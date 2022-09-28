@@ -54,9 +54,12 @@ Board Game Platform (BGP) = Lobby Service + Lobby Service Web UI + Sample Game, 
 
 ## Authors
 
-Fill e.g. names + link to github profiles in list below.
-
  * ~~Maximilian Schiedermeier - [https://github.com/kartoffelquadrat]~~
- * ...
+ * Svyatoslav Sklokin - [https://github.com/SlavaSklokin]
+ * Zachary Hayden - [https://github.com/ZacharyHayden]
+ * Lawrence Berardelli - [https://github.com/lberardelli]
+ * Ojas Krishnan - [https://github.com/SoraXO]
+ * Sofia Fiore - [https://github.com/universe-city]
+ * Jeff Léon  -  [https://github.com/jleon9]
 
 
