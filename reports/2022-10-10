@@ -1,0 +1,102 @@
+# Weekly Report, COMP361
+
+## Meta Information
+
+### Group
+
+ * Hexanome-*15*
+ * *java*
+
+### Team Members
+
+ * *Berardelli, Lawrence*
+ * *Fiore, Sofia*
+ * *Hayden, Zach*
+ * *Krishnan, Ojas*
+ * *Léon, Jeff*
+ * *Sklokin, Svyatoslav*
+
+## Status
+
+### 3 most outstanding tasks scheduled until the next report, per team member
+
+ * *Svyatoslav Sklokin*
+   * Divide team tasks and keep Jira pages updated
+   * Work on Take Turns Abstractions for M2
+   * Start preparing for M3
+ * *Zachary Hayden*
+   * Work on Lobby Service Abstractions for M2
+   * Review Catan Use Case Model
+   * Start preparing for M3
+ * *Lawrence Berardelli*
+   * Work on Lobby Service Abstractions for M2
+   * Review Catan Use Case Model
+   * Start preparing for M3
+ * *Sofia Fiore*
+   * Work on Take Turns Abstractions for M2
+   * Review Catan Use Case Model
+   * Start preparing for M3
+ * *Ojas Krishman*
+   * Work on Take Turns Abstractions for M2
+   * Review Catan Use Case Model
+   * Start preparing for M3
+ * *Jeff Leon*
+   * Work on Lobby Service Abstractions for M2
+   * Review Catan Use Case Model
+   * Start preparing for M3
+
+### Tasks achieved, scheduled for this report, per team member
+
+ * *Svyatoslav Sklokin*
+   * Reviewed Use Case Model for M2
+ * *Zachary Hayden*
+   * Reviewed Use Case Model for M2
+ * *Lawrence Berardelli*
+   * Reviewed Use Case Model for M2
+   * Attended a meeting on Sunday
+ * *Sofia Fiore*
+   * Reviewed Use Case Model for M2
+   * Attended a meeting on Sunday
+ * *Ojas Krishman*
+   * Reviewed Use Case Model for M2
+   * Attended a meeting on Sunday
+ * *Jeff Leon*
+   * Reviewed Use Case Model for M2
+   * Attended a meeting on Sunday
+
+### Tasks missed, scheduled for this report
+
+ * None, milestone 2 is scheduled to be completed for Friday.
+
+
+### Top 3 unexpected challenges encountered since last report
+
+ * Finding time where all members are available to meet. This was especially difficult due to reading week because some team members were out of town.
+ * Difficult to coordinate with members during reading week and ensure that everyone is updated.
+ * Deciding how to distribute tasks is hard. For M2, we decided to create 2 teams of 3 where each team works on either Lobby Service abstractions or Take Turns abstractions. 
+   However as of this report, we have not yet decided which use cases each team member should work on.
+
+
+### Top 3 lessons learned since last report
+
+ * After receiving feedback for M1, we realized there were a few aspects we missed during the UI design.
+ * Everyone needs to check on other's work for each milestone to ensure that nothing is missing or can be improved.
+ * After receiving feedback for M1, we realized we were still underutilizing github.
+
+
+### 3 most critical bugs in current functionality (optional)
+
+
+
+### Contribution statement
+
+ * *Berardelli, Lawrence contributed 25% of the work since last week.*
+ * *Fiore, Sofia contributed 25% of the work since last week.*
+ * *Hayden, Zach contributed 0% of the work since last week.*
+ * *Krishnan, Ojas contributed 25% of the work since last week.*
+ * *Léon, Jeff contributed 25% of the work since last week.*
+ * *Sklokin, Svyatoslav contributed 0% of the work since last week.*
+
+### Team mood
+
+ * *All is well. Reading week has made it more difficult to coordinate and finish the next milestone on time.*
