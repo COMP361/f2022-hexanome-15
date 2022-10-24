@@ -11,7 +11,7 @@ import java.util.Arrays;
  * @author zacharyhayden
  * @see Cannot be sub-classed.
  */
-public final class RunScript {
+public class RunScript {
 	/**
 	 * 
 	 * @param pPathToScript path to executable script
