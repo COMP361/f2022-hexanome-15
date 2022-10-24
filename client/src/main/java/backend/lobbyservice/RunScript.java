@@ -44,8 +44,8 @@ public final class RunScript {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (InterruptedException e) {
-			System.exit(1);
 			e.printStackTrace();
+			System.exit(1);
 		}
 
 		return null;
