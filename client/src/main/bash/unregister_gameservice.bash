@@ -12,5 +12,4 @@ else
 	gsname=$2
 	auth=$3
 	"curl -X DELETE $loc/api/gameservices/$gsname?access_token=$auth"
-	echo -e "\n"
 fi

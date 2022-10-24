@@ -11,5 +11,4 @@ else
 	auth=$2
 	id=$3
 	"curl -X DELETE $rest/api/sessions/$id?access_token=$auth"
-	echo -e "\n"
 fi

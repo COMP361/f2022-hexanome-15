@@ -16,5 +16,4 @@ else
 	websupport=$7
 	rest=$8
 	curl -X PUT --header 'Content-Type: application/json' --data "{'name':$name,'displayName':$displayname,'location':$location,'minSessionPlayers':$minplayers,'maxSessionPlayers':$maxplayers, 'webSupport':$websupport}" "${rest}/api/gameservice/$name?access_token=$auth"
-	echo -e "\n"
 fi

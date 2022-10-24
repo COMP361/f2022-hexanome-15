@@ -12,5 +12,4 @@ else
 	auth=$2
 	id=$3
 	"curl -X POST $rest/api/sessions/$id?access_token=$auth"
-	echo -e "\n"
 fi

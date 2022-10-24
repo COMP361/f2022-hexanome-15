@@ -13,5 +13,4 @@ else
 	id=$3
 	player=$4
 	"curl -X PUT $rest/api/sessions/$id/players/$player?access_token=$auth"
-	echo -e "\n"
 fi
