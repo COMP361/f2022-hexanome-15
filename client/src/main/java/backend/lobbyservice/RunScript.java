@@ -5,6 +5,7 @@
 package backend.lobbyservice;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author zacharyhayden
@@ -31,10 +32,20 @@ public final class RunScript {
 		}
 
 		try {
-			return Runtime.getRuntime().exec(command);
+			// execute the command
+			Process process = Runtime.getRuntime().exec(command);
+			// handle exit code
+			int exitCode = process.waitFor();
+			if (exitCode != 0) {
+				System.out.println("[WARNING] Process: " + Arrays.toString(command) + " resulted in exit code: " + exitCode);
+			}
+			return process;
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
+		} catch (InterruptedException e) {
+			System.exit(1);
+			e.printStackTrace();
 		}
 
 		return null;
