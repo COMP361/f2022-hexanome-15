@@ -72,7 +72,12 @@ public class RunScript implements Runnable {
 		}
 	}
 
+	/**
+	 * @assert aProcess != null
+	 * @return process of most recently executed task
+	 */
 	public Process getProcess() {
+		assert aProcess != null;
 		return aProcess;
 	}
 
