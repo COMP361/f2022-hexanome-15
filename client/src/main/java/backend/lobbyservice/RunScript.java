@@ -13,8 +13,8 @@ import java.util.Arrays;
  */
 public class RunScript implements Runnable {
 
-	private final String aPathToScript;
-	private final String[] aArgs;
+	private final String aPathToScript; // immutable
+	private String[] aArgs; // mutable
 	private InputStream aOutput; // stores the output of the most recent run call
 	private int aExitCode; // stores exit code of most recent run call
 
@@ -84,6 +84,17 @@ public class RunScript implements Runnable {
 	public InputStream getOutput() {
 		assert aOutput != null;
 		return aOutput;
+	}
+
+	/**
+	 * Updates the arguments to be called with the script given at initialization.
+	 * 
+	 * @param pArgs arguments
+	 * @assert pArgs != null
+	 */
+	public void updateArgs(String[] pArgs) {
+		assert pArgs != null;
+		aArgs = pArgs;
 	}
 
 	/**
