@@ -21,9 +21,9 @@ public class ParseOutput {
 	 * @param pScriptOutput output produced from running a script which results in
 	 *                      json formatted output
 	 * @return the string (or concatenated string) containing the desired output
-	 * @pre pScriptOutput != null
+	 * @assert pScriptOutput != null
 	 */
-	public static JSONObject parse(Process pScriptOutput) {
+	public static JSONObject parseJson(Process pScriptOutput) {
 		assert pScriptOutput != null;
 
 		StringBuilder output = new StringBuilder();
@@ -38,8 +38,32 @@ public class ParseOutput {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
 		return new JSONObject(output.toString());
+	}
+
+	/**
+	 * Parses process output for text format
+	 * 
+	 * @param pScriptOutput output process from runnable
+	 * @return textual output returned from the process
+	 */
+	public static String parseText(Process pScriptOutput) {
+		assert pScriptOutput != null;
+
+		StringBuilder output = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(pScriptOutput.getInputStream()));
+
+		String line;
+		try {
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return output.toString();
 	}
 
 	/**
@@ -47,7 +71,7 @@ public class ParseOutput {
 	 * @param pJson parsed json object
 	 * @param pKey  string key to search for and get associated value of
 	 * @return the returned value corresponding to the key
-	 * @pre pJson && pKey != null
+	 * @assert pJson != null && pKey != null
 	 */
 	public static Object getFromKey(JSONObject pJson, String pKey) {
 		assert pJson != null && pKey != null;
