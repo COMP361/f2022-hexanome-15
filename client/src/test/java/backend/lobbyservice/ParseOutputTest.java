@@ -6,6 +6,8 @@ package backend.lobbyservice;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.io.InputStream;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,14 +18,14 @@ import org.junit.jupiter.api.Test;
  */
 class ParseOutputTest {
 
-	private Process getOutput() {
+	private InputStream getOutput() {
 		RunScript runScript = new RunScript(
 				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/auth_token.bash",
 				"maex", "abc123_ABC123");
 		runScript.run();
 
-		assertNotEquals(null, runScript.getProcess());
-		return runScript.getProcess();
+		assertNotEquals(null, runScript.getOutput());
+		return runScript.getOutput();
 	}
 
 	@Test

@@ -6,6 +6,7 @@ package backend.lobbyservice;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.json.JSONObject;
@@ -23,11 +24,11 @@ public class ParseOutput {
 	 * @return the string (or concatenated string) containing the desired output
 	 * @assert pScriptOutput != null
 	 */
-	public static JSONObject parseJson(Process pScriptOutput) {
+	public static JSONObject parseJson(InputStream pScriptOutput) {
 		assert pScriptOutput != null;
 
 		StringBuilder output = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(pScriptOutput.getInputStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(pScriptOutput));
 
 		String line;
 		try {
@@ -47,11 +48,11 @@ public class ParseOutput {
 	 * @param pScriptOutput output process from runnable
 	 * @return textual output returned from the process
 	 */
-	public static String parseText(Process pScriptOutput) {
+	public static String parseText(InputStream pScriptOutput) {
 		assert pScriptOutput != null;
 
 		StringBuilder output = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(pScriptOutput.getInputStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(pScriptOutput));
 
 		String line;
 		try {

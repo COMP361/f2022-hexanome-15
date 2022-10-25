@@ -15,7 +15,8 @@ public class RunScript implements Runnable {
 
 	private final String aPathToScript;
 	private final String[] aArgs;
-	private Process aProcess; // stores the process of the most recent run call
+	private InputStream aOutput; // stores the output of the most recent run call
+	private int aExitCode; // stores exit code of most recent run call
 
 	/**
 	 * @param pPathToScript path to executable script
@@ -52,6 +53,8 @@ public class RunScript implements Runnable {
 
 			// handle exit code
 			int exitCode = process.waitFor();
+			aExitCode = exitCode; // assign global variable
+
 			if (exitCode != 0) {
 				System.out.println(
 						"[WARNING] Process: " + Arrays.toString(command) + " resulted in exit code: " + exitCode);
@@ -62,7 +65,9 @@ public class RunScript implements Runnable {
 				}
 			}
 
-			aProcess = process; // assign global variable
+			aOutput = process.getInputStream(); // assign global variable
+			// kill process
+			process.destroy();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -76,19 +81,16 @@ public class RunScript implements Runnable {
 	 * @assert aProcess != null
 	 * @return process of most recently executed task
 	 */
-	public Process getProcess() {
-		assert aProcess != null;
-		return aProcess;
+	public InputStream getOutput() {
+		assert aOutput != null;
+		return aOutput;
 	}
 
 	/**
-	 * Destroy the stored process
-	 * 
-	 * @assert process != null
+	 * @return exit code of most recently executed process
 	 */
-	public void destroy() {
-		assert aProcess != null;
-		aProcess.destroy();
+	public int exitCode() {
+		return aExitCode;
 	}
 
 }
