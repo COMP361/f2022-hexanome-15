@@ -10,16 +10,15 @@ import java.util.concurrent.Executor;
  * @author zacharyhayden
  */
 public class LobbyServiceExecutor implements Executor {
-	public static LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor();
+	public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor();
 
 	private LobbyServiceExecutor() {
 	}
 
-	public static LobbyServiceExecutor getLobbyServiceExecutor() {
-		return LOBBY_SERVICE_EXECUTOR;
-	}
-
 	@Override
+	/**
+	 * Default execution is synchronous
+	 */
 	public void execute(Runnable command) {
 		command.run();
 	}
