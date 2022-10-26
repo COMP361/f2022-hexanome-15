@@ -15,4 +15,8 @@ import java.io.InputStream;
  */
 public interface OutputParser {
 	Object parse(InputStream pScriptOutput);
+
+	default boolean isNull() {
+		return false;
+	}
 }

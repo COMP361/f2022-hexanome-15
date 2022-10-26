@@ -21,10 +21,15 @@ public class NullParser implements OutputParser {
 	public Object parse(InputStream pScriptOutput) {
 		return NULLPARSER;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "NULLPARSER";
+	}
+
+	@Override
+	public boolean isNull() {
+		return true;
 	}
 
 }

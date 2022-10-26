@@ -7,12 +7,13 @@ package backend.lobbyservice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * @author zacharyhayden
  * @implSpec Must define a private run method that'll be called from Executor
  */
-public class RunScript {
+public class RunScript implements Iterable<String> {
 
 	private final String aPathToScript; // immutable
 	private String[] aArgs; // mutable
@@ -26,6 +27,11 @@ public class RunScript {
 	 */
 	public RunScript(String pPathToScript, OutputParser pParser, String... pArgs) {
 		assert pPathToScript != null && pArgs != null && pParser != null;
+		assert pPathToScript.length() != 0;
+		// accept no null arguments
+		for (int i = 0; i < pArgs.length; i++) {
+			assert pArgs[i] != null;
+		}
 
 		this.aPathToScript = pPathToScript;
 		this.aArgs = pArgs;
@@ -120,6 +126,11 @@ public class RunScript {
 			command += (" " + aArgs[i]);
 		}
 		return command;
+	}
+
+	@Override
+	public Iterator<String> iterator() {
+		return Arrays.asList(aArgs).iterator();
 	}
 
 }

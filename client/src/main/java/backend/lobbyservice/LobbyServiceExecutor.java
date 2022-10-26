@@ -14,6 +14,8 @@ import java.lang.reflect.Method;
 public class LobbyServiceExecutor {
 	public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor();
 
+	// TODO: store the location of the LS and the bash scripts so dont need to input parameters for each construction of RunScript
+
 	private LobbyServiceExecutor() {
 	}
 
