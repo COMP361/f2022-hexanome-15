@@ -45,7 +45,4 @@ public class LobbyServiceView implements View {
 		return ACTIVE_USERS.values().iterator();
 	}
 
-	// TODO: implement a timer to automatically log user out after their refresh
-	// token expires (4 hours)
-	// TODO: implement view getter
 }

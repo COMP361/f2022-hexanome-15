@@ -36,7 +36,7 @@ public class User {
 	}
 
 	// flyweight constructor
-	public User newUser(String pAcessToken, String pRefreshToken, Role pRole) {
+	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole) {
 		if (!USERS.containsKey(pRefreshToken)) {
 			USERS.put(pRefreshToken, new User(pAcessToken, pRefreshToken, pRole));
 		}
