@@ -3,6 +3,7 @@ package gui.gameboard;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -29,6 +30,7 @@ public class CardView extends Rectangle implements CardObserver, CardObservable 
 				if (card.isPresent()) {
 					notifyObservers(card.get());
 					card = Optional.ofNullable(null);
+					setFill(Color.WHITE);
 				}
 			}
 		
