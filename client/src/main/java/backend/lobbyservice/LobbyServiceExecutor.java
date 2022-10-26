@@ -18,7 +18,8 @@ public class LobbyServiceExecutor {
 	}
 
 	/**
-	 * Default execution is synchronous
+	 * Default execution is synchronous. This is the only interface for using
+	 * RunScript run method
 	 */
 	public void execute(RunScript command) {
 		assert command != null;

@@ -69,7 +69,11 @@ public class RunScript {
 				}
 			}
 
-			aOutput = aParser.parse(process.getInputStream()); // assign global variable
+			// get parsed output if parser is not null parser; else nothing happens
+			if (aParser != NullParser.NULLPARSER) {
+				aOutput = aParser.parse(process.getInputStream()); // assign global variable
+			}
+
 			// kill process
 			process.destroy();
 		} catch (IOException e) {
