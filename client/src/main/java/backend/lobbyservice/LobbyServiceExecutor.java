@@ -4,27 +4,36 @@
  */
 package backend.lobbyservice;
 
-import java.util.concurrent.Executor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author zacharyhayden
+ * @see singleton design pattern
  */
-public class LobbyServiceExecutor implements Executor {
+public class LobbyServiceExecutor {
 	public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor();
 
 	private LobbyServiceExecutor() {
 	}
 
-	@Override
 	/**
-	 * Default execution is synchronous
+	 * Default execution is synchronous. This is the only interface for using
+	 * RunScript run method
 	 */
-	public void execute(Runnable command) {
-		command.run();
-	}
+	public void execute(RunScript command) {
+		assert command != null;
 
-	public void executeAsynchronously(Runnable pRunnable) {
-		new Thread(pRunnable).start();
+		try {
+			Method run = command.getClass().getDeclaredMethod("run");
+			run.setAccessible(true);
+			run.invoke(command, new Object[] {}); // no parameters to run method
+
+			System.out.println("Executed: " + command);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

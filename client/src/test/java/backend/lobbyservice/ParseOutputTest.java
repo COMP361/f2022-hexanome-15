@@ -4,9 +4,8 @@
  */
 package backend.lobbyservice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
-import java.io.InputStream;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -17,25 +16,23 @@ import org.junit.jupiter.api.Test;
  */
 class ParseOutputTest {
 
-	private InputStream getOutput() {
-		RunScript runScript = new RunScript(
-				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/auth_token.bash",
-				"maex", "abc123_ABC123");
-		runScript.run();
-
-		assertNotEquals(null, runScript.getOutput());
-		return runScript.getOutput();
-	}
-
 	@Test
 	void testParseOnAuthScript() {
-		JSONObject out = ParseOutput.parseJson(getOutput());
-		Object authToken = ParseOutput.getFromKey(out, "refresh_token");
+		RunScript runScript = new RunScript(
+				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/auth_token.bash",
+				ParseJSON.PARSE_JSON, "maex", "abc123_ABC123");
+		LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.execute(runScript);
+
+		assertNotEquals(null, runScript.getOutput());
+
+		Object authToken = ParseJSON.PARSE_JSON.getFromKey((JSONObject) runScript.getOutput(), "refresh_token");
 
 		// this should be proper output; the authToken should correspond directly to the
 		// field in output
-		System.out.println(out);
+		System.out.println(runScript.getOutput());
 		System.out.println(authToken);
+		
+		assertEquals(0, runScript.exitCode());
 	}
 
 }

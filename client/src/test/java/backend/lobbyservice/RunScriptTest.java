@@ -19,13 +19,13 @@ class RunScriptTest {
 	void testCorrectOutput() throws InterruptedException, IOException {
 		RunScript runScript = new RunScript(
 				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/debug.bash",
-				"http://127.0.0.1:4242");
-		runScript.run();
+				ParseText.PARSE_TEXT, "http://127.0.0.1:4242");
+		LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.execute(runScript);
 		int exitCode = runScript.exitCode();
-		String output = ParseOutput.parseText(runScript.getOutput());
+		System.out.println(runScript.getOutput());
 
 		assertEquals(0, exitCode);
-		assertEquals("Lobby Service is happily serving 5 users.\n\n", output.toString());
+		assertEquals("Lobby Service is happily serving 5 users.\n\n", runScript.getOutput());
 	}
 
 }

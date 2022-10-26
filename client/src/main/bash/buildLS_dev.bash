@@ -13,3 +13,6 @@ fi
 # may need to run: sudo chmod 666 /var/run/docker.sock : if there's an error starting up the database
 (cd $1 && docker start ls-db)
 (cd $1 && mvn clean package spring-boot:run)
+
+echo "Executed: docker start ls-db"
+echo "Executed mvn clean package spring-boot:run"
