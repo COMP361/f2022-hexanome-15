@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 /**
  * @author zacharyhayden
+ * @implSpec Must define a private run method that'll be called from Executor
  */
 public class RunScript {
 
@@ -86,7 +87,7 @@ public class RunScript {
 	}
 
 	/**
-	 * @assert aProcess != null
+	 * @assert aOutput != null
 	 * @return process of most recently executed task
 	 */
 	public Object getOutput() {
