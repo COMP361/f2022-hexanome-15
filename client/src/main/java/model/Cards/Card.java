@@ -14,5 +14,7 @@ public class Card {
 	public Color getColor() {
 		return color;
 	}
+	
+	//TODO: need things like cost, associated gem discount, and prestige. Robillard might want these to be flyweights.
 
 }

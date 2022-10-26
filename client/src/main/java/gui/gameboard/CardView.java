@@ -2,6 +2,8 @@ package gui.gameboard;
 
 import java.util.Optional;
 
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.Cards.Card;
@@ -14,6 +16,15 @@ public class CardView extends Rectangle implements CardObserver {
 	public CardView(double height, double width) {
 		super(height, width);
 		card = Optional.ofNullable(null);
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				// TODO onlick notify the deck associated with this row of cards and add a card and also add this card to the users inventory
+				
+			}
+		
+		});
 	}
 
 	@Override
