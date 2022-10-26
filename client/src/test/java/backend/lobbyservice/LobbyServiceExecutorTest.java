@@ -4,11 +4,10 @@
  */
 package backend.lobbyservice;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static backend.lobbyservice.LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import static backend.lobbyservice.LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;;
 
 /**
  * @author zacharyhayden
@@ -21,25 +20,33 @@ class LobbyServiceExecutorTest {
 	void runLSDebug() {
 		RunScript runScript = new RunScript(
 				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/debug.bash",
-				"http://127.0.0.1:4242");
+				ParseText.PARSE_TEXT, "http://127.0.0.1:4242");
 		ls.execute(runScript);
-		String out = ParseOutput.parseText(runScript.getOutput());
-		System.out.println(out);
+		System.out.println(runScript.getOutput());
 
 		assertEquals(0, runScript.exitCode());
-
-		assertEquals("Lobby Service is happily serving 5 users.\n\n", out);
+		assertEquals("Lobby Service is happily serving 5 users.\n\n", runScript.getOutput());
 	}
 
 	@Test
 	void runLSGetAuth() throws InterruptedException {
 		RunScript runScript = new RunScript(
 				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/auth_token.bash",
-				"maex", "abc123_ABC123");
+				ParseJSON.PARSE_JSON, "maex", "abc123_ABC123");
 		ls.execute(runScript);
-		JSONObject out = ParseOutput.parseJson(runScript.getOutput());
-		System.out.println(out);
+		System.out.println(runScript.getOutput());
 		assertEquals(0, runScript.exitCode());
 	}
+
+	// TODO: complete below functionality; i got it to work one time only.
+//	@Test
+//	void runBuildLS() throws InterruptedException {
+//		RunScript buildLS = new RunScript(
+//				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/buildLS_dev.bash",
+//				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/LobbyService", "&");
+//		ls.execute(buildLS);
+//		//String out = ParseOutput.parseText(buildLS.getOutput());
+//		//System.out.println(out);
+//	}
 
 }
