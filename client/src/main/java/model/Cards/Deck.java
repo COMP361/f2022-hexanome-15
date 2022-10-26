@@ -49,9 +49,17 @@ public class Deck implements CardObservable {
 		cardObservers.remove(cardView);
 	}
 	
+	//a terrible hack to work around instantiating each card view for the first time
 	public void notifyObservers(Card card, int observerIndex) {
 		//this is a terrible hack, needs a re-design.
 		cardObservers.get(observerIndex).onAction(card);
+	}
+	
+	//use this one to deal out a new card after one got purchased
+	public void notifyObservers(Card card) {
+		for (CardObserver observer : cardObservers) {
+			observer.onAction(card);
+		}
 	}
 
 }
