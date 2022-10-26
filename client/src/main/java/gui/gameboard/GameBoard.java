@@ -10,15 +10,20 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Cards.Deck;
+import model.Tokens.Token;
 import model.Tokens.TokenDeck;
 import model.Tokens.TokenType;
 
@@ -36,12 +41,32 @@ public class GameBoard extends Application {
 		return new CardView(screenSize.height/10f, screenSize.width/10f);
 	}
 	
-	private void populateCardColumn(VBox column, Dimension screenSize, List<Deck> decks) {
+	private void populateCardColumn(VBox column, Dimension screenSize, List<Deck> decks, ArrayList<CardView> aggregator) {
 		//pretty sloppy but will do for now
 		for (int i = 0; i < 3; ++i) {
 			CardView view = createCardView(screenSize);
 			decks.get(i).addListener(view);
 			column.getChildren().add(view);
+			aggregator.add(view);
+		}
+	}
+	
+	private void populateTokenDisplay(VBox tokenColumn, Dimension screenSize) {
+		for (int i = 0; i < TokenType.values().length; ++i) {
+			HBox tokenRow = new HBox();
+			TokenDeck deck = new TokenDeck(TokenType.values()[i]);
+			TokenDeckView deckView = new TokenDeckView((float)screenSize.height/55f, deck);
+			Rectangle miniCard = new Rectangle(screenSize.height/45f, screenSize.width/50f);
+			miniCard.setFill(deck.getColor());
+			Counter cardCounter = new Counter(0);
+			tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
+			tokenColumn.getChildren().add(tokenRow);
+		}
+	}
+	
+	private void populateHandView(HandView handView, Dimension screenSize) {
+		for (int i = 0; i < TokenType.values().length-1; ++i) {
+			handView.addHandColumn(new HandColumnView(TokenType.values()[i], screenSize));
 		}
 	}
 
@@ -60,21 +85,23 @@ public class GameBoard extends Application {
 		Deck greenDeck = new Deck(Color.GREEN);
 		List<Deck> decks = Arrays.asList(new Deck[] {redDeck, yellowDeck, greenDeck} );
 		decksBox.setLayoutX(screenSize.width/6f);
-		decksBox.setLayoutY(screenSize.height/10f);
+		decksBox.setLayoutY(screenSize.height/20f);
 		decksBox.getChildren().addAll(getDeckPane(redDeck, screenSize), getDeckPane(yellowDeck, screenSize), getDeckPane(greenDeck, screenSize));
 		
 		//building the layout of the faceup cards
 		HBox faceupCardsRow = new HBox();
 		faceupCardsRow.setSpacing(3);
 		faceupCardsRow.setLayoutX(screenSize.width/6f + screenSize.width/10f + 10);
-		faceupCardsRow.setLayoutY(screenSize.height/10f);
+		faceupCardsRow.setLayoutY(screenSize.height/20f);
 		VBox faceupCardsFirstColumn = new VBox();
 		VBox faceupCardsSecondColumn = new VBox();
 		VBox faceupCardsThirdColumn = new VBox();
-		List<VBox> columns = Arrays.asList(new VBox[] {faceupCardsFirstColumn, faceupCardsSecondColumn, faceupCardsThirdColumn});
+		VBox faceupCardsFourthColumn = new VBox();
+		ArrayList<CardView> cardViewAggregator = new ArrayList<CardView>();
+		List<VBox> columns = Arrays.asList(new VBox[] {faceupCardsFirstColumn, faceupCardsSecondColumn, faceupCardsThirdColumn, faceupCardsFourthColumn});
 		for (VBox column : columns) {
 			column.setSpacing(3);
-			populateCardColumn(column, screenSize, decks);
+			populateCardColumn(column, screenSize, decks, cardViewAggregator);
 		}
 		faceupCardsRow.getChildren().addAll(columns);
 		for (Deck deck : decks) {
@@ -84,21 +111,33 @@ public class GameBoard extends Application {
 		//ignoring the pretty token display for now
 		
 		//building the user inventory
-		float yOffset = 7 * screenSize.height/10f;
+		float yOffset = 6 * screenSize.height/10f;
 		float xOffset = screenSize.width/6f;
 		HBox userInventory = new HBox();
 		userInventory.setLayoutY(yOffset);
 		userInventory.setLayoutX(xOffset);
-		HBox tokenRow = new HBox();
-		tokenRow.setSpacing(5);
-		TokenDeck emeraldDeck = new TokenDeck(TokenType.EMERALD);
-		TokenDeckView emeraldView = new TokenDeckView((float)screenSize.height/45f,emeraldDeck);
-		Rectangle emeraldMiniCard = new Rectangle(screenSize.height/45f, screenSize.width/40f);
-		emeraldMiniCard.setFill(Color.GREEN);
-		Counter emeraldCardCounter = new Counter(0);
-		tokenRow.getChildren().addAll(emeraldView, emeraldView.getCounter(), emeraldMiniCard, emeraldCardCounter);
-		userInventory.getChildren().add(tokenRow);
+		VBox tokenColumn = new VBox();
+		tokenColumn.setSpacing(3);
+		userInventory.getChildren().add(tokenColumn);
+		populateTokenDisplay(tokenColumn, screenSize);
+		//these will have to be more sophisticated or at least listeners sometime soon
+		Text totalTokens = new Text("Tokens: 0/10");
+		Text totalCards = new Text("Cards: 0");
+		Text prestige = new Text("Prestige: 0");
+		tokenColumn.getChildren().addAll(totalTokens, totalCards, prestige);
+		HandView handView = new HandView();
+		populateHandView(handView, screenSize);
+		for (CardView cardView : cardViewAggregator) {
+			for (HandColumnView handColumn : handView) {
+				cardView.addListener(handColumn);
+			}
+		}
+		for (HandColumnView handColumn : handView) {
+			userInventory.getChildren().add(handColumn);
+		}
+		userInventory.setSpacing(10);
 		
+		//adding to the scene graph
 		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory);
 		
 		stage.setScene(new Scene(root, screenSize.width, screenSize.height));

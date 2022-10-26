@@ -2,6 +2,8 @@ package model.Tokens;
 
 import java.util.ArrayList;
 
+import javafx.scene.paint.Color;
+
 public class TokenDeck {
 	
 	private ArrayList<Token> tokens;
@@ -25,6 +27,11 @@ public class TokenDeck {
 	
 	public int getSize() {
 		return tokens.size();
+	}
+	
+	//again this will return the image for fill
+	public Color getColor() {
+		return Token.typeToColor[type.ordinal()];
 	}
 
 }

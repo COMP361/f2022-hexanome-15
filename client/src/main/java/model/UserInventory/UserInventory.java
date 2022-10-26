@@ -3,12 +3,12 @@ package model.UserInventory;
 import java.util.ArrayList;
 
 import model.Cards.Card;
-import model.Tokens.Token;
+import model.Tokens.TokenDeck;
 
 public class UserInventory {
 	
 	ArrayList<Card> cards;
 	
-	ArrayList<Token> tokens;
+	ArrayList<TokenDeck> tokenDecks;
 
 }

@@ -4,8 +4,8 @@ import gui.gameboard.CardView;
 
 public interface CardObservable {
 	
-	public void addListener(CardView cardView);
+	public void addListener(CardObserver cardView);
 	
-	public void removeListener(CardView cardView);
+	public void removeListener(CardObserver cardView);
 
 }
