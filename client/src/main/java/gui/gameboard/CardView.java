@@ -20,6 +20,8 @@ public class CardView extends Rectangle implements CardObserver, CardObservable 
 	
 	public CardView(double height, double width) {
 		super(height, width);
+		this.setArcHeight(height/5);
+		this.setArcWidth(height/5);
 		card = Optional.ofNullable(null);
 		observers = new ArrayList<CardObserver>();
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
