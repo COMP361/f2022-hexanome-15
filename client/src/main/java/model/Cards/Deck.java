@@ -15,11 +15,15 @@ public class Deck implements CardObservable {
 	public Deck(Color color) {
 		this.color = color;
 		cards = new ArrayList<Card>();
-		cards.add(new Card(color, TokenType.EMERALD));
 		cards.add(new Card(color, TokenType.DIAMOND));
-		cards.add(new Card(color, TokenType.LAPIS));
+		cards.add(new Card(color, TokenType.SAPPHIRE));
+		cards.add(new Card(color, TokenType.EMERALD));
+		cards.add(new Card(color, TokenType.RUBY));
 		cards.add(new Card(color, TokenType.ONYX));
-		cards.add(new Card(color, TokenType.SAPHIRE));
+		cardObservers = new ArrayList<CardObserver>();
+	}
+	public Deck(CardType type) {
+		cards = new ArrayList<Card>(Card.MakeDeck(type));
 		cardObservers = new ArrayList<CardObserver>();
 	}
 	
