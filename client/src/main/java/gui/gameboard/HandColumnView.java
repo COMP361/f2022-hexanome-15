@@ -13,7 +13,7 @@ import model.Tokens.TokenType;
 /*
  * TODO: A big design phase is gonna be adding a hand model to the user inventory model
  * Much like other choices, communication between the HandColumnView and the Hand itself can be done with the listener pattern
- * When this class recieves a ping (executes onAction) just notify the hand model and pass the card through that way. 
+ * When this class receives a ping (executes onAction) just notify the hand model and pass the card through that way. 
  */
 public class HandColumnView extends Pane implements CardObserver {
 	
@@ -31,8 +31,8 @@ public class HandColumnView extends Pane implements CardObserver {
 	public void onAction(Card card) {
 		//again in this case we'll just match the type of the bonus token
 		if (card.getTokenBonus() == typeOfColumn) {
-			//might need this to be a minicardview, rectangle for now.
-			Rectangle view = new Rectangle(screenSize.height/20f, screenSize.width/20f);
+			//might need this to be a minicardview, rectangle for now.<<made cardview, no reason not to yet
+			CardView view = new CardView(screenSize.height/20f, screenSize.width/20f);
 			view.setFill(card.getColor());
 			view.setLayoutY(5*nCardsInColumn);
 			this.getChildren().add(view);
