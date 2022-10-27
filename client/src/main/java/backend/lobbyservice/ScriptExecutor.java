@@ -11,7 +11,7 @@ package backend.lobbyservice;
 public interface ScriptExecutor<T> {
 	/**
 	 * Executes a client specified script from the LobbyServiceExecutor within this interface implementation
-	 * @return output of the script if any;
+	 * @return output of the script if any
 	 */
 	T execute();
 
