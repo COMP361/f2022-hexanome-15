@@ -4,14 +4,13 @@
  */
 package backend.users;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import backend.lobbyservice.LobbyServiceExecutor;
 import backend.lobbyservice.ParseJSON;
-import backend.lobbyservice.RunScript;
 
 /**
  * @author zacharyhayden
@@ -19,21 +18,19 @@ import backend.lobbyservice.RunScript;
  */
 class UserTest {
 
+	private final LobbyServiceExecutor ls = new LobbyServiceExecutor("http://127.0.0.1:4242",
+			"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
+
 	@Test
 	void test() {
-		RunScript runScript = new RunScript(
-				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/auth_token.bash",
-				ParseJSON.PARSE_JSON, "http://127.0.0.1:4242", "maex", "abc123_ABC123");
-		LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.execute(runScript);
+		JSONObject runScript = ls.auth_token("maex", "abc123_ABC123");
 
-		assertNotEquals(null, runScript.getOutput());
+		assertNotEquals(null, runScript);
 
-		String accessToken = (String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) runScript.getOutput(),
-				"access_token");
-		String refreshToken = (String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) runScript.getOutput(),
-				"refresh_token");
+		String accessToken = (String) ParseJSON.PARSE_JSON.getFromKey(runScript, "access_token");
+		String refreshToken = (String) ParseJSON.PARSE_JSON.getFromKey(runScript, "refresh_token");
 
-		User user = User.newUser(accessToken, refreshToken, Role.ADMIN);
+		User user = User.newUser(accessToken, refreshToken, Role.ADMIN, ls);
 
 		// TODO
 		// this method is hard to test but if you put the timer duration to something
