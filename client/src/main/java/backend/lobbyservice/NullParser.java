@@ -19,7 +19,7 @@ public class NullParser implements OutputParser {
 
 	@Override
 	public Object parse(InputStream pScriptOutput) {
-		return NULLPARSER;
+		return NULLPARSER.toString();
 	}
 
 	@Override

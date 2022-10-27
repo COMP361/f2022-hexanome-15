@@ -11,9 +11,8 @@ import java.util.TimerTask;
 
 import org.json.JSONObject;
 
-import static backend.lobbyservice.LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
+import backend.lobbyservice.LobbyServiceExecutor;
 import backend.lobbyservice.ParseJSON;
-import backend.lobbyservice.RunScript;
 
 /**
  * @author zacharyhayden
@@ -23,22 +22,27 @@ public class User {
 	private String aAccessToken;
 	private final String aRefreshToken;
 	private final Role aRole;
+	private final LobbyServiceExecutor aLobbyServiceExecutor;
+	private long aExpiresIn = 1800000L; // time in milliseconds until the users access token expires
 
 	private final static HashMap<String, User> USERS = new HashMap<>();
 
-	private User(String pAcessToken, String pRefreshToken, Role pRole) {
+	private User(String pAcessToken, String pRefreshToken, Role pRole, LobbyServiceExecutor pLobbyServiceExecutor) {
 		aAccessToken = pAcessToken;
 		aRefreshToken = pRefreshToken;
 		aRole = pRole;
+		aLobbyServiceExecutor = pLobbyServiceExecutor;
 
-		new Timer().scheduleAtFixedRate(new RenewAccessToken(), 0, 1800000); // every 30 minutes (when the users access
+		new Timer().scheduleAtFixedRate(new RenewAccessToken(), 0, aExpiresIn); // every 30 minutes (when the users
+																				// access
 																				// token expires)
 	}
 
 	// flyweight constructor
-	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole) {
+	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole,
+			LobbyServiceExecutor pLobbyServiceExecutor) {
 		if (!USERS.containsKey(pRefreshToken)) {
-			USERS.put(pRefreshToken, new User(pAcessToken, pRefreshToken, pRole));
+			USERS.put(pRefreshToken, new User(pAcessToken, pRefreshToken, pRole, pLobbyServiceExecutor));
 		}
 		return USERS.get(pRefreshToken);
 	}
@@ -57,12 +61,9 @@ public class User {
 		 * (every 30 minutes or 1800 seconds)
 		 */
 		public void run() {
-			RunScript renewAccessToken = new RunScript(
-					"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/renew_auth_token.bash",
-					ParseJSON.PARSE_JSON, "http://127.0.0.1:4242", aRefreshToken);
-			LOBBY_SERVICE_EXECUTOR.execute(renewAccessToken);
-			aAccessToken = (String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) renewAccessToken.getOutput(),
-					"access_token");
+			JSONObject renewedTokens = aLobbyServiceExecutor.renew_auth_token(aRefreshToken);
+			aAccessToken = (String) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "access_token");
+			aExpiresIn = (long) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
 		}
 
 	}
