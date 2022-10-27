@@ -32,7 +32,7 @@ class LobbyServiceExecutorTest {
 	void runLSGetAuth() throws InterruptedException {
 		RunScript runScript = new RunScript(
 				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/auth_token.bash",
-				ParseJSON.PARSE_JSON, "maex", "abc123_ABC123");
+				ParseJSON.PARSE_JSON, "http://127.0.0.1:4242", "maex", "abc123_ABC123");
 		ls.execute(runScript);
 		System.out.println(runScript.getOutput());
 		assertEquals(0, runScript.exitCode());
