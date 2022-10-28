@@ -31,14 +31,14 @@ public class GameBoard extends Application {
 	
 	private StackPane getDeckPane(Deck deck, Dimension screenSize) {
 		StackPane deckPane = new StackPane();
-		DeckView deckView = new DeckView(deck, screenSize.height/12f, screenSize.width/12f);
+		DeckView deckView = new DeckView(deck, screenSize.height/15f, screenSize.width/15f);
 		Label cardCount = deckView.getNumCardsDisplay();
 		deckPane.getChildren().addAll(deckView, cardCount);
 		return deckPane;
 	}
 	
 	private CardView createCardView(Dimension screenSize) {
-		return new CardView(screenSize.height/12f, screenSize.width/12f);
+		return new CardView(screenSize.height/15f, screenSize.width/15f);
 	}
 	
 	private void populateCardColumn(VBox column, Dimension screenSize, List<Deck> decks, ArrayList<CardView> aggregator) {
@@ -143,7 +143,7 @@ public class GameBoard extends Application {
 		nobleCards.setLayoutY(screenSize.height/20f);
 		nobleCards.setLayoutX(screenSize.width/12f);
 		for (int i=0; i<5; i++) {
-			Rectangle rectangle = new Rectangle(screenSize.height/12f, screenSize.width/12f);
+			Rectangle rectangle = new Rectangle(screenSize.height/15f, screenSize.width/15f);
 			nobleCards.getChildren().add(rectangle);
 		}
 		nobleCards.setSpacing(3);
