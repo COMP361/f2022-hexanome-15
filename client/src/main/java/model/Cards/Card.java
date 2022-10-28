@@ -36,13 +36,13 @@ public class Card {
 		List<Card> toSend;
 		switch (type) {
 		case BASE1:
-			toSend = cards.subList(0, 40);
+			toSend = new ArrayList<Card>(cards.subList(0, 40));
 			break;
 		case BASE2:
-			toSend = cards.subList(40, 70);
+			toSend = new ArrayList<Card>(cards.subList(40, 70));
 			break;
 		case BASE3:
-			toSend = cards.subList(70, 90);
+			toSend = new ArrayList<Card>(cards.subList(70, 90));
 			break;
 		default: return null;
 		}
