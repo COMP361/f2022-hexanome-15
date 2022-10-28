@@ -147,7 +147,6 @@ public class GameBoard extends Application {
 			nobleCards.getChildren().add(rectangle);
 		}
 		nobleCards.setSpacing(3);
-
 		//adding to the scene graph
 		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards);
 		

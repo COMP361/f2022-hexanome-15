@@ -1,5 +1,8 @@
 package model.Tokens;
 
 public enum TokenType {
-	EMERALD, DIAMOND, LAPIS, ONYX, SAPHIRE, GOLD
+	DIAMOND, SAPPHIRE, EMERALD, RUBY, ONYX, GOLD
 }
+/*
+ * Types base1, 2 and 3 have one of each token per variant
+ */
