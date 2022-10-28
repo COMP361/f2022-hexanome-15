@@ -1,4 +1,4 @@
-package com.lobbyservice.lobbyservice;
+package gui.lobbyservice;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

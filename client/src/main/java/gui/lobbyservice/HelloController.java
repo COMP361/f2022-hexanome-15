@@ -1,4 +1,4 @@
-package com.lobbyservice.lobbyservice;
+package gui.lobbyservice;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
