@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import model.Cards.CardType;
 import model.Cards.Deck;
 import model.Tokens.Token;
 import model.Tokens.TokenDeck;
@@ -80,9 +81,9 @@ public class GameBoard extends Application {
 		//building the decks of cards
 		VBox decksBox = new VBox();
 		decksBox.setSpacing(3);
-		Deck redDeck = new Deck(Color.BLUE);
-		Deck yellowDeck = new Deck(Color.YELLOW);
-		Deck greenDeck = new Deck(Color.GREEN);
+		Deck redDeck = new Deck(CardType.BASE3);
+		Deck yellowDeck = new Deck(CardType.BASE2);
+		Deck greenDeck = new Deck(CardType.BASE1);
 		List<Deck> decks = Arrays.asList(new Deck[] {redDeck, yellowDeck, greenDeck} );
 		decksBox.setLayoutX(screenSize.width/6f);
 		decksBox.setLayoutY(screenSize.height/20f);

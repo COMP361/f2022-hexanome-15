@@ -12,7 +12,7 @@ public class Deck implements CardObservable {
 	private ArrayList<CardObserver> cardObservers;
 	
 	//in the future we'll automatically generate the cards and shuffle them, probably doing something functional. 
-	public Deck(Color color) {
+	/*public Deck(Color color) {
 		this.color = color;
 		cards = new ArrayList<Card>();
 		cards.add(new Card(color, TokenType.DIAMOND));
@@ -21,9 +21,19 @@ public class Deck implements CardObservable {
 		cards.add(new Card(color, TokenType.RUBY));
 		cards.add(new Card(color, TokenType.ONYX));
 		cardObservers = new ArrayList<CardObserver>();
-	}
+	}*/
 	public Deck(CardType type) {
-		cards = new ArrayList<Card>(Card.MakeDeck(type));
+		switch (type) {
+		case BASE1:
+			this.color = Color.GREEN;
+			break;
+		case BASE2:
+			this.color = Color.YELLOW;
+			break;
+		case BASE3:
+			this.color = Color.BLUE;
+		}
+		this.cards = (ArrayList<Card>) Card.MakeDeck(type);
 		cardObservers = new ArrayList<CardObserver>();
 	}
 	
