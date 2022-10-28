@@ -136,9 +136,20 @@ public class GameBoard extends Application {
 			userInventory.getChildren().add(handColumn);
 		}
 		userInventory.setSpacing(10);
+
+		//Temporary display for noble cards
+		//Will replace rectangles with actual noble cards
+		VBox nobleCards = new VBox();
+		nobleCards.setLayoutY(screenSize.height/20f);
+		nobleCards.setLayoutX(screenSize.width/12f);
+		for (int i=0; i<5; i++) {
+			Rectangle rectangle = new Rectangle(screenSize.height/10f, screenSize.width/10f);
+			nobleCards.getChildren().add(rectangle);
+		}
+		nobleCards.setSpacing(3);
 		
 		//adding to the scene graph
-		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory);
+		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards);
 		
 		stage.setScene(new Scene(root, screenSize.width, screenSize.height));
 		stage.show();
