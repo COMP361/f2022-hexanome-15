@@ -63,7 +63,16 @@ public class GameBoard extends Application {
 			tokenColumn.getChildren().add(tokenRow);
 		}
 	}
-	
+	private void populateTokenPiles(HBox tokenRow, Dimension screenSize) {
+		for (int i = 0; i < TokenType.values().length; ++i) {
+			VBox tokenColumn = new VBox();
+			TokenDeck deck = new TokenDeck(TokenType.values()[i]);
+			TokenDeckView deckView = new TokenDeckView((float)screenSize.height/55f, deck);
+			tokenColumn.getChildren().addAll(deckView, deckView.getCounter());
+			tokenRow.getChildren().add(tokenColumn);
+		}
+	}
+
 	private void populateHandView(HandView handView, Dimension screenSize) {
 		for (int i = 0; i < TokenType.values().length-1; ++i) {
 			handView.addHandColumn(new HandColumnView(TokenType.values()[i], screenSize));
@@ -147,6 +156,14 @@ public class GameBoard extends Application {
 			nobleCards.getChildren().add(rectangle);
 		}
 		nobleCards.setSpacing(3);
+
+		//Creating token piles
+		HBox tokenRow = new HBox();
+		tokenRow.setSpacing(50);
+		tokenRow.setLayoutY(5.25*screenSize.height/10f);
+		tokenRow.setLayoutX(xOffset);
+		populateTokenPiles(tokenRow, screenSize);
+
 		//adding to the scene graph
 		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards);
 		
