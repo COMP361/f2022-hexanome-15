@@ -165,7 +165,7 @@ public class GameBoard extends Application {
 		populateTokenPiles(tokenRow, screenSize);
 
 		//adding to the scene graph
-		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards);
+		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards, tokenRow);
 		
 		stage.setScene(new Scene(root, screenSize.width, screenSize.height));
 		stage.show();
