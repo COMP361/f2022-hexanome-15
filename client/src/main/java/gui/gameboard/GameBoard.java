@@ -72,7 +72,7 @@ public class GameBoard extends Application {
 			tokenRow.getChildren().add(tokenColumn);
 		}
 	}
-	
+
 	private void populateHandView(HandView handView, Dimension screenSize) {
 		for (int i = 0; i < TokenType.values().length-1; ++i) {
 			handView.addHandColumn(new HandColumnView(TokenType.values()[i], screenSize));
