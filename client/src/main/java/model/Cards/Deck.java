@@ -23,7 +23,7 @@ public class Deck implements CardObservable {
 		cardObservers = new ArrayList<CardObserver>();
 	}
 	public Deck(CardType type) {
-		cards = new ArrayList<Card>(Card.MakeDeck(type));
+		cards = new ArrayList<Card>();
 		cardObservers = new ArrayList<CardObserver>();
 	}
 	
