@@ -8,31 +8,32 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import model.Cards.Card;
-import model.Cards.CardObservable;
-import model.Cards.CardObserver;
+import model.Cards.*;
 
-public class CardView extends Rectangle implements CardObserver, CardObservable {
+public class CardView extends Rectangle implements CardObserver, CardObservable, DeckObservable {
 	
 	private Optional<Card> card;
 	
-	private ArrayList<CardObserver> observers;
+	private ArrayList<CardObserver> cardObservers;
+	private ArrayList<DeckObserver> deckObservers;
 	
 	public CardView(double height, double width) {
 		super(height, width);
 		this.setArcHeight(height/5);
 		this.setArcWidth(height/5);
 		card = Optional.ofNullable(null);
-		observers = new ArrayList<CardObserver>();
+		cardObservers = new ArrayList<CardObserver>();
+		deckObservers = new ArrayList<DeckObserver>();
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent arg0) {
 				// TODO onlick notify the deck associated with this row of cards and add a card and also add this card to the users inventory
 				if (card.isPresent()) {
-					notifyObservers(card.get());
+					notifyCardObservers(card.get());
 					card = Optional.ofNullable(null);
 					setFill(Color.WHITE);
+					notifyDeckObservers();
 				}
 			}
 		
@@ -55,18 +56,28 @@ public class CardView extends Rectangle implements CardObserver, CardObservable 
 
 	@Override
 	public void addListener(CardObserver observer) {
-		observers.add(observer);
+		cardObservers.add(observer);
 	}
 
 	@Override
 	public void removeListener(CardObserver observer) {
-		observers.remove(observer);
+		cardObservers.remove(observer);
 	}
 	
-	public void notifyObservers(Card card) {
-		for (CardObserver observer : observers) {
+	public void notifyCardObservers(Card card) {
+		for (CardObserver observer : cardObservers) {
 			observer.onAction(card);
 		}
 	}
+	public void notifyDeckObservers() {
+		for (DeckObserver observer : deckObservers) {
+			observer.onAction();
+		}
+	}
 
+	@Override
+	public void addListener(DeckObserver observer) {deckObservers.add(observer);}
+
+	@Override
+	public void removeListener(DeckObserver observer) {deckObservers.remove(observer);}
 }
