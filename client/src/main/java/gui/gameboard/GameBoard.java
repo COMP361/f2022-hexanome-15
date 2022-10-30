@@ -119,8 +119,8 @@ public class GameBoard extends Application {
 			populateCardColumn(column, screenSize, decks, deckViews, cardViewAggregator);
 		}
 		faceupCardsRow.getChildren().addAll(columns);
-		for (Deck deck : decks) {
-			deck.deal();
+		for (DeckView deckView : deckViews) {
+			deckView.setUp();
 		}
 
 		decksBox.getChildren().addAll(getDeckPane(redDeckView, screenSize), getDeckPane(yellowDeckView, screenSize), getDeckPane(greenDeckView, screenSize));
