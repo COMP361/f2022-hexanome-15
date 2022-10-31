@@ -17,6 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import model.ColorManager;
+import model.Cards.CardType;
 import model.Cards.Deck;
 import model.Tokens.TokenDeck;
 import model.Tokens.TokenType;
@@ -56,7 +58,7 @@ public class GameBoard extends Application {
 			TokenDeck deck = new TokenDeck(TokenType.values()[i]);
 			TokenDeckView deckView = new TokenDeckView((float)screenSize.height/55f, deck);
 			Rectangle miniCard = new Rectangle(screenSize.height/45f, screenSize.width/50f);
-			miniCard.setFill(deck.getColor());
+			miniCard.setFill(ColorManager.getColor(deck.getType()));//.getColor());
 			Counter cardCounter = new Counter(0);
 			tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
 			tokenColumn.getChildren().add(tokenRow);
@@ -88,9 +90,9 @@ public class GameBoard extends Application {
 		//building the decks of cards
 		VBox decksBox = new VBox();
 		decksBox.setSpacing(3);
-		Deck redDeck = new Deck(Color.BLUE);
-		Deck yellowDeck = new Deck(Color.YELLOW);
-		Deck greenDeck = new Deck(Color.GREEN);
+		Deck redDeck = new Deck(CardType.BASE3);
+		Deck yellowDeck = new Deck(CardType.BASE2);
+		Deck greenDeck = new Deck(CardType.BASE1);
 		List<Deck> decks = Arrays.asList(new Deck[] {redDeck, yellowDeck, greenDeck} );
 		decksBox.setLayoutX(screenSize.width/6f);
 		decksBox.setLayoutY(screenSize.height/20f);

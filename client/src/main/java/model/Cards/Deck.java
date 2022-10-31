@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
+import model.ColorManager;
 import model.Tokens.TokenType;
 
 public class Deck implements CardObservable {
@@ -13,7 +14,7 @@ public class Deck implements CardObservable {
 	private ArrayList<CardObserver> cardObservers;
 	
 	//in the future we'll automatically generate the cards and shuffle them, probably doing something functional. 
-	public Deck(Color color) {
+	/*public Deck(Color color) {
 		this.color = color;
 		cards = new ArrayList<Card>();
 		cards.add(new Card(color, TokenType.DIAMOND));
@@ -22,9 +23,10 @@ public class Deck implements CardObservable {
 		cards.add(new Card(color, TokenType.RUBY));
 		cards.add(new Card(color, TokenType.ONYX));
 		cardObservers = new ArrayList<CardObserver>();
-	}
+	}*/
 	public Deck(CardType type) {
-		cards = new ArrayList<Card>();
+		this.color = ColorManager.getColor(type);
+		this.cards = (ArrayList<Card>) Card.MakeDeck(type);
 		cardObservers = new ArrayList<CardObserver>();
 	}
 	
