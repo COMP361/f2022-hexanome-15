@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
+import model.ColorManager;
 import model.Tokens.TokenType;
 
 public class Deck implements CardObservable {
@@ -24,16 +25,7 @@ public class Deck implements CardObservable {
 		cardObservers = new ArrayList<CardObserver>();
 	}*/
 	public Deck(CardType type) {
-		switch (type) {
-		case BASE1:
-			this.color = Color.GREEN;
-			break;
-		case BASE2:
-			this.color = Color.YELLOW;
-			break;
-		case BASE3:
-			this.color = Color.BLUE;
-		}
+		this.color = ColorManager.getColor(type);
 		this.cards = (ArrayList<Card>) Card.MakeDeck(type);
 		cardObservers = new ArrayList<CardObserver>();
 	}

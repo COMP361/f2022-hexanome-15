@@ -1,6 +1,7 @@
 package gui.gameboard;
 
 import javafx.scene.shape.Circle;
+import model.ColorManager;
 import model.Tokens.Token;
 import model.Tokens.TokenDeck;
 
@@ -13,7 +14,7 @@ public class TokenDeckView extends Circle {
 		super(radius);
 		//also make this the nice img made by ojas. 
 		this.tokenDeck = tokenDeck;
-		this.setFill(Token.typeToColor[tokenDeck.getType().ordinal()]);
+		this.setFill(ColorManager.getColor(tokenDeck.getType()));//Token.typeToColor[tokenDeck.getType().ordinal()]);
 		tokenCounter = new Counter(tokenDeck.getSize());
 	}
 	

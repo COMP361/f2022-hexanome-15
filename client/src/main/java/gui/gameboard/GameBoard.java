@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import model.ColorManager;
 import model.Cards.CardType;
 import model.Cards.Deck;
 import model.Tokens.TokenDeck;
@@ -57,7 +58,7 @@ public class GameBoard extends Application {
 			TokenDeck deck = new TokenDeck(TokenType.values()[i]);
 			TokenDeckView deckView = new TokenDeckView((float)screenSize.height/55f, deck);
 			Rectangle miniCard = new Rectangle(screenSize.height/45f, screenSize.width/50f);
-			miniCard.setFill(deck.getColor());
+			miniCard.setFill(ColorManager.getColor(deck.getType()));//.getColor());
 			Counter cardCounter = new Counter(0);
 			tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
 			tokenColumn.getChildren().add(tokenRow);
