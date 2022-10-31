@@ -9,15 +9,17 @@ public class ColorManager {
 		switch (type) {//yes ik switch statements used liberally are an antipattern but i have to bind colors Somewhere
 		//might refactor after 
 		case DIAMOND:
-			return Color.LIGHTCYAN;
+			return Color.LIGHTBLUE;
 		case SAPPHIRE:
 			return Color.BLUE;
 		case EMERALD:
-			return Color.GREEN;
+			return Color.LIMEGREEN;
 		case RUBY:
 			return Color.RED;
 		case ONYX:
-			return Color.BLACK;
+			return Color.DIMGREY;
+		case GOLD:
+			return Color.YELLOW;
 		default:
 			return Color.WHITE;
 		}
