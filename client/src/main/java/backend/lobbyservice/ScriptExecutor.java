@@ -19,7 +19,7 @@ public interface ScriptExecutor<T> {
 	 * Responds to the output produced from execute method; can do nothing and just
 	 * return;
 	 * 
-	 * @param scriptOutput output of calling the execute method
+	 * @param object output of calling the execute method
 	 */
-	void respond(Object scriptOutput);
+	void respond(Object object);
 }

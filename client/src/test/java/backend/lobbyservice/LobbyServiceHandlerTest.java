@@ -36,7 +36,7 @@ class LobbyServiceHandlerTest {
 				assertEquals("Lobby Service is happily serving 5 users.\n\n", scriptOutput);
 
 			}
-		}, null);
+		});
 
 		eventHandler.handle(new ActionEvent());
 	}
