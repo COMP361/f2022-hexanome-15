@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import model.ColorManager;
 import model.Cards.Card;
 import model.Cards.CardObserver;
 import model.Tokens.TokenType;
@@ -33,7 +34,8 @@ public class HandColumnView extends Pane implements CardObserver {
 		if (card.getTokenBonus() == typeOfColumn) {
 			//might need this to be a minicardview, rectangle for now.<<made cardview, no reason not to yet
 			CardView view = new CardView(screenSize.height/20f, screenSize.width/20f);
-			view.setFill(card.getColor());
+			view.forceCard(card);
+			//view.setFill(ColorManager.getColor(card.getTokenType()));
 			view.setLayoutY(5*nCardsInColumn);
 			this.getChildren().add(view);
 			++nCardsInColumn;
