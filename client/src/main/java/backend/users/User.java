@@ -22,6 +22,7 @@ import backend.lobbyservice.ParseJSON;
  * @implNote Flyweight design pattern
  */
 public class User {
+	private final String aUserName;
 	private String aAccessToken;
 	private final String aRefreshToken;
 	private final Role aRole;
@@ -29,7 +30,8 @@ public class User {
 
 	private final static HashMap<String, User> USERS = new HashMap<>();
 
-	private User(String pAcessToken, String pRefreshToken, Role pRole) {
+	private User(String pUserName, String pAcessToken, String pRefreshToken, Role pRole) {
+		aUserName = pUserName;
 		aAccessToken = pAcessToken;
 		aRefreshToken = pRefreshToken;
 		aRole = pRole;
@@ -39,10 +41,10 @@ public class User {
 	}
 
 	// flyweight constructor
-	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole) {
+	public static User newUser(String pUserName, String pAcessToken, String pRefreshToken, Role pRole) {
 		if (!USERS.containsKey(pRefreshToken)) {
 			try {
-				USERS.put(URLEncoder.encode(pRefreshToken, "UTF-8"), new User(URLEncoder.encode(pAcessToken, "UTF-8"),
+				USERS.put(URLEncoder.encode(pRefreshToken, "UTF-8"), new User(pUserName,URLEncoder.encode(pAcessToken, "UTF-8"),
 						URLEncoder.encode(pRefreshToken, "UTF-8"), pRole));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -89,6 +91,10 @@ public class User {
 	public String toString() {
 		return "User [aAccessToken=" + aAccessToken + ", aRefreshToken=" + aRefreshToken + ", aRole=" + aRole
 				+ ", aExpiresIn=" + aExpiresIn + "]";
+	}
+	
+	public String getUsername() {
+		return aUserName;
 	}
 
 }

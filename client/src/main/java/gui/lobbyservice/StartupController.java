@@ -54,7 +54,7 @@ public class StartupController implements Initializable {
 		String accessToken = (String) ParseJSON.PARSE_JSON.getFromKey(adminAuth, "access_token");
 		String refreshToken = (String) ParseJSON.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
 		// flyweight User object representing the default admin of the LS
-		User.newUser(accessToken, refreshToken, Role.ADMIN);
+		User.newUser("maex", accessToken, refreshToken, Role.ADMIN);
 
 		loginButton.setOnAction(createLSEventHandler(new ScriptExecutor<JSONObject>() {
 
@@ -86,14 +86,14 @@ public class StartupController implements Initializable {
 					if (bcrypt.matches(passwordField.getText(), actualPassword)) {
 						System.out.println("Successfully logged in " + usernameField.getText());
 						Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
-					}
-					else {
+					} else {
 						Alert wrongPasswordAlert = new Alert(AlertType.ERROR);
 						wrongPasswordAlert.setHeaderText("Incorrect Password");
-						wrongPasswordAlert.setContentText("Entered password does not match the given username, please try again");
+						wrongPasswordAlert
+								.setContentText("Entered password does not match the given username, please try again");
 						wrongPasswordAlert.showAndWait();
-						System.out.println("Incorrect password attempt for user: ("+ usernameField.getText() + ")");
-						
+						System.out.println("Incorrect password attempt for user: (" + usernameField.getText() + ")");
+
 					}
 
 					// TODO: initialize player object with this logged in player and fetch their

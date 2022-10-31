@@ -39,7 +39,7 @@ public class LobbyServiceExecutor {
 
 		// creates a user object for the default admin of the LS: maex, abc123_ABC123
 		JSONObject auth = auth_token("maex", "abc123_ABC123");
-		ADMIN = User.newUser((String) ParseJSON.PARSE_JSON.getFromKey(auth, "access_token"),
+		ADMIN = User.newUser("maex", (String) ParseJSON.PARSE_JSON.getFromKey(auth, "access_token"),
 				(String) ParseJSON.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN);
 	}
 	
