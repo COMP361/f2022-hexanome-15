@@ -2,6 +2,7 @@ package model.Cards;
 
 import java.util.ArrayList;
 
+import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
 import model.Tokens.TokenType;
 
@@ -48,6 +49,12 @@ public class Deck implements CardObservable {
 	public void deal() {
 		for (int i = 0; i < 4; ++i) {
 			notifyObservers(cards.get(0), i);
+			cards.remove(0);
+		}
+	}
+	public void replaceCard() {
+		if (!cards.isEmpty()) {
+			notifyObservers(cards.get(0));
 			cards.remove(0);
 		}
 	}
