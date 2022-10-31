@@ -4,8 +4,9 @@
  */
 package backend.lobbyservice;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
  * @author zacharyhayden
  */
 public class LobbyServiceExecutor {
+	private static LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR;
 	private final String aLobbyServiceLocation; // location of the running lobby service (ex http.127.0.0.1:4242)
 	private final String aScriptsDir; // location of bash scripts directory
 
@@ -28,6 +30,13 @@ public class LobbyServiceExecutor {
 				&& aScriptsDir.length() != 0;
 		this.aLobbyServiceLocation = aLobbyServiceLocation;
 		this.aScriptsDir = aScriptsDir;
+	}
+	
+	public static LobbyServiceExecutor getLobbyServiceExecutor(String aLobbyServiceLocation, String aScriptsDir) {
+		if (LOBBY_SERVICE_EXECUTOR == null) {
+			LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor(aLobbyServiceLocation, aScriptsDir);
+		}
+		return LOBBY_SERVICE_EXECUTOR;
 	}
 
 	public final String debug() {
@@ -97,6 +106,11 @@ public class LobbyServiceExecutor {
 		checkNotNullNotEmpty(gameName, accessToken);
 		run(makeRunCommand("unregister_gameservice.bash", gameName, accessToken), NullParser.NULLPARSER);
 	}
+	
+	public final JSONObject get_user(String username, String accessToken) {
+		checkNotNullNotEmpty(username, accessToken);
+		return (JSONObject) run(makeRunCommand("get_user.bash", aLobbyServiceLocation, username, accessToken), ParseJSON.PARSE_JSON);
+	}
 
 	private Object run(String[] command, OutputParser pParser) {
 		try {
@@ -111,9 +125,11 @@ public class LobbyServiceExecutor {
 
 			if (exitCode != 0) {
 				// get error message
-				InputStream errorStream = process.getErrorStream();
-				for (int i = 0; i < errorStream.available(); i++) {
-					System.out.println("" + errorStream.read());
+				BufferedReader errorStream = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+				String line;
+				System.out.println("Error Stream: \n");
+				while ((line = errorStream.readLine()) != null) {
+					System.out.println(line);
 				}
 				// throw exception if error with the script
 				throw new RuntimeException(

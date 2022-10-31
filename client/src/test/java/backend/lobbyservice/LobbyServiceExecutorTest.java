@@ -30,5 +30,11 @@ class LobbyServiceExecutorTest {
 
 		System.out.println(auth);
 	}
+	
+//	@Test
+//	void runGetUser() {
+//		JSONObject user = ls.get_user("maex", "SORnHCUQIWqgB7f8oFN2PE3qDVo=");
+//		System.out.println(user);
+//	}
 
 }

@@ -6,7 +6,6 @@ package backend.lobbyservice;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
 
 /**
  * @author zacharyhayden
@@ -14,17 +13,12 @@ import javafx.scene.control.Alert;
  */
 public class LobbyServiceHandler {
 
-	public static <T extends Event> EventHandler<T> createLSEventHandler(ScriptExecutor<?> pScriptExecutor, Alert pSuccess) {
+	public static <T extends Event> EventHandler<T> createLSEventHandler(ScriptExecutor<?> pScriptExecutor) {
 		return new EventHandler<T>() {
 
 			@Override
 			public void handle(T pEvent) {
 				pScriptExecutor.respond(pScriptExecutor.execute());
-
-				if (pSuccess != null) {
-					// success outcome
-					pSuccess.show();
-				}
 
 				pEvent.consume();
 			}
