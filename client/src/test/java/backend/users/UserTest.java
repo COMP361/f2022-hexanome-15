@@ -30,7 +30,7 @@ class UserTest {
 		String accessToken = (String) ParseJSON.PARSE_JSON.getFromKey(runScript, "access_token");
 		String refreshToken = (String) ParseJSON.PARSE_JSON.getFromKey(runScript, "refresh_token");
 
-		User user = User.newUser(accessToken, refreshToken, Role.ADMIN, ls);
+		User user = User.newUser(accessToken, refreshToken, Role.ADMIN);
 
 		// TODO
 		// this method is hard to test but if you put the timer duration to something

@@ -72,7 +72,7 @@ public class User {
 		 * (every 30 minutes or 1800 seconds)
 		 */
 		public void run() {
-			JSONObject renewedTokens = getLobbyServiceExecutor(null, null).renew_auth_token(aRefreshToken);
+			JSONObject renewedTokens = getLobbyServiceExecutor("", "").renew_auth_token(aRefreshToken);
 			aAccessToken = (String) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "access_token");
 			aExpiresIn = (long) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
 		}
