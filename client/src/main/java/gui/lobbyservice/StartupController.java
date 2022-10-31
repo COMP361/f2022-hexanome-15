@@ -80,7 +80,6 @@ public class StartupController implements Initializable {
 					System.out.println("Login failed for user: (" + usernameField.getText() + ") with password: ("
 							+ passwordField.getText() + ")");
 				} else {
-					System.out.println(userInfo);
 					PasswordEncoder bcrypt = new BCryptPasswordEncoder();
 					// username is valid must validate the password
 					String actualPassword = (String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) userInfo, "password");
