@@ -80,12 +80,21 @@ public class StartupController implements Initializable {
 					System.out.println("Login failed for user: (" + usernameField.getText() + ") with password: ("
 							+ passwordField.getText() + ")");
 				} else {
+					System.out.println(userInfo);
 					PasswordEncoder bcrypt = new BCryptPasswordEncoder();
 					// username is valid must validate the password
 					String actualPassword = (String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) userInfo, "password");
 					if (bcrypt.matches(passwordField.getText(), actualPassword)) {
 						System.out.println("Successfully logged in " + usernameField.getText());
 						Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
+					}
+					else {
+						Alert wrongPasswordAlert = new Alert(AlertType.ERROR);
+						wrongPasswordAlert.setHeaderText("Incorrect Password");
+						wrongPasswordAlert.setContentText("Entered password does not match the given username, please try again");
+						wrongPasswordAlert.showAndWait();
+						System.out.println("Incorrect password attempt for user: ("+ usernameField.getText() + ")");
+						
 					}
 
 					// TODO: initialize player object with this logged in player and fetch their

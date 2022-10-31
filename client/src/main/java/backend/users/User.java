@@ -48,7 +48,6 @@ public class User {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("USERS: " + USERS);
 		return USERS.get(pRefreshToken);
 	}
 
