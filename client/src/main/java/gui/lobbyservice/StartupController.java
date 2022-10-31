@@ -4,11 +4,19 @@
  */
 package gui.lobbyservice;
 
+import static backend.lobbyservice.LobbyServiceHandler.createLSEventHandler;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import backend.lobbyservice.LobbyServiceExecutor;
+import backend.lobbyservice.ParseJSON;
+import backend.lobbyservice.ScriptExecutor;
+import backend.users.Role;
+import backend.users.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -20,21 +28,37 @@ import javafx.scene.control.TextField;
  *
  */
 public class StartupController implements Initializable {
-	@FXML private TextField usernameField;
-	@FXML private PasswordField passwordField;
-	@FXML private Button loginButton;
+	private final LobbyServiceExecutor ls = LobbyServiceExecutor.getLobbyServiceExecutor(null, null);
+
+	@FXML
+	private TextField usernameField;
+	@FXML
+	private PasswordField passwordField;
+	@FXML
+	private Button loginButton;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		loginButton.setOnAction(new EventHandler<ActionEvent>() {
-			
+		loginButton.setOnAction(createLSEventHandler(new ScriptExecutor<JSONObject>() {
+
 			@Override
-			public void handle(ActionEvent arg0) {
-				System.out.println("Tried to login " + usernameField.getText() + " with password " + passwordField.getText());
-				
+			public JSONObject execute() {
+				return ls.auth_token(usernameField.getText(), passwordField.getText());
 			}
-		});
-		
+
+			@Override
+			public void respond(Object auth) {
+				try {
+					User.newUser((String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) auth, "access_token"),
+							(String) ParseJSON.PARSE_JSON.getFromKey((JSONObject) auth, "refresh_token"), Role.PLAYER);
+				} catch (JSONException e) {
+					// TODO: show an error alert to user that the entered credentials dont match any
+					// accounts
+				}
+
+			}
+		}));
+
 	}
-	
+
 }

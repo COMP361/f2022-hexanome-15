@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import backend.lobbyservice.LobbyServiceExecutor;
 import backend.lobbyservice.ParseJSON;
+import static backend.lobbyservice.LobbyServiceExecutor.getLobbyServiceExecutor;
 
 /**
  * @author zacharyhayden
@@ -22,16 +23,14 @@ public class User {
 	private String aAccessToken;
 	private final String aRefreshToken;
 	private final Role aRole;
-	private final LobbyServiceExecutor aLobbyServiceExecutor;
 	private long aExpiresIn = 1800000L; // time in milliseconds until the users access token expires
 
 	private final static HashMap<String, User> USERS = new HashMap<>();
 
-	private User(String pAcessToken, String pRefreshToken, Role pRole, LobbyServiceExecutor pLobbyServiceExecutor) {
+	private User(String pAcessToken, String pRefreshToken, Role pRole) {
 		aAccessToken = pAcessToken;
 		aRefreshToken = pRefreshToken;
 		aRole = pRole;
-		aLobbyServiceExecutor = pLobbyServiceExecutor;
 
 		new Timer().scheduleAtFixedRate(new RenewAccessToken(), 0, aExpiresIn); // every 30 minutes (when the users
 																				// access
@@ -39,12 +38,24 @@ public class User {
 	}
 
 	// flyweight constructor
-	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole,
-			LobbyServiceExecutor pLobbyServiceExecutor) {
+	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole) {
 		if (!USERS.containsKey(pRefreshToken)) {
-			USERS.put(pRefreshToken, new User(pAcessToken, pRefreshToken, pRole, pLobbyServiceExecutor));
+			USERS.put(pRefreshToken, new User(pAcessToken, pRefreshToken, pRole));
 		}
 		return USERS.get(pRefreshToken);
+	}
+
+	/**
+	 * Static initialization of LS Executor, and default admin user
+	 */
+	static {
+		// creates a user object for the default admin of the LS: maex, abc123_ABC123
+		// creates the lobby service executor used across entire project
+		LobbyServiceExecutor ls = getLobbyServiceExecutor("http://127.0.0.1:4242",
+				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
+		JSONObject auth = ls.auth_token("maex", "abc123_ABC123");
+		newUser((String) ParseJSON.PARSE_JSON.getFromKey(auth, "access_token"),
+				(String) ParseJSON.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN);
 	}
 
 	/**
@@ -61,7 +72,7 @@ public class User {
 		 * (every 30 minutes or 1800 seconds)
 		 */
 		public void run() {
-			JSONObject renewedTokens = aLobbyServiceExecutor.renew_auth_token(aRefreshToken);
+			JSONObject renewedTokens = getLobbyServiceExecutor(null, null).renew_auth_token(aRefreshToken);
 			aAccessToken = (String) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "access_token");
 			aExpiresIn = (long) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
 		}
