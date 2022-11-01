@@ -18,8 +18,7 @@ import javafx.event.EventHandler;
  */
 class LobbyServiceHandlerTest {
 
-	private final LobbyServiceExecutor ls = new LobbyServiceExecutor("http://127.0.0.1:4242",
-			"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
+	private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
 	@Test
 	void test() {

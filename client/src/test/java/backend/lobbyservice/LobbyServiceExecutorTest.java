@@ -6,6 +6,9 @@ package backend.lobbyservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +17,7 @@ import org.junit.jupiter.api.Test;
  *
  */
 class LobbyServiceExecutorTest {
-	private final LobbyServiceExecutor ls = new LobbyServiceExecutor("http://127.0.0.1:4242",
-			"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
+	private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
 	@Test
 	void runLSDebug() {
@@ -25,15 +27,22 @@ class LobbyServiceExecutorTest {
 	}
 
 	@Test
-	void runLSGetAuth() {
+	void runLSGetAuth1() {
+		JSONObject auth = ls.auth_token("maex", "abc123_ABC123");
+
+		System.out.println(auth);
+	}
+	
+	@Test
+	void runLSGetAuth2() {
 		JSONObject auth = ls.auth_token("maex", "abc123_ABC123");
 
 		System.out.println(auth);
 	}
 	
 //	@Test
-//	void runGetUser() {
-//		JSONObject user = ls.get_user("maex", "SORnHCUQIWqgB7f8oFN2PE3qDVo=");
+//	void runGetUser() throws UnsupportedEncodingException {
+//		JSONObject user = ls.get_user("maex", URLEncoder.encode("NfrUufyuEnprhECtXHXW/a0lLuA=", "UTF-8"));
 //		System.out.println(user);
 //	}
 

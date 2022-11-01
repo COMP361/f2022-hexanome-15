@@ -4,6 +4,10 @@
  */
 package backend.users;
 
+import static backend.lobbyservice.LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Timer;
@@ -11,51 +15,42 @@ import java.util.TimerTask;
 
 import org.json.JSONObject;
 
-import backend.lobbyservice.LobbyServiceExecutor;
 import backend.lobbyservice.ParseJSON;
-import static backend.lobbyservice.LobbyServiceExecutor.getLobbyServiceExecutor;
 
 /**
  * @author zacharyhayden
  * @implNote Flyweight design pattern
  */
 public class User {
+	private final String aUserName;
 	private String aAccessToken;
 	private final String aRefreshToken;
 	private final Role aRole;
-	private long aExpiresIn = 1800000L; // time in milliseconds until the users access token expires
+	private int aExpiresIn = 1800000; // time in milliseconds until the users access token expires
 
 	private final static HashMap<String, User> USERS = new HashMap<>();
 
-	private User(String pAcessToken, String pRefreshToken, Role pRole) {
+	private User(String pUserName, String pAcessToken, String pRefreshToken, Role pRole) {
+		aUserName = pUserName;
 		aAccessToken = pAcessToken;
 		aRefreshToken = pRefreshToken;
 		aRole = pRole;
 
-		new Timer().scheduleAtFixedRate(new RenewAccessToken(), 0, aExpiresIn); // every 30 minutes (when the users
-																				// access
-																				// token expires)
+		// setting repeating timer process to renew access token once it expires
+		new Timer().scheduleAtFixedRate(new RenewAccessToken(), aExpiresIn, aExpiresIn);
 	}
 
 	// flyweight constructor
-	public static User newUser(String pAcessToken, String pRefreshToken, Role pRole) {
+	public static User newUser(String pUserName, String pAcessToken, String pRefreshToken, Role pRole) {
 		if (!USERS.containsKey(pRefreshToken)) {
-			USERS.put(pRefreshToken, new User(pAcessToken, pRefreshToken, pRole));
+			try {
+				USERS.put(URLEncoder.encode(pRefreshToken, "UTF-8"), new User(pUserName,URLEncoder.encode(pAcessToken, "UTF-8"),
+						URLEncoder.encode(pRefreshToken, "UTF-8"), pRole));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		return USERS.get(pRefreshToken);
-	}
-
-	/**
-	 * Static initialization of LS Executor, and default admin user
-	 */
-	static {
-		// creates a user object for the default admin of the LS: maex, abc123_ABC123
-		// creates the lobby service executor used across entire project
-		LobbyServiceExecutor ls = getLobbyServiceExecutor("http://127.0.0.1:4242",
-				"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
-		JSONObject auth = ls.auth_token("maex", "abc123_ABC123");
-		newUser((String) ParseJSON.PARSE_JSON.getFromKey(auth, "access_token"),
-				(String) ParseJSON.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN);
 	}
 
 	/**
@@ -72,9 +67,9 @@ public class User {
 		 * (every 30 minutes or 1800 seconds)
 		 */
 		public void run() {
-			JSONObject renewedTokens = getLobbyServiceExecutor(null, null).renew_auth_token(aRefreshToken);
+			JSONObject renewedTokens = LOBBY_SERVICE_EXECUTOR.renew_auth_token(aRefreshToken);
 			aAccessToken = (String) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "access_token");
-			aExpiresIn = (long) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
+			aExpiresIn = (int) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
 		}
 
 	}
@@ -93,15 +88,13 @@ public class User {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		return Objects.equals(aRefreshToken, other.aRefreshToken);
+	public String toString() {
+		return "User [aAccessToken=" + aAccessToken + ", aRefreshToken=" + aRefreshToken + ", aRole=" + aRole
+				+ ", aExpiresIn=" + aExpiresIn + "]";
+	}
+	
+	public String getUsername() {
+		return aUserName;
 	}
 
 }

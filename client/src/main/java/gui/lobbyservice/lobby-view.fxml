@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:controller="gui.lobbyservice.LobbyController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <AnchorPane prefHeight="200.0" prefWidth="700.0" style="-fx-background-color: #A9A9A9;" BorderPane.alignment="CENTER">
          <children>
@@ -19,12 +19,12 @@
                   <Font size="25.0" />
                </font>
             </Label>
-            <Button layoutX="390.0" layoutY="196.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Create">
+            <Button fx:id="createSessionButton" layoutX="390.0" layoutY="196.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Create">
                <font>
                   <Font size="15.0" />
                </font>
             </Button>
-            <ListView editable="true" layoutY="350.0" prefHeight="350.0" prefWidth="700.0" />
+            <ListView fx:id="availableSessionList" editable="true" layoutY="350.0" prefHeight="350.0" prefWidth="700.0" />
             <Label layoutX="100.0" layoutY="300.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Available Sessions">
                <font>
                   <Font size="25.0" />
@@ -71,7 +71,7 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="215.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Launch">
+            <Button fx:id="launchSessionButton" layoutX="215.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Launch">
                <font>
                   <Font size="15.0" />
                </font>

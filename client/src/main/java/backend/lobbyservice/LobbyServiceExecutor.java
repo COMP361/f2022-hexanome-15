@@ -11,13 +11,19 @@ import java.util.Arrays;
 
 import org.json.JSONObject;
 
+import backend.users.Role;
+import backend.users.User;
+
 /**
  * @author zacharyhayden
  */
 public class LobbyServiceExecutor {
-	private static LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR;
+	public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242",
+			"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
+
 	private final String aLobbyServiceLocation; // location of the running lobby service (ex http.127.0.0.1:4242)
 	private final String aScriptsDir; // location of bash scripts directory
+	private static User ADMIN;
 
 	/**
 	 * @param aLobbyServiceLocation location of running lobby service
@@ -25,19 +31,18 @@ public class LobbyServiceExecutor {
 	 * @assert aLobbyServiceLocation != null && aScriptsDir != null &&
 	 *         aLobbyServiceLocation.length() != 0 && aScriptsDir.length() != 0
 	 */
-	public LobbyServiceExecutor(String aLobbyServiceLocation, String aScriptsDir) {
+	private LobbyServiceExecutor(String aLobbyServiceLocation, String aScriptsDir) {
 		assert aLobbyServiceLocation != null && aScriptsDir != null && aLobbyServiceLocation.length() != 0
 				&& aScriptsDir.length() != 0;
 		this.aLobbyServiceLocation = aLobbyServiceLocation;
 		this.aScriptsDir = aScriptsDir;
+
+		// creates a user object for the default admin of the LS: maex, abc123_ABC123
+		JSONObject auth = auth_token("maex", "abc123_ABC123");
+		ADMIN = User.newUser("maex", (String) ParseJSON.PARSE_JSON.getFromKey(auth, "access_token"),
+				(String) ParseJSON.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN);
 	}
 	
-	public static LobbyServiceExecutor getLobbyServiceExecutor(String aLobbyServiceLocation, String aScriptsDir) {
-		if (LOBBY_SERVICE_EXECUTOR == null) {
-			LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor(aLobbyServiceLocation, aScriptsDir);
-		}
-		return LOBBY_SERVICE_EXECUTOR;
-	}
 
 	public final String debug() {
 		String output = (String) run(makeRunCommand("debug.bash", aLobbyServiceLocation), ParseText.PARSE_TEXT);
@@ -45,7 +50,7 @@ public class LobbyServiceExecutor {
 	}
 
 	public final void add_player_to_session(String accessToken, String sessionID, String userName) {
-		run(makeRunCommand("add_player_to_session", aLobbyServiceLocation, accessToken, sessionID, userName),
+		run(makeRunCommand("add_player_to_session.bash", aLobbyServiceLocation, accessToken, sessionID, userName),
 				NullParser.NULLPARSER);
 	}
 
@@ -106,10 +111,17 @@ public class LobbyServiceExecutor {
 		checkNotNullNotEmpty(gameName, accessToken);
 		run(makeRunCommand("unregister_gameservice.bash", gameName, accessToken), NullParser.NULLPARSER);
 	}
-	
+
 	public final JSONObject get_user(String username, String accessToken) {
 		checkNotNullNotEmpty(username, accessToken);
-		return (JSONObject) run(makeRunCommand("get_user.bash", aLobbyServiceLocation, username, accessToken), ParseJSON.PARSE_JSON);
+		String[] command = makeRunCommand("get_user.bash", aLobbyServiceLocation, username, accessToken);
+		if (run(command, ParseText.PARSE_TEXT).equals("User details can not be queried. No such user.\n")) {
+			return null;
+		}
+		else {
+			return (JSONObject) run(command, ParseJSON.PARSE_JSON);
+		}
+
 	}
 
 	private Object run(String[] command, OutputParser pParser) {
@@ -131,6 +143,7 @@ public class LobbyServiceExecutor {
 				while ((line = errorStream.readLine()) != null) {
 					System.out.println(line);
 				}
+				errorStream.close();
 				// throw exception if error with the script
 				throw new RuntimeException(
 						"[WARNING] Process: " + Arrays.toString(command) + " resulted in exit code: " + exitCode);
@@ -195,6 +208,10 @@ public class LobbyServiceExecutor {
 		for (int i = 0; i < args.length; i++) {
 			assert args[i] != null && args[i].length() != 0 : "Arguments cannot be empty nor null.";
 		}
+	}
+
+	public static User getAdmin() {
+		return ADMIN;
 	}
 
 }

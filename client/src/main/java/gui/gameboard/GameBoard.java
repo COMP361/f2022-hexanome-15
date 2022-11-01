@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -23,24 +22,24 @@ import model.Cards.Deck;
 import model.Tokens.TokenDeck;
 import model.Tokens.TokenType;
 
-public class GameBoard extends Application {
+public class GameBoard {
 
-	private StackPane getDeckPane(DeckView deckView, Dimension screenSize) {
+	private static StackPane getDeckPane(DeckView deckView, Dimension screenSize) {
 		StackPane deckPane = new StackPane();
 		Label cardCount = deckView.getNumCardsDisplay();
 		deckPane.getChildren().addAll(deckView, cardCount);
 		return deckPane;
 	}
 
-	private DeckView createDeckView(Deck deck, Dimension screenSize) {
+	private static DeckView createDeckView(Deck deck, Dimension screenSize) {
 		return new DeckView(deck, screenSize.height/15f, screenSize.width/15f);
 	}
 	
-	private CardView createCardView(Dimension screenSize) {
+	private static CardView createCardView(Dimension screenSize) {
 		return new CardView(screenSize.height/15f, screenSize.width/15f);
 	}
 	
-	private void populateCardColumn(VBox column, Dimension screenSize, List<Deck> decks, ArrayList<DeckView> deckViews,
+	private static void populateCardColumn(VBox column, Dimension screenSize, List<Deck> decks, ArrayList<DeckView> deckViews,
 									ArrayList<CardView> aggregator) {
 		//pretty sloppy but will do for now
 		for (int i = 0; i < 3; ++i) {
@@ -52,7 +51,7 @@ public class GameBoard extends Application {
 		}
 	}
 	
-	private void populateTokenDisplay(VBox tokenColumn, Dimension screenSize) {
+	private static void populateTokenDisplay(VBox tokenColumn, Dimension screenSize) {
 		for (int i = 0; i < TokenType.values().length; ++i) {
 			HBox tokenRow = new HBox();
 			TokenDeck deck = new TokenDeck(TokenType.values()[i]);
@@ -64,7 +63,7 @@ public class GameBoard extends Application {
 			tokenColumn.getChildren().add(tokenRow);
 		}
 	}
-	private void populateTokenPiles(HBox tokenRow, Dimension screenSize) {
+	private static void populateTokenPiles(HBox tokenRow, Dimension screenSize) {
 		for (int i = 0; i < TokenType.values().length; ++i) {
 			VBox tokenColumn = new VBox();
 			TokenDeck deck = new TokenDeck(TokenType.values()[i]);
@@ -74,16 +73,13 @@ public class GameBoard extends Application {
 		}
 	}
 
-	private void populateHandView(HandView handView, Dimension screenSize) {
+	private static void populateHandView(HandView handView, Dimension screenSize) {
 		for (int i = 0; i < TokenType.values().length-1; ++i) {
 			handView.addHandColumn(new HandColumnView(TokenType.values()[i], screenSize));
 		}
 	}
-
-	@Override
-	public void start(Stage stage) throws Exception {
-		//set up the assets of the gameboard
-		stage.setTitle("H15-Splendor");
+	
+	public static Scene setupGameBoard() {
 		Pane root = new Pane();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
@@ -176,13 +172,7 @@ public class GameBoard extends Application {
 
 		//adding to the scene graph
 		root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards, tokenRow);
-		
-		stage.setScene(new Scene(root, screenSize.width, screenSize.height));
-		stage.show();
-	}
-	
-	public static void main(String[] args) {
-		launch(args);
+		return new Scene(root, screenSize.width, screenSize.height);
 	}
 
 }
