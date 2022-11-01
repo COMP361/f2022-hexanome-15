@@ -4,22 +4,22 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane fx:controller="gui.lobbyservice.LobbyController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.lobbyservice.LobbyController">
    <left>
       <AnchorPane prefHeight="200.0" prefWidth="700.0" style="-fx-background-color: #A9A9A9;" BorderPane.alignment="CENTER">
          <children>
-            <ChoiceBox layoutX="60.0" layoutY="200.0" prefWidth="300.0" />
+            <ChoiceBox layoutX="275.0" layoutY="200.0" prefWidth="300.0" />
             <Label layoutX="100.0" layoutY="150.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Create New Session">
                <font>
                   <Font size="25.0" />
                </font>
             </Label>
-            <Button fx:id="createSessionButton" layoutX="390.0" layoutY="196.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Create">
+            <Button fx:id="createSessionButton" layoutX="600.0" layoutY="196.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Create">
                <font>
                   <Font size="15.0" />
                </font>
@@ -35,6 +35,11 @@
                   <Font size="30.0" />
                </font>
             </Label>
+            <TextField layoutX="10.0" layoutY="198.0" prefHeight="30.0" prefWidth="250.0" promptText="Session Name" style="-fx-border-width: 2; -fx-border-color: #A9A9A9; -fx-border-radius: 5;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
          </children>
       </AnchorPane>
    </left>
