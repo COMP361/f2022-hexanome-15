@@ -20,7 +20,7 @@ private Scene scene;
 	
 	public Scene getLobbyScene() throws IOException {
 		if (scene == null) {
-	        FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("lobby-view.fxml"));
+	        FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("/lobby-view.fxml"));
 	        Scene scene = new Scene(fxmlLoader.load(), 1000, 700);
 	        this.scene = scene;
 		}
