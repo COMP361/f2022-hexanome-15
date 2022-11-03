@@ -27,6 +27,7 @@ public class User {
 	private final String aRefreshToken;
 	private final Role aRole;
 	private int aExpiresIn = 1800000; // time in milliseconds until the users access token expires
+	// TODO: implement the users hashed password as an initalizable field 
 
 	private final static HashMap<String, User> USERS = new HashMap<>();
 
@@ -69,9 +70,13 @@ public class User {
 		public void run() {
 			JSONObject renewedTokens = LOBBY_SERVICE_EXECUTOR.renew_auth_token(aRefreshToken);
 			aAccessToken = (String) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "access_token");
-			aExpiresIn = (int) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
+			aExpiresIn = convertToMillis((int) ParseJSON.PARSE_JSON.getFromKey(renewedTokens, "expires_in"));
 		}
 
+	}
+	
+	private int convertToMillis(int seconds) {
+		return seconds * 1000;
 	}
 
 	public String getAccessToken() {
