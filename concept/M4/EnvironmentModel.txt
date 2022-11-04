@@ -1,0 +1,33 @@
+﻿Environment Model – Server
+
+Input Messages (sent from Client to Server)
+    • login(username: String, password: String)
+    • createUser(username: String, password: String, preferredColor: String)
+    • deleteUser(username: String)
+    • updatePassword(oldPassword: String, newPassword: String)
+    • updateColor(newColor: String)
+    • SHOULD CREATE/REMOVE GAME SERVICE BE INCLUDED???
+    • SHOULD P2P / PHANTOM MODE OPTIONAL PARAMETERS BE INCLUDED???
+    • createNewSession(EXPANSION: boolean)
+    • loadSession(saveGameID: String)
+    • readyToLaunch()
+    • launchSession(sessionID: long, sessionCreatorAccessToken: String)
+    • removeSession(sessionID: long,  sessionCreatorAccessToken: String)
+    • joinSession(sessionID: long,)
+    • leaveSession(sessionID: long)
+    • savegame(savegameID: String, players: Set{String})
+    • removeSavegame(savegameID: String)
+    • logout()
+    • endTurn()
+    • takeGem(gem: Gem)
+    • reserveCard(card: Card)
+    • purchaseCard(card: Card)
+    • purchaseReserveCard(reserve: ReserveCard) # SHOULD THIS BE INCLUDED W NEW CLASS TOO
+
+Output Messages (sent from Server to Client)
+    • loadableSessions(sessions: Set{Session})
+    • error(alert: Alert) #SHOULD THIS BE INCLUDED??
+    • receiveVisit(noble: NobleTile)
+    • yourTurn()
+    • promptTakeTurn()
+    • transitionTo(scene: Scene) # IS THIS TOO GRANULAR
