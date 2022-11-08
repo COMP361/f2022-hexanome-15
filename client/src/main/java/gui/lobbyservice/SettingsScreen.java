@@ -20,7 +20,7 @@ private Scene scene;
 	
 	public Scene getSettingsScene() throws IOException {
 		if (scene == null) {
-	        FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("settings-view.fxml"));
+	        FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("/settings-view.fxml"));
 	        Scene scene = new Scene(fxmlLoader.load(), 1000, 700);
 	        this.scene = scene;
 		}

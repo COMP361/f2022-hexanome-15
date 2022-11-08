@@ -21,7 +21,7 @@ public class LoginScreen {
 	
 	public Scene getLoginScene() throws IOException {
 		if (scene == null) {
-	        FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("hello-view.fxml"));
+	        FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("/hello-view.fxml"));
 	        Scene scene = new Scene(fxmlLoader.load(), 1000, 700);
 	        this.scene = scene;
 		}
