@@ -1,7 +1,3 @@
-/**
- * Oct 25, 2022
- * TODO
- */
 package backend.lobbyservice;
 
 import java.io.BufferedReader;
@@ -10,40 +6,35 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * @author zacharyhayden
+ * Parses text.
  *
+ * @author zacharyhayden
  */
 public class ParseText implements OutputParser {
-	public static final ParseText PARSE_TEXT = new ParseText();
+  public static final ParseText PARSE_TEXT = new ParseText();
 
-	private ParseText() {
+  private ParseText() {
 
-	}
+  }
 
-	@Override
-	/**
-	 * Parses process output for text format
-	 * 
-	 * @param pScriptOutput output process from runnable
-	 * @return textual output returned from the process
-	 */
-	public Object parse(InputStream pScriptOutput) {
-		assert pScriptOutput != null;
+  @Override
+  public Object parse(InputStream scriptOutput) {
+    assert scriptOutput != null;
 
-		StringBuilder output = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(pScriptOutput));
+    StringBuilder output = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(scriptOutput));
 
-		String line;
-		try {
-			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    String line;
+    try {
+      while ((line = reader.readLine()) != null) {
+        output.append(line + "\n");
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
-		return output.toString();
-	}
+    return output.toString();
+  }
 
 }

@@ -1,28 +1,29 @@
-/**
- * Oct 25, 2022
- * TODO
- */
 package backend.lobbyservice;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 
 /**
- * @author zacharyhayden
+ * Handles the Lobby Service commands.
  *
+ * @author zacharyhayden
  */
 public class LobbyServiceHandler {
 
-	public static <T extends Event> EventHandler<T> createLSEventHandler(ScriptExecutor<?> pScriptExecutor) {
-		return new EventHandler<T>() {
+  /**
+   * Creates an EventHandler.
+   */
+  public static <T extends Event> EventHandler<T> createlsEventHandler(
+      ScriptExecutor<?> scriptExecutor) {
+    return new EventHandler<>() {
 
-			@Override
-			public void handle(T pEvent) {
-				pScriptExecutor.respond(pScriptExecutor.execute());
+      @Override
+      public void handle(T event) {
+        scriptExecutor.respond(scriptExecutor.execute());
 
-				pEvent.consume();
-			}
-		};
-	}
+        event.consume();
+      }
+    };
+  }
 
 }

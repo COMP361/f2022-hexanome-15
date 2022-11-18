@@ -6,17 +6,11 @@ package backend.users;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
-
-import backend.lobbyservice.LobbyServiceExecutor;
-import backend.lobbyservice.ParseJSON;
-
 /**
  * @author zacharyhayden
  *
  */
-class UserTest {
+/*class UserTest {
 
 	private final LobbyServiceExecutor ls = new LobbyServiceExecutor("http://127.0.0.1:4242",
 			"/home/zacharyhayden/Documents/school/mcgill/comp361/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
@@ -38,4 +32,4 @@ class UserTest {
 		// change in the access_token every n seconds
 	}
 
-}
+}*/
