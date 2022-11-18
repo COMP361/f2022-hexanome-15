@@ -23,7 +23,7 @@ class ParseOutputTest {
 
 		assertNotEquals(null, runScript);
 
-		String authToken = (String) ParseJSON.PARSE_JSON.getFromKey(runScript, "access_token");
+		String authToken = (String) Parsejson.PARSE_JSON.getFromKey(runScript, "access_token");
 
 		// this should be proper output; the authToken should correspond directly to the
 		// field in output

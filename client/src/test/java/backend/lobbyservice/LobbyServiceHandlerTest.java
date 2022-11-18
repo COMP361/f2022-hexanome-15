@@ -5,7 +5,7 @@
 package backend.lobbyservice;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static backend.lobbyservice.LobbyServiceHandler.createLSEventHandler;
+import static backend.lobbyservice.LobbyServiceHandler.createlsEventHandler;
 
 import org.junit.jupiter.api.Test;
 

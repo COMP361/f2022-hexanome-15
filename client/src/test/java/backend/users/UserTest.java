@@ -6,17 +6,11 @@ package backend.users;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
-
-import backend.lobbyservice.LobbyServiceExecutor;
-import backend.lobbyservice.ParseJSON;
-
 /**
  * @author zacharyhayden
  *
  */
-class UserTest {
+/*class UserTest {
 
 	private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
@@ -37,4 +31,4 @@ class UserTest {
 		// change in the access_token every n seconds
 	}
 
-}
+}*/
