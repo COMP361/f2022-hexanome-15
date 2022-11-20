@@ -20,24 +20,24 @@ class LobbyServiceHandlerTest {
 
 	private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
-	@Test
-	void test() {
-		EventHandler<ActionEvent> eventHandler = createLSEventHandler(new ScriptExecutor<String>() {
-
-			@Override
-			public String execute() {
-				return ls.debug();
-			}
-
-			@Override
-			public void respond(Object scriptOutput) {
-				System.out.println(scriptOutput);
-				assertEquals("Lobby Service is happily serving 5 users.\n\n", scriptOutput);
-
-			}
-		});
-
-		eventHandler.handle(new ActionEvent());
-	}
+//	@Test
+//	void test() {
+//		EventHandler<ActionEvent> eventHandler = createLSEventHandler(new ScriptExecutor<String>() {
+//
+//			@Override
+//			public String execute() {
+//				return ls.debug();
+//			}
+//
+//			@Override
+//			public void respond(Object scriptOutput) {
+//				System.out.println(scriptOutput);
+//				assertEquals("Lobby Service is happily serving 5 users.\n\n", scriptOutput);
+//
+//			}
+//		});
+//
+//		eventHandler.handle(new ActionEvent());
+//	}
 
 }

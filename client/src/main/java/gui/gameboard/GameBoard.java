@@ -1,6 +1,7 @@
 package gui.gameboard;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -217,7 +218,7 @@ public class GameBoard {
     HBox tokenRow = new HBox();
     tokenRow.setSpacing(50);
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
-    tokenRow.setLayoutX(xOffset);
+    tokenRow.setLayoutX(xoffset);
     populateTokenPiles(tokenRow, screenSize);
 
     //adding to the scene graph

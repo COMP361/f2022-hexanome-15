@@ -2,8 +2,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.COMP361.f2022-hexanome-15</groupId>
 	<artifactId>splendor</artifactId>
-	<version>0.0.1-SNAPSHOT</version><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>11</source><target>11</target></configuration></plugin></plugins></build>
-	<name>Splendor</name>
+	<version>0.0.1-SNAPSHOT</version>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
+				<version>3.8.1</version>
+			</plugin>
+		</plugins>
+	</build>
+	<name>client</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -54,13 +67,19 @@
 		</dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
+            <artifactId>javafx-controls</artifactId>
             <version>17.0.1</version>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17.0.1</version>
+        </dependency>
+	</dependencies>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 </project>
