@@ -14,14 +14,11 @@ import org.json.JSONObject;
  * @author zacharyhayden
  */
 public class LobbyServiceExecutor {
-  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242",
-      "/home/zacharyhayden/Documents/school/mcgill/comp361"
-        + "/software/Splendor/f2022-hexanome-15/client/src/main/bash/");
+  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242");
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;
   // location of bash scripts directory
-  private final String scriptsDir;
   private static User ADMIN;
 
   /**
@@ -32,11 +29,9 @@ public class LobbyServiceExecutor {
    * @assert aLobbyServiceLocation != null && aScriptsDir != null &&
    *         aLobbyServiceLocation.length() != 0 && aScriptsDir.length() != 0
    */
-  private LobbyServiceExecutor(String lobbyServiceLocation, String scriptsDir) {
-    assert lobbyServiceLocation != null && scriptsDir != null && lobbyServiceLocation.length() != 0
-             && scriptsDir.length() != 0;
+  private LobbyServiceExecutor(String lobbyServiceLocation) {
+    assert lobbyServiceLocation != null && lobbyServiceLocation.length() != 0;
     this.lobbyServiceLocation = lobbyServiceLocation;
-    this.scriptsDir = scriptsDir;
 
     // creates a user object for the default admin of the LS: maex, abc123_ABC123
     JSONObject auth = auth_token("maex", "abc123_ABC123");
@@ -49,8 +44,8 @@ public class LobbyServiceExecutor {
    * Debugs a command.
    */
   public final String debug() {
-    String output = (String) run(makeRunCommand("debug.bash", lobbyServiceLocation),
-        ParseText.PARSE_TEXT);
+    String command = String.format("curl -X GET %s/api/online", lobbyServiceLocation);
+    String output = (String) run(command, ParseText.PARSE_TEXT);
     return output;
   }
 
@@ -62,9 +57,9 @@ public class LobbyServiceExecutor {
    * @param userName the player's username
    */
   public final void add_player_to_session(String accessToken, String sessionid, String userName) {
-    run(makeRunCommand("add_player_to_session.bash",
-          lobbyServiceLocation, accessToken, sessionid, userName),
-        NullParser.NULLPARSER);
+    String command = String.format("curl -X PUT %s/api/sessions/%s/players/%s?access_token=%s", 
+        lobbyServiceLocation, sessionid, userName, accessToken);
+    run(command, NullParser.NULLPARSER);
   }
 
   /**
@@ -73,9 +68,9 @@ public class LobbyServiceExecutor {
    * @param accessToken the accessToken of the user
    */
   public final JSONObject auth_role(String accessToken) {
-    JSONObject output = (JSONObject) run(makeRunCommand("auth_role.bash",
-          lobbyServiceLocation, accessToken),
-        Parsejson.PARSE_JSON);
+    String command = String.format("curl -X GET %s/oauth/role?access_token=%s", 
+        lobbyServiceLocation, accessToken);
+    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
     return output;
   }
 
@@ -86,9 +81,11 @@ public class LobbyServiceExecutor {
    * @param password the password of the user
    */
   public final JSONObject auth_token(String userName, String password) {
-    JSONObject output = (JSONObject) run(
-        makeRunCommand("auth_token.bash",
-          lobbyServiceLocation, userName, password), Parsejson.PARSE_JSON);
+    String command = String.format("curl -X POST "
+        + "--user bgp-client-name:bgp-client-pw "
+        + "%s/oauth/token?grant_type=password&username=%s&password=%s",
+        lobbyServiceLocation, userName, password);
+    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
     return output;
   }
 
@@ -106,11 +103,16 @@ public class LobbyServiceExecutor {
 
     long output;
     if (saveGame == null) {
-      output = (long) run(makeRunCommand("create_session.bash", lobbyServiceLocation, accessToken,
-        createUserName, gameName), ParseText.PARSE_TEXT);
+      String command = String.format("curl -X POST --header 'Content-Type:application/json' "
+              + "--data {game:%s, creator:%s} %s/api/sessions?access_token=%s", 
+              gameName, createUserName, lobbyServiceLocation, accessToken);
+      output = (long) run(command, ParseText.PARSE_TEXT);
+      
     } else {
-      output = (long) run(makeRunCommand("create_session.bash", lobbyServiceLocation, accessToken,
-        createUserName, gameName, saveGame), ParseText.PARSE_TEXT);
+      String command = String.format("curl -X POST --header 'Content-Type:application/json' --data "
+              + "{game:%s, creator:%s, savegame:%s} %s/api/sessions?access_token=%s", 
+              gameName, createUserName, saveGame, lobbyServiceLocation, accessToken);
+      output = (long) run(command, ParseText.PARSE_TEXT);
     }
     return output;
   }
@@ -123,9 +125,9 @@ public class LobbyServiceExecutor {
    */
   public final void launch_session(String accessToken, long sessionid) {
     checkNotNullNotEmpty(accessToken);
-    run(makeRunCommand("launch_session.bash", lobbyServiceLocation,
-          accessToken, String.valueOf(sessionid)),
-        NullParser.NULLPARSER);
+    String command = String.format("curl -X POST %s/api/sessions/%d?access_token=%s", 
+           lobbyServiceLocation, String.valueOf(sessionid), accessToken);
+    run(command, NullParser.NULLPARSER);
   }
 
   /**
@@ -143,10 +145,14 @@ public class LobbyServiceExecutor {
                                          int maxSessionPlayers, int minSessionPlayers,
                                          String gameName, String displayName, boolean webSupport) {
     checkNotNullNotEmpty(accessToken, gameLocation, gameName, displayName);
-    run(makeRunCommand("register_gameservice.bash",
-        accessToken, gameLocation, String.valueOf(maxSessionPlayers),
-        String.valueOf(minSessionPlayers), gameName, displayName, String.valueOf(webSupport),
-        lobbyServiceLocation), NullParser.NULLPARSER);
+    String command = String.format("curl -X PUT --header 'Content-Type:application/json' --data "
+          + "{'name':%s,'displayName':%s,'location':%s,"
+          + "'minSessionPlayers':%d,'maxSessionPlayers':%d, 'webSupport':%d} "
+          + "%s/api/gameservice/$name?access_token=%s", 
+          gameName, displayName, gameLocation, String.valueOf(minSessionPlayers),
+          String.valueOf(maxSessionPlayers), String.valueOf(webSupport), lobbyServiceLocation, 
+          accessToken);
+    run(command, NullParser.NULLPARSER);
   }
 
   /**
@@ -157,9 +163,9 @@ public class LobbyServiceExecutor {
    */
   public final void remove_session(String accessToken, long sessionid) {
     checkNotNullNotEmpty(accessToken);
-    run(makeRunCommand("remove_session.bash", lobbyServiceLocation,
-        accessToken, String.valueOf(sessionid)),
-        NullParser.NULLPARSER);
+    String command = String.format("curl -X DELETE %s/api/sessions/%d?access_token=%s", 
+          lobbyServiceLocation, String.valueOf(sessionid), accessToken);
+    run(command, NullParser.NULLPARSER);
   }
 
   /**
@@ -169,9 +175,11 @@ public class LobbyServiceExecutor {
    */
   public final JSONObject renew_auth_token(String refreshToken) {
     checkNotNullNotEmpty(refreshToken);
-    JSONObject output = (JSONObject) run(
-        makeRunCommand("renew_auth_token.bash",
-        lobbyServiceLocation, refreshToken), Parsejson.PARSE_JSON);
+    String command = String.format("curl -X POST "
+            + "--user bgp-client-name:bgp-client-pw "
+            + "%s/oauth/token?grant_type=refresh_token&refresh_token=%s", 
+            lobbyServiceLocation, refreshToken);
+    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
     return output;
   }
 
@@ -183,8 +191,9 @@ public class LobbyServiceExecutor {
    */
   public final void unregister_gameservice(String gameName, String accessToken) {
     checkNotNullNotEmpty(gameName, accessToken);
-    run(makeRunCommand("unregister_gameservice.bash",
-        gameName, accessToken), NullParser.NULLPARSER);
+    String command = String.format("curl -X DELETE %s/api/gameservices/%s?access_token=%s", 
+          lobbyServiceLocation, gameName, accessToken);
+    run(command, NullParser.NULLPARSER);
   }
 
   /**
@@ -195,7 +204,8 @@ public class LobbyServiceExecutor {
    */
   public final JSONObject get_user(String username, String accessToken) {
     checkNotNullNotEmpty(username, accessToken);
-    String[] command = makeRunCommand("get_user.bash", lobbyServiceLocation, username, accessToken);
+    String command = String.format("curl -X GET %s/api/users/%s?access_token=%s",
+          lobbyServiceLocation, username, accessToken);
     if (run(command, ParseText.PARSE_TEXT).equals(
         "User details can not be queried. No such user.\n")) {
       return null;
@@ -205,7 +215,7 @@ public class LobbyServiceExecutor {
 
   }
 
-  private Object run(String[] command, OutputParser parser) {
+  private Object run(String command, OutputParser parser) {
     try {
       // execute the command
       Process process = Runtime.getRuntime().exec(command);
@@ -228,7 +238,7 @@ public class LobbyServiceExecutor {
         errorStream.close();
         // throw exception if error with the script
         throw new RuntimeException(
-          "[WARNING] Process: " + Arrays.toString(command) + " resulted in exit code: " + exitCode);
+          "[WARNING] Process: " + command + " resulted in exit code: " + exitCode);
       }
 
       // get parsed output; output will be "NULLPARSER" if the parser if NULLParser
@@ -250,38 +260,9 @@ public class LobbyServiceExecutor {
     return null;
   }
 
-  private String formatDirectoryName(String dir) {
-    if (dir.charAt(dir.length() - 1) != '/') {
-      return (dir += "/");
-    }
-    return dir;
-  }
-
-  private String[] makeRunCommand(String scriptName, String... args) {
-    assert scriptName != null && scriptName.length() != 0;
-    String basisCommand = formatDirectoryName(scriptsDir) + scriptName;
-
-    String[] command;
-    if (args == null) {
-      command = new String[] { basisCommand };
-    } else {
-      command = new String[1 + args.length];
-      command[0] = basisCommand;
-      // fill array with script arguments
-      for (int i = 0; i < args.length && (i + 1) < command.length; i++) {
-        assert args[i] != null && args[i].length() != 0;
-        command[i + 1] = args[i];
-      }
-    }
-    return command;
-
-  }
-
-  private void logExecution(String[] command, int exitCode) {
-    String logMsg = "Executed:";
-    for (int i = 0; i < command.length; i++) {
-      logMsg += (" " + command[i]);
-    }
+  private void logExecution(String command, int exitCode) {
+    String logMsg = "Executed: ";
+    logMsg += command;
     logMsg += (" -> exit code: " + exitCode);
     System.out.println(logMsg);
   }
