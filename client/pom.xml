@@ -14,6 +14,34 @@
 				</configuration>
 				<version>3.8.1</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+                	<configLocation>google_checks.xml</configLocation>
+            	</configuration>
+				<version>3.2.0</version>
+				<executions>
+        			<execution>
+            			<goals>
+                			<goal>check</goal>
+            			</goals>
+        			</execution>
+    			</executions>
+			</plugin>
+			<plugin>
+		      	<!-- Build an executable JAR -->
+		     	<groupId>org.apache.maven.plugins</groupId>
+		      	<artifactId>maven-jar-plugin</artifactId>
+		      	<version>3.1.0</version>
+		      	<configuration>
+		        	<archive>
+		       			<manifest>
+		            		<mainClass>gui.lobbyservice.Splendor</mainClass>
+		          		</manifest>
+		        	</archive>
+		      	</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<name>client</name>
