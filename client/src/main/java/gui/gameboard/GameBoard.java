@@ -71,16 +71,16 @@ public class GameBoard {
                                          ArrayList<CardView> aggregator) {
     //pretty sloppy but will do for now
     for (int i = 0; i < 3; ++i) {
-      CardView view = createCardView(screenSize);
-      decks.get(i).addListener(view);
-      column.getChildren().add(view);
-      aggregator.add(view);
-      view.addListener(deckViews.get(i));
+      CardView cardView = createCardView(screenSize);
+      decks.get(i).addListener(cardView);
+      column.getChildren().add(cardView);
+      aggregator.add(cardView);
+      cardView.addListener(deckViews.get(i));
     }
   }
 
   /**
-   * Creates a token display for the game board view.
+   * Creates a token display for the player's inventory.
    *
    * @param tokenColumn the column of tokens
    * @param screenSize the size of the screen
@@ -90,6 +90,7 @@ public class GameBoard {
       HBox tokenRow = new HBox();
       TokenPile deck = new TokenPile(TokenType.values()[i]);
       TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
+      deckView.setUpDemo();
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
       miniCard.setFill(ColorManager.getColor(deck.getType()));
       Counter cardCounter = new Counter(0);
@@ -109,6 +110,7 @@ public class GameBoard {
       VBox tokenColumn = new VBox();
       TokenPile deck = new TokenPile(TokenType.values()[i]);
       TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
+      deckView.setUp();
       tokenColumn.getChildren().addAll(deckView, deckView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
     }
@@ -158,13 +160,13 @@ public class GameBoard {
     VBox faceupCardsSecondColumn = new VBox();
     VBox faceupCardsThirdColumn = new VBox();
     VBox faceupCardsFourthColumn = new VBox();
-    ArrayList<CardView> cardViewAggregator = new ArrayList<>();
+    ArrayList<CardView> cardCardViewAggregator = new ArrayList<>();
     List<VBox> columns = Arrays.asList(faceupCardsFirstColumn, faceupCardsSecondColumn,
         faceupCardsThirdColumn, faceupCardsFourthColumn);
 
     for (VBox column : columns) {
       column.setSpacing(3);
-      populateCardColumn(column, screenSize, decks, deckViews, cardViewAggregator);
+      populateCardColumn(column, screenSize, decks, deckViews, cardCardViewAggregator);
     }
     faceupCardsRow.getChildren().addAll(columns);
     for (DeckView deckView : deckViews) {
@@ -193,7 +195,7 @@ public class GameBoard {
     tokenColumn.getChildren().addAll(totalTokens, totalCards, prestige);
     HandView handView = new HandView();
     populateHandView(handView, screenSize);
-    for (CardView cardView : cardViewAggregator) {
+    for (CardView cardView : cardCardViewAggregator) {
       for (HandColumnView handColumn : handView) {
         cardView.addListener(handColumn);
       }

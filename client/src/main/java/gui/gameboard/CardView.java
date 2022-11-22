@@ -7,21 +7,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.ColorManager;
 import model.cards.Card;
-import model.cards.CardObservable;
-import model.cards.CardObserver;
-import model.cards.DeckObservable;
-import model.cards.DeckObserver;
+import model.cards.Observable;
+import model.cards.Observer;
 
 /**
  * Represents the view of a Splendor Card.
  */
-public class CardView extends StackPane implements CardObserver, CardObservable, DeckObservable {
+public class CardView extends StackPane implements Observer, Observable {
 
   private Optional<Card> card;
   private final Rectangle outer;
   private final Rectangle inner;
-  private final ArrayList<CardObserver> cardObservers;
-  private final ArrayList<DeckObserver> deckObservers;
+  private final ArrayList<Observer> observers;
 
   /**
    * Creates a CardView.
@@ -38,17 +35,15 @@ public class CardView extends StackPane implements CardObserver, CardObservable,
     inner.setArcWidth((height - 20) / 5);
     this.getChildren().addAll(outer, inner);
     card = Optional.empty();
-    cardObservers = new ArrayList<>();
-    deckObservers = new ArrayList<>();
+    observers = new ArrayList<>();
     this.setOnMouseClicked(arg0 -> {
       // TODO onclick notify the deck associated with this row of cards
       //  and add a card and also add this card to the users inventory
       if (card.isPresent()) {
-        notifyCardObservers(card.get());
+        notifyObservers(card.get());
         card = Optional.empty();
         inner.setFill(Color.WHITE);
         outer.setFill(Color.WHITE);
-        notifyDeckObservers();
       }
     });
   }
@@ -69,19 +64,9 @@ public class CardView extends StackPane implements CardObserver, CardObservable,
    *
    * @param card The card that was purchased or reserved
    */
-  public void notifyCardObservers(Card card) {
-    for (CardObserver observer : cardObservers) {
+  public void notifyObservers(Card card) {
+    for (Observer observer : observers) {
       observer.onAction(card);
-    }
-  }
-
-  /**
-   * Notifies all observers that a card has been purchased or reserved.
-   *
-   */
-  public void notifyDeckObservers() {
-    for (DeckObserver observer : deckObservers) {
-      observer.onAction();
     }
   }
 
@@ -100,22 +85,13 @@ public class CardView extends StackPane implements CardObserver, CardObservable,
   }
 
   @Override
-  public void addListener(CardObserver observer) {
-    cardObservers.add(observer);
+  public void addListener(Observer observer) {
+    observers.add(observer);
   }
 
   @Override
-  public void addListener(DeckObserver observer) {
-    deckObservers.add(observer);
+  public void removeListener(Observer observer) {
+    observers.remove(observer);
   }
 
-  @Override
-  public void removeListener(CardObserver observer) {
-    cardObservers.remove(observer);
-  }
-
-  @Override
-  public void removeListener(DeckObserver observer) {
-    deckObservers.add(observer);
-  }
 }
