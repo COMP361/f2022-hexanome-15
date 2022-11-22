@@ -7,9 +7,7 @@ import javafx.scene.paint.Color;
  * Represents a Splendor Token Pile with tokens and type.
  */
 public class TokenPile {
-
   private final ArrayList<Token> tokens;
-
   private final TokenType type;
 
   /**
@@ -31,6 +29,15 @@ public class TokenPile {
     if (token.getType() == type) {
       tokens.add(token);
     }
+  }
+
+  /**
+   * Removes a token from the token pile.
+   *
+   * @return The token to be removed
+   */
+  public Token removeToken() {
+    return tokens.remove(0);
   }
 
   /**
