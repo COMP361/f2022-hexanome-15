@@ -3,13 +3,14 @@ package gui.gameboard;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import model.cards.Card;
 import model.cards.Deck;
-import model.cards.DeckObserver;
+import model.cards.Observer;
 
 /**
  * Represents the view of a Splendor Deck.
  */
-public class DeckView extends Rectangle implements DeckObserver {
+public class DeckView extends Rectangle implements Observer {
 
   private final Counter numCardsDisplay;
   private final Deck deck;
@@ -39,20 +40,20 @@ public class DeckView extends Rectangle implements DeckObserver {
     return numCardsDisplay;
   }
 
-  @Override
-  public void onAction() {
-    deck.replaceCard();
-    numCardsDisplay.setText(Integer.toString(deck.getSize()));
-    if (deck.getSize() == 0) {
-      this.setFill(Color.WHITE);
-    }
-  }
-
   /**
    * Sets up the DeckView upon starting the game.
    */
   public void setUp() {
     deck.deal();
     numCardsDisplay.setText(Integer.toString(deck.getSize()));
+  }
+
+  @Override
+  public void onAction(Card card) {
+    deck.replaceCard();
+    numCardsDisplay.setText(Integer.toString(deck.getSize()));
+    if (deck.getSize() == 0) {
+      this.setFill(Color.WHITE);
+    }
   }
 }

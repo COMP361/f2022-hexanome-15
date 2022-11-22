@@ -3,7 +3,7 @@ package model.cards;
 /**
  * Observer interface.
  */
-public interface CardObserver {
+public interface Observer {
 
   void onAction(Card card);
 

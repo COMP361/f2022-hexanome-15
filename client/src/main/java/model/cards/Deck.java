@@ -8,11 +8,11 @@ import model.ColorManager;
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount and cost
  * This class implements the Flyweight design pattern.
  */
-public class Deck implements CardObservable {
+public class Deck implements Observable {
 
   private final ArrayList<Card> cards;
   private final Color color;
-  private final ArrayList<CardObserver> cardObservers;
+  private final ArrayList<Observer> observers;
 
   /**
    * Creates a deck made of cards of a certain type.
@@ -22,7 +22,7 @@ public class Deck implements CardObservable {
   public Deck(CardType type) {
     this.color = ColorManager.getColor(type);
     this.cards = (ArrayList<Card>) Card.makeDeck(type);
-    cardObservers = new ArrayList<>();
+    observers = new ArrayList<>();
   }
 
   /**
@@ -65,14 +65,14 @@ public class Deck implements CardObservable {
   }
 
   @Override
-  public void addListener(CardObserver cardView) {
-    cardObservers.add(cardView);
+  public void addListener(Observer cardView) {
+    observers.add(cardView);
   }
 
   @Override
-  public void removeListener(CardObserver cardView) {
+  public void removeListener(Observer cardView) {
     //probably have to do something more sophisticated like an equals method.
-    cardObservers.remove(cardView);
+    observers.remove(cardView);
   }
 
   //a terrible hack to work around instantiating each card view for the first time
@@ -80,11 +80,11 @@ public class Deck implements CardObservable {
    * Instantiates card view.
    *
    * @param card The card that needs to be instantiated
-   * @parm observerIndex The index of the observer that must be notified
+   * @param observerIndex The index of the observer that must be notified
    */
   public void notifyObservers(Card card, int observerIndex) {
     //this is a terrible hack, needs a re-design.
-    cardObservers.get(observerIndex).onAction(card);
+    observers.get(observerIndex).onAction(card);
   }
 
   //use this one to deal out a new card after one got purchased
@@ -94,7 +94,7 @@ public class Deck implements CardObservable {
    * @param card The card that was purchased or reserved
    */
   public void notifyObservers(Card card) {
-    for (CardObserver observer : cardObservers) {
+    for (Observer observer : observers) {
       observer.onAction(card);
     }
   }
