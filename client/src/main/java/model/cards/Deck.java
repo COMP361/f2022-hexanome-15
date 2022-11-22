@@ -80,7 +80,7 @@ public class Deck implements Observable {
    * Instantiates card view.
    *
    * @param card The card that needs to be instantiated
-   * @parm observerIndex The index of the observer that must be notified
+   * @param observerIndex The index of the observer that must be notified
    */
   public void notifyObservers(Card card, int observerIndex) {
     //this is a terrible hack, needs a re-design.

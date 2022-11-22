@@ -40,10 +40,11 @@ public class CardView extends StackPane implements Observer, Observable {
       // TODO onclick notify the deck associated with this row of cards
       //  and add a card and also add this card to the users inventory
       if (card.isPresent()) {
-        notifyObservers(card.get());
+        Card purchasedCard = card.get();
         card = Optional.empty();
         inner.setFill(Color.WHITE);
         outer.setFill(Color.WHITE);
+        notifyObservers(purchasedCard);
       }
     });
   }
