@@ -1,6 +1,7 @@
 package comp361.f2022hexanome15.splendorclient.model.tokens;
 
 import javafx.scene.paint.Color;
+import model.ColorManager;
 
 /**
  * Represents a Splendor Token with type.
@@ -11,8 +12,9 @@ public class Token {
 
   // again eventually using the images ojas provided,
   // also this hack is very brittle and bad, but it's what I've got for now.
-  public static Color[] typeToColor = new Color[] {Color.GREEN, Color.LIGHTBLUE,
-    Color.BLUE, Color.DARKGREY, Color.MAGENTA, Color.GOLD};
+  /*public static Color[] typeToColor = new Color[] {Color.GREEN, Color.LIGHTBLUE,
+    Color.BLUE, Color.DARKGREY, Color.MAGENTA, Color.GOLD};*/
+  private final Color color;
 
   /**
    * Creates a Token.
@@ -21,6 +23,7 @@ public class Token {
    */
   public Token(TokenType type) {
     this.type = type;
+    this.color = ColorManager.getColor(type);
   }
 
   /**
@@ -29,7 +32,7 @@ public class Token {
    * @return the color of the token
    */
   public Color getColor() {
-    return typeToColor[type.ordinal()];
+    return color;
   }
 
   /**

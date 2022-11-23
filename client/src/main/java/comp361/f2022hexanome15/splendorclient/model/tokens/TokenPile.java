@@ -2,15 +2,18 @@ package comp361.f2022hexanome15.splendorclient.model.tokens;
 
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
+import model.ColorManager;
+import model.cards.Observable;
+import model.cards.Observer;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.
  */
 public class TokenPile {
-
   private final ArrayList<Token> tokens;
-
   private final TokenType type;
+
+  private final Color color;
 
   /**
    * Creates a TokenPile.
@@ -19,7 +22,8 @@ public class TokenPile {
    */
   public TokenPile(TokenType type) {
     this.type = type;
-    tokens = new ArrayList<>();
+    this.tokens = new ArrayList<>();
+    this.color = ColorManager.getColor(type);
   }
 
   /**
@@ -30,6 +34,16 @@ public class TokenPile {
   public void addToken(Token token) {
     if (token.getType() == type) {
       tokens.add(token);
+    }
+  }
+
+  /**
+   * Removes a token from the token pile.
+   *
+   */
+  public void removeToken() {
+    if (!tokens.isEmpty()) {
+      tokens.remove(0);
     }
   }
 
@@ -58,7 +72,7 @@ public class TokenPile {
    * @return the color of tokens in the token pile
    */
   public Color getColor() {
-    return Token.typeToColor[type.ordinal()];
+    return color;
   }
 
 }
