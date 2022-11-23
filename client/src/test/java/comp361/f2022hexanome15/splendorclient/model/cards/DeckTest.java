@@ -1,7 +1,6 @@
-package model.cards;
+package comp361.f2022hexanome15.splendorclient.model.cards;
 
 import javafx.scene.paint.Color;
-import model.tokens.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

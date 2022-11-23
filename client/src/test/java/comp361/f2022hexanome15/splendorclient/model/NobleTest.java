@@ -1,6 +1,5 @@
-package model;
+package comp361.f2022hexanome15.splendorclient.model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
