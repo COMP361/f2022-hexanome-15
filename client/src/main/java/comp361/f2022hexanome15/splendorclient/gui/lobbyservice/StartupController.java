@@ -1,5 +1,13 @@
 package comp361.f2022hexanome15.splendorclient.gui.lobbyservice;
 
+import static comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceHandler.createlsEventHandler;
+
+import comp361.f2022hexanome15.splendorclient.gui.scenemanager.SceneManager;
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.Parsejson;
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.ScriptExecutor;
+import comp361.f2022hexanome15.splendorclient.users.Role;
+import comp361.f2022hexanome15.splendorclient.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -16,17 +24,8 @@ import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import comp361.f2022hexanome15.splendorclient.gui.scenemanager.SceneManager;
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.Parsejson;
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.ScriptExecutor;
-import comp361.f2022hexanome15.splendorclient.users.Role;
-import comp361.f2022hexanome15.splendorclient.users.User;
-import static comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceHandler.createlsEventHandler;
-
 /**
  * Controls the start up for the lobby service.
- *
  */
 public class StartupController implements Initializable {
   private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
@@ -43,7 +42,8 @@ public class StartupController implements Initializable {
   // are loaded
   public void initialize(URL arg0, ResourceBundle arg1) {
     // getting LS default admin info
-    JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
+    JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(
+        "maex", "abc123_ABC123");
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
     // flyweight User object representing the default admin of the LS
