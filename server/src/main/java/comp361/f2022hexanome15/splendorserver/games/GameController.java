@@ -47,10 +47,12 @@ public class GameController {
 		aRepository.deleteById(gameid);
 		LOGGER.info("DELETED GAME ID: " + gameid);
 	}
+	
+	
 
 	@GetMapping("/api/debug")
 	void debug() {
-		LOGGER.info("DEBUG SUCCESSFULLY CALLED");
+		LOGGER.info("SOMEONE'S KNOCKING");
 	}
 
 }
