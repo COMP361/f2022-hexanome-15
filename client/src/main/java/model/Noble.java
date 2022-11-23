@@ -12,4 +12,12 @@ public class Noble {
     this.cardRequirements = requirements;
     this.reserved = false;
   }
+
+  public int[] getCardRequirements() {
+    return cardRequirements;
+  }
+
+  public boolean isReserved() {
+    return reserved;
+  }
 }

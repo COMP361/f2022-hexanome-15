@@ -3,6 +3,7 @@ package model.cards;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javafx.scene.paint.Color;
 import model.tokens.TokenType;
 
@@ -240,6 +241,23 @@ public class Card {
     cards.add(new Card(87, 1, TokenType.EMERALD, CardType.BASE3,   1, new int[]{0, 0, 0, 0, 1}));
     cards.add(new Card(88, 1, TokenType.RUBY, CardType.BASE3,      1, new int[]{1, 0, 0, 0, 0}));
     cards.add(new Card(89, 1, TokenType.ONYX, CardType.BASE3,      1, new int[]{0, 1, 0, 0, 0}));
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (object == this) {
+      return true;
+    }
+    if (!(object instanceof Card)) {
+      return false;
+    }
+    Card card = (Card) object;
+    return id == card.getId();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 
   // TODO: need things like cost, associated gem discount, and prestige.
