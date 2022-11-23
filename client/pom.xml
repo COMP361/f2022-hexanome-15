@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.COMP361.f2022-hexanome-15</groupId>
-	<artifactId>splendor</artifactId>
+	<groupId>comp361.f2022hexanome15</groupId>
+	<artifactId>splendorclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<build>
 		<plugins>
@@ -37,14 +37,14 @@
 		      	<configuration>
 		        	<archive>
 		       			<manifest>
-		            		<mainClass>gui.lobbyservice.Splendor</mainClass>
+		            		<mainClass>comp361.f2022hexanome15.splendorclient.gui.lobbyservice.Splendor</mainClass>
 		          		</manifest>
 		        	</archive>
 		      	</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<name>client</name>
+	<name>splendorclient</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.json</groupId>
