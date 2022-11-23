@@ -15,7 +15,6 @@ import javax.persistence.Id;
  */
 @Entity
 public class Game implements Iterable<String> {
-	private final String creator; // creator user-name
 	private final String savegame;
 	@Id
 	private Long gameID; // TODO: implement this from the LS
@@ -25,15 +24,12 @@ public class Game implements Iterable<String> {
 
 	/**
 	 * Creates a Game.
-	 *
-	 * @param creator  creator of the session: user who presses create session
+	 * 
 	 * @param saveGame optional fork of previously saved game; can be null
 	 * @param gameid   unique game ID
 	 * @param players  list of players in session
 	 */
-	public Game(String creator, String saveGame, long gameid, List<String> players) {
-		assert creator != null;
-		this.creator = creator;
+	public Game(String saveGame, long gameid, List<String> players) {
 		this.savegame = saveGame;
 		this.gameID = gameid;
 		this.players = players;
@@ -47,18 +43,13 @@ public class Game implements Iterable<String> {
 		return savegame;
 	}
 
-	public String creator() {
-		return creator;
-	}
-
 	public void removePlayer(String username) {
 		players.remove(username);
 	}
 
 	@Override
 	public String toString() {
-		return "Game [creator=" + creator + ", savegame=" + savegame + ", gameID=" + gameID + ", players=" + players
-				+ "]";
+		return "Game [gameID=" + gameID + ", players=" + players + "]";
 	}
 
 	@Override

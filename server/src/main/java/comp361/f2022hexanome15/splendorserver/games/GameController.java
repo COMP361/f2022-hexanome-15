@@ -7,6 +7,7 @@ package comp361.f2022hexanome15.splendorserver.games;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,8 @@ public class GameController {
 		// TODO: parse the players argument then change the game constructor not to
 		// accept null
 		System.out.println(sessionInfo);
+		// TODO: parse the players to get their names
+		System.out.println("players: " + sessionInfo.get("players").get(0));
 		// Game newGame = new Game(creator, savegame, gameid, players);
 		// save created game object to aRepository
 		// aRepository.save(newGame);
@@ -43,6 +46,11 @@ public class GameController {
 	void quitRequest(@PathVariable Long gameid) {
 		aRepository.deleteById(gameid);
 		LOGGER.info("DELETED GAME ID: " + gameid);
+	}
+
+	@GetMapping("/api/debug")
+	void debug() {
+		LOGGER.info("DEBUG SUCCESSFULLY CALLED");
 	}
 
 }
