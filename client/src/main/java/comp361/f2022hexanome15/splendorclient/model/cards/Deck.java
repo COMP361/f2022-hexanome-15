@@ -47,10 +47,11 @@ public class Deck implements Observable {
    * Deals cards in the deck to the board.
    */
   public void deal() {
-    assert !cards.isEmpty();
-    for (int i = 0; i < 4; ++i) {
-      notifyObservers(cards.get(0), i);
-      cards.remove(0);
+    if (!cards.isEmpty()) {
+      for (int i = 0; i < 4; ++i) {
+        notifyObservers(cards.get(0), i);
+        cards.remove(0);
+      }
     }
   }
 
@@ -59,9 +60,10 @@ public class Deck implements Observable {
    * used after a card is reserved or purchased.
    */
   public void replaceCard() {
-    assert !cards.isEmpty();
-    notifyObservers(cards.get(0));
-    cards.remove(0);
+    if (!cards.isEmpty()) {
+      notifyObservers(cards.get(0));
+      cards.remove(0);
+    }
   }
 
   @Override
