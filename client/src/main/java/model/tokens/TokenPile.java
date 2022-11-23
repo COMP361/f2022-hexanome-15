@@ -2,6 +2,9 @@ package model.tokens;
 
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
+import model.ColorManager;
+import model.cards.Observable;
+import model.cards.Observer;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.
@@ -10,6 +13,8 @@ public class TokenPile {
   private final ArrayList<Token> tokens;
   private final TokenType type;
 
+  private final Color color;
+
   /**
    * Creates a TokenPile.
    *
@@ -17,7 +22,8 @@ public class TokenPile {
    */
   public TokenPile(TokenType type) {
     this.type = type;
-    tokens = new ArrayList<>();
+    this.tokens = new ArrayList<>();
+    this.color = ColorManager.getColor(type);
   }
 
   /**
@@ -34,10 +40,11 @@ public class TokenPile {
   /**
    * Removes a token from the token pile.
    *
-   * @return The token to be removed
    */
-  public Token removeToken() {
-    return tokens.remove(0);
+  public void removeToken() {
+    if (!tokens.isEmpty()) {
+      tokens.remove(0);
+    }
   }
 
   /**
@@ -65,7 +72,7 @@ public class TokenPile {
    * @return the color of tokens in the token pile
    */
   public Color getColor() {
-    return Token.typeToColor[type.ordinal()];
+    return color;
   }
 
 }
