@@ -1,6 +1,5 @@
 package comp361.f2022hexanome15.splendorserver.games;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,11 +14,14 @@ import javax.persistence.Id;
  * @author zacharyhayden
  */
 @Entity
-public class Game implements Iterable<PlayerWrapper> {
-	private final TakeTurn aTakeTurn;
+public class Game implements Iterable<String> {
+	//private final TakeTurn aTakeTurn;
 	private final String savegame;
 	@Id
 	private Long gameID; // TODO: implement this from the LS
+	@ElementCollection
+	@CollectionTable(name = "players")
+	private final List<String> players; // contains player user-names
 
 	/**
 	 * Creates a Game.
@@ -28,10 +30,11 @@ public class Game implements Iterable<PlayerWrapper> {
 	 * @param gameid   unique game ID
 	 * @param players  list of players in session
 	 */
-	public Game(String saveGame, long gameid, Collection<PlayerWrapper> players) {
+	public Game(String saveGame, long gameid, List<String> players) {
 		this.savegame = saveGame;
 		this.gameID = gameid;
-		aTakeTurn = new TakeTurn(players);
+		this.players = players;
+		//aTakeTurn = new TakeTurn(null);
 	}
 
 	public long gameID() {
@@ -43,20 +46,17 @@ public class Game implements Iterable<PlayerWrapper> {
 	}
 
 	public void removePlayer(String username) {
-		aTakeTurn.removePlayer(PlayerWrapper.newPlayerWrapper(username));
-	}
-
-	public PlayerWrapper whosTurn() {
-		return aTakeTurn.whosTurn();
-	}
-
-	public PlayerWrapper endTurn() {
-		return aTakeTurn.endTurn();
+		players.remove(username);
 	}
 
 	@Override
-	public Iterator<PlayerWrapper> iterator() {
-		return aTakeTurn.iterator();
+	public String toString() {
+		return "Game [gameID=" + gameID + ", players=" + players + "]";
+	}
+
+	@Override
+	public Iterator<String> iterator() {
+		return players.iterator();
 	}
 
 }

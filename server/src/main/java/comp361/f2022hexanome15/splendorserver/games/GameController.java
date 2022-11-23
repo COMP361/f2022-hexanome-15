@@ -59,15 +59,15 @@ public class GameController {
 	 * server -> send to all users in the session via get
 	 */
 
-	@PutMapping("api/games/{gameid}/{username}")
-	public PlayerWrapper endTurn(@PathVariable(name = "gameid") Long pGameid,
-			@PathVariable(name = "username") String pUsername) {
-		// access the game object from database and then update the reference to the
-		// player not their turn
-		Game game = aRepository.findById(pGameid).orElseThrow(() -> new GameNotFoundException(pGameid));
-		updateGameBoard = true;
-		return game.endTurn();
-	}
+//	@PutMapping("api/games/{gameid}/{username}")
+//	public PlayerWrapper endTurn(@PathVariable(name = "gameid") Long pGameid,
+//			@PathVariable(name = "username") String pUsername) {
+//		// access the game object from database and then update the reference to the
+//		// player not their turn
+//		Game game = aRepository.findById(pGameid).orElseThrow(() -> new GameNotFoundException(pGameid));
+//		updateGameBoard = true;
+//		return game.endTurn();
+//	}
 
 	@GetMapping("api/games/{gameid}")
 	public DeferredResult<GameBoard> currentGameBoard(@PathVariable Long pGameid) {
