@@ -51,14 +51,23 @@ public class TokenPileView extends Circle implements Observer {
   /**
    * Sets up the TokenPileView upon starting the game.
    */
-  public void setUp() {
+  public void setUp(int nPlayers) {
+    int nTokens = 0;
+    switch (nPlayers) {
+      case 2:
+        nTokens = 4;
+      case 3:
+        nTokens = 5;
+      case 4:
+        nTokens = 7;
+    }
     if (tokenPile.getType().equals(TokenType.GOLD)) {
       for (int i = 0; i < 5; i++) {
         Token token = new Token(tokenPile.getType());
         tokenPile.addToken(token);
       }
     } else {
-      for (int i = 0; i < 7; i++) {
+      for (int i = 0; i < nTokens; i++) {
         Token token = new Token(tokenPile.getType());
         tokenPile.addToken(token);
       }

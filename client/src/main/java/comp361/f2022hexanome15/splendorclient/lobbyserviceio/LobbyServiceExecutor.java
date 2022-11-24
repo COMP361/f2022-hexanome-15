@@ -219,6 +219,19 @@ public class LobbyServiceExecutor {
 
   }
 
+  /**
+   * Returns the session info as a JSONObject
+   *
+   * @param sessionid The id of the session
+   * @return the session info
+   */
+  public JSONObject getSessionInfo(int sessionid) {
+    String command = String.format("curl -X GET %s/api/sessions/%s",
+      lobbyServiceLocation, sessionid);
+    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
+    return output;
+  }
+
   private Object run(String command, OutputParser parser) {
     try {
       // execute the command

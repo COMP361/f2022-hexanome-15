@@ -1,5 +1,7 @@
 package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.Parsejson;
 import comp361.f2022hexanome15.splendorclient.model.ColorManager;
 import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
 import comp361.f2022hexanome15.splendorclient.model.cards.Deck;
@@ -18,12 +20,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.json.JSONObject;
 
 /**
  * Represents the view of the Splendor game board.
  */
 public class GameBoard {
 
+  private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
   /**
    * Creates a stack pane for the given DeckView and returns it.
@@ -105,12 +109,12 @@ public class GameBoard {
    * @param tokenRow the row of tokens
    * @param screenSize the size of the screen
    */
-  private static void populateTokenPiles(HBox tokenRow, Dimension screenSize) {
+  private static void populateTokenPiles(HBox tokenRow, Dimension screenSize, int nPlayers) {
     for (int i = 0; i < TokenType.values().length; ++i) {
       VBox tokenColumn = new VBox();
       TokenPile deck = new TokenPile(TokenType.values()[i]);
       TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
-      deckView.setUp();
+      deckView.setUp(nPlayers);
       tokenColumn.getChildren().addAll(deckView, deckView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
     }
@@ -178,6 +182,12 @@ public class GameBoard {
 
     //ignoring the pretty token display for now
 
+    //Calling Lobby Service to get number of players
+    //TODO: The session id needs to be replaced with the session id of an actual session
+    JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
+    int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
+    final int nPlayers = players.length;
+
     //building the user inventory
     float yoffset = 6 * screenSize.height / 10f;
     float xoffset = screenSize.width / 6f;
@@ -221,7 +231,7 @@ public class GameBoard {
     tokenRow.setSpacing(50);
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
     tokenRow.setLayoutX(xoffset);
-    populateTokenPiles(tokenRow, screenSize);
+    populateTokenPiles(tokenRow, screenSize, nPlayers);
 
     //adding to the scene graph
     Pane root = new Pane();
