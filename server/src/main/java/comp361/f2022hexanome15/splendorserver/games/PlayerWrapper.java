@@ -7,11 +7,16 @@ package comp361.f2022hexanome15.splendorserver.games;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  * @author zacharyhayden
  *
  */
+@Entity
 public class PlayerWrapper {
+	@Id
 	private final String aUserName;
 
 	private final static Map<String, PlayerWrapper> PLAYER_MAP = new HashMap<>();

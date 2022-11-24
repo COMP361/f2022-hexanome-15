@@ -5,22 +5,27 @@
 package comp361.f2022hexanome15.splendorserver.games;
 
 import java.util.Collection;
-import java.util.Deque;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 
 /**
  * @author zacharyhayden
  *
  */
+@Embeddable
 public class TakeTurn implements Iterable<PlayerWrapper> {
 	/*
 	 * Creating circular data structure to store and update turns
 	 */
-	private final Deque<PlayerWrapper> aTurns;
+	@OneToMany
+	private final List<PlayerWrapper> aTurns;
 
 	public TakeTurn(Collection<PlayerWrapper> pPlayers) {
-		aTurns = new ConcurrentLinkedDeque<>(pPlayers);
+		aTurns = new CopyOnWriteArrayList<>(pPlayers);
 	}
 
 	public void removePlayer(PlayerWrapper pPlayer) {
@@ -32,17 +37,20 @@ public class TakeTurn implements Iterable<PlayerWrapper> {
 	 * @return the player wrapper of the player who's turn it is
 	 */
 	public PlayerWrapper whosTurn() {
-		return aTurns.element();
+		return aTurns.get(0);
 	}
 
 	/**
+	 * Removes the player who's turn it currently is and puts them at the end of the
+	 * line, moving the next player up
 	 * 
 	 * @return the player fly-weight who's turn it now is
 	 */
 	public PlayerWrapper endTurn() {
-		PlayerWrapper player = aTurns.poll();
-		aTurns.offer(player);
-		return aTurns.element(); // the new head of queue
+		PlayerWrapper player = aTurns.get(0);
+		aTurns.remove(0);
+		aTurns.add(player);
+		return aTurns.get(0); // the new head of queue
 	}
 
 	@Override
