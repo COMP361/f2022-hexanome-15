@@ -1,8 +1,11 @@
 package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import comp361.f2022hexanome15.splendorclient.model.cards.Card;
+import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
 import javafx.scene.layout.Pane;
@@ -18,12 +21,13 @@ import javafx.scene.layout.Pane;
 /**
  * Represents the view of the user's inventory.
  */
-public class HandColumnView extends Pane implements Observer {
+public class HandColumnView extends Pane implements Observer, Observable {
 
 	// This will be the token type of the bonus associated to the card
 	private final TokenType typeOfColumn;
 	private final Dimension screenSize;
 	private int ncardsInColumn = 0;
+	private List<Observer> observers;
 
 	/**
 	 * Creates a HandColumnView.
@@ -34,6 +38,7 @@ public class HandColumnView extends Pane implements Observer {
 	public HandColumnView(TokenType type, Dimension screenSize) {
 		this.typeOfColumn = type;
 		this.screenSize = screenSize;
+		observers = new ArrayList<Observer>();
 	}
 
 	@Override
@@ -47,6 +52,16 @@ public class HandColumnView extends Pane implements Observer {
 			this.getChildren().add(cardView);
 			++ncardsInColumn;
 		}
+	}
+
+	@Override
+	public void addListener(Observer observer) {
+		observers.add(observer);
+	}
+
+	@Override
+	public void removeListener(Observer observer) {
+		observers.remove(observer);
 	}
 
 }

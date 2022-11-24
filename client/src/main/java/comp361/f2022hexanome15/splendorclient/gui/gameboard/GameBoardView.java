@@ -11,6 +11,7 @@ import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
 import comp361.f2022hexanome15.splendorclient.model.cards.Deck;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
+import comp361.f2022hexanome15.splendorclient.model.userinventory.UserInventory;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -23,7 +24,7 @@ import javafx.scene.text.Text;
 /**
  * Represents the view of the Splendor game board.
  */
-public class GameBoard {
+public class GameBoardView {
 
 
   /**
@@ -86,18 +87,21 @@ public class GameBoard {
    * @param tokenColumn the column of tokens
    * @param screenSize the size of the screen
    */
-  private static void populateTokenDisplay(VBox tokenColumn, Dimension screenSize) {
+  private static List<TokenPile> populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize) {
+	List<TokenPile> piles = new ArrayList<TokenPile>();
     for (int i = 0; i < TokenType.values().length; ++i) {
       HBox tokenRow = new HBox();
       TokenPile deck = new TokenPile(TokenType.values()[i]);
-      TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
-      deckView.setUpDemo();
+      piles.add(deck);
+      TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck.getType());
+      deck.setUpDemo();
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
       miniCard.setFill(ColorManager.getColor(deck.getType()));
       Counter cardCounter = new Counter(0);
       tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
       tokenColumn.getChildren().add(tokenRow);
     }
+    return piles;
   }
 
   /**
@@ -106,15 +110,33 @@ public class GameBoard {
    * @param tokenRow the row of tokens
    * @param screenSize the size of the screen
    */
-  private static void populateTokenPiles(HBox tokenRow, Dimension screenSize) {
+  private static List<TokenPile> populateGameBoardTokenPiles(HBox tokenRow, Dimension screenSize) {
+	List<TokenPile> piles = new ArrayList<TokenPile>();
     for (int i = 0; i < TokenType.values().length; ++i) {
       VBox tokenColumn = new VBox();
       TokenPile deck = new TokenPile(TokenType.values()[i]);
-      TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
-      deckView.setUp();
+      piles.add(deck);
+      //TODO: make these a new kind of view for the game board displays (populate the piles instead of removing the piles)
+      TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck.getType());
+      deck.setUp();
       tokenColumn.getChildren().addAll(deckView, deckView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
     }
+    return piles;
+  }
+  
+  /**
+   * The gameboard token piles and the user inventory token piles need to be in communication
+   * 
+   * @param gameBoardPiles
+   * @param userInventoryPiles
+   */
+  private static void linkGameboardAndUserInventoryTokenPiles(List<TokenPile> gameBoardPiles, List<TokenPile> userInventoryPiles) {
+	for (TokenPile gameBoardPile : gameBoardPiles) {
+		for (TokenPile userInventoryPile : userInventoryPiles) {
+			
+		}
+	}
   }
 
   /**
@@ -123,7 +145,7 @@ public class GameBoard {
    * @param handView the view the user's inventory
    * @param screenSize the size of the screen
    */
-  private static void populateHandView(HandView handView, Dimension screenSize) {
+  private static void populateHandView(UserInventoryView handView, Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
       handView.addHandColumn(new HandColumnView(TokenType.values()[i], screenSize));
     }
@@ -179,22 +201,22 @@ public class GameBoard {
 
     //ignoring the pretty token display for now
 
-    //building the user inventory
+    //building the user inventory still only one
     float yoffset = 6 * screenSize.height / 10f;
     float xoffset = screenSize.width / 6f;
-    HBox userInventory = new HBox();
-    userInventory.setLayoutY(yoffset);
-    userInventory.setLayoutX(xoffset);
+    HBox userInventoryView = new HBox();
+    userInventoryView.setLayoutY(yoffset);
+    userInventoryView.setLayoutX(xoffset);
     VBox tokenColumn = new VBox();
     tokenColumn.setSpacing(3);
-    userInventory.getChildren().add(tokenColumn);
-    populateTokenDisplay(tokenColumn, screenSize);
+    userInventoryView.getChildren().add(tokenColumn);
+    populateUserInventoryDisplay(tokenColumn, screenSize);
     //these will have to be more sophisticated or at least listeners sometime soon
     Text totalTokens = new Text("Tokens: 0/10");
     Text totalCards = new Text("Cards: 0");
     Text prestige = new Text("Prestige: 0");
     tokenColumn.getChildren().addAll(totalTokens, totalCards, prestige);
-    HandView handView = new HandView();
+    UserInventoryView handView = new UserInventoryView();
     populateHandView(handView, screenSize);
     for (CardView cardView : cardCardViewAggregator) {
       for (HandColumnView handColumn : handView) {
@@ -202,9 +224,14 @@ public class GameBoard {
       }
     }
     for (HandColumnView handColumn : handView) {
-      userInventory.getChildren().add(handColumn);
+      userInventoryView.getChildren().add(handColumn);
     }
-    userInventory.setSpacing(10);
+    userInventoryView.setSpacing(10);
+    //so that we can figure out if we can afford the card, we need to check in UserInventory class. 
+    UserInventory userInventory = new UserInventory();
+    for (HandColumnView handColumn : handView) {
+    	handColumn.addListener(userInventory);
+    }
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards
@@ -222,11 +249,11 @@ public class GameBoard {
     tokenRow.setSpacing(50);
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
     tokenRow.setLayoutX(xoffset);
-    populateTokenPiles(tokenRow, screenSize);
+    populateGameBoardTokenPiles(tokenRow, screenSize);
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, faceupCardsRow, userInventory, nobleCards, tokenRow);
+    root.getChildren().addAll(decksBox, faceupCardsRow, userInventoryView, nobleCards, tokenRow);
     return new Scene(root, screenSize.width, screenSize.height);
   }
 

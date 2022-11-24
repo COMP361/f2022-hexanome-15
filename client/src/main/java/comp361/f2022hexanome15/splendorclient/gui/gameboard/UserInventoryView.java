@@ -6,14 +6,14 @@ import java.util.Iterator;
 /**
  * Represents the view of the user's inventory.
  */
-public class HandView implements Iterable<HandColumnView> {
+public class UserInventoryView implements Iterable<HandColumnView> {
 
   private final ArrayList<HandColumnView> handColumns;
 
   /**
    * Creates a HandView.
    */
-  public HandView() {
+  public UserInventoryView() {
     handColumns = new ArrayList<>();
   }
 

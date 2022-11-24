@@ -12,7 +12,9 @@ import javafx.scene.shape.Rectangle;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 
 /**
- * Represents the view of a Splendor Card.
+ * Represents the view of a Splendor Card. 
+ * Observed by HandColumnViews, for purpose of adding purchased card to User Inventory
+ * Observed by DeckView, for purpose of dealing out another card.
  */
 public class CardView extends StackPane implements Observer, Observable {
 
