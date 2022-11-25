@@ -7,7 +7,6 @@ import comp361.f2022hexanome15.splendorclient.model.cards.Card;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
-import java.awt.Dimension;
 import javafx.scene.layout.Pane;
 
 
@@ -23,6 +22,7 @@ public class CardColumnView extends Pane implements Observer, Observable {
 	private final Dimension screenSize;
 	private int ncardsInColumn = 0;
 	private List<Observer> observers;
+	private final Counter numCardsDisplay;
 
 	/**
 	 * Creates a HandColumnView.
@@ -34,6 +34,7 @@ public class CardColumnView extends Pane implements Observer, Observable {
 		this.typeOfColumn = type;
 		this.screenSize = screenSize;
 		observers = new ArrayList<Observer>();
+		this.numCardsDisplay = new Counter(ncardsInColumn);
 	}
 
 	@Override
@@ -48,6 +49,7 @@ public class CardColumnView extends Pane implements Observer, Observable {
 			++ncardsInColumn;
 			notifyObservers(card);
 		}
+		numCardsDisplay.setText(Integer.toString(ncardsInColumn));
 	}
 
 	@Override
@@ -65,5 +67,9 @@ public class CardColumnView extends Pane implements Observer, Observable {
 			observer.onAction(card);
 		}
 	}
+	
+	public Counter getNumCardsDisplay() {
+    return numCardsDisplay;
+  }
 
 }

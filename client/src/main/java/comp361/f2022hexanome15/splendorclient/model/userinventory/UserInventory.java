@@ -1,12 +1,11 @@
 package comp361.f2022hexanome15.splendorclient.model.userinventory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import comp361.f2022hexanome15.splendorclient.model.cards.Card;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,43 +20,48 @@ public class UserInventory implements Observer, Observable {
   ArrayList<Observer> observers;
   List<TokenPile> tokenPiles;
   
+  /**
+   * Initialize User Inventory Model.
+   * 
+   * @param pile
+   */
   public UserInventory(List<TokenPile> pile) {
-	  cards = new ArrayList<Card>();
-	  tokenPiles = List.copyOf(pile);
-	  observers = new ArrayList<Observer>();
+    cards = new ArrayList<Card>();
+    tokenPiles = List.copyOf(pile);
+    observers = new ArrayList<Observer>();
   }
 
-	@Override
-	public void onAction(Card card) {
-		boolean affordable = true;
-		for (int i = 0; i < card.getCost().length; i++) {
-			for (TokenPile tokenPile : tokenPiles) {
-				if (tokenPile.getType().ordinal() == i) {
-					if (card.getCost()[i] > 0 && tokenPile.getSize() < card.getCost()[i]) {
-						affordable = false;
-					}
-				}
-			}
-		}
-		if (affordable) {
-			notifyObservers(card);
-			for (int i = 0; i < card.getCost().length; i++) {
-				for (TokenPile tokenPile : tokenPiles) {
-					if (tokenPile.getType().ordinal() == i) {
-						if (card.getCost()[i] > 0 && tokenPile.getSize() >= card.getCost()[i]) {
-							for (int j = 0; j < card.getCost()[i]; j++) {
-								tokenPile.removeToken();
-							}
-						}
-					}
-				}
-			}
-		}
+  @Override
+  public void onAction(Card card) {
+    boolean affordable = true;
+    for (int i = 0; i < card.getCost().length; i++) {
+      for (TokenPile tokenPile : tokenPiles) {
+        if (tokenPile.getType().ordinal() == i) {
+          if (card.getCost()[i] > 0 && tokenPile.getSize() < card.getCost()[i]) {
+            affordable = false;
+          }
+        }
+      }
+    }
+if (affordable) {
+  notifyObservers(card);
+      for (int i = 0; i < card.getCost().length; i++) {
+        for (TokenPile tokenPile : tokenPiles) {
+          if (tokenPile.getType().ordinal() == i) {
+            if (card.getCost()[i] > 0 && tokenPile.getSize() >= card.getCost()[i]) {
+              for (int j = 0; j < card.getCost()[i]; j++) {
+                tokenPile.removeToken();
+              }
+            }
+          }
+        }
+      }
+	  }
 	}
 	
 	//need tighter encapsulation eventually
 	public void addPile(TokenPile pile) {
-		tokenPiles.add(pile);
+	  tokenPiles.add(pile);
 	}
 
 	@Override

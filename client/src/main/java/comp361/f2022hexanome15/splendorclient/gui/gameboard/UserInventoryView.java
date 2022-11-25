@@ -8,27 +8,27 @@ import java.util.Iterator;
  */
 public class UserInventoryView implements Iterable<CardColumnView> {
 
-  private final ArrayList<CardColumnView> handColumns;
+  private final ArrayList<CardColumnView> cardColumns;
 
   /**
-   * Creates a HandView.
+   * Creates a UserInventoryView.
    */
   public UserInventoryView() {
-    handColumns = new ArrayList<>();
+    cardColumns = new ArrayList<>();
   }
 
   @Override
   public Iterator<CardColumnView> iterator() {
-    return handColumns.iterator();
+    return cardColumns.iterator();
   }
 
   /**
-   * Adds a hand column to the hand view.
+   * Adds a card column to the user inventory view.
    *
    * @param handColumn the handColumn to be added
    */
   public void addCardColumn(CardColumnView handColumn) {
-    handColumns.add(handColumn);
+    cardColumns.add(handColumn);
   }
 
 }

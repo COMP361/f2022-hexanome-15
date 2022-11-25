@@ -1,12 +1,12 @@
 package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
 import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.Parsejson;
 import comp361.f2022hexanome15.splendorclient.model.ColorManager;
 import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
 import comp361.f2022hexanome15.splendorclient.model.cards.Deck;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
+import comp361.f2022hexanome15.splendorclient.model.userinventory.UserInventory;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
@@ -19,9 +19,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import org.json.JSONObject;
-import comp361.f2022hexanome15.splendorclient.model.userinventory.UserInventory;
 
 /**
  * Represents the view of the Splendor game board.
@@ -89,10 +86,10 @@ public class GameBoardView {
    * @param tokenColumn the column of tokens
    * @param screenSize the size of the screen
    */
-  private static List<TokenPile> populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize) {
-	List<TokenPile> piles = new ArrayList<TokenPile>();
-    for (int i = 0; i < TokenType.values().length; ++i) {
-      HBox tokenRow = new HBox();
+  private static List<TokenPile> populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize, final UserInventoryView userInventoryView) {
+    List<TokenPile> piles = new ArrayList<TokenPile>();
+    int i = 0;
+    for (CardColumnView cardColumn : userInventoryView) {
       TokenPile pile = new TokenPile(TokenType.values()[i]);
       piles.add(pile);
       TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, pile.getType());
@@ -100,19 +97,23 @@ public class GameBoardView {
       pile.setUpDemo();
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
       miniCard.setFill(ColorManager.getColor(pile.getType()));
-      Counter cardCounter = new Counter(0);
+      Counter cardCounter = cardColumn.getNumCardsDisplay();
+      HBox tokenRow = new HBox();
       tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
       tokenColumn.getChildren().add(tokenRow);
+      ++i;
     }
-//    //Token Display for gold tokens
-//    HBox tokenRow = new HBox();
-//    TokenPile deck = new TokenPile(TokenType.values()[i]);
-//    TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck.getType());
-//    Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
-//    Counter cardCounter = new Counter(0);
-//    miniCard.setFill(ColorManager.getColor(deck.getType()));
-//    tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
-//    tokenColumn.getChildren().add(tokenRow);
+    //  Token Display for gold tokens
+    HBox tokenRow = new HBox();
+    TokenPile pile = new TokenPile(TokenType.values()[i]);
+    TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, pile.getType());
+    pile.addListener(pileView);
+    pile.setUpDemo();
+    Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
+    Counter cardCounter = new Counter(0);
+    miniCard.setFill(ColorManager.getColor(pile.getType()));
+    tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
+    tokenColumn.getChildren().add(tokenRow);
     return piles;
   }
 
@@ -236,10 +237,10 @@ public class GameBoardView {
     TotalAssetCountView tokenCountView = new TotalAssetCountView("Total Token Count: 0/10");
     TotalAssetCountView cardCountView = new TotalAssetCountView("Total Card Count: 0");
     TotalAssetCountView prestigeCountView = new TotalAssetCountView("Total Prestige Count: 0");
-    List<TokenPile> userTokenPiles = populateUserInventoryDisplay(tokenColumn, screenSize);
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView();
     populateUserInventoryView(inventoryView, screenSize);
+    List<TokenPile> userTokenPiles = populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
     //just to update the count of total tokens
     for (TokenPile pile : userTokenPiles) {
     	pile.addListener(tokenCountView);
