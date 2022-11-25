@@ -41,8 +41,6 @@ public class CardView extends StackPane implements Observer, Observable {
 		card = Optional.empty();
 		observers = new ArrayList<>();
 		this.setOnMouseClicked(arg0 -> {
-			// TODO onclick notify the deck associated with this row of cards
-			// and add a card and also add this card to the users inventory
 			if (card.isPresent()) {
 				final Card purchasedCard = card.get();
 				hasActivePurchaseAttempt = true;

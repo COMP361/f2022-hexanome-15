@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
  * 
  * Observed by CardView in order to populate the card view with the correct card from the top of the deck. 
  * Observed by DeckView in order to update the card count in a deck
+ * Observes CardColumnView to forward a "deal the card" request and update the DeckView
  */
 public class Deck implements Observable, Observer {
 
