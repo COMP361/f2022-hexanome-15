@@ -13,8 +13,8 @@ import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 
 /**
  * Represents the view of a Splendor Card. 
- * Observed by HandColumnViews, for purpose of adding purchased card to User Inventory
- * Observed by DeckView, for purpose of dealing out another card.
+ * Observed by UserInventory, for purpose of adding purchased card to User Inventory
+ * Observes Deck in order to populate card from top of deck.
  */
 public class CardView extends StackPane implements Observer, Observable {
 
@@ -22,6 +22,7 @@ public class CardView extends StackPane implements Observer, Observable {
 	private final Rectangle outer;
 	private final Rectangle inner;
 	private final ArrayList<Observer> observers;
+	private boolean hasActivePurchaseAttempt = true;
 
 	/**
 	 * Creates a CardView.
@@ -44,9 +45,7 @@ public class CardView extends StackPane implements Observer, Observable {
 			// and add a card and also add this card to the users inventory
 			if (card.isPresent()) {
 				final Card purchasedCard = card.get();
-				card = Optional.empty();
-				inner.setFill(Color.WHITE);
-				outer.setFill(Color.WHITE);
+				hasActivePurchaseAttempt = true;
 				notifyObservers(purchasedCard);
 			}
 		});
@@ -79,12 +78,13 @@ public class CardView extends StackPane implements Observer, Observable {
 		if (card == null) {
 			inner.setFill(Color.WHITE);
 			outer.setFill(Color.WHITE);
-		} else if (this.card.isEmpty()) {
+		} else if (hasActivePurchaseAttempt) {
 			// when the card has an associated png, make that the fill
 			// https://stackoverflow.com/questions/22848829/how-do-i-add-an-image-inside-a-rectangle-or-a-circle-in-javafx
 			this.card = Optional.of(card);
 			inner.setFill(ColorManager.getColor(card.getTokenType()));
 			outer.setFill(ColorManager.getColor(card.getCardType()));
+			hasActivePurchaseAttempt = false;
 		}
 	}
 

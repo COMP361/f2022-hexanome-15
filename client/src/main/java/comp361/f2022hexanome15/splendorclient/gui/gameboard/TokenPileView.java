@@ -7,6 +7,7 @@ import comp361.f2022hexanome15.splendorclient.model.tokens.Token;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 /**
  * Represents the view of a token pile. 
@@ -32,11 +33,11 @@ public class TokenPileView extends Circle implements Observer {
 		return tokenCounter;
 	}
 
-	//only doing this for purchasing action for now, need another one for grabbing action. 
 	@Override
 	public void onAction(boolean bIncrement) {
 		if (bIncrement) {
 			tokenCounter.setText(String.valueOf(tokenCounter.getCount()+1));
+			String.format("Total tokens: %d", tokenCounter.getCount());
 		}
 		else {
 			tokenCounter.setText(String.valueOf(tokenCounter.getCount()-1));

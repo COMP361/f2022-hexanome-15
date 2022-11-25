@@ -12,7 +12,8 @@ import javafx.scene.paint.Color;
 /**
  * Represents a Splendor Token Pile with tokens and type.
  * Observes itself, so that grabbing tokens and buying cards messages can be relayed between the board and the user inventory
- * Observes user inventory so that a valid purchase can be forwarded to the token pile in the user inventory
+ * Observed by TokenPileView to update the counter
+ * Observed by TotalAssetCountView to update the counter
  */
 public class TokenPile implements Iterable<Token>, Observable, Observer {
 	private final ArrayList<Token> tokens;
@@ -40,13 +41,11 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 			for (int i = 0; i < 5; i++) {
 				Token token = new Token(getType());
 				addToken(token);
-				notifyObservers();
 			}
 		} else {
 			for (int i = 0; i < 7; i++) {
 				Token token = new Token(getType());
 				addToken(token);
-				notifyObservers();
 			}
 		}
 	}
@@ -59,7 +58,6 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 			for (int i = 0; i < 3; i++) {
 				Token token = new Token(getType());
 				addToken(token);
-				notifyObservers();
 			}
 		}
 	}
@@ -72,6 +70,7 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 	public void addToken(Token token) {
 		if (token.getType() == type) {
 			tokens.add(token);
+			notifyObservers(true);
 		}
 	}
 
@@ -79,10 +78,16 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 	 * Removes a token from the token pile.
 	 *
 	 */
-	public void removeToken() {
+	public Token removeToken() {
 		if (!tokens.isEmpty()) {
-			tokens.remove(0);
+			//i.e decrement the associated counter
+			notifyObservers(false);
+			Token token = tokens.remove(0);
+			//notify the gameboard pile/ui pile depending on action.
+			notifyObservers(token);
+			return token;
 		}
+		return null;
 	}
 
 	/**
@@ -128,16 +133,22 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 		observers.remove(observer);
 	}
 	
-	private void notifyObservers() {
+	private void notifyObservers(boolean bIncrement) {
 		for (Observer observer : observers) {
-			observer.onAction(false);
+			observer.onAction(bIncrement);
+		}
+	}
+	
+	private void notifyObservers(Token token) {
+		for (Observer observer : observers) {
+			observer.onAction(token);
 		}
 	}
 	
 	@Override
 	public void onAction(Token token) {
 		tokens.add(token);
-		notifyObservers();
+		notifyObservers(true);
 	}
 
 }

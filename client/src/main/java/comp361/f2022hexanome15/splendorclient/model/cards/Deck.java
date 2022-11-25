@@ -8,12 +8,16 @@ import javafx.scene.paint.Color;
 /**
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount
  * and cost This class implements the Flyweight design pattern.
+ * 
+ * Observed by CardView in order to populate the card view with the correct card from the top of the deck. 
+ * Observed by DeckView in order to update the card count in a deck
  */
-public class Deck implements Observable {
+public class Deck implements Observable, Observer {
 
 	private final ArrayList<Card> cards;
 	private final Color color;
 	private final ArrayList<Observer> observers;
+	private final CardType type;
 
 	/**
 	 * Creates a deck made of cards of a certain type.
@@ -23,7 +27,12 @@ public class Deck implements Observable {
 	public Deck(CardType type) {
 		this.color = ColorManager.getColor(type);
 		this.cards = (ArrayList<Card>) Card.makeDeck(type);
+		this.type = type;
 		observers = new ArrayList<>();
+	}
+	
+	public CardType getType() {
+		return type;
 	}
 
 	/**
@@ -52,14 +61,22 @@ public class Deck implements Observable {
 		for (int i = 0; i < 4; ++i) {
 			notifyObservers(cards.get(0), i);
 			cards.remove(0);
+			notifyObservers(false);
 		}
+	}
+	
+	/**
+	 * Sets up the DeckView upon starting the game.
+	 */
+	public void setUp() {
+		deal();
 	}
 
 	/**
 	 * Replaces an empty spot on the board with a card from the deck. This method is
 	 * used after a card is reserved or purchased.
 	 */
-	public void replaceCard() {
+	private void replaceCard() {
 		assert !cards.isEmpty();
 		notifyObservers(cards.get(0));
 		cards.remove(0);
@@ -98,6 +115,23 @@ public class Deck implements Observable {
 	public void notifyObservers(Card card) {
 		for (Observer observer : observers) {
 			observer.onAction(card);
+		}
+	}
+	
+	public void notifyObservers(boolean bIncrement) {
+		if (!bIncrement) {
+			for (Observer observer : observers) {
+				observer.onAction(bIncrement);
+			}
+		}
+	}
+	
+	@Override
+	public void onAction(Card card) {
+		if (card.getCardType() == getType()) {
+			notifyObservers(cards.get(0));
+			cards.remove(0);
+			notifyObservers(false);
 		}
 	}
 

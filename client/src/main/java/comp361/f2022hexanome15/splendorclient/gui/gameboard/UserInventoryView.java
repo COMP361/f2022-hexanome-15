@@ -6,9 +6,9 @@ import java.util.Iterator;
 /**
  * Represents the view of the user's inventory.
  */
-public class UserInventoryView implements Iterable<HandColumnView> {
+public class UserInventoryView implements Iterable<CardColumnView> {
 
-  private final ArrayList<HandColumnView> handColumns;
+  private final ArrayList<CardColumnView> handColumns;
 
   /**
    * Creates a HandView.
@@ -18,7 +18,7 @@ public class UserInventoryView implements Iterable<HandColumnView> {
   }
 
   @Override
-  public Iterator<HandColumnView> iterator() {
+  public Iterator<CardColumnView> iterator() {
     return handColumns.iterator();
   }
 
@@ -27,7 +27,7 @@ public class UserInventoryView implements Iterable<HandColumnView> {
    *
    * @param handColumn the handColumn to be added
    */
-  public void addHandColumn(HandColumnView handColumn) {
+  public void addCardColumn(CardColumnView handColumn) {
     handColumns.add(handColumn);
   }
 

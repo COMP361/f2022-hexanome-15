@@ -10,18 +10,13 @@ import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
 import javafx.scene.layout.Pane;
 
-/*
- * TODO: A big design phase is gonna be adding a hand model to the user inventory model
- * Much like other choices, communication between the HandColumnView
- * and the Hand itself can be done with the listener pattern
- * When this class receives a ping (executes onAction)
- * just notify the hand model and pass the card through that way.
- */
 
 /**
  * Represents the view of the user's inventory.
+ * Observes UserInventory for notification of valid purchase and associated card
+ * Observed by Deck for notification of dealing new card 
  */
-public class HandColumnView extends Pane implements Observer, Observable {
+public class CardColumnView extends Pane implements Observer, Observable {
 
 	// This will be the token type of the bonus associated to the card
 	private final TokenType typeOfColumn;
@@ -35,7 +30,7 @@ public class HandColumnView extends Pane implements Observer, Observable {
 	 * @param type       the type of token bonus of the card
 	 * @param screenSize the size of the screen
 	 */
-	public HandColumnView(TokenType type, Dimension screenSize) {
+	public CardColumnView(TokenType type, Dimension screenSize) {
 		this.typeOfColumn = type;
 		this.screenSize = screenSize;
 		observers = new ArrayList<Observer>();
@@ -45,12 +40,13 @@ public class HandColumnView extends Pane implements Observer, Observable {
 	public void onAction(Card card) {
 		// again in this case we'll just match the type of the bonus token
 		if (card.getTokenType() == typeOfColumn) {
+			//TODO: refactor the cardView class to accept a functional defintion of what to do onclick, for these, do nothing. 
 			CardView cardView = new CardView(screenSize.height / 20f, screenSize.width / 20f);
 			cardView.forceCard(card);
-			// view.setFill(ColorManager.getColor(card.getTokenType()));
 			cardView.setLayoutY(5 * ncardsInColumn);
 			this.getChildren().add(cardView);
 			++ncardsInColumn;
+			notifyObservers(card);
 		}
 	}
 
@@ -62,6 +58,12 @@ public class HandColumnView extends Pane implements Observer, Observable {
 	@Override
 	public void removeListener(Observer observer) {
 		observers.remove(observer);
+	}
+	
+	private void notifyObservers(Card card) {
+		for (Observer observer : observers) {
+			observer.onAction(card);
+		}
 	}
 
 }

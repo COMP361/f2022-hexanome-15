@@ -26,9 +26,6 @@ public class Card {
 	private Color borderColor;
 	private Color fillColor;
 	
-	//a null card to distinguish which action method to call for observers
-	public static Card NULLCARD = new Card(0, 1, TokenType.DIAMOND, CardType.BASE1, 1, new int[] { 0, 0, 1, 0, 0 });
-
 	/**
 	 * Creates a card.
 	 *
