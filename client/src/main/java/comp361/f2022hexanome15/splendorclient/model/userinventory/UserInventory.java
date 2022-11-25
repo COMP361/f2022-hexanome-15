@@ -55,19 +55,6 @@ public class UserInventory implements Observer, Observable {
 		}
 	}
 	
-	//setup method after adding all the tokens, send the count to the token pile view
-	public void setUp() {
-		for (TokenPile pile : tokenPiles) {
-			pile.setUp();
-		}
-	}
-	
-	public void setUpDemo() {
-		for (TokenPile pile : tokenPiles) {
-			pile.setUpDemo();
-		}
-	}
-	
 	//need tighter encapsulation eventually
 	public void addPile(TokenPile pile) {
 		tokenPiles.add(pile);
