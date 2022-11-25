@@ -3,11 +3,11 @@ package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
 import javafx.scene.text.Text;
 
-public class TotalAssetCountView extends Text implements Observer {
+public class TotalTokenCountView extends Text implements Observer {
 	
 	private static int totalTokenCount = 15;
 	
-	public TotalAssetCountView(String startupText) {
+	public TotalTokenCountView(String startupText) {
     setText(startupText);
 	}
 	

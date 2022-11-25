@@ -233,9 +233,9 @@ public class GameBoardView {
     VBox tokenColumn = new VBox();
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
-    TotalAssetCountView tokenCountView = new TotalAssetCountView("Total Token Count: 15");
+    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
-    TotalAssetCountView prestigeCountView = new TotalAssetCountView("Total Prestige Count: 0");
+    TotalPrestigeCountView prestigeCountView = new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView();
     populateUserInventoryView(inventoryView, screenSize);
@@ -244,8 +244,10 @@ public class GameBoardView {
     for (TokenPile pile : userTokenPiles) {
     	pile.addListener(tokenCountView);
     }
+    //Adding cardCountView and prestigeCountView as listeners of cardColumnView
     for (CardColumnView cardColumnView : inventoryView) {
       cardColumnView.addListener(cardCountView);
+      cardColumnView.addListener(prestigeCountView);
     }
     
     //so that we can figure out if we can afford the card, we need to check in UserInventory class. 
