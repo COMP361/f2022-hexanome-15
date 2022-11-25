@@ -24,6 +24,8 @@ public class HandColumnView extends Pane implements Observer {
   private final Dimension screenSize;
   private int ncardsInColumn = 0;
 
+  private final Counter numCardsDisplay;
+
   /**
    * Creates a HandColumnView.
    *
@@ -33,6 +35,7 @@ public class HandColumnView extends Pane implements Observer {
   public HandColumnView(TokenType type, Dimension screenSize) {
     this.typeOfColumn = type;
     this.screenSize = screenSize;
+    this.numCardsDisplay = new Counter(ncardsInColumn);
   }
 
   @Override
@@ -46,6 +49,10 @@ public class HandColumnView extends Pane implements Observer {
       this.getChildren().add(cardView);
       ++ncardsInColumn;
     }
+    numCardsDisplay.setText(Integer.toString(ncardsInColumn));
   }
 
+  public Counter getNumCardsDisplay() {
+    return numCardsDisplay;
+  }
 }
