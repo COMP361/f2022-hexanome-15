@@ -1,16 +1,15 @@
 package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import comp361.f2022hexanome15.splendorclient.model.ColorManager;
 import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
 import comp361.f2022hexanome15.splendorclient.model.cards.Deck;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
