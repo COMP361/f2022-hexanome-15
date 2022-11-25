@@ -1,12 +1,8 @@
 package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
-<<<<<<< HEAD:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/CardColumnView.java
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-
-=======
->>>>>>> gameboard:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/HandColumnView.java
 import comp361.f2022hexanome15.splendorclient.model.cards.Card;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
@@ -22,7 +18,6 @@ import javafx.scene.layout.Pane;
  */
 public class CardColumnView extends Pane implements Observer, Observable {
 
-<<<<<<< HEAD:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/CardColumnView.java
 	// This will be the token type of the bonus associated to the card
 	private final TokenType typeOfColumn;
 	private final Dimension screenSize;
@@ -70,35 +65,5 @@ public class CardColumnView extends Pane implements Observer, Observable {
 			observer.onAction(card);
 		}
 	}
-=======
-  // This will be the token type of the bonus associated to the card
-  private final TokenType typeOfColumn;
-  private final Dimension screenSize;
-  private int ncardsInColumn = 0;
-
-  /**
-   * Creates a HandColumnView.
-   *
-   * @param type       the type of token bonus of the card
-   * @param screenSize the size of the screen
-   */
-  public HandColumnView(TokenType type, Dimension screenSize) {
-    this.typeOfColumn = type;
-    this.screenSize = screenSize;
-  }
-
-  @Override
-  public void onAction(Card card) {
-    // again in this case we'll just match the type of the bonus token
-    if (card.getTokenType() == typeOfColumn) {
-      CardView cardView = new CardView(screenSize.height / 20f, screenSize.width / 20f);
-      cardView.forceCard(card);
-      // view.setFill(ColorManager.getColor(card.getTokenType()));
-      cardView.setLayoutY(5 * ncardsInColumn);
-      this.getChildren().add(cardView);
-      ++ncardsInColumn;
-    }
-  }
->>>>>>> gameboard:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/HandColumnView.java
 
 }
