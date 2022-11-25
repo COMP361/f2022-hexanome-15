@@ -234,7 +234,7 @@ public class GameBoardView {
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
     TotalAssetCountView tokenCountView = new TotalAssetCountView("Total Token Count: 15");
-    TotalAssetCountView cardCountView = new TotalAssetCountView("Total Card Count: 0");
+    TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
     TotalAssetCountView prestigeCountView = new TotalAssetCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView();
@@ -243,6 +243,9 @@ public class GameBoardView {
     //just to update the count of total tokens
     for (TokenPile pile : userTokenPiles) {
     	pile.addListener(tokenCountView);
+    }
+    for (CardColumnView cardColumnView : inventoryView) {
+      cardColumnView.addListener(cardCountView);
     }
     
     //so that we can figure out if we can afford the card, we need to check in UserInventory class. 

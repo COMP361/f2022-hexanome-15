@@ -48,9 +48,15 @@ public class CardColumnView extends Pane implements Observer, Observable {
 			this.getChildren().add(cardView);
 			++ncardsInColumn;
 			notifyObservers(card);
+      notifyObservers(true);
 		}
 		numCardsDisplay.setText(Integer.toString(ncardsInColumn));
 	}
+
+  @Override
+  public  void onAction(boolean bIncrement) {
+    notifyObservers(true);
+  }
 
 	@Override
 	public void addListener(Observer observer) {
@@ -67,6 +73,12 @@ public class CardColumnView extends Pane implements Observer, Observable {
 			observer.onAction(card);
 		}
 	}
+
+  private void notifyObservers(boolean bIncrement) {
+    for (Observer observer : observers) {
+      observer.onAction(bIncrement);
+    }
+  }
 	
 	public Counter getNumCardsDisplay() {
     return numCardsDisplay;
