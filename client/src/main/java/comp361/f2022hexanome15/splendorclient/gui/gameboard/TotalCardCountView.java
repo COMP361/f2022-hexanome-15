@@ -14,7 +14,7 @@ public class TotalCardCountView extends Text implements Observer {
   @Override
   public void onAction(boolean bIncrement) {
     totalCardCount++;
-    String text = String.format("Total Token Count: %d", totalCardCount);
+    String text = String.format("Total Card Count: %d", totalCardCount);
     setText(text);
   }
 }
