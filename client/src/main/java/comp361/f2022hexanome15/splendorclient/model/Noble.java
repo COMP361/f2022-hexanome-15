@@ -5,19 +5,19 @@ package comp361.f2022hexanome15.splendorclient.model;
  */
 public class Noble {
 
-	private int[] cardRequirements;
-	private boolean reserved;
+  private int[] cardRequirements;
+  private boolean reserved;
 
-	public Noble(int[] requirements) {
-		this.cardRequirements = requirements;
-		this.reserved = false;
-	}
+  public Noble(int[] requirements) {
+    this.cardRequirements = requirements;
+    this.reserved = false;
+  }
 
-	public int[] getCardRequirements() {
-		return cardRequirements;
-	}
+  public int[] getCardRequirements() {
+    return cardRequirements;
+  }
 
-	public boolean isReserved() {
-		return reserved;
-	}
+  public boolean isReserved() {
+    return reserved;
+  }
 }

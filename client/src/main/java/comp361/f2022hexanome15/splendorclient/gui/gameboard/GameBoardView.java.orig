@@ -1,17 +1,21 @@
 package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import comp361.f2022hexanome15.splendorclient.lobbyserviceio.Parsejson;
 import comp361.f2022hexanome15.splendorclient.model.ColorManager;
 import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
 import comp361.f2022hexanome15.splendorclient.model.cards.Deck;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
+<<<<<<< HEAD:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoardView.java
 import comp361.f2022hexanome15.splendorclient.model.userinventory.UserInventory;
+=======
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+>>>>>>> gameboard:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoard.java
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -20,12 +24,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.json.JSONObject;
 
 /**
  * Represents the view of the Splendor game board.
  */
 public class GameBoardView {
 
+  private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
   /**
    * Creates a stack pane for the given DeckView and returns it.
@@ -77,7 +83,6 @@ public class GameBoardView {
       decks.get(i).addListener(cardView);
       column.getChildren().add(cardView);
       aggregator.add(cardView);
-      cardView.addListener(deckViews.get(i));
     }
   }
 
@@ -111,6 +116,7 @@ public class GameBoardView {
    * @param tokenRow the row of tokens
    * @param screenSize the size of the screen
    */
+<<<<<<< HEAD:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoardView.java
   private static List<TokenPile> populateGameBoardTokenPiles(HBox tokenRow, Dimension screenSize) {
 	List<TokenPile> piles = new ArrayList<TokenPile>();
     for (int i = 0; i < TokenType.values().length; ++i) {
@@ -122,6 +128,15 @@ public class GameBoardView {
       pile.addListener(pileView);
       pile.setUp();
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
+=======
+  private static void populateTokenPiles(HBox tokenRow, Dimension screenSize, int nPlayers) {
+    for (int i = 0; i < TokenType.values().length; ++i) {
+      VBox tokenColumn = new VBox();
+      TokenPile deck = new TokenPile(TokenType.values()[i]);
+      TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
+      deckView.setUp(nPlayers);
+      tokenColumn.getChildren().addAll(deckView, deckView.getCounter());
+>>>>>>> gameboard:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoard.java
       tokenRow.getChildren().add(tokenColumn);
     }
     return piles;
@@ -170,13 +185,6 @@ public class GameBoardView {
     List<Deck> decks = Arrays.asList(redDeck, yellowDeck, greenDeck);
     decksBox.setLayoutX(screenSize.width / 6f);
     decksBox.setLayoutY(screenSize.height / 20f);
-    DeckView redDeckView = createDeckView(redDeck, screenSize);
-    DeckView yellowDeckView = createDeckView(yellowDeck, screenSize);
-    DeckView greenDeckView = createDeckView(greenDeck, screenSize);
-    ArrayList<DeckView> deckViews = new ArrayList<>();
-    deckViews.add(redDeckView);
-    deckViews.add(yellowDeckView);
-    deckViews.add(greenDeckView);
 
     //building the layout of the faceup cards
     HBox faceupCardsRow = new HBox();
@@ -211,9 +219,18 @@ public class GameBoardView {
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
         getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
-    //ignoring the pretty token display for now
 
+<<<<<<< HEAD:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoardView.java
     //building the user inventory still only one
+=======
+    //Calling Lobby Service to get number of players
+    //TODO: The session id needs to be replaced with the session id of an actual session
+    JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
+    int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
+    final int nPlayers = players.length;
+
+    //building the user inventory
+>>>>>>> gameboard:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoard.java
     float yoffset = 6 * screenSize.height / 10f;
     float xoffset = screenSize.width / 6f;
     HBox userInventoryView = new HBox();
@@ -266,8 +283,12 @@ public class GameBoardView {
     tokenRow.setSpacing(50);
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
     tokenRow.setLayoutX(xoffset);
+<<<<<<< HEAD:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoardView.java
     List<TokenPile> gameboardPiles = populateGameBoardTokenPiles(tokenRow, screenSize);
     linkGameboardAndUserInventoryTokenPiles(gameboardPiles, userTokenPiles);
+=======
+    populateTokenPiles(tokenRow, screenSize, nPlayers);
+>>>>>>> gameboard:client/src/main/java/comp361/f2022hexanome15/splendorclient/gui/gameboard/GameBoard.java
 
     //adding to the scene graph
     Pane root = new Pane();
