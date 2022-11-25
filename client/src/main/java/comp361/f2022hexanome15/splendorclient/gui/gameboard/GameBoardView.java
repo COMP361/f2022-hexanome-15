@@ -77,7 +77,6 @@ public class GameBoardView {
       decks.get(i).addListener(cardView);
       column.getChildren().add(cardView);
       aggregator.add(cardView);
-      cardView.addListener(deckViews.get(i));
     }
   }
 
@@ -170,13 +169,7 @@ public class GameBoardView {
     List<Deck> decks = Arrays.asList(redDeck, yellowDeck, greenDeck);
     decksBox.setLayoutX(screenSize.width / 6f);
     decksBox.setLayoutY(screenSize.height / 20f);
-    DeckView redDeckView = createDeckView(redDeck, screenSize);
-    DeckView yellowDeckView = createDeckView(yellowDeck, screenSize);
-    DeckView greenDeckView = createDeckView(greenDeck, screenSize);
-    ArrayList<DeckView> deckViews = new ArrayList<>();
-    deckViews.add(redDeckView);
-    deckViews.add(yellowDeckView);
-    deckViews.add(greenDeckView);
+
 
     //building the layout of the faceup cards
     HBox faceupCardsRow = new HBox();
