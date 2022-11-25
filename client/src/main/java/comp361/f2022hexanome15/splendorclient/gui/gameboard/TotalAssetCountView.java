@@ -5,10 +5,10 @@ import javafx.scene.text.Text;
 
 public class TotalAssetCountView extends Text implements Observer {
 	
-	private static int totalTokenCount = 0;
+	private static int totalTokenCount = 15;
 	
 	public TotalAssetCountView(String startupText) {
-		setText(startupText);
+    setText(startupText);
 	}
 	
 	@Override

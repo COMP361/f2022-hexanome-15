@@ -148,11 +148,11 @@ public class Card {
 		cards.add(new Card(8, 1, TokenType.RUBY, CardType.BASE1, 1, new int[] { 1, 0, 0, 0, 0 }));
 		cards.add(new Card(9, 1, TokenType.ONYX, CardType.BASE1, 1, new int[] { 0, 1, 0, 0, 0 }));
 
-		cards.add(new Card(10, 1, TokenType.DIAMOND, CardType.BASE1, 1, new int[] { 0, 0, 4, 0, 0 }));
-		cards.add(new Card(11, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new int[] { 0, 0, 0, 4, 0 }));
-		cards.add(new Card(12, 1, TokenType.EMERALD, CardType.BASE1, 1, new int[] { 0, 0, 0, 0, 4 }));
-		cards.add(new Card(13, 1, TokenType.RUBY, CardType.BASE1, 1, new int[] { 4, 0, 0, 0, 0 }));
-		cards.add(new Card(14, 1, TokenType.ONYX, CardType.BASE1, 1, new int[] { 0, 4, 0, 0, 0 }));
+		cards.add(new Card(10, 1, TokenType.DIAMOND, CardType.BASE1, 1, new int[] { 0, 0, 1, 0, 0 }));
+		cards.add(new Card(11, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new int[] { 0, 0, 0, 1, 0 }));
+		cards.add(new Card(12, 1, TokenType.EMERALD, CardType.BASE1, 1, new int[] { 0, 0, 0, 0, 1 }));
+		cards.add(new Card(13, 1, TokenType.RUBY, CardType.BASE1, 1, new int[] { 1, 0, 0, 0, 0 }));
+		cards.add(new Card(14, 1, TokenType.ONYX, CardType.BASE1, 1, new int[] { 0, 1, 0, 0, 0 }));
 
 		cards.add(new Card(15, 1, TokenType.DIAMOND, CardType.BASE1, 1, new int[] { 0, 0, 1, 0, 0 }));
 		cards.add(new Card(16, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new int[] { 0, 0, 0, 1, 0 }));

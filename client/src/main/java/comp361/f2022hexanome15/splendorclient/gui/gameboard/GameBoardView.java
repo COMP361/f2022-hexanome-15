@@ -65,7 +65,6 @@ public class GameBoardView {
    * @param column the column
    * @param screenSize the size of the screen
    * @param decks the list of decks that are used for this game
-   * @param deckViews the list of deckViews that represent the decks in this game
    * @param aggregator the list of cardViews
    */
   private static void populateCardColumn(VBox column, Dimension screenSize,
@@ -234,7 +233,7 @@ public class GameBoardView {
     VBox tokenColumn = new VBox();
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
-    TotalAssetCountView tokenCountView = new TotalAssetCountView("Total Token Count: 0/10");
+    TotalAssetCountView tokenCountView = new TotalAssetCountView("Total Token Count: 15");
     TotalAssetCountView cardCountView = new TotalAssetCountView("Total Card Count: 0");
     TotalAssetCountView prestigeCountView = new TotalAssetCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);

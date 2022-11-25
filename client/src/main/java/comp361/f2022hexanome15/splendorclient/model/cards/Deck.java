@@ -58,12 +58,13 @@ public class Deck implements Observable, Observer {
 	 * Deals cards in the deck to the board.
 	 */
 	public void deal() {
-		assert !cards.isEmpty();
-		for (int i = 0; i < 4; ++i) {
-			notifyObservers(cards.get(0), i);
-			cards.remove(0);
-			notifyObservers(false);
-		}
+		if (!cards.isEmpty()) {
+      for (int i = 0; i < 4; ++i) {
+        notifyObservers(cards.get(0), i);
+        cards.remove(0);
+        notifyObservers(false);
+      }
+    }
 	}
 	
 	/**
@@ -78,9 +79,10 @@ public class Deck implements Observable, Observer {
 	 * used after a card is reserved or purchased.
 	 */
 	private void replaceCard() {
-		assert !cards.isEmpty();
-		notifyObservers(cards.get(0));
-		cards.remove(0);
+    if (!cards.isEmpty()) {
+      notifyObservers(cards.get(0));
+      cards.remove(0);
+    }
 	}
 
 	@Override

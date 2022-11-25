@@ -21,7 +21,7 @@ public class TokenPileView extends Circle implements Observer {
 	 * Creates a TokenPileView.
 	 *
 	 * @param radius    the radius of the circle used to represent the token pile
-	 * @param tokenPile the token pile that is represented by this token pile view
+	 * @param type the type of tokens in the token pile
 	 */
 	public TokenPileView(float radius, TokenType type) {
 		super(radius);
