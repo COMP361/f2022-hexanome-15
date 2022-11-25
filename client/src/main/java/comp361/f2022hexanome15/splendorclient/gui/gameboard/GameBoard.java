@@ -89,18 +89,30 @@ public class GameBoard {
    * @param tokenColumn the column of tokens
    * @param screenSize the size of the screen
    */
-  private static void populateTokenDisplay(VBox tokenColumn, Dimension screenSize) {
-    for (int i = 0; i < TokenType.values().length; ++i) {
+  private static void populateTokenDisplay(VBox tokenColumn, HandView handView, Dimension screenSize) {
+    int i = 0;
+    for (HandColumnView handColumnView : handView) {
       HBox tokenRow = new HBox();
       TokenPile deck = new TokenPile(TokenType.values()[i]);
       TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
       deckView.setUpDemo();
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
+      Counter cardCounter = handColumnView.getNumCardsDisplay();
       miniCard.setFill(ColorManager.getColor(deck.getType()));
-      Counter cardCounter = new Counter(0);
       tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
       tokenColumn.getChildren().add(tokenRow);
+      i++;
     }
+    //Token Display for gold tokens
+    HBox tokenRow = new HBox();
+    TokenPile deck = new TokenPile(TokenType.values()[i]);
+    TokenPileView deckView = new TokenPileView((float) screenSize.height / 55f, deck);
+    deckView.setUpDemo();
+    Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
+    Counter cardCounter = new Counter(0);
+    miniCard.setFill(ColorManager.getColor(deck.getType()));
+    tokenRow.getChildren().addAll(deckView, deckView.getCounter(), miniCard, cardCounter);
+    tokenColumn.getChildren().add(tokenRow);
   }
 
   /**
@@ -184,9 +196,9 @@ public class GameBoard {
 
     //Calling Lobby Service to get number of players
     //TODO: The session id needs to be replaced with the session id of an actual session
-    JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
-    int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
-    final int nPlayers = players.length;
+    //JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
+   // int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
+    final int nPlayers = 4;
 
     //building the user inventory
     float yoffset = 6 * screenSize.height / 10f;
@@ -197,7 +209,7 @@ public class GameBoard {
     VBox tokenColumn = new VBox();
     tokenColumn.setSpacing(3);
     userInventory.getChildren().add(tokenColumn);
-    populateTokenDisplay(tokenColumn, screenSize);
+
     //these will have to be more sophisticated or at least listeners sometime soon
     Text totalTokens = new Text("Tokens: 0/10");
     Text totalCards = new Text("Cards: 0");
@@ -213,6 +225,7 @@ public class GameBoard {
     for (HandColumnView handColumn : handView) {
       userInventory.getChildren().add(handColumn);
     }
+    populateTokenDisplay(tokenColumn, handView, screenSize);
     userInventory.setSpacing(10);
 
     //Temporary display for noble cards
