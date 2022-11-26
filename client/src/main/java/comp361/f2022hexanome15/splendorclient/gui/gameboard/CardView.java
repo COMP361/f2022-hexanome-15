@@ -42,11 +42,18 @@ public class CardView extends StackPane implements Observer, Observable {
 		observers = new ArrayList<>();
 		this.setOnMouseClicked(arg0 -> {
 			if (card.isPresent()) {
-				final Card purchasedCard = card.get();
 				hasActivePurchaseAttempt = true;
-				notifyObservers(purchasedCard);
+				notifyObservers();
 			}
 		});
+	}
+	
+	public Optional<Card> getCard() {
+	  return card;
+	}
+	
+	public void revokePurchaseAttempt() {
+	  hasActivePurchaseAttempt = false;
 	}
 
 	/**
@@ -65,9 +72,9 @@ public class CardView extends StackPane implements Observer, Observable {
 	 *
 	 * @param card The card that was purchased or reserved
 	 */
-	public void notifyObservers(Card card) {
+	public void notifyObservers() {
 		for (Observer observer : observers) {
-			observer.onAction(card);
+			observer.onAction(this);
 		}
 	}
 

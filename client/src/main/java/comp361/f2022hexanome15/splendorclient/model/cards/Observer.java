@@ -1,5 +1,6 @@
 package comp361.f2022hexanome15.splendorclient.model.cards;
 
+import comp361.f2022hexanome15.splendorclient.gui.gameboard.CardView;
 import comp361.f2022hexanome15.splendorclient.model.tokens.Token;
 
 /**
@@ -17,5 +18,9 @@ public interface Observer {
   
   default void onAction(boolean bIncrement) {
 	  
+  }
+  
+  default void onAction(CardView cardView) {
+    
   }
 }

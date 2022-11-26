@@ -1,5 +1,6 @@
 package comp361.f2022hexanome15.splendorclient.model.userinventory;
 
+import comp361.f2022hexanome15.splendorclient.gui.gameboard.CardView;
 import comp361.f2022hexanome15.splendorclient.model.cards.Card;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
@@ -16,40 +17,47 @@ import java.util.List;
  */
 public class UserInventory implements Observer, Observable {
 
-  ArrayList<Card> cards;
-  ArrayList<Observer> observers;
-  List<TokenPile> tokenPiles;
+  private ArrayList<Card> cards;
+  private ArrayList<Observer> observers;
+  private List<TokenPile> tokenPiles;
+  private int playerNumber;
   
   /**
    * Initialize User Inventory Model.
    * 
    * @param pile
    */
-  public UserInventory(List<TokenPile> pile) {
+  public UserInventory(List<TokenPile> pile, int number) {
     cards = new ArrayList<Card>();
     tokenPiles = List.copyOf(pile);
     observers = new ArrayList<Observer>();
+    playerNumber = number;
+  }
+  
+  public int getPlayerNumber() {
+    return playerNumber;
   }
 
   @Override
-  public void onAction(Card card) {
+  public void onAction(CardView cardView) {
     boolean affordable = true;
-    for (int i = 0; i < card.getCost().length; i++) {
+    for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
       for (TokenPile tokenPile : tokenPiles) {
         if (tokenPile.getType().ordinal() == i) {
-          if (card.getCost()[i] > 0 && tokenPile.getSize() < card.getCost()[i]) {
+          if (cardView.getCard().get().getCost()[i] > 0 && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
             affordable = false;
           }
         }
       }
     }
-if (affordable) {
-  notifyObservers(card);
-      for (int i = 0; i < card.getCost().length; i++) {
+    if (affordable) {
+      notifyObservers(cardView.getCard().get());
+      cards.add(cardView.getCard().get());
+      for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
         for (TokenPile tokenPile : tokenPiles) {
           if (tokenPile.getType().ordinal() == i) {
-            if (card.getCost()[i] > 0 && tokenPile.getSize() >= card.getCost()[i]) {
-              for (int j = 0; j < card.getCost()[i]; j++) {
+            if (cardView.getCard().get().getCost()[i] > 0 && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
+              for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
                 tokenPile.removeToken();
               }
             }
@@ -57,6 +65,9 @@ if (affordable) {
         }
       }
 	  }
+    else {
+      cardView.revokePurchaseAttempt();
+    }
 	}
 	
 	//need tighter encapsulation eventually

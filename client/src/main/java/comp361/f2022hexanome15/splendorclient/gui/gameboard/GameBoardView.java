@@ -144,14 +144,16 @@ public class GameBoardView {
    * @param gameBoardPiles
    * @param userInventoryPiles
    */
-  private static void linkGameboardAndUserInventoryTokenPiles(List<TokenPile> gameBoardPiles, List<TokenPile> userInventoryPiles) {
-	for (TokenPile gameBoardPile : gameBoardPiles) {
-		for (TokenPile userInventoryPile : userInventoryPiles) {
-			if (userInventoryPile.getType() == gameBoardPile.getType()) {
-				userInventoryPile.addListener(gameBoardPile);
-			}
-		}
-	}
+  private static void linkGameboardAndUserInventoryTokenPiles(List<TokenPile> gameBoardPiles, List<List<TokenPile>> allUserInventoryPiles) {
+  	for (TokenPile gameBoardPile : gameBoardPiles) {
+  	  for (List<TokenPile> userInventoryPiles : allUserInventoryPiles) {
+    		for (TokenPile userInventoryPile : userInventoryPiles) {
+    			if (userInventoryPile.getType() == gameBoardPile.getType()) {
+    				userInventoryPile.addListener(gameBoardPile);
+    			}
+    		}
+  	  }
+  	}
   }
 
   /**
@@ -165,7 +167,60 @@ public class GameBoardView {
       handView.addCardColumn(new CardColumnView(TokenType.values()[i], screenSize));
     }
   }
-
+  
+  
+  private static HBox buildAllUserInventoryViews(int nPlayer, ArrayList<CardView> cardCardViewAggregator, List<Deck> decks, Dimension screenSize,
+      List<List<TokenPile>> out_tokenPile) {
+    //building the user inventory
+    float yoffset = 6 * screenSize.height / 10f;
+    float xoffset = screenSize.width * (nPlayer + 1) / 6f;
+    if (nPlayer > 0) {
+      xoffset = screenSize.width * (nPlayer + 2) / 6f;
+    }
+    HBox userInventoryView = new HBox();
+    userInventoryView.setLayoutY(yoffset);
+    userInventoryView.setLayoutX(xoffset);
+    VBox tokenColumn = new VBox();
+    tokenColumn.setSpacing(3);
+    userInventoryView.getChildren().add(tokenColumn);
+    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
+    TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
+    TotalPrestigeCountView prestigeCountView = new TotalPrestigeCountView("Total Prestige Count: 0");
+    tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
+    UserInventoryView inventoryView = new UserInventoryView();
+    populateUserInventoryView(inventoryView, screenSize);
+    List<TokenPile> tokenPile = populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
+    //just to update the count of total tokens
+    for (TokenPile pile : tokenPile) {
+      pile.addListener(tokenCountView);
+    }
+    //Adding cardCountView and prestigeCountView as listeners of cardColumnView
+    for (CardColumnView cardColumnView : inventoryView) {
+      cardColumnView.addListener(cardCountView);
+      cardColumnView.addListener(prestigeCountView);
+    }
+    
+    //so that we can figure out if we can afford the card, we need to check in UserInventory class. 
+    UserInventory userInventory = new UserInventory(tokenPile, nPlayer);
+    //i.e only register click actions for this user inventory
+    if (nPlayer == 0) {
+      for (CardView cardView : cardCardViewAggregator) {
+          cardView.addListener(userInventory);
+      }
+    }
+    for (CardColumnView cardColumn : inventoryView) {
+      userInventoryView.getChildren().add(cardColumn);
+    }
+    userInventoryView.setSpacing(10);
+    for (CardColumnView cardColumn : inventoryView) {
+      userInventory.addListener(cardColumn);
+      for (Deck deck : decks) {
+        cardColumn.addListener(deck);
+      }
+    }
+    out_tokenPile.add(tokenPile);
+    return userInventoryView;
+  }
   /**
    * Initializes the game board.
    */
@@ -192,13 +247,13 @@ public class GameBoardView {
     VBox faceupCardsSecondColumn = new VBox();
     VBox faceupCardsThirdColumn = new VBox();
     VBox faceupCardsFourthColumn = new VBox();
-    ArrayList<CardView> cardCardViewAggregator = new ArrayList<>();
+    ArrayList<CardView> cardViewAggregator = new ArrayList<>();
     List<VBox> columns = Arrays.asList(faceupCardsFirstColumn, faceupCardsSecondColumn,
         faceupCardsThirdColumn, faceupCardsFourthColumn);
 
     for (VBox column : columns) {
       column.setSpacing(3);
-      populateCardColumn(column, screenSize, decks, cardCardViewAggregator);
+      populateCardColumn(column, screenSize, decks, cardViewAggregator);
     }
     faceupCardsRow.getChildren().addAll(columns);
     for (Deck deck : decks) {
@@ -222,49 +277,15 @@ public class GameBoardView {
     //TODO: The session id needs to be replaced with the session id of an actual session
 //    JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
 //    int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
-    final int nPlayers = 4;
-
-    //building the user inventory
-    float yoffset = 6 * screenSize.height / 10f;
-    float xoffset = screenSize.width / 6f;
-    HBox userInventoryView = new HBox();
-    userInventoryView.setLayoutY(yoffset);
-    userInventoryView.setLayoutX(xoffset);
-    VBox tokenColumn = new VBox();
-    tokenColumn.setSpacing(3);
-    userInventoryView.getChildren().add(tokenColumn);
-    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
-    TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
-    TotalPrestigeCountView prestigeCountView = new TotalPrestigeCountView("Total Prestige Count: 0");
-    tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
-    UserInventoryView inventoryView = new UserInventoryView();
-    populateUserInventoryView(inventoryView, screenSize);
-    List<TokenPile> userTokenPiles = populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
-    //just to update the count of total tokens
-    for (TokenPile pile : userTokenPiles) {
-    	pile.addListener(tokenCountView);
-    }
-    //Adding cardCountView and prestigeCountView as listeners of cardColumnView
-    for (CardColumnView cardColumnView : inventoryView) {
-      cardColumnView.addListener(cardCountView);
-      cardColumnView.addListener(prestigeCountView);
+    final int nPlayers = 2;
+    //building all user inventories
+    List<List<TokenPile>> allUserTokenPiles = new ArrayList<List<TokenPile>>();
+    List<HBox> allUserInventoryViews = new ArrayList<HBox>();
+    for (int i = 0; i < nPlayers; ++i) {
+      HBox userInventoryView = buildAllUserInventoryViews(i, cardViewAggregator, decks, screenSize, allUserTokenPiles);
+      allUserInventoryViews.add(userInventoryView);
     }
     
-    //so that we can figure out if we can afford the card, we need to check in UserInventory class. 
-    UserInventory userInventory = new UserInventory(userTokenPiles);
-    for (CardView cardView : cardCardViewAggregator) {
-        cardView.addListener(userInventory);
-    }
-    for (CardColumnView cardColumn : inventoryView) {
-      userInventoryView.getChildren().add(cardColumn);
-    }
-    userInventoryView.setSpacing(10);
-    for (CardColumnView cardColumn : inventoryView) {
-    	userInventory.addListener(cardColumn);
-    	for (Deck deck : decks) {
-    		cardColumn.addListener(deck);
-    	}
-    }
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards
@@ -281,13 +302,14 @@ public class GameBoardView {
     HBox tokenRow = new HBox();
     tokenRow.setSpacing(50);
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
-    tokenRow.setLayoutX(xoffset);
+    tokenRow.setLayoutX(screenSize.width / 6f);
     List<TokenPile> gameboardPiles = populateGameBoardTokenPiles(tokenRow, screenSize, nPlayers);
-    linkGameboardAndUserInventoryTokenPiles(gameboardPiles, userTokenPiles);
+    linkGameboardAndUserInventoryTokenPiles(gameboardPiles, allUserTokenPiles);
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, faceupCardsRow, userInventoryView, nobleCards, tokenRow);
+    root.getChildren().addAll(decksBox, faceupCardsRow, nobleCards, tokenRow);
+    root.getChildren().addAll(allUserInventoryViews);
     return new Scene(root, screenSize.width, screenSize.height);
   }
 
