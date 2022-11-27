@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * Represents the inventory of a Splendor player.
  * Contains cards and token piles.
- * Observes CardView to assess whether a card is affordable
- * Observed by HandColumnView to add the card to the inventory
+ * Observes CardView to assess whether a card is affordable.
+ * Observed by HandColumnView to add the card to the inventory.
  */
 public class UserInventory implements Observer, Observable {
 
@@ -21,11 +21,12 @@ public class UserInventory implements Observer, Observable {
   private ArrayList<Observer> observers;
   private List<TokenPile> tokenPiles;
   private int playerNumber;
-  
+
   /**
    * Initialize User Inventory Model.
-   * 
-   * @param pile
+   *
+   * @param pile The token piles in a user's inventory
+   * @param number The player number of this user
    */
   public UserInventory(List<TokenPile> pile, int number) {
     cards = new ArrayList<Card>();
@@ -33,7 +34,7 @@ public class UserInventory implements Observer, Observable {
     observers = new ArrayList<Observer>();
     playerNumber = number;
   }
-  
+
   public int getPlayerNumber() {
     return playerNumber;
   }
@@ -44,7 +45,8 @@ public class UserInventory implements Observer, Observable {
     for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
       for (TokenPile tokenPile : tokenPiles) {
         if (tokenPile.getType().ordinal() == i) {
-          if (cardView.getCard().get().getCost()[i] > 0 && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
+          if (cardView.getCard().get().getCost()[i] > 0
+                && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
             affordable = false;
           }
         }
@@ -56,7 +58,8 @@ public class UserInventory implements Observer, Observable {
       for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
         for (TokenPile tokenPile : tokenPiles) {
           if (tokenPile.getType().ordinal() == i) {
-            if (cardView.getCard().get().getCost()[i] > 0 && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
+            if (cardView.getCard().get().getCost()[i] > 0
+                  && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
               for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
                 tokenPile.removeToken();
               }
@@ -64,31 +67,30 @@ public class UserInventory implements Observer, Observable {
           }
         }
       }
-	  }
-    else {
+    } else {
       cardView.revokePurchaseAttempt();
     }
-	}
-	
-	//need tighter encapsulation eventually
-	public void addPile(TokenPile pile) {
-	  tokenPiles.add(pile);
-	}
+  }
 
-	@Override
-	public void addListener(Observer observer) {
-		observers.add(observer);
-	}
+  //need tighter encapsulation eventually
+  public void addPile(TokenPile pile) {
+    tokenPiles.add(pile);
+  }
 
-	@Override
-	public void removeListener(Observer observer) {
-		observers.remove(observer);
-	}
-	
-	private void notifyObservers(Card card) {
-		for (Observer observer : observers) {
-			observer.onAction(card);
-		}
-	}
+  @Override
+  public void addListener(Observer observer) {
+    observers.add(observer);
+  }
+
+  @Override
+  public void removeListener(Observer observer) {
+    observers.remove(observer);
+  }
+
+  private void notifyObservers(Card card) {
+    for (Observer observer : observers) {
+      observer.onAction(card);
+    }
+  }
 
 }

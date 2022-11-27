@@ -43,11 +43,12 @@ public class GameBoardView {
   /**
    * Creates a DeckView for the given deck and returns it.
    *
-   * @param deck the deck that is being represented by the DeckView
+   * @param deck       the deck that is being represented by the DeckView
    * @param screenSize the size of the screen
    */
   private static DeckView createDeckView(Deck deck, Dimension screenSize) {
-    return new DeckView(screenSize.height / 15f, screenSize.width / 15f, deck.getSize(), deck.getColor());
+    return new DeckView(screenSize.height / 15f, screenSize.width / 15f,
+      deck.getSize(), deck.getColor());
   }
 
   /**
@@ -62,9 +63,9 @@ public class GameBoardView {
   /**
    * Creates a column of cards for the game board view.
    *
-   * @param column the column
+   * @param column     the column
    * @param screenSize the size of the screen
-   * @param decks the list of decks that are used for this game
+   * @param decks      the list of decks that are used for this game
    * @param aggregator the list of cardViews
    */
   private static void populateCardColumn(VBox column, Dimension screenSize,
@@ -83,9 +84,11 @@ public class GameBoardView {
    * Creates a token display for the player's inventory.
    *
    * @param tokenColumn the column of tokens
-   * @param screenSize the size of the screen
+   * @param screenSize  the size of the screen
    */
-  private static List<TokenPile> populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize, final UserInventoryView userInventoryView) {
+  private static List<TokenPile>
+        populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize,
+                               final UserInventoryView userInventoryView) {
     List<TokenPile> piles = new ArrayList<TokenPile>();
     int i = 0;
     for (CardColumnView cardColumn : userInventoryView) {
@@ -103,7 +106,7 @@ public class GameBoardView {
       ++i;
     }
     //  Token Display for gold tokens
-    HBox tokenRow = new HBox();
+    final HBox tokenRow = new HBox();
     TokenPile pile = new TokenPile(TokenType.values()[i]);
     TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, pile.getType());
     pile.addListener(pileView);
@@ -119,47 +122,51 @@ public class GameBoardView {
   /**
    * Populates the token piles for the game board view.
    *
-   * @param tokenRow the row of tokens
+   * @param tokenRow   the row of tokens
    * @param screenSize the size of the screen
    */
-  private static List<TokenPile> populateGameBoardTokenPiles(HBox tokenRow, Dimension screenSize, int nPlayers) {
-	List<TokenPile> piles = new ArrayList<TokenPile>();
+  private static List<TokenPile> populateGameBoardTokenPiles(HBox tokenRow,
+                                                             Dimension screenSize, int numPlayers) {
+    List<TokenPile> piles = new ArrayList<TokenPile>();
     for (int i = 0; i < TokenType.values().length; ++i) {
-      VBox tokenColumn = new VBox();
+      final VBox tokenColumn = new VBox();
       TokenPile pile = new TokenPile(TokenType.values()[i]);
       piles.add(pile);
-      //TODO: make these a new kind of view for the game board displays (populate the piles instead of removing the piles)
+      // TODO: make these a new kind of view for the game board displays
+      //  (populate the piles instead of removing the piles)
       TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, pile.getType());
       pile.addListener(pileView);
-      pile.setUp(nPlayers);
+      pile.setUp(numPlayers);
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
     }
     return piles;
   }
-  
+
   /**
-   * The gameboard token piles and the user inventory token piles need to be in communication
-   * 
-   * @param gameBoardPiles
-   * @param userInventoryPiles
+   * The Gameboard token piles and the user inventory token piles need to be in communication.
+   *
+   * @param gameBoardPiles The token piles on the gameboard
+   * @param allUserInventoryPiles The token piles in every player's inventory
    */
-  private static void linkGameboardAndUserInventoryTokenPiles(List<TokenPile> gameBoardPiles, List<List<TokenPile>> allUserInventoryPiles) {
-  	for (TokenPile gameBoardPile : gameBoardPiles) {
-  	  for (List<TokenPile> userInventoryPiles : allUserInventoryPiles) {
-    		for (TokenPile userInventoryPile : userInventoryPiles) {
-    			if (userInventoryPile.getType() == gameBoardPile.getType()) {
-    				userInventoryPile.addListener(gameBoardPile);
-    			}
-    		}
-  	  }
-  	}
+  private static void
+        linkGameboardAndUserInventoryTokenPiles(List<TokenPile> gameBoardPiles,
+                                                List<List<TokenPile>> allUserInventoryPiles) {
+    for (TokenPile gameBoardPile : gameBoardPiles) {
+      for (List<TokenPile> userInventoryPiles : allUserInventoryPiles) {
+        for (TokenPile userInventoryPile : userInventoryPiles) {
+          if (userInventoryPile.getType() == gameBoardPile.getType()) {
+            userInventoryPile.addListener(gameBoardPile);
+          }
+        }
+      }
+    }
   }
 
   /**
    * Populates the view of the user's inventory.
    *
-   * @param handView the view the user's inventory
+   * @param handView   the view the user's inventory
    * @param screenSize the size of the screen
    */
   private static void populateUserInventoryView(UserInventoryView handView, Dimension screenSize) {
@@ -167,15 +174,17 @@ public class GameBoardView {
       handView.addCardColumn(new CardColumnView(TokenType.values()[i], screenSize));
     }
   }
-  
-  
-  private static HBox buildAllUserInventoryViews(int nPlayer, ArrayList<CardView> cardCardViewAggregator, List<Deck> decks, Dimension screenSize,
-      List<List<TokenPile>> out_tokenPile) {
+
+
+  private static HBox buildAllUserInventoryViews(int numPlayer,
+                                                 ArrayList<CardView> cardCardViewAggregator,
+                                                 List<Deck> decks, Dimension screenSize,
+                                                 List<List<TokenPile>> outTokenPile) {
     //building the user inventory
     float yoffset = 6 * screenSize.height / 10f;
-    float xoffset = screenSize.width * (nPlayer + 1) / 6f;
-    if (nPlayer > 0) {
-      xoffset = screenSize.width * (nPlayer + 2) / 6f;
+    float xoffset = screenSize.width * (numPlayer + 1) / 6f;
+    if (numPlayer > 0) {
+      xoffset = screenSize.width * (numPlayer + 2) / 6f;
     }
     HBox userInventoryView = new HBox();
     userInventoryView.setLayoutY(yoffset);
@@ -185,11 +194,13 @@ public class GameBoardView {
     userInventoryView.getChildren().add(tokenColumn);
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
-    TotalPrestigeCountView prestigeCountView = new TotalPrestigeCountView("Total Prestige Count: 0");
+    TotalPrestigeCountView prestigeCountView =
+        new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView();
     populateUserInventoryView(inventoryView, screenSize);
-    List<TokenPile> tokenPile = populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
+    List<TokenPile> tokenPile =
+        populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
     //just to update the count of total tokens
     for (TokenPile pile : tokenPile) {
       pile.addListener(tokenCountView);
@@ -199,13 +210,13 @@ public class GameBoardView {
       cardColumnView.addListener(cardCountView);
       cardColumnView.addListener(prestigeCountView);
     }
-    
+
     //so that we can figure out if we can afford the card, we need to check in UserInventory class. 
-    UserInventory userInventory = new UserInventory(tokenPile, nPlayer);
+    UserInventory userInventory = new UserInventory(tokenPile, numPlayer);
     //i.e only register click actions for this user inventory
-    if (nPlayer == 0) {
+    if (numPlayer == 0) {
       for (CardView cardView : cardCardViewAggregator) {
-          cardView.addListener(userInventory);
+        cardView.addListener(userInventory);
       }
     }
     for (CardColumnView cardColumn : inventoryView) {
@@ -218,9 +229,10 @@ public class GameBoardView {
         cardColumn.addListener(deck);
       }
     }
-    out_tokenPile.add(tokenPile);
+    outTokenPile.add(tokenPile);
     return userInventoryView;
   }
+
   /**
    * Initializes the game board.
    */
@@ -259,8 +271,9 @@ public class GameBoardView {
     for (Deck deck : decks) {
       deck.setUp();
     }
-    
-    //building the deck views. NOTE: this has to be done after populateCardColumn due to ridiculous design on my part
+
+    // building the deck views.
+    // NOTE: this has to be done after populateCardColumn due to ridiculous design on my part
     DeckView redDeckView = createDeckView(redDeck, screenSize);
     redDeck.addListener(redDeckView);
     DeckView yellowDeckView = createDeckView(yellowDeck, screenSize);
@@ -275,17 +288,18 @@ public class GameBoardView {
 
     //Calling Lobby Service to get number of players
     //TODO: The session id needs to be replaced with the session id of an actual session
-//    JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
-//    int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
+    //JSONObject sessionInfo = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getSessionInfo(1);
+    //int[] players = (int[]) Parsejson.PARSE_JSON.getFromKey(sessionInfo, "players");
     final int nPlayers = 2;
     //building all user inventories
     List<List<TokenPile>> allUserTokenPiles = new ArrayList<List<TokenPile>>();
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
-      HBox userInventoryView = buildAllUserInventoryViews(i, cardViewAggregator, decks, screenSize, allUserTokenPiles);
+      HBox userInventoryView =
+          buildAllUserInventoryViews(i, cardViewAggregator, decks, screenSize, allUserTokenPiles);
       allUserInventoryViews.add(userInventoryView);
     }
-    
+
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards

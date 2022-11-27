@@ -1,11 +1,9 @@
 package comp361.f2022hexanome15.splendorclient.gui.lobbyservice;
 
-
-import java.io.IOException;
-import java.util.Optional;
-
 import comp361.f2022hexanome15.splendorclient.gui.gameboard.GameBoardView;
 import comp361.f2022hexanome15.splendorclient.gui.scenemanager.SceneManager;
+import java.io.IOException;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
