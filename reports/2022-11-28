@@ -1,0 +1,103 @@
+# Weekly Report, COMP361
+
+## Meta Information
+
+### Group
+
+ * Hexanome-*15*
+ * *java*
+
+### Team Members
+
+ * *Berardelli, Lawrence*
+ * *Fiore, Sofia*
+ * *Hayden, Zach*
+ * *Krishnan, Ojas*
+ * *Léon, Jeff*
+ * *Sklokin, Svyatoslav*
+
+## Status
+
+### 3 most outstanding tasks scheduled until the next report, per team member
+
+* *Svyatoslav Sklokin*
+   * Creating/joining sessions
+   * Launching the server
+   * Sharing session info across all users
+ * *Zachary Hayden*
+   * Changing backend file structure
+   * Backend REST interface
+   * Synchronizing game state among players
+ * *Lawrence Berardelli*
+   * Full game board initialization
+   * Synchronizing game state among players
+ * *Sofia Fiore*
+   * Multiple player inventories
+   * Full game board initialization
+   * Token and card purchasing mechanics
+ * *Ojas Krishman*
+   * Creating/joining sessions
+   * Launching the server
+   * Sharing session info across all users
+ * *Jeff Leon*
+   * Full game board initialization
+   * Writing unit tests for the server
+
+### Tasks achieved, scheduled for this report, per team member
+
+ * *Svyatoslav Sklokin*
+   * Attended Monday team meeting
+   * Creating/joining sessions
+   * Launching the server
+ * *Zachary Hayden*
+   * Attended Monday team meeting
+   * Backend REST interface
+   * Synchronizing game state among players
+ * *Lawrence Berardelli*
+   * Token and card purchasing mechanics
+   * Multiple player inventories
+   * Full game board initialization
+ * *Sofia Fiore*
+   * Attended Monday team meeting
+   * Token and card purchasing mechanics
+   * Full game board initialization
+ * *Ojas Krishman*
+   * Attended Monday team meeting
+   * Creating/joining sessions
+   * Launching the server
+ * *Jeff Leon*
+   * Attended Monday team meeting
+   * Writing unit tests for the server
+
+### Tasks missed, scheduled for this report
+
+  * Synchronizing game state among players
+  * Sharing session info across all users
+
+### Top 3 unexpected challenges encountered since last report
+
+ * Some of the branches have conflicts with master so it will be hard to merge them.
+ * Task division is hard as some tasks seem shorter but more complex.
+ * The package name was violating checkstyle naming conventions so we had to change it, change the group id and refactor everything.
+
+### Top 3 lessons learned since last report
+
+ * How to better maintain our repository
+ * How to name our group id so that our packages wouldn't violate checkstyle naming conventions
+ * Familiarized ourselves with checkstyle and java coding conventions
+
+### 3 most critical bugs in current functionality (optional)
+
+
+### Contribution statement
+
+ * *Berardelli, Lawrence contributed 21% of the work since last week.*
+ * *Fiore, Sofia contributed 14% of the work since last week.*
+ * *Hayden, Zach contributed 21% of the work since last week.*
+ * *Krishnan, Ojas contributed 17% of the work since last week.*
+ * *Léon, Jeff contributed 10% of the work since last week.*
+ * *Sklokin, Svyatoslav contributed 17% of the work since last week.*
+
+### Team mood
+
+ * *We're excited for the end of semester but nervous for final exams.*
