@@ -1,17 +1,20 @@
 /**
- * Nov 22, 2022
+ * Nov 22, 2022.
  * TODO
  */
+
 package ca.mcgill.splendorserver.games;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author zacharyhayden Preliminary processing of the repository
+ * Preliminary processing of the repository.
+ *
+ * @author zacharyhayden
  */
 public class LoadDatabase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LoadDatabase.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LoadDatabase.class);
 
 }
