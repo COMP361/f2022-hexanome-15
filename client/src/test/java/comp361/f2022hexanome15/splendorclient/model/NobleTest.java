@@ -1,4 +1,4 @@
-package comp361.f2022hexanome15.splendorclient.model;
+package ca.mcgill.splendorclient.model;
 
 import org.junit.jupiter.api.Test;
 

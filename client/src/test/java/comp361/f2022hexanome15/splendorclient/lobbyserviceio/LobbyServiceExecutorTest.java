@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 
 /**
  * @author zacharyhayden

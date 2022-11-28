@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>comp361.f2022hexanome15</groupId>
+	<groupId>ca.mcgill</groupId>
 	<artifactId>splendorclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<build>
@@ -18,29 +18,29 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-                	<configLocation>google_checks.xml</configLocation>
-            	</configuration>
+					<configLocation>google_checks.xml</configLocation>
+				</configuration>
 				<version>3.2.0</version>
 				<executions>
-        			<execution>
-            			<goals>
-                			<goal>check</goal>
-            			</goals>
-        			</execution>
-    			</executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
-		      	<!-- Build an executable JAR -->
-		     	<groupId>org.apache.maven.plugins</groupId>
-		      	<artifactId>maven-jar-plugin</artifactId>
-		      	<version>3.1.0</version>
-		      	<configuration>
-		        	<archive>
-		       			<manifest>
-		            		<mainClass>comp361.f2022hexanome15.splendorclient.gui.lobbyservice.Splendor</mainClass>
-		          		</manifest>
-		        	</archive>
-		      	</configuration>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>ca.mcgill.splendorclient.gui.lobbyservice.Splendor</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -93,16 +93,16 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>5.7.4</version>
 		</dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>17.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>17.0.1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>17.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>17.0.1</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
