@@ -2,6 +2,7 @@ package comp361.f2022hexanome15.splendorclient.gui.gameboard;
 
 import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import comp361.f2022hexanome15.splendorclient.model.ColorManager;
+import comp361.f2022hexanome15.splendorclient.model.action.MoveManager;
 import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
 import comp361.f2022hexanome15.splendorclient.model.cards.Deck;
 import comp361.f2022hexanome15.splendorclient.model.tokens.TokenPile;
@@ -211,8 +212,9 @@ public class GameBoardView {
       cardColumnView.addListener(prestigeCountView);
     }
 
-    //so that we can figure out if we can afford the card, we need to check in UserInventory class. 
-    UserInventory userInventory = new UserInventory(tokenPile, numPlayer);
+    //so that we can figure out if we can afford the card, we need to check in UserInventory class. TODO: instantiate player names from actual game.
+    UserInventory userInventory = new UserInventory(tokenPile, "");
+    MoveManager.getInstance().addListener(userInventory);
     //i.e only register click actions for this user inventory
     if (numPlayer == 0) {
       for (CardView cardView : cardCardViewAggregator) {
@@ -229,6 +231,7 @@ public class GameBoardView {
         cardColumn.addListener(deck);
       }
     }
+    userInventory.addListener(MoveManager.getInstance());
     outTokenPile.add(tokenPile);
     return userInventoryView;
   }
@@ -270,6 +273,11 @@ public class GameBoardView {
     faceupCardsRow.getChildren().addAll(columns);
     for (Deck deck : decks) {
       deck.setUp();
+    }
+    
+    //setting up move manager listeners of cardview
+    for (CardView cardView : cardViewAggregator) {
+      cardView.addListener(MoveManager.getInstance());
     }
 
     // building the deck views.

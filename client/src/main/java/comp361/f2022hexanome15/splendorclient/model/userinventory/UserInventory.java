@@ -1,6 +1,7 @@
 package comp361.f2022hexanome15.splendorclient.model.userinventory;
 
 import comp361.f2022hexanome15.splendorclient.gui.gameboard.CardView;
+import comp361.f2022hexanome15.splendorclient.model.action.Move;
 import comp361.f2022hexanome15.splendorclient.model.cards.Card;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observable;
 import comp361.f2022hexanome15.splendorclient.model.cards.Observer;
@@ -13,14 +14,15 @@ import java.util.List;
  * Represents the inventory of a Splendor player.
  * Contains cards and token piles.
  * Observes CardView to assess whether a card is affordable.
- * Observed by HandColumnView to add the card to the inventory.
+ * Observed by CardColumnView to add the card to the inventory.
+ * Observed by MoveManager to create the current move
  */
 public class UserInventory implements Observer, Observable {
 
   private ArrayList<Card> cards;
   private ArrayList<Observer> observers;
   private List<TokenPile> tokenPiles;
-  private int playerNumber;
+  private String playerName;
 
   /**
    * Initialize User Inventory Model.
@@ -28,15 +30,15 @@ public class UserInventory implements Observer, Observable {
    * @param pile The token piles in a user's inventory
    * @param number The player number of this user
    */
-  public UserInventory(List<TokenPile> pile, int number) {
+  public UserInventory(List<TokenPile> pile, String name) {
     cards = new ArrayList<Card>();
     tokenPiles = List.copyOf(pile);
     observers = new ArrayList<Observer>();
-    playerNumber = number;
+    playerName = name;
   }
 
-  public int getPlayerNumber() {
-    return playerNumber;
+  public String getPlayerName() {
+    return playerName;
   }
 
   @Override
@@ -69,6 +71,18 @@ public class UserInventory implements Observer, Observable {
       }
     } else {
       cardView.revokePurchaseAttempt();
+    }
+  }
+  
+  /**
+   * Resulting from an update passed through via the server.
+   * Passes through the card to the chain of observers which updates the view. 
+   */
+  @Override
+  public void onAction(Move move) {
+    if (move.getName() == playerName) {
+      cards.add(move.getCard());
+      notifyObservers(move.getCard());
     }
   }
 

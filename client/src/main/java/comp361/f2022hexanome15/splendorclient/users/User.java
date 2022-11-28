@@ -22,6 +22,7 @@ public class User {
   private String refreshToken;
   private final Role role;
   private int expiresIn = 1800000; // time in milliseconds until the users access token expires
+  public static String THISUSER = null;
 
   // using the user's user-name as the unique key for each of them
   private static final HashMap<String, User> USERS = new HashMap<>();
@@ -44,11 +45,14 @@ public class User {
    * @param refreshToken the refresh token of the user
    * @param role         the role of the user
    */
-  public static User newUser(String userName, String accessToken, String refreshToken, Role role) {
+  public static User newUser(String userName, String accessToken, String refreshToken, Role role, boolean isThisUser) {
     if (!USERS.containsKey(userName)) {
       try {
         USERS.put(userName, new User(userName, URLEncoder.encode(accessToken, "UTF-8"),
             URLEncoder.encode(refreshToken, "UTF-8"), role));
+        if (isThisUser) {
+          THISUSER  = userName;
+        }
       } catch (UnsupportedEncodingException e) {
         e.printStackTrace();
       }

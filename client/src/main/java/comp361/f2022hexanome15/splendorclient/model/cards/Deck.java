@@ -95,9 +95,6 @@ public class Deck implements Observable, Observer {
     observers.remove(cardView);
   }
 
-  // a terrible hack to work around instantiating each card view for the first
-  // time
-
   /**
    * Instantiates card view.
    *
@@ -134,7 +131,8 @@ public class Deck implements Observable, Observer {
       }
     }
   }
-
+  
+  
   @Override
   public void onAction(Card card) {
     if (card.getCardType() == getType()) {

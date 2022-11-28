@@ -15,6 +15,7 @@ import org.json.JSONObject;
  */
 public class LobbyServiceExecutor {
   public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242");
+  public static final String SERVERLOCATION = "127.0.0.1:8080";
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;
@@ -33,7 +34,7 @@ public class LobbyServiceExecutor {
     // creates a user object for the default admin of the LS: maex, abc123_ABC123
     JSONObject auth = auth_token("maex", "abc123_ABC123");
     ADMIN = User.newUser("maex", (String) Parsejson.PARSE_JSON.getFromKey(auth, "access_token"),
-      (String) Parsejson.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN);
+      (String) Parsejson.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN, false);
   }
 
   /**
@@ -216,7 +217,11 @@ public class LobbyServiceExecutor {
     } else {
       return (JSONObject) run(command, Parsejson.PARSE_JSON);
     }
-
+  }
+  
+  public final void end_turn(int gameId, String username, String move) {
+    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s", SERVERLOCATION, gameId, username, move);
+    run(command, NullParser.NULLPARSER);
   }
 
   /**

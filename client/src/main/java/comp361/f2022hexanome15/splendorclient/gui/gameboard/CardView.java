@@ -13,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * Represents the view of a Splendor Card.
  * Observed by UserInventory, for purpose of adding purchased card to User Inventory
+ * Observed by MoveManager to forward the finished move to the server
  * Observes Deck in order to populate card from top of deck.
  */
 public class CardView extends StackPane implements Observer, Observable {
@@ -72,6 +73,16 @@ public class CardView extends StackPane implements Observer, Observable {
   public void notifyObservers() {
     for (Observer observer : observers) {
       observer.onAction(this);
+    }
+  }
+  
+  /**
+   * Notifies MoveManager of completed move.
+   * @param card
+   */
+  public void notifyObservers(Card card) {
+    for (Observer observer : observers) {
+      observer.onAction();
     }
   }
 
