@@ -1,12 +1,11 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import ca.mcgill.splendorclient.model.ColorManager;
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.cards.Observable;
 import ca.mcgill.splendorclient.model.cards.Observer;
+import java.util.ArrayList;
+import java.util.Optional;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

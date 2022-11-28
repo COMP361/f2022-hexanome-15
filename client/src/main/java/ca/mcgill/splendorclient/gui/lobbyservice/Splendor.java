@@ -1,10 +1,9 @@
 package ca.mcgill.splendorclient.gui.lobbyservice;
 
-import java.io.IOException;
-import java.util.Optional;
-
 import ca.mcgill.splendorclient.gui.gameboard.GameBoard;
 import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
+import java.io.IOException;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -2,6 +2,12 @@ package ca.mcgill.splendorclient.gui.lobbyservice;
 
 import static ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceHandler.createlsEventHandler;
 
+import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
+import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
+import ca.mcgill.splendorclient.users.Role;
+import ca.mcgill.splendorclient.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -17,13 +23,6 @@ import javafx.scene.control.TextField;
 import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
-import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
-import ca.mcgill.splendorclient.users.Role;
-import ca.mcgill.splendorclient.users.User;
 
 /**
  * Controls the start up for the lobby service.

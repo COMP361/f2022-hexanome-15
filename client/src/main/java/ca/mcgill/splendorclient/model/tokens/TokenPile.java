@@ -1,8 +1,7 @@
 package ca.mcgill.splendorclient.model.tokens;
 
-import java.util.ArrayList;
-
 import ca.mcgill.splendorclient.model.ColorManager;
+import java.util.ArrayList;
 import javafx.scene.paint.Color;
 
 /**

@@ -1,9 +1,8 @@
 package ca.mcgill.splendorclient.model.userinventory;
 
-import java.util.ArrayList;
-
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.tokens.TokenPile;
+import java.util.ArrayList;
 
 /**
  * Represents the inventory of a Splendor player.

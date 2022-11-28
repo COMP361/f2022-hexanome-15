@@ -1,11 +1,10 @@
 package ca.mcgill.splendorclient.model.cards;
 
+import ca.mcgill.splendorclient.model.tokens.TokenType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import ca.mcgill.splendorclient.model.tokens.TokenType;
 import javafx.scene.paint.Color;
 
 /**

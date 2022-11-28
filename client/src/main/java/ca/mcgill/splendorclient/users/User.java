@@ -2,14 +2,13 @@ package ca.mcgill.splendorclient.users;
 
 import static ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONObject;
-
-import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 
 /**
  * Represents a user.

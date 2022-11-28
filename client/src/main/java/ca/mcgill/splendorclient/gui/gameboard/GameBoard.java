@@ -1,16 +1,15 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import ca.mcgill.splendorclient.model.ColorManager;
 import ca.mcgill.splendorclient.model.cards.CardType;
 import ca.mcgill.splendorclient.model.cards.Deck;
 import ca.mcgill.splendorclient.model.tokens.TokenPile;
 import ca.mcgill.splendorclient.model.tokens.TokenType;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -86,7 +85,8 @@ public class GameBoard {
    * @param tokenColumn the column of tokens
    * @param screenSize the size of the screen
    */
-  private static void populateTokenDisplay(VBox tokenColumn, HandView handView, Dimension screenSize) {
+  private static void populateTokenDisplay(VBox tokenColumn,
+                                           HandView handView, Dimension screenSize) {
     int i = 0;
     for (HandColumnView handColumnView : handView) {
       HBox tokenRow = new HBox();
