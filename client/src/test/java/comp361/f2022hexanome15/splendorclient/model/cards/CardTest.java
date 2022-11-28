@@ -1,6 +1,6 @@
-package comp361.f2022hexanome15.splendorclient.model.cards;
+package ca.mcgill.splendorclient.model.cards;
 
-import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
+import ca.mcgill.splendorclient.model.tokens.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

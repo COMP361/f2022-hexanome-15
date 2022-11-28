@@ -1,4 +1,4 @@
-package comp361.f2022hexanome15.splendorclient.model.tokens;
+package ca.mcgill.splendorclient.model.tokens;
 
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeEach;

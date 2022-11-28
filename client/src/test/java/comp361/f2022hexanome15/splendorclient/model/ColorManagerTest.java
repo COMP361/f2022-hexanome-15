@@ -1,8 +1,8 @@
-package comp361.f2022hexanome15.splendorclient.model;
+package ca.mcgill.splendorclient.model;
 
 import javafx.scene.paint.Color;
-import comp361.f2022hexanome15.splendorclient.model.cards.CardType;
-import comp361.f2022hexanome15.splendorclient.model.tokens.TokenType;
+import ca.mcgill.splendorclient.model.cards.CardType;
+import ca.mcgill.splendorclient.model.tokens.TokenType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

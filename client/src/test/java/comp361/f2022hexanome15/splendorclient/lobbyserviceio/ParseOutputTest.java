@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.Parsejson;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 
 /**
  * @author zacharyhayden

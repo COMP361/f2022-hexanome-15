@@ -7,7 +7,7 @@
 		<version>2.7.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>omp361.f2022hexanome15</groupId>
+	<groupId>ca.mcgill</groupId>
 	<artifactId>splendorserver</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
@@ -52,7 +52,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<fork>true</fork>
-					<mainClass>comp361.f2022hexanome15.splendorserver.games.Launcher</mainClass>
+					<mainClass>ca.mcgill.splendorserver.games.Launcher</mainClass>
 				</configuration>
 				<executions>
 					<execution>

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import comp361.f2022hexanome15.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
