@@ -10,8 +10,6 @@ import ca.mcgill.splendorclient.model.Noble;
 import ca.mcgill.splendorclient.model.tokens.TokenPile;
 import ca.mcgill.splendorclient.model.userinventory.UserInventory;
 
-import org.json.JSONObject;
-
 /**
  * Model of the gameboard. Necessary due to permanence requirement. 
  * Only ever used for initial setup, the rest can be taken care of by the actions. 

@@ -1,6 +1,5 @@
 package ca.mcgill.splendorclient.model.tokens;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -128,8 +127,6 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
   public void addListener(Observer observer) {
     observers.add(observer);
   }
-
-  @Override
   public void removeListener(Observer observer) {
     observers.remove(observer);
   }

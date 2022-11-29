@@ -1,6 +1,5 @@
 package ca.mcgill.splendorclient.model.tokens;
 
-
 /**
  * Represents a Splendor Token with type.
  */
