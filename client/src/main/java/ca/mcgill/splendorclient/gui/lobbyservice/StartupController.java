@@ -1,6 +1,12 @@
 package ca.mcgill.splendorclient.gui.lobbyservice;
 
-
+import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceHandler;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
+import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
+import ca.mcgill.splendorclient.users.Role;
+import ca.mcgill.splendorclient.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -16,14 +22,6 @@ import javafx.scene.control.TextField;
 import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceHandler;
-import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
-import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
-import ca.mcgill.splendorclient.users.Role;
-import ca.mcgill.splendorclient.users.User;
 
 /**
  * Controls the start up for the lobby service.
@@ -50,55 +48,56 @@ public class StartupController implements Initializable {
     // flyweight User object representing the default admin of the LS
     User.newUser("maex", accessToken, refreshToken, Role.ADMIN, false);
 
-    loginButton.setOnAction(LobbyServiceHandler.createlsEventHandler(new ScriptExecutor<JSONObject>() {
+    loginButton.setOnAction(LobbyServiceHandler.createlsEventHandler(
+      new ScriptExecutor<JSONObject>() {
 
-      @Override
-      public JSONObject execute() {
-        try {
-          // must use the utf-8 encoding otherwise (+) in the token will cause it to
-          // seperate and insert a space
-          return ls.get_user(usernameField.getText(), URLEncoder.encode(accessToken, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-        }
-        return null;
-      }
-
-      @Override
-      public void respond(Object userInfo) {
-        if (userInfo == null) { // means that the entered username doesn't exist within the LS
-          Alert noUser = new Alert(AlertType.ERROR);
-          noUser.setHeaderText("Invalid Credentials");
-          noUser.setContentText("Given credentials don't match our records, please try again.");
-          noUser.showAndWait();
-          System.out.println("Login failed for user: (" + usernameField.getText()
-                               + ") with password: (" + passwordField.getText() + ")");
-        } else {
-          PasswordEncoder bcrypt = new BCryptPasswordEncoder();
-          // username is valid must validate the password
-          String actualPassword = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo,
-              "password");
-          if (bcrypt.matches(passwordField.getText(), actualPassword)) {
-            System.out.println("Successfully logged in " + usernameField.getText());
-            Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
-            //TODO: actually get the role
-            User.newUser(usernameField.getText(), accessToken, refreshToken, Role.PLAYER, true);
-          } else {
-            Alert wrongPasswordAlert = new Alert(AlertType.ERROR);
-            wrongPasswordAlert.setHeaderText("Incorrect Password");
-            wrongPasswordAlert.setContentText(
-                "Entered password does not match the given username, please try again");
-            wrongPasswordAlert.showAndWait();
-            System.out.println(
-                "Incorrect password attempt for user: (" + usernameField.getText() + ")");
-
+        @Override
+        public JSONObject execute() {
+          try {
+            // must use the utf-8 encoding otherwise (+) in the token will cause it to
+            // seperate and insert a space
+            return ls.get_user(usernameField.getText(), URLEncoder.encode(accessToken, "UTF-8"));
+          } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
           }
-
-          // TODO: initialize player object with this logged in player and fetch their
-          // auth tokens
+          return null;
         }
-      }
-    }));
+
+        @Override
+        public void respond(Object userInfo) {
+          if (userInfo == null) { // means that the entered username doesn't exist within the LS
+            Alert noUser = new Alert(AlertType.ERROR);
+            noUser.setHeaderText("Invalid Credentials");
+            noUser.setContentText("Given credentials don't match our records, please try again.");
+            noUser.showAndWait();
+            System.out.println("Login failed for user: (" + usernameField.getText()
+                                 + ") with password: (" + passwordField.getText() + ")");
+          } else {
+            PasswordEncoder bcrypt = new BCryptPasswordEncoder();
+            // username is valid must validate the password
+            String actualPassword = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo,
+                "password");
+            if (bcrypt.matches(passwordField.getText(), actualPassword)) {
+              System.out.println("Successfully logged in " + usernameField.getText());
+              Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
+              //TODO: actually get the role
+              User.newUser(usernameField.getText(), accessToken, refreshToken, Role.PLAYER, true);
+            } else {
+              Alert wrongPasswordAlert = new Alert(AlertType.ERROR);
+              wrongPasswordAlert.setHeaderText("Incorrect Password");
+              wrongPasswordAlert.setContentText(
+                  "Entered password does not match the given username, please try again");
+              wrongPasswordAlert.showAndWait();
+              System.out.println(
+                  "Incorrect password attempt for user: (" + usernameField.getText() + ")");
+
+            }
+
+            // TODO: initialize player object with this logged in player and fetch their
+            // auth tokens
+          }
+        }
+      }));
 
   }
 

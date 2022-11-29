@@ -1,15 +1,13 @@
 package ca.mcgill.splendorclient.model.userinventory;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 import ca.mcgill.splendorclient.gui.gameboard.CardView;
 import ca.mcgill.splendorclient.model.action.Move;
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.cards.Observable;
 import ca.mcgill.splendorclient.model.cards.Observer;
 import ca.mcgill.splendorclient.model.tokens.TokenPile;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -30,7 +28,7 @@ public class UserInventory implements Observer, Observable {
    * Initialize User Inventory Model.
    *
    * @param pile The token piles in a user's inventory
-   * @param number The player number of this user
+   * @param name This player's username
    */
   public UserInventory(List<TokenPile> pile, String name) {
     cards = new ArrayList<Card>();

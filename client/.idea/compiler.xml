@@ -7,13 +7,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="splendor" />
+        <module name="splendorclient" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="splendor" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="splendor" options="--add-modules java.desktop" />
+      <module name="splendorclient" options="--add-modules java.desktop" />
     </option>
   </component>
 </project>

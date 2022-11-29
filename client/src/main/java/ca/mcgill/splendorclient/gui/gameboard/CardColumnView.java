@@ -1,14 +1,12 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
-
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.cards.Observable;
 import ca.mcgill.splendorclient.model.cards.Observer;
 import ca.mcgill.splendorclient.model.tokens.TokenType;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.layout.Pane;
 
 

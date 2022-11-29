@@ -1,12 +1,11 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import ca.mcgill.splendorclient.model.ColorManager;
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.cards.Observable;
 import ca.mcgill.splendorclient.model.cards.Observer;
+import java.util.ArrayList;
+import java.util.Optional;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -79,7 +78,8 @@ public class CardView extends StackPane implements Observer, Observable {
   
   /**
    * Notifies MoveManager of completed move.
-   * @param card
+   *
+   * @param card The card that was purchased
    */
   public void notifyObservers(Card card) {
     for (Observer observer : observers) {

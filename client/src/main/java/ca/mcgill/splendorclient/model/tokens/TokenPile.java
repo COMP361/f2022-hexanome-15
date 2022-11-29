@@ -1,11 +1,10 @@
 package ca.mcgill.splendorclient.model.tokens;
 
+import ca.mcgill.splendorclient.model.cards.Observable;
+import ca.mcgill.splendorclient.model.cards.Observer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import ca.mcgill.splendorclient.model.cards.Observable;
-import ca.mcgill.splendorclient.model.cards.Observer;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.
@@ -127,6 +126,7 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
   public void addListener(Observer observer) {
     observers.add(observer);
   }
+
   public void removeListener(Observer observer) {
     observers.remove(observer);
   }

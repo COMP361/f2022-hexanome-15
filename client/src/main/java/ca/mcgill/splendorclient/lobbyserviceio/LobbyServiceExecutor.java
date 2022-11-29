@@ -1,12 +1,11 @@
 package ca.mcgill.splendorclient.lobbyserviceio;
 
+import ca.mcgill.splendorclient.users.Role;
+import ca.mcgill.splendorclient.users.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.json.JSONObject;
-
-import ca.mcgill.splendorclient.users.*;
 
 /**
  * Executes Lobby Service commands.
@@ -46,9 +45,16 @@ public class LobbyServiceExecutor {
     return output;
   }
 
+  /**
+   * Sends the gameboard to the server using a put request.
+   *
+   * @param gameboard The current gameboard
+   * @param gameid The game id
+   */
   public final void sendGameboard(String gameboard, int gameid) {
     String command = String.format("curl -X PUT --data {'gameboard':%s} "
-                                     + "%s/api/games/%s/gameboard", gameboard,SERVERLOCATION, gameid);
+                                     + "%s/api/games/%s/gameboard",
+        gameboard, SERVERLOCATION, gameid);
     run(command, Parsejson.PARSE_JSON);
   }
 
@@ -224,9 +230,17 @@ public class LobbyServiceExecutor {
       return (JSONObject) run(command, Parsejson.PARSE_JSON);
     }
   }
-  
+
+  /**
+   * Sends the move done by a player to the server at the end of their turn.
+   *
+   * @param gameId The game id
+   * @param username The player's username
+   * @param move The move that the player made
+   */
   public final void end_turn(int gameId, String username, String move) {
-    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s", SERVERLOCATION, gameId, username, move);
+    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
+        SERVERLOCATION, gameId, username, move);
     run(command, NullParser.NULLPARSER);
   }
 

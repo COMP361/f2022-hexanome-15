@@ -1,12 +1,5 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import ca.mcgill.splendorclient.model.ColorManager;
 import ca.mcgill.splendorclient.model.Noble;
 import ca.mcgill.splendorclient.model.action.MoveManager;
@@ -17,6 +10,11 @@ import ca.mcgill.splendorclient.model.cards.GameBoard;
 import ca.mcgill.splendorclient.model.tokens.TokenPile;
 import ca.mcgill.splendorclient.model.tokens.TokenType;
 import ca.mcgill.splendorclient.model.userinventory.UserInventory;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -34,7 +32,7 @@ public class GameBoardView {
   private static List<UserInventory> userInventories = new ArrayList<>();
 
   /**
-   * Returns the current gameboard
+   * Returns the current gameboard.
    *
    * @return the current gameboard
    */
@@ -226,7 +224,8 @@ public class GameBoardView {
       cardColumnView.addListener(prestigeCountView);
     }
 
-    //so that we can figure out if we can afford the card, we need to check in UserInventory class. TODO: instantiate player names from actual game.
+    //so that we can figure out if we can afford the card, we need to check in UserInventory class.
+    // TODO: instantiate player names from actual game.
     UserInventory userInventory = new UserInventory(tokenPile, "");
     userInventories.add(userInventory);
     MoveManager.getInstance().addListener(userInventory);

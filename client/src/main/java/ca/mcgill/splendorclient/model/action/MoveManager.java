@@ -1,23 +1,20 @@
 package ca.mcgill.splendorclient.model.action;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
-import com.google.gson.Gson;
-
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.cards.Observable;
 import ca.mcgill.splendorclient.model.cards.Observer;
 import ca.mcgill.splendorclient.users.User;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Observes UserInventory to receive message of a valid move.
  * Observes CardView to get notification of when to forward the action to the server.
- * 
- * @author lawrenceberardelli
  *
+ * @author lawrenceberardelli
  */
 public class MoveManager implements Observer, Observable {
   
@@ -37,9 +34,10 @@ public class MoveManager implements Observer, Observable {
   }
   
   /**
-   * Called as a result of an update from the server. Only notifies observers if move is performed by another user.
-   * 
-   * @param json
+   * Called as a result of an update from the server.
+   * Only notifies observers if move is performed by another user.
+   *
+   * @param json The move that is being retrieved as a String
    */
   public void deserializeMove(String json) {
     Gson gson = new Gson();
@@ -53,7 +51,9 @@ public class MoveManager implements Observer, Observable {
   }
   
   /**
-   * creates the move object for later forwarding to server
+   * Creates the move object for later forwarding to server.
+   *
+   * @param card The card that was purchased/reserved
    */
   public void onAction(Card card) {
     Move move = new Move(Action.PURCHASE, card, User.THISUSER);
