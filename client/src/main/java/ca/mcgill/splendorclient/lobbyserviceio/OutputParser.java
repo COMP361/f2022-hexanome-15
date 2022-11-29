@@ -12,8 +12,19 @@ import java.io.InputStream;
  * @author zacharyhayden
  */
 public interface OutputParser {
+  /**
+   * Parses the input stream and returns an object.
+   *
+   * @param scriptOutput the output of the script
+   * @return the object
+   */
   Object parse(InputStream scriptOutput);
 
+  /**
+   * Returns whether the output is null.
+   *
+   * @return boolean determining whether the output is null
+   */
   default boolean isNull() {
     return false;
   }

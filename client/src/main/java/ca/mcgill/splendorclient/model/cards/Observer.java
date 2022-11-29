@@ -18,6 +18,11 @@ public interface Observer {
 
   }
 
+  /**
+   * Sends a token to observers.
+   *
+   * @param token The token to be sent to observers
+   */
   default void onAction(Token token) {
 
   }

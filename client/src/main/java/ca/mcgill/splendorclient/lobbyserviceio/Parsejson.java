@@ -12,6 +12,9 @@ import org.json.JSONObject;
  * @author zacharyhayden
  */
 public class Parsejson implements OutputParser {
+  /**
+   * Parsejson instance.
+   */
   public static final Parsejson PARSE_JSON = new Parsejson();
 
   private Parsejson() {
@@ -44,7 +47,6 @@ public class Parsejson implements OutputParser {
    *              from executing
    * @param key  string key to search for and get associated value of
    * @return the returned value corresponding to the key
-   * @assert pJson != null && pKey != null
    */
   public Object getFromKey(JSONObject json, String key) {
     assert json != null && key != null;

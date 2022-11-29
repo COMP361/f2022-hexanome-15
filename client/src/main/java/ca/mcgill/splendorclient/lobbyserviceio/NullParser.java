@@ -9,8 +9,14 @@ import java.io.InputStream;
  * @author zacharyhayden
  */
 public class NullParser implements OutputParser {
+  /**
+   * NullParser instance.
+   */
   public static final NullParser NULLPARSER = new NullParser();
 
+  /**
+   * Creates a NullParser.
+   */
   private NullParser() {
 
   }

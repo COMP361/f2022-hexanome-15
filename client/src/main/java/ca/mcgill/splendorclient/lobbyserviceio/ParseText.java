@@ -11,6 +11,10 @@ import java.io.InputStreamReader;
  * @author zacharyhayden
  */
 public class ParseText implements OutputParser {
+
+  /**
+   * ParseText instance.
+   */
   public static final ParseText PARSE_TEXT = new ParseText();
 
   private ParseText() {
