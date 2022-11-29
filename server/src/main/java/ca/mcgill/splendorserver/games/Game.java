@@ -2,8 +2,6 @@ package ca.mcgill.splendorserver.games;
 
 import java.util.Iterator;
 import java.util.List;
-
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,90 +13,94 @@ import javax.persistence.Id;
  */
 @Entity
 public class Game implements Iterable<PlayerWrapper> {
-	private final String savegame;
-	@Id
-	private Long gameid; // TODO: implement this from the LS
-	@Embedded
-	private final TakeTurn takeTurn; // contains player user-names
-	private String initGameBoard; // the game-board which initialized the game
-	private String lastAction = "";
-	
+  private final String savegame;
+  @Id
+  private Long gameid; // TODO: implement this from the LS
+  @Embedded
+  private final TakeTurn takeTurn; // contains player user-names
+  private String initGameBoard; // the game-board which initialized the game
+  private String lastAction = "";
 
-	/**
-	 * Creates a Game.
-	 *
-	 * @param saveGame optional fork of previously saved game; can be null
-	 * @param gameid   unique game ID
-	 * @param players  list of players in game session as indicated from the rest
-	 *                 call
-	 */
-	public Game(String saveGame, long gameid, List<PlayerWrapper> players) {
-		this.savegame = saveGame;
-		this.gameid = gameid;
-		this.takeTurn = new TakeTurn(players);
-	}
 
-	public long gameid() {
-		return gameid;
-	}
+  /**
+   * Creates a Game.
+   *
+   * @param saveGame optional fork of previously saved game; can be null
+   * @param gameid   unique game ID
+   * @param players  list of players in game session as indicated from the rest
+   *                 call
+   */
+  public Game(String saveGame, long gameid, List<PlayerWrapper> players) {
+    this.savegame = saveGame;
+    this.gameid = gameid;
+    this.takeTurn = new TakeTurn(players);
+  }
 
-	public String savegame() {
-		return savegame;
-	}
+  public long gameid() {
+    return gameid;
+  }
 
-	public void removePlayer(PlayerWrapper username) {
-		takeTurn.removePlayer(username);
-	}
+  public String savegame() {
+    return savegame;
+  }
 
-	/**
-	 * Ends the current players turn and updates the current player.
-	 *
-	 * @return the player wrapper whose turn it now is
-	 */
-	public PlayerWrapper endTurn() {
-		return takeTurn.endTurn();
-	}
+  public void removePlayer(PlayerWrapper username) {
+    takeTurn.removePlayer(username);
+  }
 
-	/**
-	 * Returns the player whose turn it is.
-	 *
-	 * @return the player whose turn it is
-	 */
-	public PlayerWrapper whoseTurn() {
-		return takeTurn.whoseTurn();
-	}
+  /**
+   * Ends the current players turn and updates the current player.
+   *
+   * @return the player wrapper whose turn it now is
+   */
+  public PlayerWrapper endTurn() {
+    return takeTurn.endTurn();
+  }
 
-	@Override
-	public String toString() {
-		return "Game [savegame=" + savegame + ", gameID=" + gameid + ", aTakeTurn=" + takeTurn + "]";
-	}
+  /**
+   * Returns the player whose turn it is.
+   *
+   * @return the player whose turn it is
+   */
+  public PlayerWrapper whoseTurn() {
+    return takeTurn.whoseTurn();
+  }
 
-	@Override
-	public Iterator<PlayerWrapper> iterator() {
-		return takeTurn.iterator();
-	}
+  @Override
+  public String toString() {
+    return "Game [savegame=" + savegame + ", gameID=" + gameid + ", aTakeTurn=" + takeTurn + "]";
+  }
 
-	public void updateGameBoard(String newGameBoard) {
-		assert newGameBoard != null;
-		this.initGameBoard = newGameBoard;
-	}
+  @Override
+  public Iterator<PlayerWrapper> iterator() {
+    return takeTurn.iterator();
+  }
 
-	public String getGameBoard() {
-		return initGameBoard;
-	}
+  public void updateGameBoard(String newGameBoard) {
+    assert newGameBoard != null;
+    this.initGameBoard = newGameBoard;
+  }
 
-	/**
-	 * @return the lastAction
-	 */
-	public String getLastAction() {
-		return lastAction;
-	}
+  public String getGameBoard() {
+    return initGameBoard;
+  }
 
-	/**
-	 * @param lastAction the lastAction to set
-	 */
-	public void setLastAction(String lastAction) {
-		this.lastAction = lastAction;
-	}
+  /**
+   * Returns the last action that a player made.
+   *
+   * @return the lastAction
+   */
+  public String getLastAction() {
+    return lastAction;
+  }
+
+  /**
+   * Sets the last action that a player made.
+   *
+   * @param lastAction the lastAction to set
+   */
+  public void setLastAction(String lastAction) {
+    this.lastAction = lastAction;
+  }
 
 }
