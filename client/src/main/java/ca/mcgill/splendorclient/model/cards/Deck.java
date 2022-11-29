@@ -27,10 +27,20 @@ public class Deck implements Observable, Observer {
     observers = new ArrayList<>();
   }
 
+  /**
+   * Returns the card type of the deck.
+   *
+   * @return the card type of the deck
+   */
   public CardType getType() {
     return type;
   }
-  
+
+  /**
+   * Returns the cards in the deck.
+   *
+   * @return the cards in the deck
+   */
   public ArrayList<Card> getCards() {
     return cards;
   }

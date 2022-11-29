@@ -24,15 +24,30 @@ public class Move {
     this.card = card;
     this.playername = playername;
   }
-  
+
+  /**
+   * Returns the card purchased during this move.
+   *
+   * @return the card purchased during this move
+   */
   public Card getCard() {
     return card;
   }
-  
+
+  /**
+   * Returns the current player's username.
+   *
+   * @return the current player's username
+   */
   public String getName() {
     return playername;
   }
-  
+
+  /**
+   * Returns the current player's action.
+   *
+   * @return the current player's action
+   */
   public Action getAction() {
     return action;
   }

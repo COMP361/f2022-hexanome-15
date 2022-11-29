@@ -9,6 +9,11 @@ import ca.mcgill.splendorclient.model.tokens.Token;
  */
 public interface Observer {
 
+  /**
+   * This is used to send the card that was purchased to observers.
+   *
+   * @param card The card that was purchased
+   */
   default void onAction(Card card) {
 
   }
@@ -17,18 +22,36 @@ public interface Observer {
 
   }
 
+  /**
+   * This is used when adding tokens or removing tokens.
+   *
+   * @param increment boolean to determine if tokens are being added or removed
+   */
   default void onAction(boolean increment) {
 
   }
 
+  /**
+   * This is used to send a card that was purchased.
+   *
+   * @param cardView the cardView of the purchased card
+   */
   default void onAction(CardView cardView) {
 
   }
-  
+
+  /**
+   * This is used when forwarding moves to the server.
+   */
   default void onAction() {
     
   }
-  
+
+  /**
+   * This is used to send the current player's move.
+   *
+   * @param move the move to be sent
+   */
   default void onAction(Move move) {
     
   }

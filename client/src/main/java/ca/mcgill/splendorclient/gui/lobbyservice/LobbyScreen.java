@@ -10,12 +10,20 @@ import javafx.scene.Scene;
 public class LobbyScreen {
   private Scene scene;
 
+  /**
+   * Lobby screen instance.
+   */
   public static LobbyScreen instance = new LobbyScreen();
 
   private LobbyScreen() {
 
   }
 
+  /**
+   * Returns this instance of the lobby screen.
+   *
+   * @return this instance of the lobby screen
+   */
   public static LobbyScreen getInstance() {
     return instance;
   }
@@ -24,6 +32,7 @@ public class LobbyScreen {
    * Returns the current scene of the lobby service.
    *
    * @return the current scene of the lobby service
+   * @throws IOException an io exception can be thrown
    */
   public Scene getLobbyScene() throws IOException {
     if (scene == null) {

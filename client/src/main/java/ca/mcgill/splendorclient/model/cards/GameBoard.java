@@ -23,10 +23,20 @@ public class GameBoard {
   private List<Noble> nobles;
   private String currentPlayer;
 
+  /**
+   * Returns the current player.
+   *
+   * @return the current player
+   */
   public String getCurrentPlayer() {
     return currentPlayer;
   }
 
+  /**
+   * Sets the current player.
+   *
+   * @param currentPlayer the current player
+   */
   public void setCurrentPlayer(String currentPlayer) {
     this.currentPlayer = currentPlayer;
   }

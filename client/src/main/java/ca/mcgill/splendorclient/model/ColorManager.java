@@ -10,8 +10,16 @@ import javafx.scene.paint.Color;
 public class ColorManager {
 
   /**
+   * Creates a ColorManager.
+   */
+  public ColorManager() {
+
+  }
+
+  /**
    * Returns the color for a given token type.
    *
+   * @param type The given token type
    * @return the color of a token type
    */
   public static Color getColor(TokenType type) {
@@ -39,6 +47,7 @@ public class ColorManager {
   /**
    * Returns the color for a given card type.
    *
+   * @param type the given card type
    * @return the color of a card type
    */
   public static Color getColor(CardType type) {

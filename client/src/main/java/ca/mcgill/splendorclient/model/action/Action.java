@@ -5,7 +5,14 @@ package ca.mcgill.splendorclient.model.action;
  * A player can purchase cards, reserve cards or take gem tokens.
  */
 public enum Action {
-  
-  PURCHASE, RESERVE
+
+  /**
+   * Purchase type Action.
+   */
+  PURCHASE,
+  /**
+   * Reserve type Action.
+   */
+  RESERVE
 
 }

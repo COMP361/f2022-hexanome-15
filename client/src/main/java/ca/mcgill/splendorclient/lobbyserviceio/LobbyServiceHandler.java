@@ -11,7 +11,18 @@ import javafx.event.EventHandler;
 public class LobbyServiceHandler {
 
   /**
+   * Creates a LobbyServiceHandler.
+   */
+  public LobbyServiceHandler() {
+
+  }
+
+  /**
    * Creates an EventHandler.
+   *
+   * @param <T>  Type
+   * @param scriptExecutor ScriptExecutor
+   * @return the new Event Handler
    */
   public static <T extends Event> EventHandler<T> createlsEventHandler(
       ScriptExecutor<?> scriptExecutor) {

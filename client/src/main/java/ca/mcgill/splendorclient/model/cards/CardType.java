@@ -6,5 +6,28 @@ package ca.mcgill.splendorclient.model.cards;
  * The numbers are used to indicate the level of the card
  */
 public enum CardType {
-BASE1, BASE2, BASE3, ORIENT1, ORIENT2, ORIENT3
+  /**
+   * Base 1 card type.
+   */
+  BASE1,
+  /**
+   * Base 2 card type.
+   */
+  BASE2,
+  /**
+   * Base 3 card type.
+   */
+  BASE3,
+  /**
+   * Orient 1 card type.
+   */
+  ORIENT1,
+  /**
+   * Orient 2 card type.
+   */
+  ORIENT2,
+  /**
+   * Orient 3 card type.
+   */
+  ORIENT3
 }

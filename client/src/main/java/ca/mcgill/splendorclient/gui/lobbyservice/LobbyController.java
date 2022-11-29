@@ -22,6 +22,13 @@ public class LobbyController implements Initializable {
   @FXML
   private Button launchSessionButton;
 
+  /**
+   * Creates a LobbyController.
+   */
+  public LobbyController() {
+
+  }
+
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     createSessionButton.setOnAction(new EventHandler<ActionEvent>() {

@@ -11,12 +11,20 @@ public class LoginScreen {
 
   private Scene scene;
 
+  /**
+   * Login screen instance.
+   */
   public static LoginScreen instance = new LoginScreen();
 
   private LoginScreen() {
 
   }
 
+  /**
+   * Returns this instance of login screen.
+   *
+   * @return this instance of login screen
+   */
   public static LoginScreen getInstance() {
     return instance;
   }
@@ -25,6 +33,7 @@ public class LoginScreen {
    * Returns the current login scene.
    *
    * @return the current login scene
+   * @throws IOException may throw an io exception
    */
   public Scene getLoginScene() throws IOException {
     if (scene == null) {

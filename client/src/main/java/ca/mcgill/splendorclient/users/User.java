@@ -11,9 +11,9 @@ import org.json.JSONObject;
 
 /**
  * Represents a user.
+ * Flyweight design pattern.
  *
  * @author zacharyhayden
- * @implNote Flyweight design pattern
  */
 public class User {
   private final String userName;

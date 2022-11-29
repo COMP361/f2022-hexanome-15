@@ -43,6 +43,12 @@ public class Card {
   }
   // bad design ill get back to this
 
+  /**
+   * Gets a card based on their id.
+   *
+   * @param id The id of the card
+   * @return the requested card
+   */
   public Card getCard(int id) {
     return cards.get(id);
   }
@@ -51,6 +57,7 @@ public class Card {
    * Creates a deck made of cards of a certain type of cards.
    *
    * @param type The type of Card and Deck
+   * @return the list of cards in the deck
    */
   public static List<Card> makeDeck(CardType type) {
     if (cards.size() == 0) {

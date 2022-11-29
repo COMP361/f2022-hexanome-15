@@ -81,6 +81,11 @@ public class CardColumnView extends Pane implements Observer, Observable {
     }
   }
 
+  /**
+   * Returns the label with the number of cards in that column.
+   *
+   * @return the card counter label
+   */
   public Counter getNumCardsDisplay() {
     return numCardsDisplay;
   }

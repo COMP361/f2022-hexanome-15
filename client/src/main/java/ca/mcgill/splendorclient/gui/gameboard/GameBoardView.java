@@ -32,6 +32,13 @@ public class GameBoardView {
   private static List<UserInventory> userInventories = new ArrayList<>();
 
   /**
+   * Creates a GameBoardView.
+   */
+  public GameBoardView() {
+
+  }
+
+  /**
    * Returns the current gameboard.
    *
    * @return the current gameboard
@@ -252,6 +259,8 @@ public class GameBoardView {
 
   /**
    * Initializes the game board.
+   *
+   * @return the gameboard scene
    */
   public static Scene setupGameBoard() {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

@@ -3,6 +3,7 @@ package ca.mcgill.splendorclient.lobbyserviceio;
 /**
  * Executes bash scripts.
  *
+ * @param <T> Type
  * @author zacharyhayden
  */
 public interface ScriptExecutor<T> {

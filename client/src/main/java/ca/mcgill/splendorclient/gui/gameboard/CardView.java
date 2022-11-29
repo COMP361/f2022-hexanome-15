@@ -48,10 +48,18 @@ public class CardView extends StackPane implements Observer, Observable {
     });
   }
 
+  /**
+   * Returns the card that is represented by this CardView.
+   *
+   * @return the card that is represented by this CardView
+   */
   public Optional<Card> getCard() {
     return card;
   }
 
+  /**
+   * Revokes purchase attempt if a player can't afford a card.
+   */
   public void revokePurchaseAttempt() {
     hasActivePurchaseAttempt = false;
   }

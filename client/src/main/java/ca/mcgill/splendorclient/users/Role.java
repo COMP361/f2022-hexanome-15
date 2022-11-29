@@ -6,5 +6,13 @@ package ca.mcgill.splendorclient.users;
  * @author zacharyhayden
  */
 public enum Role {
-  ADMIN, PLAYER;
+
+  /**
+   * Admin user role.
+   */
+  ADMIN,
+  /**
+   * Player user role.
+   */
+  PLAYER;
 }

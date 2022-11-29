@@ -28,7 +28,12 @@ public class MoveManager implements Observer, Observable {
     gson = new Gson();
     observers = new ArrayList<Observer>();
   }
-  
+
+  /**
+   * Returns this instance of MoveManager.
+   *
+   * @return this instance of MoveManager
+   */
   public static MoveManager getInstance() {
     return INSTANCE;
   }
@@ -69,7 +74,12 @@ public class MoveManager implements Observer, Observable {
     String json = gson.toJson(move);
     LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.end_turn(0, User.THISUSER, json);
   }
-  
+
+  /**
+   * Returns the most recent move.
+   *
+   * @return the most recent move
+   */
   public Move getMostRecentMove() {
     return moveStack.peek();
   }

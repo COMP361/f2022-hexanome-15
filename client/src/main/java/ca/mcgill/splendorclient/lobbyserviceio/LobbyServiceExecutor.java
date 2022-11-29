@@ -13,7 +13,13 @@ import org.json.JSONObject;
  * @author zacharyhayden
  */
 public class LobbyServiceExecutor {
+  /**
+   * Instance of Lobby Service Executor.
+   */
   public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242");
+  /**
+   * The location of the server.
+   */
   public static final String SERVERLOCATION = "127.0.0.1:8080";
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
@@ -38,6 +44,8 @@ public class LobbyServiceExecutor {
 
   /**
    * Debugs a command.
+   *
+   * @return the output of the command as a string
    */
   public final String debug() {
     String command = String.format("curl -X GET %s/api/online", lobbyServiceLocation);
@@ -76,6 +84,7 @@ public class LobbyServiceExecutor {
    * Auth role.
    *
    * @param accessToken the accessToken of the user
+   * @return the output of the command as a JSONObject
    */
   public final JSONObject auth_role(String accessToken) {
     String command = String.format("curl -X GET %s/oauth/role?access_token=%s",
@@ -89,6 +98,7 @@ public class LobbyServiceExecutor {
    *
    * @param userName the username of the user
    * @param password the password of the user
+   * @return the output as a JSONObject
    */
   public final JSONObject auth_token(String userName, String password) {
     String command = String.format(
@@ -106,6 +116,7 @@ public class LobbyServiceExecutor {
    * @param createUserName the username to be created
    * @param gameName       the name of the game
    * @param saveGame       the saved game if creating session from saved game
+   * @return the output of the command as a long
    */
   public final long create_session(String accessToken, String createUserName,
                                    String gameName, String saveGame) {
@@ -188,6 +199,7 @@ public class LobbyServiceExecutor {
    * Renews authentication token.
    *
    * @param refreshToken the accessToken of the user
+   * @return the output as a JSONObject
    */
   public final JSONObject renew_auth_token(String refreshToken) {
     checkNotNullNotEmpty(refreshToken);
@@ -218,6 +230,7 @@ public class LobbyServiceExecutor {
    *
    * @param username    the username of the user
    * @param accessToken the access token of the user
+   * @return the output as a JSON object
    */
   public final JSONObject get_user(String username, String accessToken) {
     checkNotNullNotEmpty(username, accessToken);
@@ -316,6 +329,11 @@ public class LobbyServiceExecutor {
     }
   }
 
+  /**
+   * Returns the admin.
+   *
+   * @return the admin
+   */
   public static User getAdmin() {
     return ADMIN;
   }
