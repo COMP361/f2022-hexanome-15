@@ -29,8 +29,9 @@ public class Game implements Iterable<PlayerWrapper> {
    * @param gameid   unique game ID
    * @param players  list of players in game session as indicated from the rest
    *                 call
+   * @param gb The gameboard
    */
-  public Game(String saveGame, long gameid, List<PlayerWrapper> players) {
+  public Game(String saveGame, long gameid, List<PlayerWrapper> players, GameBoard gb) {
     this.savegame = saveGame;
     this.gameid = gameid;
     this.takeTurn = new TakeTurn(players);

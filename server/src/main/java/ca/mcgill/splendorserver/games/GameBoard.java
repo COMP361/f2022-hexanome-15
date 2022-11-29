@@ -12,7 +12,7 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class GameBoard {
-  // TODO: inlcude a field to whoevers turn it is
+  // TODO: include a field to whoevers turn it is
   
 
 }
