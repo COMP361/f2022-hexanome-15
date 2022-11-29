@@ -1,7 +1,5 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import ca.mcgill.splendorclient.model.cards.Card;
-import ca.mcgill.splendorclient.model.cards.Deck;
 import ca.mcgill.splendorclient.model.cards.Observer;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -9,26 +7,26 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * Represents the view of a Splendor Deck.
+ * Observes Deck to be notified of when to change the count.
  */
 public class DeckView extends Rectangle implements Observer {
 
   private final Counter numCardsDisplay;
-  private final Deck deck;
 
   /**
    * Creates a DeckView.
    *
-   * @param deck   The deck that is represented by this DeckView
    * @param height The height of the DeckView
    * @param width  The width of the DeckView
+   * @param size The number of cards in the deck
+   * @param color The color of the DeckView
    */
-  public DeckView(Deck deck, double height, double width) {
+  public DeckView(double height, double width, int size, Color color) {
     super(height, width);
     this.setArcHeight(height / 5);
     this.setArcWidth(height / 5);
-    numCardsDisplay = new Counter(deck.getSize());
-    this.deck = deck;
-    this.setFill(deck.getColor());
+    numCardsDisplay = new Counter(size);
+    this.setFill(color);
   }
 
   /**
@@ -40,20 +38,12 @@ public class DeckView extends Rectangle implements Observer {
     return numCardsDisplay;
   }
 
-  /**
-   * Sets up the DeckView upon starting the game.
-   */
-  public void setUp() {
-    deck.deal();
-    numCardsDisplay.setText(Integer.toString(deck.getSize()));
-  }
-
   @Override
-  public void onAction(Card card) {
-    deck.replaceCard();
-    numCardsDisplay.setText(Integer.toString(deck.getSize()));
-    if (deck.getSize() == 0) {
-      this.setFill(Color.WHITE);
+  public void onAction(boolean increment) {
+    if (increment) {
+      numCardsDisplay.setText(String.valueOf(numCardsDisplay.getCount() + 1));
+    } else {
+      numCardsDisplay.setText(String.valueOf(numCardsDisplay.getCount() - 1));
     }
   }
 }

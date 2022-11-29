@@ -1,8 +1,5 @@
 package ca.mcgill.splendorclient.model.tokens;
 
-import ca.mcgill.splendorclient.model.ColorManager;
-import javafx.scene.paint.Color;
-
 /**
  * Represents a Splendor Token with type.
  */
@@ -16,7 +13,6 @@ public class Token {
    * public static Color[] typeToColor = new Color[] {Color.GREEN,
    * Color.LIGHTBLUE, Color.BLUE, Color.DARKGREY, Color.MAGENTA, Color.GOLD};
    */
-  private final Color color;
 
   /**
    * Creates a Token.
@@ -25,16 +21,6 @@ public class Token {
    */
   public Token(TokenType type) {
     this.type = type;
-    this.color = ColorManager.getColor(type);
-  }
-
-  /**
-   * Returns the color of the token.
-   *
-   * @return the color of the token
-   */
-  public Color getColor() {
-    return color;
   }
 
   /**

@@ -13,6 +13,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class GameBoard {
   // TODO: inlcude a field to whoevers turn it is
-  private final Long gameid = null;
+  
 
 }

@@ -9,8 +9,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>11</source>
-					<target>11</target>
+					<source>16</source>
+					<target>16</target>
 				</configuration>
 				<version>3.8.1</version>
 			</plugin>
@@ -93,6 +93,7 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>5.7.4</version>
 		</dependency>
+<<<<<<< HEAD
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
@@ -103,12 +104,30 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>17.0.1</version>
 		</dependency>
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 1fe20180c5c058e7636756a6c8938a7487cb5f8b
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
 		    <version>2.10</version>
 		</dependency>
+<<<<<<< HEAD
+=======
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>17.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17.0.1</version>
+        </dependency>
+>>>>>>> 8988fffb268ba078f8fac1201430688673205602
+>>>>>>> 1fe20180c5c058e7636756a6c8938a7487cb5f8b
 	</dependencies>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>

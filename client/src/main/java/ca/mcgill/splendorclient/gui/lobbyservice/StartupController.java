@@ -1,13 +1,6 @@
 package ca.mcgill.splendorclient.gui.lobbyservice;
 
-import static ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceHandler.createlsEventHandler;
 
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
-import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
-import ca.mcgill.splendorclient.users.Role;
-import ca.mcgill.splendorclient.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -23,6 +16,14 @@ import javafx.scene.control.TextField;
 import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceHandler;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
+import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
+import ca.mcgill.splendorclient.users.Role;
+import ca.mcgill.splendorclient.users.User;
 
 /**
  * Controls the start up for the lobby service.
@@ -47,9 +48,9 @@ public class StartupController implements Initializable {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
     // flyweight User object representing the default admin of the LS
-    User.newUser("maex", accessToken, refreshToken, Role.ADMIN);
+    User.newUser("maex", accessToken, refreshToken, Role.ADMIN, false);
 
-    loginButton.setOnAction(createlsEventHandler(new ScriptExecutor<JSONObject>() {
+    loginButton.setOnAction(LobbyServiceHandler.createlsEventHandler(new ScriptExecutor<JSONObject>() {
 
       @Override
       public JSONObject execute() {
@@ -80,6 +81,8 @@ public class StartupController implements Initializable {
           if (bcrypt.matches(passwordField.getText(), actualPassword)) {
             System.out.println("Successfully logged in " + usernameField.getText());
             Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
+            //TODO: actually get the role
+            User.newUser(usernameField.getText(), accessToken, refreshToken, Role.PLAYER, true);
           } else {
             Alert wrongPasswordAlert = new Alert(AlertType.ERROR);
             wrongPasswordAlert.setHeaderText("Incorrect Password");
