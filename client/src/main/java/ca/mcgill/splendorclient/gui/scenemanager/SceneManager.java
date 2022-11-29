@@ -21,6 +21,11 @@ public class SceneManager {
 
   }
 
+  /**
+   * Sets the Game Screen.
+   *
+   * @param scene the scene to be set
+   */
   public static void setGameScreen(Scene scene) {
     scenes.put(sceneNames[0], scene);
   }

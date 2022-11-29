@@ -10,12 +10,20 @@ import javafx.scene.Scene;
 public class SettingsScreen {
   private Scene scene;
 
+  /**
+   * Instance of the settings screen.
+   */
   public static SettingsScreen instance = new SettingsScreen();
 
   private SettingsScreen() {
 
   }
 
+  /**
+   * Returns this instance of the settings screen.
+   *
+   * @return this instance of the settings screen.
+   */
   public static SettingsScreen getInstance() {
     return instance;
   }
@@ -24,6 +32,7 @@ public class SettingsScreen {
    * Returns the current settings scene.
    *
    * @return the current settings scene
+   * @throws IOException may throw an io exception
    */
   public Scene getSettingsScene() throws IOException {
     if (scene == null) {

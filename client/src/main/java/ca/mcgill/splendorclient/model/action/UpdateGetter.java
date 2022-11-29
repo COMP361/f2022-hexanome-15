@@ -17,11 +17,19 @@ public class UpdateGetter implements Runnable {
       //MoveManager.getInstance().deserializeMove(null);
     }
   }
-  
+
+  /**
+   * Gets updates for this game.
+   *
+   * @param gameId the game id
+   */
   public UpdateGetter(int gameId) {
     this.gameId = gameId;
   }
-  
+
+  /**
+   * Exits this thread.
+   */
   public void exit() {
     exit = true;
   }

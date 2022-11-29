@@ -21,6 +21,10 @@ public class User {
   private String refreshToken;
   private final Role role;
   private int expiresIn = 1800000; // time in milliseconds until the users access token expires
+
+  /**
+   * Instance of this user.
+   */
   public static String THISUSER = null;
 
   // using the user's user-name as the unique key for each of them
@@ -43,6 +47,8 @@ public class User {
    * @param accessToken  the access token of the user
    * @param refreshToken the refresh token of the user
    * @param role         the role of the user
+   * @param isThisUser is this the user that is created
+   * @return the newly created user
    */
   public static User newUser(String userName, String accessToken,
                              String refreshToken, Role role, boolean isThisUser) {
@@ -77,10 +83,20 @@ public class User {
 
   }
 
+  /**
+   * Returns the user's accessToken.
+   *
+   * @return the user's accessToken
+   */
   public String getAccessToken() {
     return accessToken;
   }
 
+  /**
+   * Returns this user's role.
+   *
+   * @return this user's role
+   */
   public Role getRole() {
     return role;
   }
@@ -92,6 +108,11 @@ public class User {
              + ", role=" + role + ", expiresIn=" + expiresIn + "]";
   }
 
+  /**
+   * Returns this user's username.
+   *
+   * @return this user's username
+   */
   public String getUsername() {
     return userName;
   }

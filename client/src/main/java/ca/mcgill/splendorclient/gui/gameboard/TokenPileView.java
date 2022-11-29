@@ -26,6 +26,11 @@ public class TokenPileView extends Circle implements Observer {
     tokenCounter = new Counter(0);
   }
 
+  /**
+   * Returns the token counter.
+   *
+   * @return the token counter
+   */
   public Counter getCounter() {
     return tokenCounter;
   }

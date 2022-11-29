@@ -37,6 +37,11 @@ public class UserInventory implements Observer, Observable {
     playerName = name;
   }
 
+  /**
+   * Returns the username of the player who owns this inventory.
+   *
+   * @return this player's username
+   */
   public String getPlayerName() {
     return playerName;
   }
@@ -87,6 +92,12 @@ public class UserInventory implements Observer, Observable {
   }
 
   //need tighter encapsulation eventually
+
+  /**
+   * Adds a token pile to the user inventory.
+   *
+   * @param pile the pile to be added
+   */
   public void addPile(TokenPile pile) {
     tokenPiles.add(pile);
   }

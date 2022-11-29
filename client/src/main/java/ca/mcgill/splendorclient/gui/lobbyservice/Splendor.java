@@ -18,6 +18,13 @@ public class Splendor extends Application {
   private static Stage stage;
   private static UpdateGetter updateGetter;
 
+  /**
+   * Creates a Splendor object.
+   */
+  public Splendor() {
+
+  }
+
   @Override
   public void start(Stage stage) throws IOException {
     // scene initialization
@@ -37,6 +44,9 @@ public class Splendor extends Application {
   /**
    * Transitions to the next scene.
    * TODO: Make this the state machine pattern. Each scene is a state with a transition to function.
+   *
+   * @param scene the scene to transition to
+   * @param title the title of the screen
    */
   public static void transitionTo(Scene scene, Optional<String> title) {
     stage.setScene(scene);
@@ -57,12 +67,20 @@ public class Splendor extends Application {
       stage.setTitle("");
     }
   }
-  
+
+  /**
+   * Exits the game.
+   */
   public static void exitGame() {
     assert updateGetter != null;
     updateGetter.exit();
   }
 
+  /**
+   * Launches the Splendor application.
+   *
+   * @param args the arguments
+   */
   public static void main(String[] args) {
     launch();
   }

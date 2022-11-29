@@ -11,6 +11,11 @@ public class TotalTokenCountView extends Text implements Observer {
 
   private static int totalTokenCount = 15;
 
+  /**
+   * Creates a TotalTokenCountView.
+   *
+   * @param startupText the initial text of the counter
+   */
   public TotalTokenCountView(String startupText) {
     setText(startupText);
   }

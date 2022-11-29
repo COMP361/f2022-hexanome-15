@@ -11,6 +11,11 @@ public class TotalCardCountView extends Text implements Observer {
 
   private static int totalCardCount = 0;
 
+  /**
+   * Creates a TotalCardCountView.
+   *
+   * @param startupText the initial text of the counter
+   */
   public TotalCardCountView(String startupText) {
     setText(startupText);
   }

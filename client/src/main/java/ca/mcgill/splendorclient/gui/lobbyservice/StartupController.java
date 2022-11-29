@@ -36,6 +36,13 @@ public class StartupController implements Initializable {
   @FXML
   private Button loginButton;
 
+  /**
+   * Creates a StartUpController.
+   */
+  public StartupController() {
+
+  }
+
   @Override
   // this method gets called once when the contents of the associated fxml files
   // are loaded

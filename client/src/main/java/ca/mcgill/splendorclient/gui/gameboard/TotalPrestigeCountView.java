@@ -11,6 +11,11 @@ public class TotalPrestigeCountView extends Text implements Observer {
 
   private static int totalPrestigeCount = 0;
 
+  /**
+   * Creates a TotalPrestigeCountView.
+   *
+   * @param startupText the initial text of the counter
+   */
   public TotalPrestigeCountView(String startupText) {
     setText(startupText);
   }

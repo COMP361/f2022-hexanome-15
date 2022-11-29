@@ -31,6 +31,8 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 
   /**
    * Sets up the TokenPile upon starting the game.
+   *
+   * @param numPlayers the number of players in the game
    */
   public void setUp(int numPlayers) {
     int numTokens = 0;
@@ -86,6 +88,8 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
 
   /**
    * Removes a token from the token pile.
+   *
+   * @return the token that is removed
    */
   public Token removeToken() {
     if (!tokens.isEmpty()) {
