@@ -52,7 +52,8 @@ public class LobbyServiceExecutor {
    * @param gameid The game id
    */
   public final void sendGameboard(String gameboard, int gameid) {
-    String command = String.format("curl -X PUT --data {'gameboard':%s} "
+    String command = String.format("curl -X PUT --header 'Content-Type: application/json' "
+                                     + "--data {'gameboard':%s} "
                                      + "%s/api/games/%s/gameboard",
         gameboard, SERVERLOCATION, gameid);
     run(command, Parsejson.PARSE_JSON);
