@@ -1,11 +1,12 @@
 package ca.mcgill.splendorclient.lobbyserviceio;
 
-import ca.mcgill.splendorclient.users.Role;
-import ca.mcgill.splendorclient.users.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import org.json.JSONObject;
+
+import ca.mcgill.splendorclient.users.*;
 
 /**
  * Executes Lobby Service commands.
@@ -14,6 +15,7 @@ import org.json.JSONObject;
  */
 public class LobbyServiceExecutor {
   public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242");
+  public static final String SERVERLOCATION = "127.0.0.1:8080";
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;
@@ -32,7 +34,7 @@ public class LobbyServiceExecutor {
     // creates a user object for the default admin of the LS: maex, abc123_ABC123
     JSONObject auth = auth_token("maex", "abc123_ABC123");
     ADMIN = User.newUser("maex", (String) Parsejson.PARSE_JSON.getFromKey(auth, "access_token"),
-      (String) Parsejson.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN);
+      (String) Parsejson.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN, false);
   }
 
   /**
@@ -42,6 +44,12 @@ public class LobbyServiceExecutor {
     String command = String.format("curl -X GET %s/api/online", lobbyServiceLocation);
     String output = (String) run(command, ParseText.PARSE_TEXT);
     return output;
+  }
+
+  public final void sendGameboard(String gameboard, int gameid) {
+    String command = String.format("curl -X PUT --data {'gameboard':%s} "
+                                     + "%s/api/games/%s/gameboard", gameboard,SERVERLOCATION, gameid);
+    run(command, Parsejson.PARSE_JSON);
   }
 
   /**
@@ -215,7 +223,24 @@ public class LobbyServiceExecutor {
     } else {
       return (JSONObject) run(command, Parsejson.PARSE_JSON);
     }
+  }
+  
+  public final void end_turn(int gameId, String username, String move) {
+    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s", SERVERLOCATION, gameId, username, move);
+    run(command, NullParser.NULLPARSER);
+  }
 
+  /**
+   * Returns the session info as a JSONObject.
+   *
+   * @param sessionid The id of the session
+   * @return the session info
+   */
+  public JSONObject getSessionInfo(int sessionid) {
+    String command = String.format("curl -X GET %s/api/sessions/%s",
+        lobbyServiceLocation, sessionid);
+    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
+    return output;
   }
 
   private Object run(String command, OutputParser parser) {

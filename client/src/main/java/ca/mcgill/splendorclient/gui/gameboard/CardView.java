@@ -1,17 +1,21 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import ca.mcgill.splendorclient.model.ColorManager;
 import ca.mcgill.splendorclient.model.cards.Card;
 import ca.mcgill.splendorclient.model.cards.Observable;
 import ca.mcgill.splendorclient.model.cards.Observer;
-import java.util.ArrayList;
-import java.util.Optional;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
  * Represents the view of a Splendor Card.
+ * Observed by UserInventory, for purpose of adding purchased card to User Inventory
+ * Observed by MoveManager to forward the finished move to the server
+ * Observes Deck in order to populate card from top of deck.
  */
 public class CardView extends StackPane implements Observer, Observable {
 
@@ -19,6 +23,7 @@ public class CardView extends StackPane implements Observer, Observable {
   private final Rectangle outer;
   private final Rectangle inner;
   private final ArrayList<Observer> observers;
+  private boolean hasActivePurchaseAttempt = true;
 
   /**
    * Creates a CardView.
@@ -37,16 +42,19 @@ public class CardView extends StackPane implements Observer, Observable {
     card = Optional.empty();
     observers = new ArrayList<>();
     this.setOnMouseClicked(arg0 -> {
-      // TODO onclick notify the deck associated with this row of cards
-      // and add a card and also add this card to the users inventory
       if (card.isPresent()) {
-        final Card purchasedCard = card.get();
-        card = Optional.empty();
-        inner.setFill(Color.WHITE);
-        outer.setFill(Color.WHITE);
-        notifyObservers(purchasedCard);
+        hasActivePurchaseAttempt = true;
+        notifyObservers();
       }
     });
+  }
+
+  public Optional<Card> getCard() {
+    return card;
+  }
+
+  public void revokePurchaseAttempt() {
+    hasActivePurchaseAttempt = false;
   }
 
   /**
@@ -62,12 +70,20 @@ public class CardView extends StackPane implements Observer, Observable {
 
   /**
    * Notifies all observers that a card has been purchased or reserved.
-   *
-   * @param card The card that was purchased or reserved
+   */
+  public void notifyObservers() {
+    for (Observer observer : observers) {
+      observer.onAction(this);
+    }
+  }
+  
+  /**
+   * Notifies MoveManager of completed move.
+   * @param card
    */
   public void notifyObservers(Card card) {
     for (Observer observer : observers) {
-      observer.onAction(card);
+      observer.onAction();
     }
   }
 
@@ -76,12 +92,13 @@ public class CardView extends StackPane implements Observer, Observable {
     if (card == null) {
       inner.setFill(Color.WHITE);
       outer.setFill(Color.WHITE);
-    } else if (this.card.isEmpty()) {
+    } else if (hasActivePurchaseAttempt) {
       // when the card has an associated png, make that the fill
       // https://stackoverflow.com/questions/22848829/how-do-i-add-an-image-inside-a-rectangle-or-a-circle-in-javafx
       this.card = Optional.of(card);
       inner.setFill(ColorManager.getColor(card.getTokenType()));
       outer.setFill(ColorManager.getColor(card.getCardType()));
+      hasActivePurchaseAttempt = false;
     }
   }
 

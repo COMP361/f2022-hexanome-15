@@ -4,7 +4,6 @@ import ca.mcgill.splendorclient.model.cards.CardType;
 import ca.mcgill.splendorclient.model.tokens.TokenType;
 import javafx.scene.paint.Color;
 
-
 /**
  * Manages colors for tokens and cards.
  */

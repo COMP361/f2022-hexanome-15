@@ -1,9 +1,10 @@
 package ca.mcgill.splendorclient.gui.lobbyservice;
 
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
