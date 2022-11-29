@@ -17,4 +17,11 @@ public class LoadDatabase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoadDatabase.class);
 
+  /**
+   * Creates a LoadDatabase.
+   */
+  public LoadDatabase() {
+
+  }
+
 }

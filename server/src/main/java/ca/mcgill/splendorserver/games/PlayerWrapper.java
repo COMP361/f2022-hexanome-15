@@ -43,6 +43,11 @@ public class PlayerWrapper {
     }
   }
 
+  /**
+   * Returns a player's username.
+   *
+   * @return a player's username
+   */
   public String getaUserName() {
     return userName;
   }

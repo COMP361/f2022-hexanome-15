@@ -37,14 +37,29 @@ public class Game implements Iterable<PlayerWrapper> {
     this.takeTurn = new TakeTurn(players);
   }
 
+  /**
+   * Returns the game id.
+   *
+   * @return the game id
+   */
   public long gameid() {
     return gameid;
   }
 
+  /**
+   * Returns the savegame.
+   *
+   * @return the savegame
+   */
   public String savegame() {
     return savegame;
   }
 
+  /**
+   * Removes a player.
+   *
+   * @param username The removed player's username
+   */
   public void removePlayer(PlayerWrapper username) {
     takeTurn.removePlayer(username);
   }
@@ -77,11 +92,21 @@ public class Game implements Iterable<PlayerWrapper> {
     return takeTurn.iterator();
   }
 
+  /**
+   * Updates the gameboard in the server.
+   *
+   * @param newGameBoard the updated gameboard
+   */
   public void updateGameBoard(String newGameBoard) {
     assert newGameBoard != null;
     this.initGameBoard = newGameBoard;
   }
 
+  /**
+   * Returns the gameboard.
+   *
+   * @return the gameboard
+   */
   public String getGameBoard() {
     return initGameBoard;
   }

@@ -25,10 +25,20 @@ public class TakeTurn implements Iterable<PlayerWrapper> {
   @OneToMany
   private final List<PlayerWrapper> turns;
 
+  /**
+   * Take turn.
+   *
+   * @param players the players in the game
+   */
   public TakeTurn(Collection<PlayerWrapper> players) {
     turns = new CopyOnWriteArrayList<>(players);
   }
 
+  /**
+   * Removes a player from turns.
+   *
+   * @param player the player to be removed
+   */
   public void removePlayer(PlayerWrapper player) {
     turns.remove(player);
   }

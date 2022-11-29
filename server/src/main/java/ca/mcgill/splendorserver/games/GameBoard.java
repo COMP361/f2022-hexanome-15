@@ -13,6 +13,13 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class GameBoard {
   // TODO: include a field to whoevers turn it is
+
+  /**
+   * Creates a gameboard.
+   */
+  public GameBoard() {
+
+  }
   
 
 }

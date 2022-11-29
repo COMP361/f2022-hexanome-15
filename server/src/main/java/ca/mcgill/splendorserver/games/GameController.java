@@ -32,6 +32,11 @@ public class GameController {
   private boolean updateGameBoard = false;
   private boolean updateAction = false;
 
+  /**
+   * Creates a GameController.
+   *
+   * @param repository the repository
+   */
   public GameController(GameRepository repository) {
     this.repository = repository;
   }
