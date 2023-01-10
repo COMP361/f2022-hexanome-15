@@ -95,6 +95,9 @@ public class CardView extends StackPane implements Observer, Observable {
     }
   }
 
+  /**
+   * Closing the action loop resulting from a valid purchase, insert the dealt card into this cardview.
+   */
   @Override
   public void onAction(Card card) {
     if (card == null) {
@@ -107,6 +110,7 @@ public class CardView extends StackPane implements Observer, Observable {
       inner.setFill(ColorManager.getColor(card.getTokenType()));
       outer.setFill(ColorManager.getColor(card.getCardType()));
       hasActivePurchaseAttempt = false;
+      notifyObservers(card);
     }
   }
 

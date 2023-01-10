@@ -234,6 +234,9 @@ public class GameBoardView {
     //so that we can figure out if we can afford the card, we need to check in UserInventory class.
     // TODO: instantiate player names from actual game.
     UserInventory userInventory = new UserInventory(tokenPile, "");
+    
+    userInventory.addListener(MoveManager.getInstance()); //also unfortunately needs to be registered before all others
+    
     userInventories.add(userInventory);
     MoveManager.getInstance().addListener(userInventory);
     //i.e only register click actions for this user inventory
@@ -252,7 +255,6 @@ public class GameBoardView {
         cardColumn.addListener(deck);
       }
     }
-    userInventory.addListener(MoveManager.getInstance());
     outTokenPile.add(tokenPile);
     return userInventoryView;
   }
