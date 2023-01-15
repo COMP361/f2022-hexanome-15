@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.json.JSONObject;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 
 /**
  * Executes Lobby Service commands.
@@ -253,9 +256,14 @@ public class LobbyServiceExecutor {
    * @param move The move that the player made
    */
   public final void end_turn(int gameId, String username, String move) {
-    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
-        SERVERLOCATION, gameId, username, move);
-    run(command, NullParser.NULLPARSER);
+//    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
+//        SERVERLOCATION, gameId, username, move);
+//    run(command, NullParser.NULLPARSER);
+    HttpResponse<String> response = Unirest.put(String.format("http://127.0.0.1:8080/api/games/%d/endturn", gameId, username))
+        .header("Content-Type", "application/json")
+        .body(move)
+        .asString();
+    System.out.println(response.getStatus());
   }
 
   /**

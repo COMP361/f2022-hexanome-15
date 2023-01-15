@@ -6,8 +6,17 @@
 package ca.mcgill.splendorserver.games;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,14 +40,113 @@ public class GameController {
   private ExecutorService updaters = Executors.newFixedThreadPool(4);
   private boolean updateGameBoard = false;
   private boolean updateAction = false;
+  private final String gameServiceLocation = "http://127.0.0.1:8080";//should probably be final
+  
+  JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
+  String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+  String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
 
-  /**
-   * Creates a GameController.
-   *
-   * @param repository the repository
-   */
+  
   public GameController(GameRepository repository) {
+    //accessToken = accessToken.substring(0, accessToken.length()-1);
+    register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
+    //create_session(accessToken, "maex", "splendorBase1", "");
+    //get_session("136528857923959438");
+    //delete_session("8657865879198511197", accessToken);
+    //launch_session("136528857923959438", accessToken);
+    //get_session("136528857923959438");
     this.repository = repository;
+  }
+  
+  /**
+   * Registers a game service. This should not be called by client and is kept here 
+   * for reference while changes are made. Servers should register themselves
+   * as per LS diagram.
+   *
+   * @param accessToken       the accessToken of the user
+   * @param gameLocation      the location of the game
+   * @param maxSessionPlayers the max amount of players that can be in a session
+   * @param minSessionPlayers the min amount of players that can be in a session
+   * @param gameName          the name of the game
+   * @param displayName       the name of the display
+   * @param webSupport        boolean value for webSupport
+   * @return 
+   */
+  private final Object register_gameservice(String accessToken, String gameLocation, int maxSessionPlayers,
+      int minSessionPlayers, String gameName, String displayName, boolean webSupport) {
+    checkNotNullNotEmpty(accessToken, gameLocation, gameName, displayName);
+    
+    GameServiceAccountJson acc = new GameServiceAccountJson(
+          gameName,
+          "Antichrist1!",
+          "#000000"
+        );
+    
+    String newUserJSon = new Gson().toJson(acc);
+    
+    HttpResponse<String> response1 = Unirest.put(
+          "http://127.0.0.1:4242/api/users/"
+          + gameName
+          + "?access_token="
+          + accessToken
+        )
+        .header("Content-Type", "application/json")
+        .body(newUserJSon)
+        .asString();
+    
+    
+
+    adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
+      accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+      refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+      GameServiceJson gs = new GameServiceJson(
+            gameName,
+            "Splendor",
+            "http://127.0.0.1:8080",
+            "2",
+            "4",
+            "true"
+          );
+
+      System.out.println(response1.getBody());
+      String newServiceJSon = new Gson().toJson(gs);
+      
+      HttpResponse<String> response2 = Unirest.put(
+        "http://127.0.0.1:4242/api/gameservices/"
+        + gameName
+        + "?access_token="
+        + accessToken
+      )
+      .header("Content-Type", "application/json")
+      .body(newServiceJSon)
+        .asString();
+      System.out.println(response2.getBody());
+    return null;
+    
+    /*accessToken = accessToken.replaceAll("\\+", "\\\\+");
+    //registers a user with ROLE_SERVICE
+    String command = String.format(
+        "curl -X PUT --header \"Content-Type:application/json\" --data "
+            + "\"{ \\\"name\\\": \\\"%s\\\",\\\"password\\\": \\\"Antichrist1!\\\",\\\"preferredColour\\\": \\\"#000000\\\","
+            + "\\\"role\\\": \\\"ROLE_SERVICE\\\"}\" "
+            + "\"%s/api/users/%s?access_token=%s\"",
+        gameName, "http://127.0.0.1:4242", gameName, accessToken);
+    run(command, ParseText.PARSE_TEXT);
+    adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
+      accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+      refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+    
+    //System.out.println(command);
+    //actually registers the gameservice
+    command = String.format(
+        "curl -X PUT --header \"Content-Type:application/json\" --data "
+            + "\"{ \\\"name\\\": \\\"%s\\\",\\\"displayName\\\": \\\"%s\\\",\\\"location\\\": \\\"%s\\\","
+            + "\\\"minSessionPlayers\\\": %s,\\\"maxSessionPlayers\\\": %s, \\\"webSupport\\\": \\\"%s\\\" }\" "
+            + "\"%s/api/gameservices/%s?access_token=%s\"",
+        gameName, displayName, gameLocation, String.valueOf(minSessionPlayers),
+        String.valueOf(maxSessionPlayers), String.valueOf(webSupport), "http://127.0.0.1:4242", gameName, accessToken);
+    //System.out.println(command);
+    return run(command, ParseText.PARSE_TEXT);*/
   }
 
   @PutMapping("/api/games/{gameid}")
@@ -127,6 +235,13 @@ public class GameController {
       updateAction = false;
     });
     return updatedAction;
+  }
+  
+  //copied from LobbyServiceExecutor, to be refactored later
+  private void checkNotNullNotEmpty(String... args) {
+    for (String arg : args) {
+      assert arg != null && arg.length() != 0 : "Arguments cannot be empty nor null.";
+    }
   }
 
   /**

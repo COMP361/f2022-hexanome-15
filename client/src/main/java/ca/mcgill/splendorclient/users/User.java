@@ -25,7 +25,7 @@ public class User {
   /**
    * Instance of this user.
    */
-  public static String THISUSER = null;
+  public static User THISUSER = null;
 
   // using the user's user-name as the unique key for each of them
   private static final HashMap<String, User> USERS = new HashMap<>();
@@ -54,10 +54,11 @@ public class User {
                              String refreshToken, Role role, boolean isThisUser) {
     if (!USERS.containsKey(userName)) {
       try {
-        USERS.put(userName, new User(userName, URLEncoder.encode(accessToken, "UTF-8"),
-            URLEncoder.encode(refreshToken, "UTF-8"), role));
+        User user = new User(userName, URLEncoder.encode(accessToken, "UTF-8"),
+            URLEncoder.encode(refreshToken, "UTF-8"), role);
+        USERS.put(userName, user);
         if (isThisUser) {
-          THISUSER  = userName;
+          THISUSER  = user;
         }
       } catch (UnsupportedEncodingException e) {
         e.printStackTrace();

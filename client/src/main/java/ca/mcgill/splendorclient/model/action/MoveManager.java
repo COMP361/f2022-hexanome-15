@@ -48,7 +48,7 @@ public class MoveManager implements Observer, Observable {
     Gson gson = new Gson();
     Move move = gson.fromJson(json, Move.class);
     moveStack.push(move);
-    if (move.getName() != User.THISUSER) {
+    if (move.getName() != User.THISUSER.getUsername()) {
       for (Observer observer : observers) {
         observer.onAction(move);
       }
@@ -61,7 +61,7 @@ public class MoveManager implements Observer, Observable {
    * @param card The card that was purchased/reserved
    */
   public void onAction(Card card) {
-    Move move = new Move(Action.PURCHASE, card, User.THISUSER);
+    Move move = new Move(Action.PURCHASE, card, User.THISUSER.getUsername());
     moveStack.push(move);
   }
   
@@ -72,7 +72,7 @@ public class MoveManager implements Observer, Observable {
     assert User.THISUSER != null;
     Move move = getMostRecentMove();
     String json = gson.toJson(move);
-    LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.end_turn(0, User.THISUSER, json);
+    LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.end_turn(0, User.THISUSER.getUsername(), json);
   }
 
   /**
