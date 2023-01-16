@@ -10,9 +10,12 @@ import com.google.gson.Gson;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
+import kong.unirest.Body;
 import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,6 +61,12 @@ public class GameController {
     this.repository = repository;
   }
   
+  private HttpResponse<JsonNode> getRegisteredGameServices() {
+    HttpResponse<JsonNode> r = Unirest.get("http://127.0.0.1:4242/api/gameservices")
+        .header("accept", "application/json").asJson();    
+    return r;
+  }
+  
   /**
    * Registers a game service. This should not be called by client and is kept here 
    * for reference while changes are made. Servers should register themselves
@@ -76,6 +85,8 @@ public class GameController {
       int minSessionPlayers, String gameName, String displayName, boolean webSupport) {
     checkNotNullNotEmpty(accessToken, gameLocation, gameName, displayName);
     
+    System.out.println(getRegisteredGameServices().getBody().toPrettyString());
+    
     GameServiceAccountJson acc = new GameServiceAccountJson(
           gameName,
           "Antichrist1!",
@@ -88,7 +99,7 @@ public class GameController {
           "http://127.0.0.1:4242/api/users/"
           + gameName
           + "?access_token="
-          + accessToken
+          + accessToken.replace("+", "%2B")
         )
         .header("Content-Type", "application/json")
         .body(newUserJSon)
@@ -97,8 +108,8 @@ public class GameController {
     
 
     adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
-      accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
-      refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+    accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+    refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
       GameServiceJson gs = new GameServiceJson(
             gameName,
             "Splendor",
@@ -108,19 +119,19 @@ public class GameController {
             "true"
           );
 
-      System.out.println(response1.getBody());
+      System.out.println("Response from service user registration: " + response1.getBody());
       String newServiceJSon = new Gson().toJson(gs);
       
       HttpResponse<String> response2 = Unirest.put(
         "http://127.0.0.1:4242/api/gameservices/"
         + gameName
         + "?access_token="
-        + accessToken
+        + accessToken.replace("+", "%2B")
       )
       .header("Content-Type", "application/json")
       .body(newServiceJSon)
         .asString();
-      System.out.println(response2.getBody());
+      System.out.println("Response from registration request: " + response2.getBody());
     return null;
     
     /*accessToken = accessToken.replaceAll("\\+", "\\\\+");

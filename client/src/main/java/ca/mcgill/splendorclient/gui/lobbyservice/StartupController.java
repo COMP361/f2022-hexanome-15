@@ -60,52 +60,33 @@ public class StartupController implements Initializable {
 
         @Override
         public JSONObject execute() {
-          try {
-            // must use the utf-8 encoding otherwise (+) in the token will cause it to
-            // seperate and insert a space
-            return ls.get_user(usernameField.getText(), URLEncoder.encode(accessToken, "UTF-8"));
-          } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-          }
-          return null;
+          // must use the utf-8 encoding otherwise (+) in the token will cause it to
+          // seperate and insert a space
+          return ls.auth_token(usernameField.getText(), passwordField.getText());
         }
 
         @Override
         public void respond(Object userInfo) {
-          if (userInfo == null) { // means that the entered username doesn't exist within the LS
-            Alert noUser = new Alert(AlertType.ERROR);
-            noUser.setHeaderText("Invalid Credentials");
-            noUser.setContentText("Given credentials don't match our records, please try again.");
-            noUser.showAndWait();
-            System.out.println("Login failed for user: (" + usernameField.getText()
-                                 + ") with password: (" + passwordField.getText() + ")");
-          } else {
-            PasswordEncoder bcrypt = new BCryptPasswordEncoder();
-            // username is valid must validate the password
-            String actualPassword = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo,
-                "password");
-            if (bcrypt.matches(passwordField.getText(), actualPassword)) {
-              System.out.println("Successfully logged in " + usernameField.getText());
-              Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
-              //TODO: actually get the role
-              User.newUser(usernameField.getText(), accessToken, refreshToken, Role.PLAYER, true);
-            } else {
-              Alert wrongPasswordAlert = new Alert(AlertType.ERROR);
-              wrongPasswordAlert.setHeaderText("Incorrect Password");
-              wrongPasswordAlert.setContentText(
-                  "Entered password does not match the given username, please try again");
-              wrongPasswordAlert.showAndWait();
-              System.out.println(
-                  "Incorrect password attempt for user: (" + usernameField.getText() + ")");
-
-            }
-
-            // TODO: initialize player object with this logged in player and fetch their
-            // auth tokens
+          JSONObject reply = (JSONObject) userInfo;
+          if (reply.has("error")) {
+            Alert wrongCredentialsAlert = new Alert(AlertType.ERROR);
+            wrongCredentialsAlert.setHeaderText("Invalid Credentials");
+            wrongCredentialsAlert.setContentText(
+                "Given credentials don't match our records, please try again.");
+            wrongCredentialsAlert.showAndWait();
+            System.out.println(
+                "Incorrect credentials attempted: (" + usernameField.getText() + ")");
+          }
+          else {
+            System.out.println("Successfully logged in " + usernameField.getText());
+            Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
+            //TODO: actually get the role
+            String accessToken = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo, "access_token");
+            String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo, "refresh_token");
+            User.newUser(usernameField.getText(), accessToken, refreshToken, Role.PLAYER, true);
           }
         }
       }));
-
   }
 
 }

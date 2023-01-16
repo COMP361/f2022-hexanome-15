@@ -27,8 +27,6 @@ public class LobbyServiceExecutor {
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;
-  // location of bash scripts directory
-  private static User ADMIN;
 
   /**
    * Creates a LobbyServiceExecutor.
@@ -38,11 +36,6 @@ public class LobbyServiceExecutor {
   private LobbyServiceExecutor(String lobbyServiceLocation) {
     assert lobbyServiceLocation != null && lobbyServiceLocation.length() != 0;
     this.lobbyServiceLocation = lobbyServiceLocation;
-
-    // creates a user object for the default admin of the LS: maex, abc123_ABC123
-    JSONObject auth = auth_token("maex", "abc123_ABC123");
-    ADMIN = User.newUser("maex", (String) Parsejson.PARSE_JSON.getFromKey(auth, "access_token"),
-      (String) Parsejson.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN, false);
   }
 
   /**
@@ -335,15 +328,6 @@ public class LobbyServiceExecutor {
     for (String arg : args) {
       assert arg != null && arg.length() != 0 : "Arguments cannot be empty nor null.";
     }
-  }
-
-  /**
-   * Returns the admin.
-   *
-   * @return the admin
-   */
-  public static User getAdmin() {
-    return ADMIN;
   }
 
 }

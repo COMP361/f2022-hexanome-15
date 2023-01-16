@@ -53,15 +53,11 @@ public class User {
   public static User newUser(String userName, String accessToken,
                              String refreshToken, Role role, boolean isThisUser) {
     if (!USERS.containsKey(userName)) {
-      try {
-        User user = new User(userName, URLEncoder.encode(accessToken, "UTF-8"),
-            URLEncoder.encode(refreshToken, "UTF-8"), role);
-        USERS.put(userName, user);
-        if (isThisUser) {
-          THISUSER  = user;
-        }
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
+      User user = new User(userName, accessToken,
+          refreshToken, role);
+      USERS.put(userName, user);
+      if (isThisUser) {
+        THISUSER  = user;
       }
     }
     return USERS.get(refreshToken);

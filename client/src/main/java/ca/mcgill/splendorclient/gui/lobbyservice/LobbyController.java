@@ -144,21 +144,16 @@ public class LobbyController implements Initializable {
 		}
 		else {
 			HttpResponse<String> response2;
-			try {
-				response2 = Unirest.post(
-										"http://127.0.0.1:4242/api/sessions"
-										+ "?access_token="
-										+ URLEncoder.encode(accessToken, "UTF-8")//accessToken+'='
-										)
-						.header("Authorization", "Bearer" + accessToken)
-						.header("Content-Type", "application/json")
-						.body(String.format("{\"creator\":\"%s\", \"game\":\"%s\", \"savegame\":\"%s\"}", createUserName, gameName, saveGame))
-						.asString();
-						System.out.println(response2.getBody());
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			response2 = Unirest.post(
+									"http://127.0.0.1:4242/api/sessions"
+									+ "?access_token="
+									+ accessToken
+									)
+					.header("Authorization", "Bearer" + accessToken)
+					.header("Content-Type", "application/json")
+					.body(String.format("{\"creator\":\"%s\", \"game\":\"%s\", \"savegame\":\"%s\"}", createUserName, gameName, saveGame))
+					.asString();
+					System.out.println(response2.getBody());
 		}
 	}
 
