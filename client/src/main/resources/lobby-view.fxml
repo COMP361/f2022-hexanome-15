@@ -56,7 +56,7 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="200.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Logout">
+            <Button fx:id="logoutButton" layoutX="200.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Logout">
                <font>
                   <Font size="15.0" />
                </font>
@@ -71,7 +71,7 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="140.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Delete">
+            <Button fx:id="deleteSessionButton" layoutX="140.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Delete">
                <font>
                   <Font size="15.0" />
                </font>

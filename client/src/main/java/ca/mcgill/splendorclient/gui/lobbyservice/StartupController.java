@@ -47,13 +47,6 @@ public class StartupController implements Initializable {
   // this method gets called once when the contents of the associated fxml files
   // are loaded
   public void initialize(URL arg0, ResourceBundle arg1) {
-    // getting LS default admin info
-    JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(
-        "maex", "abc123_ABC123");
-    String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
-    String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
-    // flyweight User object representing the default admin of the LS
-    User.newUser("maex", accessToken, refreshToken, Role.ADMIN, false);
 
     loginButton.setOnAction(LobbyServiceHandler.createlsEventHandler(
       new ScriptExecutor<JSONObject>() {

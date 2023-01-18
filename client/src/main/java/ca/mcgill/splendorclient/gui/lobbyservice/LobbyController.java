@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.users.User;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -43,9 +45,12 @@ public class LobbyController implements Initializable {
 	@FXML
 	private TextField sessionNameText;
 	@FXML
+	private Button deleteSessionButton;
+	@FXML
+	private Button logoutButton; 
+	@FXML
 	private ChoiceBox<String> gameserviceChoiceBox;
 	
-	private String selectedSession = "";
 	
 
 	@Override
@@ -53,24 +58,88 @@ public class LobbyController implements Initializable {
 		ArrayList<String> cope = get_gameservices();
 		ObservableList<String> listcope = FXCollections.observableArrayList(cope);
 		gameserviceChoiceBox.setItems(listcope);
-		availableSessionList.getItems().addAll(get_all_sessions());
+		
+		//get session updates by polling
+		new Thread(new Runnable() {
+
+      @Override
+      public void run() {
+        while (true) {
+          Platform.runLater(() -> { 
+            if (!availableSessionList.getItems().stream().collect(Collectors.toList()).equals(get_all_sessions())) {
+              availableSessionList.getItems().clear();
+              availableSessionList.getItems().addAll(get_all_sessions());
+            }
+          });
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+		}).start();
+		
+		logoutButton.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        revoke_auth(User.THISUSER.getAccessToken());
+        User.logout(User.THISUSER.getUsername());
+        Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
+      }
+		  
+		});
+		
+		deleteSessionButton.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        String toDelete = availableSessionList.getSelectionModel().getSelectedItem();
+        if (delete_session(toDelete, User.THISUSER.getAccessToken()) ){
+          
+        }
+        else {
+          //issue deleting the session
+          System.out.println("Failed to delete session: " + toDelete);
+        }
+      }
+		  
+		});
 
 		joinSessionButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				User user = User.THISUSER;
-				String toJoin = availableSessionList.getSelectionModel().getSelectedItem();
-				add_player_to_session(user.getUsername(), user.getAccessToken(), toJoin);//selectedSession);
-				while (!get_session(toJoin).getBoolean("launched")) {
-					//wait
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				String sessionToJoin = availableSessionList.getSelectionModel().getSelectedItem();
+				if (add_player_to_session(user.getUsername(), user.getAccessToken(), sessionToJoin)) {
+				  new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+              while (true) {
+                try {
+                  Thread.sleep(2000);
+                  JSONObject sessionInfo = get_session(sessionToJoin);
+                  System.out.println("in here");
+                  if (sessionInfo.getBoolean("launched")) {
+                    Platform.runLater(() -> {
+                      Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
+                    });
+                  }
+                } catch (InterruptedException e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+                }
+              }
+            }
+				    
+				  }).start();;
+  				
 				}
-				Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
+				else {
+				  //failed to join session, notify user.
+				}
 			}
 		});
 
@@ -79,8 +148,12 @@ public class LobbyController implements Initializable {
 			public void handle(ActionEvent arg0) {
 				User user = User.THISUSER;
 				String toJoin = availableSessionList.getSelectionModel().getSelectedItem();
-				launch_session(toJoin, user.getAccessToken());
-				Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
+				if (launch_session(toJoin, user.getAccessToken())) {
+				  Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
+				}
+				else {
+				  //notify user failure to launch session. 
+				}
 			}
 		});
 		
@@ -134,7 +207,7 @@ public class LobbyController implements Initializable {
 			HttpResponse<String> response = Unirest.post(
 							"http://127.0.0.1:4242/api/sessions"
 									+ "?access_token="
-									+ accessToken+'='
+									+ accessToken
 					)
 					.header("Authorization", "Bearer" + accessToken)
 					.header("Content-Type", "application/json")
@@ -168,7 +241,7 @@ public class LobbyController implements Initializable {
 		JSONObject obj = response.getBody().getObject();
 		obj = obj.getJSONObject("sessions");
 		ArrayList<String> arr = new ArrayList<>();
-		Iterator keys = obj.keys();
+		Iterator<String> keys = obj.keys();
 		while (keys.hasNext()) {
 			Object key = keys.next();
 			arr.add((String) key);
@@ -186,7 +259,6 @@ public class LobbyController implements Initializable {
 								+ sessionID
 				)
 				.asJson();
-		System.out.println(response.getBody().toString());
 		return response.getBody().getObject();
 	}
 
@@ -194,16 +266,19 @@ public class LobbyController implements Initializable {
 	 * @param sessionID
 	 * @param accessToken
 	 */
-	private void launch_session(String sessionID, String accessToken) {
+	private boolean launch_session(String sessionID, String accessToken) {
 		try {
 			HttpResponse<String> response = Unirest.post(
 							"http://127.0.0.1:4242/api/sessions/" + sessionID
-									+ "?access_token=" + URLEncoder.encode( accessToken, "UTF-8")
+									+ "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
 					)
 					.asString();
+			System.out.println("Response from launch: " + response.getBody().toString());
+			return response.getStatus() % 100 == 2;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -211,13 +286,31 @@ public class LobbyController implements Initializable {
 	 * @param sessionID
 	 * @param accessToken
 	 */
-	private void delete_session(String sessionID, String accessToken) {
-		HttpResponse<String> response = Unirest.delete(
-						"http://127.0.0.1:4242/api/sessions/" + sessionID
-								+ "?access_token=" + accessToken
-				)
-				.header("Authorization", "Bearer" + accessToken)
-				.asString();
+	private boolean delete_session(String sessionID, String accessToken) {
+	  try {
+      HttpResponse<String> response = Unirest.delete(
+              "http://127.0.0.1:4242/api/sessions/" + sessionID
+                  + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
+          )
+          .asString();
+      System.out.println("Response from delete: " + response.getBody().toString());
+      return response.getStatus() % 100 == 2;
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+      return false;
+    }
+	}
+	
+	private void revoke_auth(String accessToken) {
+	  try {
+       HttpResponse<String> response = Unirest.delete("http://127.0.0.1:4242/oauth/active?access_token="
+            + URLEncoder.encode(accessToken, "UTF-8")).asString();
+       if (!response.isSuccess()) {
+         System.out.println("Failed to logout");
+       }
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
 	}
 
 	/**
@@ -225,7 +318,7 @@ public class LobbyController implements Initializable {
 	 * @param accessToken
 	 * @param sessionID
 	 */
-	private void add_player_to_session(String playerName, String accessToken, String sessionID) {
+	private boolean add_player_to_session(String playerName, String accessToken, String sessionID) {
 		HttpResponse<String> response;
 		try {
 			response = Unirest.put(
@@ -234,10 +327,15 @@ public class LobbyController implements Initializable {
 									+ URLEncoder.encode( accessToken, "UTF-8")
 					)
 					.asString();
-					System.out.println(response.getBody());
+					System.out.println("Response from add player: " + response.getBody());
+					if (response.getStatus() % 100 == 4) {
+					  return false;
+					}
+					return true;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -255,7 +353,7 @@ public class LobbyController implements Initializable {
 									+ URLEncoder.encode( accessToken, "UTF-8")
 					)
 					.asString();
-					System.out.println(response.getBody());
+					System.out.println("Response from delete player: " + response.getBody());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -270,6 +368,7 @@ public class LobbyController implements Initializable {
 						"http://127.0.0.1:4242/api/gameservices"
 				)
 				.asJson();
+		System.out.println("Response from get_gameservices: " + response.getBody().toString());
 		//JSONObject obj = response.getBody().getObject();
 		ArrayList<String> arr = new ArrayList<>();
 		JsonNode json =  response.getBody();//new JSONArray(response.getBody().getObject());

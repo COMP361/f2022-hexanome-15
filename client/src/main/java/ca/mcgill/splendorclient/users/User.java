@@ -21,7 +21,7 @@ public class User {
   private String refreshToken;
   private final Role role;
   private int expiresIn = 1800000; // time in milliseconds until the users access token expires
-
+  private Timer renewalTimer = new Timer();
   /**
    * Instance of this user.
    */
@@ -37,9 +37,13 @@ public class User {
     this.role = role;
 
     // setting repeating timer process to renew access token once it expires
-    new Timer().scheduleAtFixedRate(new RenewAccessToken(), expiresIn, expiresIn);
+    renewalTimer.scheduleAtFixedRate(new RenewAccessToken(), expiresIn, expiresIn);
   }
-
+  
+  private Timer getTimer() {
+    return renewalTimer;
+  }
+  
   /**
    * Creates a User.
    *
@@ -61,6 +65,11 @@ public class User {
       }
     }
     return USERS.get(refreshToken);
+  }
+  
+  public static void logout(String userName) {
+    USERS.get(userName).getTimer().cancel();
+    USERS.remove(userName);
   }
 
   /**
