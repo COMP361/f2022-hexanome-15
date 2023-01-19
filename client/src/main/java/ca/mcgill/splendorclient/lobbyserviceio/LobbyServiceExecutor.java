@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.json.JSONObject;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 
 /**
  * Executes Lobby Service commands.
@@ -24,8 +27,6 @@ public class LobbyServiceExecutor {
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;
-  // location of bash scripts directory
-  private static User ADMIN;
 
   /**
    * Creates a LobbyServiceExecutor.
@@ -35,11 +36,6 @@ public class LobbyServiceExecutor {
   private LobbyServiceExecutor(String lobbyServiceLocation) {
     assert lobbyServiceLocation != null && lobbyServiceLocation.length() != 0;
     this.lobbyServiceLocation = lobbyServiceLocation;
-
-    // creates a user object for the default admin of the LS: maex, abc123_ABC123
-    JSONObject auth = auth_token("maex", "abc123_ABC123");
-    ADMIN = User.newUser("maex", (String) Parsejson.PARSE_JSON.getFromKey(auth, "access_token"),
-      (String) Parsejson.PARSE_JSON.getFromKey(auth, "refresh_token"), Role.ADMIN, false);
   }
 
   /**
@@ -246,16 +242,21 @@ public class LobbyServiceExecutor {
   }
 
   /**
-   * Sends the move done by a player to the server at the end of their turn.
+   * TODO: Should be moved to server service controller. Sends the move done by a player to the server at the end of their turn.
    *
    * @param gameId The game id
    * @param username The player's username
    * @param move The move that the player made
    */
   public final void end_turn(int gameId, String username, String move) {
-    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
-        SERVERLOCATION, gameId, username, move);
-    run(command, NullParser.NULLPARSER);
+//    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
+//        SERVERLOCATION, gameId, username, move);
+//    run(command, NullParser.NULLPARSER);
+    HttpResponse<String> response = Unirest.put(String.format("http://127.0.0.1:8080/api/games/%d/endturn", gameId, username))
+        .header("Content-Type", "application/json")
+        .body(move)
+        .asString();
+    System.out.println(response.getStatus());
   }
 
   /**
@@ -327,15 +328,6 @@ public class LobbyServiceExecutor {
     for (String arg : args) {
       assert arg != null && arg.length() != 0 : "Arguments cannot be empty nor null.";
     }
-  }
-
-  /**
-   * Returns the admin.
-   *
-   * @return the admin
-   */
-  public static User getAdmin() {
-    return ADMIN;
   }
 
 }

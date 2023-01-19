@@ -6,6 +6,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import ca.mcgill.splendorserver.games.model.GameBoard;
+
 /**
  * Represents a game session.
  *

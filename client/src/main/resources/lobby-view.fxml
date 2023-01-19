@@ -13,7 +13,7 @@
    <left>
       <AnchorPane prefHeight="200.0" prefWidth="700.0" style="-fx-background-color: #A9A9A9;" BorderPane.alignment="CENTER">
          <children>
-            <ChoiceBox layoutX="275.0" layoutY="200.0" prefWidth="300.0" />
+            <ChoiceBox fx:id="gameserviceChoiceBox" layoutX="275.0" layoutY="200.0" prefWidth="300.0" />
             <Label layoutX="100.0" layoutY="150.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Create New Session">
                <font>
                   <Font size="25.0" />
@@ -35,7 +35,7 @@
                   <Font size="30.0" />
                </font>
             </Label>
-            <TextField layoutX="10.0" layoutY="198.0" prefHeight="30.0" prefWidth="250.0" promptText="Session Name" style="-fx-border-width: 2; -fx-border-color: #A9A9A9; -fx-border-radius: 5;">
+            <TextField fx:id="sessionNameText" layoutX="10.0" layoutY="198.0" prefHeight="30.0" prefWidth="250.0" promptText="Session Name" style="-fx-border-width: 2; -fx-border-color: #A9A9A9; -fx-border-radius: 5;">
                <font>
                   <Font size="14.0" />
                </font>
@@ -56,7 +56,7 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="200.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Logout">
+            <Button fx:id="logoutButton" layoutX="200.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Logout">
                <font>
                   <Font size="15.0" />
                </font>
@@ -66,12 +66,12 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="81.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Join">
+            <Button fx:id="joinSessionButton" layoutX="81.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Join">
                <font>
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="140.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Delete">
+            <Button fx:id="deleteSessionButton" layoutX="140.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Delete">
                <font>
                   <Font size="15.0" />
                </font>

@@ -21,11 +21,11 @@ public class User {
   private String refreshToken;
   private final Role role;
   private int expiresIn = 1800000; // time in milliseconds until the users access token expires
-
+  private Timer renewalTimer = new Timer();
   /**
    * Instance of this user.
    */
-  public static String THISUSER = null;
+  public static User THISUSER = null;
 
   // using the user's user-name as the unique key for each of them
   private static final HashMap<String, User> USERS = new HashMap<>();
@@ -37,9 +37,13 @@ public class User {
     this.role = role;
 
     // setting repeating timer process to renew access token once it expires
-    new Timer().scheduleAtFixedRate(new RenewAccessToken(), expiresIn, expiresIn);
+    renewalTimer.scheduleAtFixedRate(new RenewAccessToken(), expiresIn, expiresIn);
   }
-
+  
+  private Timer getTimer() {
+    return renewalTimer;
+  }
+  
   /**
    * Creates a User.
    *
@@ -53,17 +57,19 @@ public class User {
   public static User newUser(String userName, String accessToken,
                              String refreshToken, Role role, boolean isThisUser) {
     if (!USERS.containsKey(userName)) {
-      try {
-        USERS.put(userName, new User(userName, URLEncoder.encode(accessToken, "UTF-8"),
-            URLEncoder.encode(refreshToken, "UTF-8"), role));
-        if (isThisUser) {
-          THISUSER  = userName;
-        }
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
+      User user = new User(userName, accessToken,
+          refreshToken, role);
+      USERS.put(userName, user);
+      if (isThisUser) {
+        THISUSER  = user;
       }
     }
     return USERS.get(refreshToken);
+  }
+  
+  public static void logout(String userName) {
+    USERS.get(userName).getTimer().cancel();
+    USERS.remove(userName);
   }
 
   /**
