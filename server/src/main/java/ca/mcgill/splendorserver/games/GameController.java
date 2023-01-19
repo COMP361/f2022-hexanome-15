@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -136,18 +138,18 @@ public class GameController {
     return null;
   }
 
-  @PutMapping("/api/sessions/{gameid}")
-  void launchRequest(@RequestBody ObjectNode sessionInfo, @PathVariable Long gameid) {
+  @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
+  public ResponseEntity<String> launchRequest(@PathVariable long gameId, @RequestBody ObjectNode sessionInfo) {
 
     // TODO: parse the players argument then change the game constructor not to also use threads
     // accept null
     System.out.println(sessionInfo);
     // TODO: parse the players to get their names
-    System.out.println("players: " + sessionInfo.get("players").get(0));
     // Game newGame = new Game(creator, savegame, gameid, players);
     // save created game object to repository
     // repository.save(newGame);
     // LOGGER.info("CREATED: " + newGame); // sending log info
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   /**
@@ -155,7 +157,7 @@ public class GameController {
    *
    * @param gameid The game id
    */
-  @DeleteMapping("/api/sessions/{gameid}")
+  @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
     Game game = repository.findById(gameid).orElseThrow(() -> new GameNotFoundException(gameid));
     repository.deleteById(gameid);
@@ -174,7 +176,7 @@ public class GameController {
    * @param gameid The game id
    * @param gameBoard The current gameboard
    */
-  @PutMapping("api/games/{gameid}/gameboard")
+  @PutMapping("/api/games/{gameid}/gameboard")
   public void setGameBoard(@PathVariable(name = "gameid") Long gameid,
                            @RequestBody String gameBoard) {
     // access the game object from database and then update the reference to the
@@ -191,7 +193,7 @@ public class GameController {
    * @param gameid The game id
    * @param action The last action that was made
    */
-  @PutMapping("api/games/{gameid}/endturn")
+  @PutMapping("/api/games/{gameid}/endturn")
   public void endTurn(@PathVariable(name = "gameid") Long gameid, @RequestBody String action) {
     Game game = repository.findById(gameid).orElseThrow(() -> new GameNotFoundException(gameid));
     game.setLastAction(action);
@@ -205,7 +207,7 @@ public class GameController {
    * @param gameid The game id
    * @return The last action
    */
-  @GetMapping("api/games/{gameid}/endturn")
+  @GetMapping("/api/games/{gameid}/endturn")
   public DeferredResult<String> getLastAction(@PathVariable(name = "gameid") Long gameid) {
     DeferredResult<String> updatedAction = new DeferredResult<>();
     updaters.execute(() -> {
@@ -237,7 +239,7 @@ public class GameController {
    * @param gameid The game id
    * @return the current gameboard
    */
-  @GetMapping("api/games/{gameid}/gameboard")
+  @GetMapping("/api/games/{gameid}/gameboard")
   public DeferredResult<String> currentGameBoard(@PathVariable Long gameid) {
     DeferredResult<String> updatedGameBoard = new DeferredResult<>();
     updaters.execute(() -> {
