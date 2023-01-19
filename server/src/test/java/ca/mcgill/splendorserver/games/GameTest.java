@@ -2,6 +2,8 @@ package ca.mcgill.splendorserver.games;
 
 import org.junit.jupiter.api.Test;
 
+import ca.mcgill.splendorserver.games.model.GameBoard;
+
 import java.util.ArrayList;
 import java.util.List;
 

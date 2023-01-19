@@ -47,7 +47,7 @@ public class LobbyController implements Initializable {
 	@FXML
 	private Button deleteSessionButton;
 	@FXML
-	private Button logoutButton; 
+	private Button logoutButton;
 	@FXML
 	private ChoiceBox<String> gameserviceChoiceBox;
 	
@@ -121,11 +121,11 @@ public class LobbyController implements Initializable {
                 try {
                   Thread.sleep(2000);
                   JSONObject sessionInfo = get_session(sessionToJoin);
-                  System.out.println("in here");
                   if (sessionInfo.getBoolean("launched")) {
                     Platform.runLater(() -> {
                       Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
                     });
+                    break;
                   }
                 } catch (InterruptedException e) {
                   // TODO Auto-generated catch block

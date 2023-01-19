@@ -43,7 +43,7 @@ public class GameController {
   private ExecutorService updaters = Executors.newFixedThreadPool(4);
   private boolean updateGameBoard = false;
   private boolean updateAction = false;
-  private final String gameServiceLocation = "http://127.0.0.1:8080";//should probably be final
+  private static final String gameServiceLocation = "http://127.0.0.1:8080";//should probably be final
   
   JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
   String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
@@ -81,7 +81,8 @@ public class GameController {
    * @param webSupport        boolean value for webSupport
    * @return 
    */
-  private final Object register_gameservice(String accessToken, String gameLocation, int maxSessionPlayers,
+  private final Object register_gameservice(String accessToken, String gameLocation, 
+      int maxSessionPlayers,
       int minSessionPlayers, String gameName, String displayName, boolean webSupport) {
     checkNotNullNotEmpty(accessToken, gameLocation, gameName, displayName);
     
@@ -110,7 +111,7 @@ public class GameController {
     adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
     accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
-      GameServiceJson gs = new GameServiceJson(
+    GameServiceJson gs = new GameServiceJson(
             gameName,
             "Splendor",
             "http://127.0.0.1:8080",
@@ -119,51 +120,26 @@ public class GameController {
             "true"
           );
 
-      System.out.println("Response from service user registration: " + response1.getBody());
-      String newServiceJSon = new Gson().toJson(gs);
-      
+    System.out.println("Response from service user registration: " + response1.getBody());
+    String newServiceJSon = new Gson().toJson(gs);
+    
       HttpResponse<String> response2 = Unirest.put(
-        "http://127.0.0.1:4242/api/gameservices/"
-        + gameName
-        + "?access_token="
-        + accessToken.replace("+", "%2B")
-      )
-      .header("Content-Type", "application/json")
-      .body(newServiceJSon)
-        .asString();
-      System.out.println("Response from registration request: " + response2.getBody());
+      "http://127.0.0.1:4242/api/gameservices/"
+      + gameName
+      + "?access_token="
+      + accessToken.replace("+", "%2B")
+    )
+    .header("Content-Type", "application/json")
+    .body(newServiceJSon)
+      .asString();
+    System.out.println("Response from registration request: " + response2.getBody());
     return null;
-    
-    /*accessToken = accessToken.replaceAll("\\+", "\\\\+");
-    //registers a user with ROLE_SERVICE
-    String command = String.format(
-        "curl -X PUT --header \"Content-Type:application/json\" --data "
-            + "\"{ \\\"name\\\": \\\"%s\\\",\\\"password\\\": \\\"Antichrist1!\\\",\\\"preferredColour\\\": \\\"#000000\\\","
-            + "\\\"role\\\": \\\"ROLE_SERVICE\\\"}\" "
-            + "\"%s/api/users/%s?access_token=%s\"",
-        gameName, "http://127.0.0.1:4242", gameName, accessToken);
-    run(command, ParseText.PARSE_TEXT);
-    adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
-      accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
-      refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
-    
-    //System.out.println(command);
-    //actually registers the gameservice
-    command = String.format(
-        "curl -X PUT --header \"Content-Type:application/json\" --data "
-            + "\"{ \\\"name\\\": \\\"%s\\\",\\\"displayName\\\": \\\"%s\\\",\\\"location\\\": \\\"%s\\\","
-            + "\\\"minSessionPlayers\\\": %s,\\\"maxSessionPlayers\\\": %s, \\\"webSupport\\\": \\\"%s\\\" }\" "
-            + "\"%s/api/gameservices/%s?access_token=%s\"",
-        gameName, displayName, gameLocation, String.valueOf(minSessionPlayers),
-        String.valueOf(maxSessionPlayers), String.valueOf(webSupport), "http://127.0.0.1:4242", gameName, accessToken);
-    //System.out.println(command);
-    return run(command, ParseText.PARSE_TEXT);*/
   }
 
-  @PutMapping("/api/games/{gameid}")
+  @PutMapping("/api/sessions/{gameid}")
   void launchRequest(@RequestBody ObjectNode sessionInfo, @PathVariable Long gameid) {
 
-    // TODO: parse the players argument then change the game constructor not to
+    // TODO: parse the players argument then change the game constructor not to also use threads
     // accept null
     System.out.println(sessionInfo);
     // TODO: parse the players to get their names
@@ -179,7 +155,7 @@ public class GameController {
    *
    * @param gameid The game id
    */
-  @DeleteMapping("/api/games/{gameid}")
+  @DeleteMapping("/api/sessions/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
     Game game = repository.findById(gameid).orElseThrow(() -> new GameNotFoundException(gameid));
     repository.deleteById(gameid);
@@ -283,6 +259,7 @@ public class GameController {
     return updatedGameBoard;
 
   }
+  
 
   @GetMapping("/api/knock")
   String knock() {

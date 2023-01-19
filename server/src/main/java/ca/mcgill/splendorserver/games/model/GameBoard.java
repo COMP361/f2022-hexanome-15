@@ -3,7 +3,7 @@
  * TODO implement game state encoding for sending via REST
  */
 
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.games.model;
 
 import javax.persistence.Embeddable;
 
