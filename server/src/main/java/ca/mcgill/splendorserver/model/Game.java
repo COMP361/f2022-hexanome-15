@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.model;
 
 import java.util.Iterator;
 import java.util.List;
@@ -6,7 +6,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import ca.mcgill.splendorserver.games.model.GameBoard;
+import ca.mcgill.splendorserver.games.PlayerWrapper;
+import ca.mcgill.splendorserver.games.TakeTurn;
 
 /**
  * Represents a game session.

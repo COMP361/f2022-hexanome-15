@@ -7,6 +7,8 @@ package ca.mcgill.splendorserver.games;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import ca.mcgill.splendorserver.model.Game;
+
 /**
  * GameRepository.
  *
