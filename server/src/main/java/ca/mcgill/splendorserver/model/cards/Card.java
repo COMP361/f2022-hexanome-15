@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.model.cards;
+package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorclient.model.tokens.TokenType;
 import java.util.ArrayList;

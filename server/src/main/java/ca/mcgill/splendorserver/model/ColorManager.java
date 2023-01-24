@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.model;
+package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorclient.model.cards.CardType;
 import ca.mcgill.splendorclient.model.tokens.TokenType;

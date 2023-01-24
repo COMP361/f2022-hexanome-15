@@ -1,7 +1,9 @@
-package ca.mcgill.splendorclient.model.cards;
+package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.Noble;
+import ca.mcgill.splendorclient.model.cards.Card;
+import ca.mcgill.splendorclient.model.cards.Deck;
 import ca.mcgill.splendorclient.model.tokens.TokenPile;
 import ca.mcgill.splendorclient.model.userinventory.UserInventory;
 import com.google.gson.Gson;

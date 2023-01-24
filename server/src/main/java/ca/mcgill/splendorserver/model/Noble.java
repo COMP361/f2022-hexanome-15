@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.model;
+package ca.mcgill.splendorserver.model;
 
 /**
  * Represents a Splendor Noble with reserved status.

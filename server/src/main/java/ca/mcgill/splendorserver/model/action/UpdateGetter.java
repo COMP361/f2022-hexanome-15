@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.model.action;
+package ca.mcgill.splendorserver.model.action;
 
 /**
  * Gets updates from the server.

@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.model.cards;
+package ca.mcgill.splendorserver.model.cards;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.model.tokens;
+package ca.mcgill.splendorserver.model.tokens;
 
 /**
  * Type of Token.
