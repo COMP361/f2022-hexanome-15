@@ -1,10 +1,12 @@
 package ca.mcgill.splendorserver.model.tokens;
 
-import ca.mcgill.splendorclient.model.cards.Observable;
-import ca.mcgill.splendorclient.model.cards.Observer;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import ca.mcgill.splendorserver.model.cards.Observable;
+import ca.mcgill.splendorserver.model.cards.Observer;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.

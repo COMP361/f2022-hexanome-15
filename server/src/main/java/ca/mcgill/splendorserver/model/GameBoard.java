@@ -1,11 +1,11 @@
 package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.model.Noble;
-import ca.mcgill.splendorclient.model.cards.Card;
-import ca.mcgill.splendorclient.model.cards.Deck;
-import ca.mcgill.splendorclient.model.tokens.TokenPile;
-import ca.mcgill.splendorclient.model.userinventory.UserInventory;
+import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.userinventory.UserInventory;
+
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;

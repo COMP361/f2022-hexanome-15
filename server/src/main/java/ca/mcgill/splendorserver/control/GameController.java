@@ -1,8 +1,3 @@
-/**
- * Nov 22, 2022.
- * TODO
- */
-
 package ca.mcgill.splendorserver.control;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;

@@ -18,7 +18,6 @@ import javafx.scene.shape.Rectangle;
  */
 public class CardView extends StackPane implements Observer, Observable {
 
-  private Optional<Card> card;
   private final Rectangle outer;
   private final Rectangle inner;
   private final ArrayList<Observer> observers;

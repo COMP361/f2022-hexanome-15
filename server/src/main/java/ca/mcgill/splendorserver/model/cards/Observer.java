@@ -1,8 +1,8 @@
 package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorclient.gui.gameboard.CardView;
-import ca.mcgill.splendorclient.model.action.Move;
-import ca.mcgill.splendorclient.model.tokens.Token;
+import ca.mcgill.splendorserver.model.action.Move;
+import ca.mcgill.splendorserver.model.tokens.Token;
 
 /**
  * Observer interface. Getting pretty crowded. Might have to revisit this in the future. 

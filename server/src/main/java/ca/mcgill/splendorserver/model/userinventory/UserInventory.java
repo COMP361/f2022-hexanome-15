@@ -1,11 +1,12 @@
-package ca.mcgill.splendorclient.model.userinventory;
+package ca.mcgill.splendorserver.model.userinventory;
 
 import ca.mcgill.splendorclient.gui.gameboard.CardView;
-import ca.mcgill.splendorclient.model.action.Move;
-import ca.mcgill.splendorclient.model.cards.Card;
-import ca.mcgill.splendorclient.model.cards.Observable;
-import ca.mcgill.splendorclient.model.cards.Observer;
-import ca.mcgill.splendorclient.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.action.Move;
+import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.Observable;
+import ca.mcgill.splendorserver.model.cards.Observer;
+import ca.mcgill.splendorserver.model.tokens.TokenPile;
+
 import java.util.ArrayList;
 import java.util.List;
 

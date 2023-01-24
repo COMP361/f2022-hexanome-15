@@ -1,7 +1,8 @@
 package ca.mcgill.splendorserver.model;
 
-import ca.mcgill.splendorclient.model.cards.CardType;
-import ca.mcgill.splendorclient.model.tokens.TokenType;
+
+import ca.mcgill.splendorserver.model.cards.CardType;
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import javafx.scene.paint.Color;
 
 /**

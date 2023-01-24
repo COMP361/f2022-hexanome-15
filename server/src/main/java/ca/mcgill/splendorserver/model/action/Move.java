@@ -1,6 +1,6 @@
 package ca.mcgill.splendorserver.model.action;
 
-import ca.mcgill.splendorclient.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.Card;
 
 /**
  * Represents a move with the action a player made,

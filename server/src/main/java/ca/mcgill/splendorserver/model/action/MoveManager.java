@@ -1,10 +1,11 @@
 package ca.mcgill.splendorserver.model.action;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.model.cards.Card;
-import ca.mcgill.splendorclient.model.cards.Observable;
-import ca.mcgill.splendorclient.model.cards.Observer;
 import ca.mcgill.splendorclient.users.User;
+import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.Observable;
+import ca.mcgill.splendorserver.model.cards.Observer;
+
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
