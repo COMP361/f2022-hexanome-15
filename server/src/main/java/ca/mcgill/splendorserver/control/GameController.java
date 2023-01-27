@@ -41,15 +41,16 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class GameController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameController.class);
   private final GameRepository repository;
+  private String gameName;
   // 4 threads for the max 4 players
   private ExecutorService updaters = Executors.newFixedThreadPool(4);
   private boolean updateGameBoard = false;
   private boolean updateAction = false;
   private static final String gameServiceLocation = "http://127.0.0.1:8080";//should probably be final
   
-  JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
-  String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
-  String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+  private JSONObject adminAuth = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
+  private String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+  private String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
 
   
   public GameController(GameRepository repository) {
@@ -135,21 +136,27 @@ public class GameController {
     .body(newServiceJSon)
       .asString();
     System.out.println("Response from registration request: " + response2.getBody());
+    this.gameName = gameName;
     return null;
   }
 
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
-  public ResponseEntity<String> launchRequest(@PathVariable long gameId, @RequestBody ObjectNode sessionInfo) {
+  public ResponseEntity<String> launchRequest(@PathVariable long gameId, @RequestBody SessionInfo sessionInfo) {
 
-    // TODO: parse the players argument then change the game constructor not to also use threads
-    // accept null
-    System.out.println(sessionInfo);
-    // TODO: parse the players to get their names
-    // Game newGame = new Game(creator, savegame, gameid, players);
-    // save created game object to repository
-    // repository.save(newGame);
-    // LOGGER.info("CREATED: " + newGame); // sending log info
-    return ResponseEntity.status(HttpStatus.OK).build();
+    try {
+      if (sessionInfo == null || sessionInfo.getGameServer() == null) {
+        throw new Exception();
+      }
+      if (!sessionInfo.getGameServer().equals(gameName)) {
+        throw new Exception();
+      }
+      //Getting the players in the session
+      //gameManager.addGame(gameId, sessionInfo.getPlayers().toArray(new Player[launcherInfo.getPlayers().size()]));
+      return ResponseEntity.status(HttpStatus.OK).build();
+    }
+    catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
 
   /**
