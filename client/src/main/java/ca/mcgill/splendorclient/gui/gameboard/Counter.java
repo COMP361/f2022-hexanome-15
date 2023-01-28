@@ -24,5 +24,9 @@ public class Counter extends Label {
   public int getCount() {
     return Integer.valueOf(this.getText());
   }
+  
+  public void setCount(int count) {
+    this.setText(String.valueOf(count));
+  }
 
 }

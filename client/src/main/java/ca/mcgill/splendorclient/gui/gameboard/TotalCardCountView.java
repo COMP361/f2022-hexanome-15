@@ -1,13 +1,12 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import ca.mcgill.splendorclient.model.cards.Observer;
 import javafx.scene.text.Text;
 
 /**
  * Represents the counter corresponding to the total number of cards
  * in a player's inventory.
  */
-public class TotalCardCountView extends Text implements Observer {
+public class TotalCardCountView extends Text {
 
   private static int totalCardCount = 0;
 
@@ -20,9 +19,14 @@ public class TotalCardCountView extends Text implements Observer {
     setText(startupText);
   }
 
-  @Override
-  public void onAction(boolean increment) {
+  public void increment() {
     totalCardCount++;
+    String text = String.format("Total Card Count: %d", totalCardCount);
+    setText(text);
+  }
+  
+  public void decrement() {
+    --totalCardCount;
     String text = String.format("Total Card Count: %d", totalCardCount);
     setText(text);
   }

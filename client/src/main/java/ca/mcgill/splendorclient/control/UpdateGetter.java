@@ -1,11 +1,11 @@
-package ca.mcgill.splendorserver.model.action;
+package ca.mcgill.splendorclient.control;
 
 /**
  * Gets updates from the server.
  */
 public class UpdateGetter implements Runnable {
   
-  private int gameId;
+  private long gameId;
   private boolean exit = false;
   
   @Override
@@ -23,7 +23,7 @@ public class UpdateGetter implements Runnable {
    *
    * @param gameId the game id
    */
-  public UpdateGetter(int gameId) {
+  public UpdateGetter(long gameId) {
     this.gameId = gameId;
   }
 

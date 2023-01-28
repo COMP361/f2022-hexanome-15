@@ -7,9 +7,7 @@ import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
 import ca.mcgill.splendorclient.users.Role;
 import ca.mcgill.splendorclient.users.User;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -20,8 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Controls the start up for the lobby service.

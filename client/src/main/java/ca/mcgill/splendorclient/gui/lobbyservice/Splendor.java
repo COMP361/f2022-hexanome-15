@@ -2,12 +2,13 @@ package ca.mcgill.splendorclient.gui.lobbyservice;
 
 import ca.mcgill.splendorclient.gui.gameboard.GameBoardView;
 import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.model.action.UpdateGetter;
+import ca.mcgill.splendorclient.control.UpdateGetter;
 import java.io.IOException;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import kong.unirest.json.JSONObject;
 
 /**
  * Represents the view of the entire game.
@@ -31,8 +32,6 @@ public class Splendor extends Application {
     SceneManager.setLoginScreen(LoginScreen.getInstance().getLoginScene());
     SceneManager.setLobbyScreen(LobbyScreen.getInstance().getLobbyScene());
     SceneManager.setSettingsScreen(SettingsScreen.getInstance().getSettingsScene());
-    //TODO: Only do this once we have knowledge of the session.
-    SceneManager.setGameScreen(GameBoardView.setupGameBoard());
 
     stage.setResizable(false);
     Splendor.stage = stage;
@@ -51,14 +50,8 @@ public class Splendor extends Application {
   public static void transitionTo(Scene scene, Optional<String> title) {
     stage.setScene(scene);
     if (title.get() == "Game Screen") {
-      //update server with game info
-      //GameBoard gameBoard = GameBoardView.getGameBoard();
-      //TODO: make this an actual gameid
-      //gameBoard.sendToServer(1);
+      //get the game info from the server
       
-      //launch update getter TODO: somehow get the session id over from the lobby service.
-      updateGetter = new UpdateGetter(1);
-      new Thread(updateGetter).start();
     }
     if (title.isPresent()) {
       stage.setTitle(title.get());
@@ -66,6 +59,16 @@ public class Splendor extends Application {
     } else {
       stage.setTitle("");
     }
+  }
+  
+  public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
+    SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players")));
+    stage.setScene(SceneManager.getGameScreen());
+    //get game info from server such as player names creator etc.
+    
+    //launch update getter TODO: somehow get the session id over from the lobby service.
+    updateGetter = new UpdateGetter(gameId);
+    new Thread(updateGetter).start();
   }
 
   /**

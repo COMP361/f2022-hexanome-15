@@ -1,13 +1,12 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import ca.mcgill.splendorclient.model.cards.Observer;
 import javafx.scene.text.Text;
 
 /**
  * Represents the counter corresponding to the total number of tokens
  * in a player's inventory.
  */
-public class TotalTokenCountView extends Text implements Observer {
+public class TotalTokenCountView extends Text {
 
   private static int totalTokenCount = 15;
 
@@ -20,16 +19,15 @@ public class TotalTokenCountView extends Text implements Observer {
     setText(startupText);
   }
 
-  @Override
-  public void onAction(boolean increment) {
-    if (increment) {
-      totalTokenCount++;
-      String text = String.format("Total Token Count: %d/10", totalTokenCount);
-      setText(text);
-    } else {
-      totalTokenCount--;
-      String text = String.format("Total Token Count: %d", totalTokenCount);
-      setText(text);
-    }
+  public void increment() {
+    totalTokenCount++;
+    String text = String.format("Total Token Count: %d/10", totalTokenCount);
+    setText(text);
+  }
+  
+  public void decrement() {
+    totalTokenCount--;
+    String text = String.format("Total Token Count: %d", totalTokenCount);
+    setText(text);
   }
 }

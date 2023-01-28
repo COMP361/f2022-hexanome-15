@@ -1,6 +1,5 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import ca.mcgill.splendorclient.model.cards.Observer;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -9,7 +8,7 @@ import javafx.scene.shape.Rectangle;
  * Represents the view of a Splendor Deck.
  * Observes Deck to be notified of when to change the count.
  */
-public class DeckView extends Rectangle implements Observer {
+public class DeckView extends Rectangle {
 
   private final Counter numCardsDisplay;
 
@@ -37,13 +36,13 @@ public class DeckView extends Rectangle implements Observer {
   public Label getNumCardsDisplay() {
     return numCardsDisplay;
   }
-
-  @Override
-  public void onAction(boolean increment) {
-    if (increment) {
-      numCardsDisplay.setText(String.valueOf(numCardsDisplay.getCount() + 1));
-    } else {
-      numCardsDisplay.setText(String.valueOf(numCardsDisplay.getCount() - 1));
-    }
+  
+  /**
+   * Sets the number of cards display for a deck view.
+   * 
+   * @param count to display
+   */
+  public void setNumCardsDisplay(int count) {
+    numCardsDisplay.setCount(count);
   }
 }

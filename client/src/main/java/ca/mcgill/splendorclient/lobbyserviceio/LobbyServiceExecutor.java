@@ -1,13 +1,10 @@
 package ca.mcgill.splendorclient.lobbyserviceio;
 
-import ca.mcgill.splendorclient.users.Role;
-import ca.mcgill.splendorclient.users.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.json.JSONObject;
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 
 /**

@@ -1,16 +1,15 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
 
-import ca.mcgill.splendorclient.model.ColorManager;
-import ca.mcgill.splendorclient.model.cards.Observer;
-import ca.mcgill.splendorclient.model.tokens.TokenType;
+import ca.mcgill.splendorclient.control.ColorManager;
+import ca.mcgill.splendorclient.model.TokenType;
 import javafx.scene.shape.Circle;
 
 /**
  * Represents the view of a token pile.
  * Observes token piles.
  */
-public class TokenPileView extends Circle implements Observer {
+public class TokenPileView extends Circle {
 
   private final Counter tokenCounter;
 
@@ -34,14 +33,5 @@ public class TokenPileView extends Circle implements Observer {
   public Counter getCounter() {
     return tokenCounter;
   }
-
-  @Override
-  public void onAction(boolean increment) {
-    if (increment) {
-      tokenCounter.setText(String.valueOf(tokenCounter.getCount() + 1));
-      String.format("Total tokens: %d", tokenCounter.getCount());
-    } else {
-      tokenCounter.setText(String.valueOf(tokenCounter.getCount() - 1));
-    }
-  }
+  
 }

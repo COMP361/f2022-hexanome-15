@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorserver.model.cards.Observable;
 import ca.mcgill.splendorserver.model.cards.Observer;
 

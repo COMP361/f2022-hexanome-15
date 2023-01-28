@@ -1,5 +1,7 @@
 package ca.mcgill.splendorserver.model.tokens;
 
+import ca.mcgill.splendorclient.model.TokenType;
+
 /**
  * Represents a Splendor Token with type.
  */

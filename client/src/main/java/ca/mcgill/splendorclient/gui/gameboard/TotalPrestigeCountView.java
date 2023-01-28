@@ -1,13 +1,11 @@
 package ca.mcgill.splendorclient.gui.gameboard;
 
-import ca.mcgill.splendorclient.model.cards.Card;
-import ca.mcgill.splendorclient.model.cards.Observer;
 import javafx.scene.text.Text;
 
 /**
  * Represents the counter corresponding to a player's total prestige.
  */
-public class TotalPrestigeCountView extends Text implements Observer {
+public class TotalPrestigeCountView extends Text {
 
   private static int totalPrestigeCount = 0;
 
@@ -20,9 +18,8 @@ public class TotalPrestigeCountView extends Text implements Observer {
     setText(startupText);
   }
 
-  @Override
-  public void onAction(Card card) {
-    totalPrestigeCount += card.getPrestige();
+  public void increment(int amount) {
+    totalPrestigeCount += amount;
     String text = String.format("Total Prestige Count: %d", totalPrestigeCount);
     setText(text);
   }

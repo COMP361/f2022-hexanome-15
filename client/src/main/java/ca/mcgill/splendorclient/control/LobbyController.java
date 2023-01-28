@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.gui.lobbyservice;
+package ca.mcgill.splendorclient.control;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import ca.mcgill.splendorclient.gui.lobbyservice.Splendor;
 import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.users.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -33,7 +33,6 @@ import kong.unirest.json.JSONObject;
  * Controls Lobby Service functions.
  */
 public class LobbyController implements Initializable {
-	private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 	@FXML
 	private Button createSessionButton;
 	@FXML
@@ -123,7 +122,7 @@ public class LobbyController implements Initializable {
                   JSONObject sessionInfo = get_session(sessionToJoin);
                   if (sessionInfo.getBoolean("launched")) {
                     Platform.runLater(() -> {
-                      Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
+                      Splendor.transitionToGameScreen(Long.valueOf(sessionToJoin), sessionInfo);
                     });
                     break;
                   }
@@ -147,9 +146,9 @@ public class LobbyController implements Initializable {
 			@Override
 			public void handle(ActionEvent arg0) {
 				User user = User.THISUSER;
-				String toJoin = availableSessionList.getSelectionModel().getSelectedItem();
-				if (launch_session(toJoin, user.getAccessToken())) {
-				  Splendor.transitionTo(SceneManager.getGameScreen(), Optional.of("Game Screen"));
+				String sessionToLaunch = availableSessionList.getSelectionModel().getSelectedItem();
+				if (launch_session(sessionToLaunch, user.getAccessToken())) {
+				  Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch), get_session(sessionToLaunch));
 				}
 				else {
 				  //notify user failure to launch session. 
@@ -169,27 +168,8 @@ public class LobbyController implements Initializable {
 				create_session(user.getAccessToken(), user.getUsername(), gameserviceChoiceBox.getValue(), "");
 				availableSessionList.getItems().clear();
 				availableSessionList.getItems().addAll(get_all_sessions());
-				/*ArrayList<String> arr = get_all_sessions();
-				for (String key : arr) {
-					availableSessionList.getItems().add(key);
-				}*/
 			}
 		});
-
-		// launches the selected session
-		/*launchSessionButton.setOnAction(new EventHandler<ActionEvent>() {
-			// TODO: setup with LS
-			@Override
-			public void handle(ActionEvent arg0) {
-			}
-		});*/
-		
-		/*sessionNameText.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				selectedSession = sessionNameText.getSelectedText();
-			}
-		});*/
 	}
 	
 	/**
@@ -201,7 +181,6 @@ public class LobbyController implements Initializable {
 	 */
 	private void create_session(String accessToken, String createUserName, String gameName, String saveGame) {
 		checkNotNullNotEmpty(accessToken, createUserName, gameName, saveGame);
-//		accessToken = accessToken.replaceAll("\\+", "\\+");
 
 		if (saveGame == null) {
 			HttpResponse<String> response = Unirest.post(
@@ -274,7 +253,8 @@ public class LobbyController implements Initializable {
 					)
 					.asString();
 			System.out.println("Response from launch: " + response.getBody().toString());
-			return response.getStatus() % 100 == 2;
+			//
+			return response.isSuccess();
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -369,7 +349,6 @@ public class LobbyController implements Initializable {
 				)
 				.asJson();
 		System.out.println("Response from get_gameservices: " + response.getBody().toString());
-		//JSONObject obj = response.getBody().getObject();
 		ArrayList<String> arr = new ArrayList<>();
 		JsonNode json =  response.getBody();//new JSONArray(response.getBody().getObject());
 		JSONArray jarr = new JSONArray(json.toString());

@@ -9,11 +9,13 @@ import java.util.Iterator;
 public class UserInventoryView implements Iterable<CardColumnView> {
 
   private final ArrayList<CardColumnView> cardColumns;
+  private final String player;
 
   /**
    * Creates a UserInventoryView.
    */
-  public UserInventoryView() {
+  public UserInventoryView(String playerName) {
+    player = playerName;
     cardColumns = new ArrayList<>();
   }
 
@@ -29,6 +31,10 @@ public class UserInventoryView implements Iterable<CardColumnView> {
    */
   public void addCardColumn(CardColumnView handColumn) {
     cardColumns.add(handColumn);
+  }
+  
+  public String getAssociatedPlayerName() {
+    return player;
   }
 
 }
