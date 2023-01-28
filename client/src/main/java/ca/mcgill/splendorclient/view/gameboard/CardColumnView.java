@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.gui.gameboard;
+package ca.mcgill.splendorclient.view.gameboard;
 
 import ca.mcgill.splendorclient.model.TokenType;
 import java.awt.Dimension;

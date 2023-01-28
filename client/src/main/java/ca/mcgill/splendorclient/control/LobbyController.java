@@ -9,9 +9,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import ca.mcgill.splendorclient.gui.lobbyservice.Splendor;
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.users.User;
+import ca.mcgill.splendorclient.model.users.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

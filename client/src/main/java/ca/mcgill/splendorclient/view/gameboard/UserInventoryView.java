@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.gui.gameboard;
+package ca.mcgill.splendorclient.view.gameboard;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.gui.scenemanager;
+package ca.mcgill.splendorclient.control;
 
 import java.util.HashMap;
 import java.util.Map;

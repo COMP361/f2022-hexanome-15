@@ -1,6 +1,8 @@
-package ca.mcgill.splendorclient.gui.lobbyservice;
+package ca.mcgill.splendorclient.view.lobbyservice;
 
 import java.io.IOException;
+
+import ca.mcgill.splendorclient.control.Splendor;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 

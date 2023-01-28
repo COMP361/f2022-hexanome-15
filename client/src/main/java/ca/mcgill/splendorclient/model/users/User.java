@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.users;
+package ca.mcgill.splendorclient.model.users;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;

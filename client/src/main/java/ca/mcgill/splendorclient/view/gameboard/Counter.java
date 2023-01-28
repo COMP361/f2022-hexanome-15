@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.gui.gameboard;
+package ca.mcgill.splendorclient.view.gameboard;
 
 import javafx.scene.control.Label;
 

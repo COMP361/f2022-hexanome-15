@@ -1,12 +1,14 @@
-package ca.mcgill.splendorclient.gui.lobbyservice;
+package ca.mcgill.splendorclient.view.lobbyservice;
 
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
+import ca.mcgill.splendorclient.control.SceneManager;
+import ca.mcgill.splendorclient.control.Splendor;
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceHandler;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
-import ca.mcgill.splendorclient.users.Role;
-import ca.mcgill.splendorclient.users.User;
+import ca.mcgill.splendorclient.model.users.Role;
+import ca.mcgill.splendorclient.model.users.User;
+
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;

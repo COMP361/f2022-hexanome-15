@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.users;
+package ca.mcgill.splendorclient.model.users;
 
 /**
  * Represents the role of a user.

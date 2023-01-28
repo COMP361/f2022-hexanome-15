@@ -1,6 +1,6 @@
 package ca.mcgill.splendorserver.model.cards;
 
-import ca.mcgill.splendorclient.gui.gameboard.CardView;
+import ca.mcgill.splendorclient.view.gameboard.CardView;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.tokens.Token;
 

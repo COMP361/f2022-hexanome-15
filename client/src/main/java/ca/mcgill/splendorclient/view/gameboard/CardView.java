@@ -1,12 +1,8 @@
-package ca.mcgill.splendorclient.gui.gameboard;
-
-import java.util.ArrayList;
-import java.util.Optional;
+package ca.mcgill.splendorclient.view.gameboard;
 
 import ca.mcgill.splendorclient.control.ActionManager;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**

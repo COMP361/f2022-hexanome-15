@@ -1,8 +1,10 @@
-package ca.mcgill.splendorclient.gui.lobbyservice;
+package ca.mcgill.splendorclient.control;
 
-import ca.mcgill.splendorclient.gui.gameboard.GameBoardView;
-import ca.mcgill.splendorclient.gui.scenemanager.SceneManager;
-import ca.mcgill.splendorclient.control.UpdateGetter;
+import ca.mcgill.splendorclient.view.gameboard.GameBoardView;
+import ca.mcgill.splendorclient.view.lobbyservice.LobbyScreen;
+import ca.mcgill.splendorclient.view.lobbyservice.LoginScreen;
+import ca.mcgill.splendorclient.view.lobbyservice.SettingsScreen;
+
 import java.io.IOException;
 import java.util.Optional;
 import javafx.application.Application;
