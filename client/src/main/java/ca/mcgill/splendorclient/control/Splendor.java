@@ -65,10 +65,7 @@ public class Splendor extends Application {
   
   public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
     SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players")));
-    stage.setScene(SceneManager.getGameScreen());
-    //get game info from server such as player names creator etc.
-    
-    //launch update getter TODO: somehow get the session id over from the lobby service.
+    stage.setScene(SceneManager.getGameScreen());    
     updateGetter = new UpdateGetter(gameId);
     new Thread(updateGetter).start();
   }

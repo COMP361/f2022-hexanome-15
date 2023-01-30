@@ -1,25 +1,17 @@
 package ca.mcgill.splendorserver.model.tokens;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import ca.mcgill.splendorclient.model.TokenType;
-import ca.mcgill.splendorserver.model.cards.Observable;
-import ca.mcgill.splendorserver.model.cards.Observer;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.
- * Observes itself, so that grabbing tokens and buying cards messages
- * can be relayed between the board and the user inventory
- * Observed by TokenPileView to update the counter
- * Observed by TotalAssetCountView to update the counter
  */
-public class TokenPile implements Iterable<Token>, Observable, Observer {
+public class TokenPile implements Iterable<Token> {
   private final ArrayList<Token> tokens;
   private final TokenType type;
-  private List<Observer> observers;
 
   /**
    * Creates a TokenPile.
@@ -29,7 +21,6 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
   public TokenPile(TokenType type) {
     this.type = type;
     this.tokens = new ArrayList<>();
-    observers = new ArrayList<Observer>();
   }
 
   /**
@@ -85,7 +76,6 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
   public void addToken(Token token) {
     if (token.getType() == type) {
       tokens.add(token);
-      notifyObservers(true);
     }
   }
 
@@ -96,11 +86,7 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
    */
   public Token removeToken() {
     if (!tokens.isEmpty()) {
-      //i.e decrement the associated counter
-      notifyObservers(false);
       Token token = tokens.remove(0);
-      //notify the gameboard pile/ui pile depending on action.
-      notifyObservers(token);
       return token;
     }
     return null;
@@ -127,33 +113,6 @@ public class TokenPile implements Iterable<Token>, Observable, Observer {
   @Override
   public Iterator<Token> iterator() {
     return tokens.iterator();
-  }
-
-  @Override
-  public void addListener(Observer observer) {
-    observers.add(observer);
-  }
-
-  public void removeListener(Observer observer) {
-    observers.remove(observer);
-  }
-
-  private void notifyObservers(boolean increment) {
-    for (Observer observer : observers) {
-      observer.onAction(increment);
-    }
-  }
-
-  private void notifyObservers(Token token) {
-    for (Observer observer : observers) {
-      observer.onAction(token);
-    }
-  }
-
-  @Override
-  public void onAction(Token token) {
-    tokens.add(token);
-    notifyObservers(true);
   }
 
 }

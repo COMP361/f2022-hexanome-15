@@ -54,13 +54,7 @@ public class GameController {
 
   
   public GameController(GameRepository repository) {
-    //accessToken = accessToken.substring(0, accessToken.length()-1);
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
-    //create_session(accessToken, "maex", "splendorBase1", "");
-    //get_session("136528857923959438");
-    //delete_session("8657865879198511197", accessToken);
-    //launch_session("136528857923959438", accessToken);
-    //get_session("136528857923959438");
     this.repository = repository;
   }
   
@@ -152,6 +146,8 @@ public class GameController {
       }
       //Getting the players in the session
       //gameManager.addGame(gameId, sessionInfo.getPlayers().toArray(new Player[launcherInfo.getPlayers().size()]));
+      GameBoardManager manager = new GameBoardManager(sessionInfo, gameId);
+      BroadcastManager.addActiveGame(manager);
       return ResponseEntity.status(HttpStatus.OK).build();
     }
     catch (Exception e) {
@@ -237,6 +233,18 @@ public class GameController {
   private void checkNotNullNotEmpty(String... args) {
     for (String arg : args) {
       assert arg != null && arg.length() != 0 : "Arguments cannot be empty nor null.";
+    }
+  }
+  
+  @GetMapping("/api/games/{gameid}/board")
+  public ResponseEntity<String> getGameBoard(@PathVariable long gameid) {
+    GameBoardManager manager = BroadcastManager.getActiveGame(gameid);
+    if (manager == null) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    else {
+      String json = new Gson().toJson(manager.getBoard());
+      return ResponseEntity.status(HttpStatus.OK).body(json);
     }
   }
 

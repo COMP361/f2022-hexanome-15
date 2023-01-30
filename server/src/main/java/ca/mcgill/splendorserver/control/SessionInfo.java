@@ -1,19 +1,14 @@
 package ca.mcgill.splendorserver.control;
 
-public class SessionInfo {
+import java.util.Iterator;
+import java.util.List;
 
-  String gameServer;
+public class SessionInfo implements Iterable<String> {
 
-  //TODO: Make Player class (subclass of User) and save list of players here
-
-  String gameCreator;
-
-  //TODO: Implement launching from a saved game
-
-  public SessionInfo(String gameServer, String gameCreator) {
-    this.gameServer = gameServer;
-    this.gameCreator = gameCreator;
-  }
+  private String gameServer;
+  private List<String> players;
+  private String gameCreator;
+  private String saveGameId;
 
   public String getGameServer() {
     return gameServer;
@@ -22,14 +17,10 @@ public class SessionInfo {
   public String getGameCreator() {
     return gameCreator;
   }
-
-  public void setGameServer(String gameServer) {
-    this.gameServer = gameServer;
-  }
-
-  public void setGameCreator(String gameCreator) {
-    this.gameCreator = gameCreator;
-  }
+  
+  public int getNumPlayers() {
+    return players.size();
+  }  
 
   @Override
   public String toString() {
@@ -37,5 +28,10 @@ public class SessionInfo {
              "gameServer='" + gameServer + '\'' +
              ", gameCreator='" + gameCreator + '\'' +
              '}';
+  }
+
+  @Override
+  public Iterator<String> iterator() {
+    return players.iterator();
   }
 }

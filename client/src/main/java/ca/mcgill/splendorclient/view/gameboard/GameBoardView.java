@@ -211,7 +211,6 @@ public class GameBoardView {
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
         getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
-    //ignoring the pretty token display for now
 
     final int nPlayers = players.length();
     //building all user inventories

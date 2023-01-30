@@ -1,8 +1,8 @@
 package ca.mcgill.splendorserver.model;
 
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 
@@ -23,25 +23,6 @@ public class GameBoard {
   private List<Card> cardField;
   private List<TokenPile> tokenPiles;
   private List<Noble> nobles;
-  private String currentPlayer;
-
-  /**
-   * Returns the current player.
-   *
-   * @return the current player
-   */
-  public String getCurrentPlayer() {
-    return currentPlayer;
-  }
-
-  /**
-   * Sets the current player.
-   *
-   * @param currentPlayer the current player
-   */
-  public void setCurrentPlayer(String currentPlayer) {
-    this.currentPlayer = currentPlayer;
-  }
 
   /**
    * Creates a gameboard.
@@ -61,19 +42,5 @@ public class GameBoard {
     this.nobles = nobles;
   }
 
-  /**
-   * Sends gameboard to server.
-   *
-   * @param gameid The game id
-   */
-  public void sendToServer(int gameid) {
-    Gson gson = new Gson();
-    List<List<Card>> decksAsCards = new ArrayList<List<Card>>();
-    for (Deck deck : decks) {
-      decksAsCards.add(deck.getCards());
-    }
-    String json = gson.toJson(decksAsCards);
-    System.out.println(json);
-    LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.sendGameboard(json, gameid);
-  }
+
 }
