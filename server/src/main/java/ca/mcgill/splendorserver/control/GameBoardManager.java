@@ -3,13 +3,13 @@ package ca.mcgill.splendorserver.control;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardType;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 
 public class GameBoardManager {

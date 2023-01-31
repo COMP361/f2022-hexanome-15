@@ -1,7 +1,6 @@
 package ca.mcgill.splendorserver.model.action;
 
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.model.users.User;
+
 import ca.mcgill.splendorserver.model.cards.Card;
 
 import com.google.gson.Gson;

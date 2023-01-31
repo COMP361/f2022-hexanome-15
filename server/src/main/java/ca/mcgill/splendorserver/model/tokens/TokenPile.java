@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ca.mcgill.splendorclient.model.TokenType;
-
 /**
  * Represents a Splendor Token Pile with tokens and type.
  */
@@ -16,10 +14,10 @@ public class TokenPile implements Iterable<Token> {
   /**
    * Creates a TokenPile.
    *
-   * @param type The type of tokens that are in the token pile
+   * @param tokenType The type of tokens that are in the token pile
    */
-  public TokenPile(TokenType type) {
-    this.type = type;
+  public TokenPile(TokenType tokenType) {
+    this.type = tokenType;
     this.tokens = new ArrayList<>();
   }
 
