@@ -240,7 +240,7 @@ public class GameController {
   public ResponseEntity<String> getGameBoard(@PathVariable long gameid) {
     GameBoardManager manager = BroadcastManager.getActiveGame(gameid);
     if (manager == null) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     else {
       String json = new Gson().toJson(manager.getBoard());
