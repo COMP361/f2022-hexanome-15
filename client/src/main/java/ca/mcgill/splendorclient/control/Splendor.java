@@ -1,5 +1,6 @@
 package ca.mcgill.splendorclient.control;
 
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.view.gameboard.GameBoardView;
 import ca.mcgill.splendorclient.view.lobbyservice.LobbyScreen;
 import ca.mcgill.splendorclient.view.lobbyservice.LoginScreen;
@@ -8,8 +9,12 @@ import ca.mcgill.splendorclient.view.lobbyservice.SettingsScreen;
 import java.io.IOException;
 import java.util.Optional;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
 /**
@@ -19,7 +24,6 @@ import kong.unirest.json.JSONObject;
 public class Splendor extends Application {
 
   private static Stage stage;
-  private static UpdateGetter updateGetter;
 
   /**
    * Creates a Splendor object.
@@ -65,18 +69,9 @@ public class Splendor extends Application {
   
   public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
     SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players")));
-    stage.setScene(SceneManager.getGameScreen());    
-    updateGetter = new UpdateGetter(gameId);
-    new Thread(updateGetter).start();
+    stage.setScene(SceneManager.getGameScreen());  
   }
 
-  /**
-   * Exits the game.
-   */
-  public static void exitGame() {
-    assert updateGetter != null;
-    updateGetter.exit();
-  }
 
   /**
    * Launches the Splendor application.

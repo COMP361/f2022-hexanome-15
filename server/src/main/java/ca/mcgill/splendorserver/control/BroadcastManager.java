@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,10 +11,9 @@ import java.util.List;
  */
 public class BroadcastManager {
   
-  private static List<GameBoardManager> activeGames;
+  private static List<GameBoardManager> activeGames = new ArrayList<GameBoardManager>();
   
   private BroadcastManager() {
-    
   }
   
   public static void addActiveGame(GameBoardManager manager) {
