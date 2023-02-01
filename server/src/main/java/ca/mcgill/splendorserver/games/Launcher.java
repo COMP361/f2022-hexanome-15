@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.games;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,15 +1,13 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.games;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
-import ca.mcgill.splendorserver.games.GameNotFoundException;
-import ca.mcgill.splendorserver.games.GameRepository;
-import ca.mcgill.splendorserver.games.GameServiceAccountJson;
-import ca.mcgill.splendorserver.games.GameServiceJson;
-import ca.mcgill.splendorserver.model.Game;
+import ca.mcgill.splendorserver.control.BroadcastManager;
+import ca.mcgill.splendorserver.control.GameBoardManager;
+import ca.mcgill.splendorserver.control.SessionInfo;
 import kong.unirest.Body;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -52,10 +50,10 @@ public class GameController {
   private String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
   private String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
 
-  
   public GameController(GameRepository repository) {
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
     this.repository = repository;
+    System.out.println("in here");
   }
   
   private HttpResponse<JsonNode> getRegisteredGameServices() {
