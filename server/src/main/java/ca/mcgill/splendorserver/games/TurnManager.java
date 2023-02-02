@@ -5,20 +5,20 @@
 
 package ca.mcgill.splendorserver.games;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
 /**
- * Take turn mechanic.
+ * Take turn functionality.
  *
  * @author zacharyhayden
  */
 @Embeddable
-public class TakeTurn implements Iterable<PlayerWrapper> {
+public class TurnManager implements Iterable<PlayerWrapper> {
   /*
    * Creating circular data structure to store and update turns
    */
@@ -30,8 +30,8 @@ public class TakeTurn implements Iterable<PlayerWrapper> {
    *
    * @param players the players in the game
    */
-  public TakeTurn(Collection<PlayerWrapper> players) {
-    turns = new CopyOnWriteArrayList<>(players);
+  public TurnManager(Collection<PlayerWrapper> players) {
+    turns = new ArrayList<>(players);
   }
 
   /**
@@ -62,7 +62,7 @@ public class TakeTurn implements Iterable<PlayerWrapper> {
     PlayerWrapper player = turns.get(0);
     turns.remove(0);
     turns.add(player);
-    return turns.get(0); // the new head of queue
+    return turns.get(0); // the new head of queue -> player whose turn it is
   }
 
   @Override
@@ -72,7 +72,7 @@ public class TakeTurn implements Iterable<PlayerWrapper> {
 
   @Override
   public String toString() {
-    return "TakeTurn [aTurns=" + turns + "]";
+    return "TurnManager [aTurns=" + turns + "]";
   }
 
 }

@@ -1,6 +1,6 @@
 package ca.mcgill.splendorserver.model.userinventory;
 
-import ca.mcgill.splendorserver.model.action.Move;
+import ca.mcgill.splendorserver.games.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 
@@ -13,13 +13,13 @@ import java.util.List;
  * Contains cards and token piles.
  * Observes CardView to assess whether a card is affordable.
  * Observed by CardColumnView to add the card to the inventory.
- * Observed by MoveManager to create the current move
+ * Observed by MoveManagerDepr to create the current move
  */
 public class UserInventory {
 
   private ArrayList<Card> cards;
   private List<TokenPile> tokenPiles;
-  private String playerName;
+  private final PlayerWrapper playerWrapper;
 
   /**
    * Initialize User Inventory Model.
@@ -27,19 +27,32 @@ public class UserInventory {
    * @param pile The token piles in a user's inventory
    * @param name This player's username
    */
-  public UserInventory(List<TokenPile> pile, String name) {
-    cards = new ArrayList<Card>();
+  public UserInventory(List<TokenPile> pile, PlayerWrapper name) {
+    cards = new ArrayList<>();
     tokenPiles = List.copyOf(pile);
-    playerName = name;
+    playerWrapper = name;
+  }
+
+  /**
+   * Number of tokens of any type in this inventory.
+   *
+   * @return total number of tokens in user inventory.
+   */
+  public int tokenCount() {
+    int count = 0;
+    for (TokenPile tokenPile : tokenPiles) {
+      count += tokenPile.getSize();
+    }
+    return count;
   }
 
   /**
    * Returns the username of the player who owns this inventory.
    *
-   * @return this player's username
+   * @return this player.
    */
-  public String getPlayerName() {
-    return playerName;
+  public PlayerWrapper getPlayer() {
+    return playerWrapper;
   }
 
 //  @Override

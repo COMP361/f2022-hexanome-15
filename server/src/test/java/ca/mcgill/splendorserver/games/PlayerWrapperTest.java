@@ -13,9 +13,9 @@ class PlayerWrapperTest {
   @Test
   void getaUserName() {
     PlayerWrapper.newPlayerWrapper("Zack");
-    PlayerWrapper.newPlayerWrapper("Ojas").getaUserName();
+    PlayerWrapper.newPlayerWrapper("Ojas").getName();
     assertEquals
       ("Ojas",
-        PlayerWrapper.newPlayerWrapper("Ojas").getaUserName(), "");
+       PlayerWrapper.newPlayerWrapper("Ojas").getName(), "");
   }
 }

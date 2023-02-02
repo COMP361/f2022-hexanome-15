@@ -7,12 +7,19 @@ package ca.mcgill.splendorserver.model.action;
 public enum Action {
 
   /**
-   * Purchase type Action.
+   * Purchase type Action. Card must be face up in middle of table or a previously reserved one.
    */
-  PURCHASE,
+  PURCHASE_DEV,
   /**
    * Reserve type Action.
    */
-  RESERVE
+  RESERVE_DEV_TAKE_JOKER,
+  TAKE_3_GEM_TOKENS_DIFF_COL,
+  /*
+  this action is only possible if there are at least 4 tokens of the chosen color left
+  when the player takes them
+  */
+  TAKE_2_GEM_TOKENS_SAME_COL
+
 
 }

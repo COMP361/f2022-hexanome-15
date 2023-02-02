@@ -1,11 +1,8 @@
 package ca.mcgill.splendorserver.model.action;
 
 
-import ca.mcgill.splendorserver.model.cards.Card;
-
 import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Stack;
 
 /**
@@ -13,21 +10,22 @@ import java.util.Stack;
  *
  * @author lawrenceberardelli
  */
-public class MoveManager {
+public class MoveManagerDepr
+{
   
-  private static MoveManager INSTANCE = new MoveManager();
+  private static MoveManagerDepr INSTANCE = new MoveManagerDepr();
   private static Stack<Move> moveStack;
   
-  private MoveManager() {
+  private MoveManagerDepr() {
     moveStack = new Stack<Move>();
   }
 
   /**
-   * Returns this instance of MoveManager.
+   * Returns this instance of MoveManagerDepr.
    *
-   * @return this instance of MoveManager
+   * @return this instance of MoveManagerDepr
    */
-  public static MoveManager getInstance() {
+  public static MoveManagerDepr getInstance() {
     return INSTANCE;
   }
   

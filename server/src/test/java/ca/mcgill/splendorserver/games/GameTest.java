@@ -87,7 +87,7 @@
 //    players.add(PlayerWrapper.newPlayerWrapper("Zack"));
 //    players.add(PlayerWrapper.newPlayerWrapper("Jeff"));
 //    players.add(PlayerWrapper.newPlayerWrapper("Larry"));
-//    TakeTurn aTakeTurn = new TakeTurn(players);
+//    TurnManager aTakeTurn = new TurnManager(players);
 //    GameBoard gb = new GameBoard();
 //    Game game = new Game(sg, id, players, gb);
 //    assertEquals("Game [savegame=" +
@@ -106,7 +106,7 @@
 //    players.add(PlayerWrapper.newPlayerWrapper("Zack"));
 //    players.add(PlayerWrapper.newPlayerWrapper("Jeff"));
 //    players.add(PlayerWrapper.newPlayerWrapper("Larry"));
-//    TakeTurn aTakeTurn = new TakeTurn(players);
+//    TurnManager aTakeTurn = new TurnManager(players);
 //    GameBoard gb = new GameBoard();
 //    Game game = new Game(sg, id, players, gb);
 ////    assertTrue(game.iterator().hasNext(), "");

@@ -11,14 +11,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- * PlayerWrapper.
+ * Flyweight PlayerWrapper.
  *
  * @author zacharyhayden
  */
 @Entity
 public class PlayerWrapper {
   @Id
-  private final String userName;
+  private final String userName; // assuming this is unique amongst all players
+  // TODO: should we track prefered color???
 
   private static final Map<String, PlayerWrapper> PLAYER_MAP = new HashMap<>();
 
@@ -32,8 +33,10 @@ public class PlayerWrapper {
    *
    * @param userName The player's username
    * @return The requested player wrapper
+   * @throws AssertionError if userName is null.
    */
   public static PlayerWrapper newPlayerWrapper(String userName) {
+    assert userName != null;
     if (PLAYER_MAP.containsKey(userName)) {
       return PLAYER_MAP.get(userName);
     } else {
@@ -48,7 +51,7 @@ public class PlayerWrapper {
    *
    * @return a player's username
    */
-  public String getaUserName() {
+  public String getName() {
     return userName;
   }
 
