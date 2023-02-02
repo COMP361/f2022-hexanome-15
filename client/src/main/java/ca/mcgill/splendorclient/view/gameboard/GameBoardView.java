@@ -58,8 +58,8 @@ public class GameBoardView {
    *
    * @param screenSize the size of the screen
    */
-  private static CardView createCardView(Dimension screenSize, int columnCount, int rowCount) {
-    return new CardView(screenSize.height / 15f, screenSize.width / 15f, columnCount, rowCount);
+  private static CardView createCardView(Dimension screenSize, String location) {
+    return new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
   }
 
   /**
@@ -69,11 +69,13 @@ public class GameBoardView {
    * @param screenSize the size of the screen
    * @param aggregator the list of cardViews
    */
-  private static void populateCardColumn(VBox column, Dimension screenSize,
+  private static void createCardFieldColumn(VBox column, Dimension screenSize,
                                          List<CardView> aggregator, int columnCount) {
-    //pretty sloppy but will do for now
-    for (int i = 0; i < 3; ++i) {
-      CardView cardView = createCardView(screenSize, columnCount, i);
+    int nRows = 3;
+    for (int i = 0; i < nRows; ++i) {
+      //flatten the 2d playing field for cardview location data.
+      int location = columnCount*nRows + i;
+      CardView cardView = createCardView(screenSize, "C" + location);
       column.getChildren().add(cardView);
       aggregator.add(cardView);
     }
@@ -199,7 +201,7 @@ public class GameBoardView {
     int columnCount = 0;
     for (VBox column : columns) {
       column.setSpacing(3);
-      populateCardColumn(column, screenSize, cardViewAggregator, columnCount);
+      createCardFieldColumn(column, screenSize, cardViewAggregator, columnCount);
       ++columnCount;
     }
     faceupCardsRow.getChildren().addAll(columns);

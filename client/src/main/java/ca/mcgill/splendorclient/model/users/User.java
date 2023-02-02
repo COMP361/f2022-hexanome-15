@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 /**
  * Represents a user.
- * Flyweight design pattern.
+ * Flyweight design pattern. (maybe singleton TODO)
  *
  * @author zacharyhayden
  */

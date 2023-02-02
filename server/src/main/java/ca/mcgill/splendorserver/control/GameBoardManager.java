@@ -53,6 +53,7 @@ public class GameBoardManager {
       Deck deck = new Deck(CardType.values()[i]);
       List<Card> cards = deck.deal();
       playingField.addAll(cards);
+      decks.add(deck);
     }
   }
 

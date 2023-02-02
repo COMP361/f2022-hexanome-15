@@ -9,16 +9,30 @@ import kong.unirest.Unirest;
 public class GameController {
   
   private Long gameId;
-  private static BoardUpdater updater;
   private int currentState;
   
-  public GameController(Long gameId) {
-    this.gameId = gameId;
-    updater = new BoardUpdater();
+  private static GameController instance;
+  
+  private GameController() {
+    
   }
   
-  public void start() {
-    new Thread(updater).start();
+  public static GameController getInstance() {
+    return instance;
+  }
+  
+  public void setGameId(Long gameId) {
+    this.gameId = gameId;
+  }
+  
+  public Long getGameId() {
+    return gameId;
+  }
+  
+  
+  //TODO: disable multiple calls to this method
+  public static void start() {
+    new Thread(instance.new BoardUpdater()).start();
   }
   
   
