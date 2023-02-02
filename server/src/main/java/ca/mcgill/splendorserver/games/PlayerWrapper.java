@@ -19,7 +19,6 @@ import javax.persistence.Id;
 public class PlayerWrapper {
   @Id
   private final String userName; // assuming this is unique amongst all players
-  // TODO: should we track prefered color???
 
   private static final Map<String, PlayerWrapper> PLAYER_MAP = new HashMap<>();
 

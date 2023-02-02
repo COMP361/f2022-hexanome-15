@@ -29,6 +29,39 @@ import org.springframework.web.bind.annotation.RestController;
 public class MoveManager {
   private final Logger logger = Logger.getAnonymousLogger();
 
+  private List<TokenType[]> generateTokenCombinations(List<TokenType> tokenTypes, int r) {
+    List<TokenType[]> combinations = new ArrayList<>();
+    int[] ixs = new int[r]; // keep indexes
+
+    if (r <= tokenTypes.size()) {
+      for (int i = 0; (ixs[i] = i) < r - 1; i++) ;
+      combinations.add(getSubset(tokenTypes, ixs));
+      for (; ; ) {
+        int i;
+        for (i = r - 1; i >= 0 && ixs[i] == tokenTypes.size() - r + i; i--) ;
+        if (i < 0) {
+          break;
+        }
+        ixs[i]++;
+        for (i++; i < r; i++) {
+          ixs[i] = ixs[i - 1] + 1;
+        }
+        combinations.add(getSubset(tokenTypes, ixs));
+
+      }
+
+    }
+    return combinations;
+  }
+
+  private TokenType[] getSubset(List<TokenType> input, int[] s) {
+    TokenType[] result = new TokenType[s.length];
+    for (int i = 0; i < s.length; i++) {
+      result[i] = input.get(s[i]);
+    }
+    return result;
+  }
+
   // TODO: do we need the users access token as request param to validate here???
   @GetMapping(value = "/api/games/{gameid}/players/{player}/actions", produces = "application/json; charset=utf-8")
   public ResponseEntity getMoves(@PathVariable(name = "gameid") long gameid,
@@ -44,7 +77,8 @@ public class MoveManager {
     GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid).orElseThrow();
     Optional<PlayerWrapper> playerWrapper =
         gameBoardManager.getSessionInfo().getPlayerByName(playerName);
-    String serializedMoves =
+    //String serializedMoves =
+    return null;
   }
 
   /**
@@ -88,14 +122,19 @@ public class MoveManager {
     UserInventory userInventory =
         gameBoard.getInventoryByPlayerName(playerWrapper.getName()).orElseThrow();
 
+    return null;
   }
 
   private Map<String, Move> getSelectTokenMoves(Map<String, Move> moveMap, UserInventory inventory,
                                                 GameBoard gameBoard, PlayerWrapper player
   ) {
-    // checking if take 3 gem tokens of diff colors is viable
+    // checking select token moves:
+
     // player cannot be left with more than 10 tokens after move is made
+    // ie their token count must be <= 7 if select 3 diff, or <= 8 if selecting 2 same
     if (inventory.tokenCount() <= 7) {
+      // can either do take 2 (if legal) or take 3 gem tokens
+
       // list of token types which can be drawn from while selecting 3 tokens from different piles
       List<TokenType> validTokenTypes = new ArrayList<>();
       // can they pick 2 tokens of same color?
@@ -108,18 +147,23 @@ public class MoveManager {
         if (tokenPile.getSize() >= 4) {
           Move move =
               new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, tokenPile.getType());
-          String moveMD5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
-          moveMap.put(moveMD5, move);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
+          moveMap.put(moveMd5, move);
         }
       }
 
-      // creating the take 3 diff gem tokens for all tokens that can be drawn from
+      // creating the take 3 diff gem tokens moves for all tokens that can be drawn from
       if (!validTokenTypes.isEmpty()) {
-        Move move = new Move(Action.TAKE_3_GEM_TOKENS_DIFF_COL, null, player,
-                             validTokenTypes.toArray(TokenType[]::new)
-        );
-        String moveMD5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
-        moveMap.put(moveMD5, move);
+        int numTokensTake = 3;
+        List<TokenType[]> possibleTokens =
+            generateTokenCombinations(validTokenTypes, numTokensTake);
+        for (TokenType[] tokenTypes : possibleTokens) {
+          Move move = new Move(Action.TAKE_3_GEM_TOKENS_DIFF_COL, null, player, tokenTypes);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
+
+
       }
     }
     return moveMap;

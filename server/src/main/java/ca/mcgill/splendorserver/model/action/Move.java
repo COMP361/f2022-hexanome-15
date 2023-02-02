@@ -19,7 +19,7 @@ public class Move {
   /**
    * Creates a Move.
    *
-   *  @param action The action that a player did.
+   * @param action The action that a player did.
    * @param card   The card that was purchased/reserved, can be null if none.
    * @param player The player's username.
    * @param tokenType the type(s) of token if any, can be null.
