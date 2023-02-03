@@ -6,6 +6,7 @@ import ca.mcgill.splendorclient.control.ActionManager;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
+import kong.unirest.json.JSONException;
 
 /**
  * Represents the view of a Splendor Card.
@@ -53,10 +54,20 @@ public class CardView extends StackPane {
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {
       if (arg0.getButton() == MouseButton.SECONDARY) {
-        ActionManager.forwardCardRequest(locationCode + "R");
+        try {
+          ActionManager.forwardCardRequest(locationCode + "R");
+        }
+        catch (JSONException e) {
+          //TODO: add a turn field to the response from the .../board call. 
+        }
       }
       else {
-        ActionManager.forwardCardRequest(locationCode + "P");
+        try {
+          ActionManager.forwardCardRequest(locationCode + "P");
+        }
+        catch (JSONException e) {
+          
+        }
       }
     });
   }
