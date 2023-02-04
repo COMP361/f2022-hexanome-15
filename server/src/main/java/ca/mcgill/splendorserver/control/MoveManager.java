@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,7 @@ public class MoveManager {
 
   private List<TokenType[]> generateTokenCombinations(List<TokenType> tokenTypes, int r) {
     List<TokenType[]> combinations = new ArrayList<>();
-    int[] ixs = new int[r]; // keep indexes
+    int[]             ixs          = new int[r]; // keep indexes
 
     if (r <= tokenTypes.size()) {
       for (int i = 0; (ixs[i] = i) < r - 1; i++) ;
@@ -68,22 +69,42 @@ public class MoveManager {
   }
 
   // TODO: do we need the users access token as request param to validate here???
-  @GetMapping(value = "/api/games/{gameid}/players/{player}/actions", produces = "application/json; charset=utf-8")
+
+  /**
+   * Method to discover and retrieve all the possible moves for the specific player in specific game session.
+   *
+   * @param gameid     game ID of the game being played
+   * @param playerName player whose turn it currently is
+   * @return the possible moves that can be made in a map w/ key = hash of move object, value = raw move object.
+   */
+  @GetMapping(value = "/api/games/{gameid}/players/{player}/actions",
+              produces = "application/json; charset=utf-8")
   public ResponseEntity getMoves(@PathVariable(name = "gameid") long gameid,
                                  @PathVariable(name = "player") String playerName
   ) {
-    // if the given gameid doesn't exist or isn't active then throw an error
-    if (!BroadcastManager.exists(gameid)) {
-      throw new IllegalArgumentException(
-          "gameid: " + gameid + " is invalid or represents a game which is not active");
-    }
+    try {
+      // if the given gameid doesn't exist or isn't active then throw an error
+      if (!BroadcastManager.exists(gameid)) {
+        throw new IllegalArgumentException(
+            "gameid: " + gameid + " is invalid or represents a game which is not active");
+      }
 
-    // get the game manager instance
-    GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid).orElseThrow();
-    Optional<PlayerWrapper> playerWrapper =
-        gameBoardManager.getSessionInfo().getPlayerByName(playerName);
-    //String serializedMoves =
-    return null;
+      // get the game manager instance
+      GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid).orElseThrow();
+      Optional<PlayerWrapper> playerWrapper = gameBoardManager.getSessionInfo()
+          .getPlayerByName(playerName);
+      String serializedMoves = new Gson().toJson(findMoves(gameBoardManager, playerWrapper));
+      return ResponseEntity.status(HttpStatus.OK).body(serializedMoves);
+    } catch (IllegalArgumentException | IllegalStateException e) {
+      /*
+      - if we get here either the game doesnt exist or we've reached a state error somewhere
+      - a state error indicates that a game rule / state has been broken ie player has too many
+      devs etc
+      - send a bad response back indicating the error
+       */
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+    }
   }
 
   /**
@@ -123,8 +144,8 @@ public class MoveManager {
     // TODO: find the players inventory from the game, scan over their tokens and cards to ascertain what moves are possible
     GameBoard gameBoard = gameBoardManager.getBoard();
     // we know that the player is in the game if we make it to this point
-    UserInventory userInventory =
-        gameBoard.getInventoryByPlayerName(playerWrapper.getName()).orElseThrow();
+    UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
+        .orElseThrow();
     Map<String, Move> moveMap = new LinkedHashMap<>();
     getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
     getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
@@ -141,7 +162,7 @@ public class MoveManager {
     // cards face-up on table
     for (Card faceUp : gameBoard.getCards()) {
       if (inventory.canAffordCard(faceUp)) {
-        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null);
+        Move   move    = new Move(Action.PURCHASE_DEV, faceUp, player, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
         moveMap.put(moveMd5, move);
       }
@@ -152,7 +173,7 @@ public class MoveManager {
       // now check if they can afford them
       for (Card reservedCard : inventory) {
         if (inventory.canAffordCard(reservedCard)) {
-          Move move = new Move(Action.PURCHASE_DEV, reservedCard, player, null, null);
+          Move   move    = new Move(Action.PURCHASE_DEV, reservedCard, player, null, null);
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
           moveMap.put(moveMd5, move);
         }
@@ -183,14 +204,14 @@ public class MoveManager {
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
-      Move takeFaceUp = new Move(action, card, player, null, null);
+      Move   takeFaceUp    = new Move(action, card, player, null, null);
       String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp)).toUpperCase();
       moveMap.put(takeFaceUpMd5, takeFaceUp);
     }
     // or can take from one of the decks, but they won't be able to see the card, so it'll be null
     // ,but they will see the different deck levels (1, 2, 3)
     for (Deck deck : gameBoard.getDecks()) {
-      Move takeFromDeck = new Move(action, null, player, deck.getLevel(), null);
+      Move   takeFromDeck    = new Move(action, null, player, deck.getLevel(), null);
       String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck)).toUpperCase();
       moveMap.put(takeFromDeckMd5, takeFromDeck);
     }
@@ -220,8 +241,8 @@ public class MoveManager {
       if (tokenPile.getSize() >= 4) {
         Move move;
         if (inventory.tokenCount() <= 8) {
-          move =
-              new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, tokenPile.getType());
+          move = new Move(
+              Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, tokenPile.getType());
         } else if (inventory.tokenCount() == 9) {
           // must return token after the 2 tokens are taken
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
@@ -243,7 +264,7 @@ public class MoveManager {
 
     // creating the take 3 diff gem tokens moves for all tokens that can be drawn from
     if (!validTokenTypes.isEmpty()) {
-      int numTokensTake = 3;
+      int               numTokensTake  = 3;
       List<TokenType[]> possibleTokens = generateTokenCombinations(validTokenTypes, numTokensTake);
 
       Action action;
@@ -261,7 +282,7 @@ public class MoveManager {
       }
 
       for (TokenType[] tokenTypes : possibleTokens) {
-        Move move = new Move(action, null, player, null, tokenTypes);
+        Move   move    = new Move(action, null, player, null, tokenTypes);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
         moveMap.put(moveMd5, move);
       }

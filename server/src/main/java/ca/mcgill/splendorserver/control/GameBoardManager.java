@@ -25,7 +25,14 @@ public class GameBoardManager {
   private final TurnManager turnManager;
   private GameBoard board;
 
+  /**
+   * GameBoardManager constructor.
+   *
+   * @param info   session info, cannot be null
+   * @param gameId gameID
+   */
   public GameBoardManager(SessionInfo info, long gameId) {
+    assert info != null;
     sessionInfo = info;
     this.gameId = gameId;
     turnManager = new TurnManager(info.getPlayers());
@@ -48,7 +55,6 @@ public class GameBoardManager {
     return board;
   }
 
-  // TODO: do we need the decks parameter???
   private void setUpPlayingField(List<Card> playingField, List<Deck> decks) {
     for (int i = 0; i < DeckLevel.values().length; ++i) {
       Deck deck = new Deck(CardType.values()[i], DeckLevel.values()[i]);
@@ -81,10 +87,11 @@ public class GameBoardManager {
     List<Deck> decks = new ArrayList<>();
     List<Card> playingField = new ArrayList<>();
     List<UserInventory> inventories = new ArrayList<>();
-    List<Noble> nobles = new ArrayList<>();
     setUpPlayingField(playingField, decks);
     setUpTokenPiles(piles, true);
     setUpUserInventories(inventories);
+
+    List<Noble> nobles = new ArrayList<>();
     board = new GameBoard(inventories, decks, playingField, piles, nobles);
   }
 
