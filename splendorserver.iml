@@ -3,12 +3,34 @@
   <component name="CheckStyle-IDEA-Module" serialisationVersion="2">
     <option name="activeLocationsIds" />
   </component>
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <webroots />
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/server/src/main/java" />
+        </sourceRoots>
+      </configuration>
+    </facet>
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping />
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_16">
     <output url="file://$MODULE_DIR$/server/target/classes" />
     <output-test url="file://$MODULE_DIR$/server/target/test-classes" />
     <content url="file://$MODULE_DIR$/server">
       <sourceFolder url="file://$MODULE_DIR$/server/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/server/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/server/src/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/server/target" />
     </content>
     <orderEntry type="inheritedJdk" />
