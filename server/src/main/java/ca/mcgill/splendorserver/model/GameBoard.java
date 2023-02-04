@@ -4,6 +4,7 @@ import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.List;
 import java.util.Objects;
@@ -66,6 +67,20 @@ public class GameBoard {
 
   public List<TokenPile> getTokenPiles() {
     return tokenPiles;
+  }
+
+  /**
+   * Gets the count of gold tokens.
+   *
+   * @return count of gold tokens.
+   */
+  public boolean noGoldTokens() {
+    for (TokenPile tokenPile : tokenPiles) {
+      if (tokenPile.getType() == TokenType.GOLD) {
+        return tokenPile.getSize() == 0;
+      }
+    }
+    return true;
   }
 
   public List<Noble> getNobles() {

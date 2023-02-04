@@ -5,21 +5,28 @@ import java.util.List;
 
 /**
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount
- * and cost This class implements the Flyweight design pattern.
+ * and cost. This class implements the Flyweight design pattern.
  */
 public class Deck {
 
   private final ArrayList<Card> cards;
   private final CardType type;
+  private final DeckLevel level;
 
   /**
    * Creates a deck made of cards of a certain type.
    *
    * @param type The type of cards
    */
-  public Deck(CardType type) {
+  public Deck(CardType type, DeckLevel level) {
+    assert type != null && level != null;
     this.cards = (ArrayList<Card>) Card.makeDeck(type);
     this.type = type;
+    this.level = level;
+  }
+
+  public DeckLevel getLevel() {
+    return level;
   }
 
   /**

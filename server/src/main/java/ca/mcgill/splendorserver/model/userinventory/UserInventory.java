@@ -3,9 +3,12 @@ package ca.mcgill.splendorserver.model.userinventory;
 import ca.mcgill.splendorserver.games.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
-
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -15,10 +18,10 @@ import java.util.List;
  * Observed by CardColumnView to add the card to the inventory.
  * Observed by MoveManagerDepr to create the current move
  */
-public class UserInventory {
+public class UserInventory implements Iterable<Card> {
 
-  private ArrayList<Card> cards;
-  private List<TokenPile> tokenPiles;
+  private final List<Card> cards;
+  private final List<TokenPile> tokenPiles;
   private final PlayerWrapper playerWrapper;
 
   /**
@@ -31,6 +34,69 @@ public class UserInventory {
     cards = new ArrayList<>();
     tokenPiles = List.copyOf(pile);
     playerWrapper = name;
+  }
+
+  /**
+   * Gets the number of cards in inventory.
+   *
+   * @return the number of cards in this inventory.
+   */
+  public int cardCount() {
+    return cards.size();
+  }
+
+  /**
+   * If the inventory has cards.
+   *
+   * @return if they have cards or not.
+   */
+  public boolean hasCards() {
+    return !cards.isEmpty();
+  }
+
+  public boolean canAffordCard(Card card) {
+    for (Map.Entry<TokenType, Integer> entry : card.getCardCost().entrySet()) {
+      if (!hasEnoughFor(entry.getKey(), entry.getValue())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private int getGoldTokenCount() {
+    for (TokenPile tokenPile : tokenPiles) {
+      if (tokenPile.getType() == TokenType.GOLD) {
+        return tokenPile.getSize();
+      }
+    }
+    return 0;
+  }
+
+  private boolean hasEnoughFor(TokenType tokenType, int cost) {
+    int goldTokenCount = getGoldTokenCount();
+    for (TokenPile tokenPile : tokenPiles) {
+      if (tokenPile.getType() == tokenType) {
+        // if the amount of that token possessed plus any gold tokens if sufficient then true
+        return tokenPile.getSize() + goldTokenCount >= cost;
+      } else {
+        break;
+      }
+    }
+    return false;
+  }
+
+  //TODO: do we check if the card is already in the hand or are the cards all unique???
+
+  /**
+   * Adds card to user inventory.
+   *
+   * @param card card to add.
+   * @throws AssertionError if card == null
+   */
+  public void addCard(Card card) {
+    assert card != null;
+    cards.add(card);
+    Collections.sort(cards); // sorts the cards by color as described in rules
   }
 
   /**
@@ -89,7 +155,6 @@ public class UserInventory {
 //  }
 
 
-
   /**
    * Adds a token pile to the user inventory.
    *
@@ -99,4 +164,8 @@ public class UserInventory {
     tokenPiles.add(pile);
   }
 
+  @Override
+  public Iterator<Card> iterator() {
+    return cards.iterator();
+  }
 }

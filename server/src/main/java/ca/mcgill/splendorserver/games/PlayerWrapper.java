@@ -54,4 +54,8 @@ public class PlayerWrapper {
     return userName;
   }
 
+  @Override
+  public String toString() {
+    return "Player{" + userName + "}";
+  }
 }

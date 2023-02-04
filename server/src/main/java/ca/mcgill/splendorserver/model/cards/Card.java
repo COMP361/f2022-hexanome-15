@@ -11,7 +11,7 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
  * Represents a Splendor Card with id, prestige, tokenBonus, cardType, discount
  * and cost This class implements the Flyweight design pattern.
  */
-public class Card {
+public class Card implements Comparable<Card> {
   private static final ArrayList<Card> cards = new ArrayList<>();
   // this eventually will be the png that is on the actual card
   private final int id;
@@ -22,6 +22,7 @@ public class Card {
   // maybe
   private final int discount;
   private final int[] cost;
+  private final CardCost cardCost;
 
   /**
    * Creates a card.
@@ -41,6 +42,7 @@ public class Card {
     this.cardType = cardType;
     this.discount = discount;
     this.cost = cost;
+    cardCost = null; // TODO: update the card cost
   }
   // bad design ill get back to this
 
@@ -266,6 +268,16 @@ public class Card {
   @Override
   public int hashCode() {
     return Objects.hash(id);
+  }
+
+  @Override
+  public int compareTo(Card card) {
+    assert card != null;
+    return this.getTokenType().compareTo(card.getTokenType());
+  }
+
+  public CardCost getCardCost() {
+    return cardCost;
   }
 
   // TODO: need things like cost, associated gem discount, and prestige.

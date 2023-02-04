@@ -6,6 +6,7 @@ import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardType;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cards.DeckLevel;
 import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -49,8 +50,8 @@ public class GameBoardManager {
 
   // TODO: do we need the decks parameter???
   private void setUpPlayingField(List<Card> playingField, List<Deck> decks) {
-    for (int i = 0; i < 3; ++i) {
-      Deck deck = new Deck(CardType.values()[i]);
+    for (int i = 0; i < DeckLevel.values().length; ++i) {
+      Deck deck = new Deck(CardType.values()[i], DeckLevel.values()[i]);
       List<Card> cards = deck.deal();
       playingField.addAll(cards);
     }
