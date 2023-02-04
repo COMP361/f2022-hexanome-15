@@ -1,8 +1,11 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
 
+import ca.mcgill.splendorclient.control.ActionManager;
 import ca.mcgill.splendorclient.control.ColorManager;
 import ca.mcgill.splendorclient.model.TokenType;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 
 /**
@@ -23,6 +26,29 @@ public class TokenPileView extends Circle {
     super(radius);
     this.setFill(ColorManager.getColor(type));
     tokenCounter = new Counter(0);
+  }
+  
+  /**
+   * Creates a clickable TokenPileView for the gameboard view.
+   * On click it continues generating a token request code
+   * 
+   * @param radius
+   * @param type
+   * @param locationCode
+   */
+  public TokenPileView(float radius, TokenType type, String locationCode) {
+    super(radius);
+    this.setFill(ColorManager.getColor(type));
+    tokenCounter = new Counter(0);
+    this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+      @Override
+      public void handle(MouseEvent event) {
+        //TODO: make this more user friendly, as is a user wouldn't know when a take token attempt starts and finishes.
+        ActionManager.getInstance().addToRequest(type);
+      }
+      
+    });
   }
 
   /**

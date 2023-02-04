@@ -48,8 +48,6 @@ public class LobbyController implements Initializable {
 	@FXML
 	private ChoiceBox<String> gameserviceChoiceBox;
 	
-	private GameController gameController;
-	
 	
 
 	@Override
@@ -149,8 +147,8 @@ public class LobbyController implements Initializable {
 				String sessionToLaunch = availableSessionList.getSelectionModel().getSelectedItem();
 				if (launch_session(sessionToLaunch, user.getAccessToken())) {
 				  Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch), get_session(sessionToLaunch));
-				  gameController = new GameController(Long.valueOf(sessionToLaunch));
-				  gameController.start();
+				  GameController.getInstance().setGameId(Long.valueOf(sessionToLaunch));
+				  GameController.start();
 				}
 				else {
 				  //notify user failure to launch session. 
