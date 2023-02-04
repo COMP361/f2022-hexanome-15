@@ -76,11 +76,11 @@ public class GameBoardManager {
   }
 
   private void instantiateNewGameboard() {
-    List<TokenPile> piles = new ArrayList<TokenPile>();
-    List<Deck> decks = new ArrayList<Deck>();
-    List<Card> playingField = new ArrayList<Card>();
-    List<UserInventory> inventories = new ArrayList<UserInventory>();
-    List<Noble> nobles = new ArrayList<Noble>();
+    List<TokenPile> piles = new ArrayList<>();
+    List<Deck> decks = new ArrayList<>();
+    List<Card> playingField = new ArrayList<>();
+    List<UserInventory> inventories = new ArrayList<>();
+    List<Noble> nobles = new ArrayList<>();
     setUpPlayingField(playingField, decks);
     setUpTokenPiles(piles, true);
     setUpUserInventories(inventories);
