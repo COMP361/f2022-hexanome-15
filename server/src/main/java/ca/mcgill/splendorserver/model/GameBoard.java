@@ -4,7 +4,7 @@ import ca.mcgill.splendorserver.games.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
-import ca.mcgill.splendorserver.model.cards.DeckLevel;
+import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
@@ -86,7 +86,11 @@ public class GameBoard {
           logger.log(Level.INFO, player + " purchased a reserved dev card: " + selectedCard);
         } else if (cardField.contains(selectedCard)) { // purchase face-up dev card
           // purchase card which is face-up on the board
-          inventory.addPurchasedCard(selectedCard);
+          // purchase card, take it from the face up table and replace that card on table
+          int ix = cardField.indexOf(selectedCard);
+          inventory.addPurchasedCard(cardField.remove(ix));
+          replenish(selectedCard, ix);
+
           logger.log(
               Level.INFO,
               player + " purchased a face-up dev card from game board: " + selectedCard
@@ -105,19 +109,39 @@ public class GameBoard {
       case RESERVE_DEV -> {
         // no gold token (joker) will be received, just the reserved card
         // throws an error if a card nor deck level to choose from weren't chosen
-        inventory.addReservedCard(move.getCard()
-                                      .orElse(getCardByDeckLevel(move.getDeckLevel()
-                                                                     .orElseThrow(
-                                                                         () -> new IllegalGameStateException(
-                                                                             "If move is to reserve dev card, a card or deck level to draw a card from must be chosen")))));
+        Card selectedCard = move.getCard()
+                                .orElse(getCardByDeckLevel(move.getDeckType()
+                                                               .orElseThrow(
+                                                                   () -> new IllegalGameStateException(
+                                                                       "If move is to reserve dev card, a card or deck level to draw a card from must be chosen"))));
+        // if we're taking from the table, replenish table from the deck and remove from table
+        if (move.getCard()
+                .isPresent()) {
+          // remove the selected card from the board
+          int ix = cardField.indexOf(selectedCard);
+          cardField.remove(selectedCard);
+          replenish(move.getCard()
+                        .get(), ix);
+        }
+        inventory.addReservedCard(selectedCard);
       }
       case RESERVE_DEV_TAKE_JOKER -> {
         // gold token and card reserved
-        inventory.addReservedCard(move.getCard()
-                                      .orElse(getCardByDeckLevel(move.getDeckLevel()
-                                                                     .orElseThrow(
-                                                                         () -> new IllegalGameStateException(
-                                                                             "If move is to reserve dev card, a card or deck level to draw a card from must be chosen")))));
+        Card selectedCard = move.getCard()
+                                .orElse(getCardByDeckLevel(move.getDeckType()
+                                                               .orElseThrow(
+                                                                   () -> new IllegalGameStateException(
+                                                                       "If move is to reserve dev card, a card or deck level to draw a card from must be chosen"))));
+        // if card taken from table face-up we must replace it
+        if (move.getCard()
+                .isPresent()) {
+          // remove the selected card from the board
+          int ix = cardField.indexOf(selectedCard);
+          cardField.remove(selectedCard);
+          replenish(move.getCard()
+                        .get(), ix);
+        }
+        inventory.addReservedCard(selectedCard);
         inventory.addTokens(drawGoldToken());
       }
       case TAKE_2_GEM_TOKENS_SAME_COL -> {
@@ -296,6 +320,15 @@ public class GameBoard {
     }
   }
 
+  private void replenish(Card card, int replenishIndex) {
+    // empty card field means we cant replenish because otherwise it would have been replenished alr
+    for (Deck deck : decks) {
+      if (deck.getType() == card.getDeckType() && !deck.isEmpty()) {
+        cardField.add(replenishIndex, deck.draw());
+      }
+    }
+  }
+
   private void moveTokensToUserInventory(UserInventory inventory, TokenType[] selected) {
     for (TokenType tokenType : selected) {
       inventory.addTokens(drawTokenByTokenType(tokenType));
@@ -309,10 +342,10 @@ public class GameBoard {
     }
   }
 
-  private Card getCardByDeckLevel(DeckLevel deckLevel) {
+  private Card getCardByDeckLevel(DeckType deckLevel) {
     assert deckLevel != null;
     for (Deck deck : decks) {
-      if (deck.getLevel() == deckLevel) {
+      if (deck.getType() == deckLevel) {
         return deck.draw();
       }
     }
@@ -369,6 +402,13 @@ public class GameBoard {
   public List<TokenPile> getTokenPiles() {
     return tokenPiles.values()
                      .stream()
+                     .toList();
+  }
+
+  public List<TokenPile> getTokenPilesNoGold() {
+    return tokenPiles.values()
+                     .stream()
+                     .filter(tokens -> tokens.getType() != TokenType.GOLD)
                      .toList();
   }
 

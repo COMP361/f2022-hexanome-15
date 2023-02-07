@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.mcgill.splendorserver.model.tokens.TokenType;
-import java.util.Optional;
 
 /**
- * Represents a Splendor Card with id, prestige, tokenBonus, cardType, discount
+ * Represents a Splendor Card with id, prestige, tokenBonus, deckType, discount
  * and cost This class implements the Flyweight design pattern.
  */
 public class Card implements Comparable<Card> {
@@ -17,33 +16,34 @@ public class Card implements Comparable<Card> {
   // this eventually will be the png that is on the actual card
   private final        int             id;
   private final        int             prestige;
-  private final        TokenType       tokenBonus;
-  private final        CardType        cardType;
+  private final        TokenType       tokenBonusType;
+  // TODO: THIS NEEDS TO BE CHANGED TO AN ENUM CAUSE IT'LL ONLY BE 1 OR 2
+  private final        int             tokenBonusAmount;
+  private final        DeckType        deckType;
   // TODO: IDK if we need this, but orient pairing can increase discount from 1 to 2 so
   // maybe
-  private final        int             discount;
   private final        CardCost        cardCost;
   private              CardStatus      cardStatus;
 
   /**
    * Creates a card.
    *
-   * @param id         The id of the card
-   * @param prestige   The prestige earned upon purchasing the card
-   * @param tokenBonus The bonus received upon purchasing the card
-   * @param cardType   The type of card
-   * @param discount   The card's discount
-   * @param cardCost   The cost of the card
+   * @param id               The id of the card
+   * @param prestige         The prestige earned upon purchasing the card
+   * @param tokenBonusType   The bonus received upon purchasing the card
+   * @param deckType         The type of card
+   * @param tokenBonusAmount The card's discount
+   * @param cardCost         The cost of the card
    */
-  public Card(int id, int prestige, TokenType tokenBonus, CardType cardType,
-              int discount, CardCost cardCost
+  public Card(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
+              int tokenBonusAmount, CardCost cardCost
   ) {
-    this.id         = id;
-    this.prestige   = prestige;
-    this.tokenBonus = tokenBonus;
-    this.cardType   = cardType;
-    this.discount   = discount;
-    this.cardCost   = cardCost;
+    this.id               = id;
+    this.prestige         = prestige;
+    this.tokenBonusType   = tokenBonusType;
+    this.deckType         = deckType;
+    this.tokenBonusAmount = tokenBonusAmount;
+    this.cardCost         = cardCost;
   }
   // TODO: bad design ill get back to this
 
@@ -75,7 +75,7 @@ public class Card implements Comparable<Card> {
    * @param type The type of Card and Deck
    * @return the list of cards in the deck
    */
-  public static List<Card> makeDeck(CardType type) {
+  public static List<Card> makeDeck(DeckType type) {
     if (cards.size() == 0) {
       generateCards();
     }
@@ -120,8 +120,8 @@ public class Card implements Comparable<Card> {
    *
    * @return the discount of this card
    */
-  public int getDiscount() {
-    return discount;
+  public int getTokenBonusAmount() {
+    return tokenBonusAmount;
   }
 
   /**
@@ -138,8 +138,8 @@ public class Card implements Comparable<Card> {
    *
    * @return the type of this card
    */
-  public CardType getCardType() {
-    return cardType;
+  public DeckType getDeckType() {
+    return deckType;
   }
 
   /**
@@ -148,7 +148,7 @@ public class Card implements Comparable<Card> {
    * @return the token bonus type of this card
    */
   public TokenType getTokenType() {
-    return tokenBonus;
+    return tokenBonusType;
   }
 
   // dw I didn't write this its generated
@@ -157,113 +157,113 @@ public class Card implements Comparable<Card> {
    * Generates cards for the decks.
    */
   private static void generateCards() {
-    cards.add(new Card(0, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(1, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(2, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(3, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(4, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(0, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(1, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(2, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(3, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(4, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(5, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(6, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(7, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(8, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(9, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(5, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(6, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(7, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(8, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(9, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(10, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(11, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(12, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(13, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(14, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(10, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(11, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(12, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(13, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(14, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(15, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(16, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(17, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(18, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(19, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(15, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(16, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(17, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(18, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(19, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(20, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(21, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(22, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(23, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(24, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(20, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(21, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(22, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(23, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(24, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(25, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(26, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(27, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(28, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(29, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(25, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(26, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(27, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(28, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(29, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(30, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(31, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(32, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(33, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(34, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(30, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(31, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(32, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(33, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(34, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(35, 1, TokenType.DIAMOND, CardType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(36, 1, TokenType.SAPPHIRE, CardType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(37, 1, TokenType.EMERALD, CardType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(38, 1, TokenType.RUBY, CardType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(39, 1, TokenType.ONYX, CardType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(35, 1, TokenType.DIAMOND, DeckType.BASE1, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(36, 1, TokenType.SAPPHIRE, DeckType.BASE1, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(37, 1, TokenType.EMERALD, DeckType.BASE1, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(38, 1, TokenType.RUBY, DeckType.BASE1, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(39, 1, TokenType.ONYX, DeckType.BASE1, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(40, 1, TokenType.DIAMOND, CardType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(41, 1, TokenType.SAPPHIRE, CardType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(42, 1, TokenType.EMERALD, CardType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(43, 1, TokenType.RUBY, CardType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(44, 1, TokenType.ONYX, CardType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(40, 1, TokenType.DIAMOND, DeckType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(41, 1, TokenType.SAPPHIRE, DeckType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(42, 1, TokenType.EMERALD, DeckType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(43, 1, TokenType.RUBY, DeckType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(44, 1, TokenType.ONYX, DeckType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(45, 1, TokenType.DIAMOND, CardType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(46, 1, TokenType.SAPPHIRE, CardType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(47, 1, TokenType.EMERALD, CardType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(48, 1, TokenType.RUBY, CardType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(49, 1, TokenType.ONYX, CardType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(45, 1, TokenType.DIAMOND, DeckType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(46, 1, TokenType.SAPPHIRE, DeckType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(47, 1, TokenType.EMERALD, DeckType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(48, 1, TokenType.RUBY, DeckType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(49, 1, TokenType.ONYX, DeckType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(50, 1, TokenType.DIAMOND, CardType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(51, 1, TokenType.SAPPHIRE, CardType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(52, 1, TokenType.EMERALD, CardType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(53, 1, TokenType.RUBY, CardType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(54, 1, TokenType.ONYX, CardType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(50, 1, TokenType.DIAMOND, DeckType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(51, 1, TokenType.SAPPHIRE, DeckType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(52, 1, TokenType.EMERALD, DeckType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(53, 1, TokenType.RUBY, DeckType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(54, 1, TokenType.ONYX, DeckType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(55, 1, TokenType.DIAMOND, CardType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(56, 1, TokenType.SAPPHIRE, CardType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(57, 1, TokenType.EMERALD, CardType.BASE2, 1, new CardCost(0, 0, 0, 0, 4)));
-    cards.add(new Card(58, 1, TokenType.RUBY, CardType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(59, 1, TokenType.ONYX, CardType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(55, 1, TokenType.DIAMOND, DeckType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(56, 1, TokenType.SAPPHIRE, DeckType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(57, 1, TokenType.EMERALD, DeckType.BASE2, 1, new CardCost(0, 0, 0, 0, 4)));
+    cards.add(new Card(58, 1, TokenType.RUBY, DeckType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(59, 1, TokenType.ONYX, DeckType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(60, 1, TokenType.DIAMOND, CardType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(61, 1, TokenType.SAPPHIRE, CardType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(62, 1, TokenType.EMERALD, CardType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(63, 1, TokenType.RUBY, CardType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(64, 1, TokenType.ONYX, CardType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(60, 1, TokenType.DIAMOND, DeckType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(61, 1, TokenType.SAPPHIRE, DeckType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(62, 1, TokenType.EMERALD, DeckType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(63, 1, TokenType.RUBY, DeckType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(64, 1, TokenType.ONYX, DeckType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(65, 1, TokenType.DIAMOND, CardType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(66, 1, TokenType.SAPPHIRE, CardType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(67, 1, TokenType.EMERALD, CardType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(68, 1, TokenType.RUBY, CardType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(69, 1, TokenType.ONYX, CardType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(65, 1, TokenType.DIAMOND, DeckType.BASE2, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(66, 1, TokenType.SAPPHIRE, DeckType.BASE2, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(67, 1, TokenType.EMERALD, DeckType.BASE2, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(68, 1, TokenType.RUBY, DeckType.BASE2, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(69, 1, TokenType.ONYX, DeckType.BASE2, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(70, 1, TokenType.DIAMOND, CardType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(71, 1, TokenType.SAPPHIRE, CardType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(72, 1, TokenType.EMERALD, CardType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(73, 1, TokenType.RUBY, CardType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(74, 1, TokenType.ONYX, CardType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(70, 1, TokenType.DIAMOND, DeckType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(71, 1, TokenType.SAPPHIRE, DeckType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(72, 1, TokenType.EMERALD, DeckType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(73, 1, TokenType.RUBY, DeckType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(74, 1, TokenType.ONYX, DeckType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(75, 1, TokenType.DIAMOND, CardType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(76, 1, TokenType.SAPPHIRE, CardType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(77, 1, TokenType.EMERALD, CardType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(78, 1, TokenType.RUBY, CardType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(79, 1, TokenType.ONYX, CardType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(75, 1, TokenType.DIAMOND, DeckType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(76, 1, TokenType.SAPPHIRE, DeckType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(77, 1, TokenType.EMERALD, DeckType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(78, 1, TokenType.RUBY, DeckType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(79, 1, TokenType.ONYX, DeckType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(80, 1, TokenType.DIAMOND, CardType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(81, 1, TokenType.SAPPHIRE, CardType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(82, 1, TokenType.EMERALD, CardType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(83, 1, TokenType.RUBY, CardType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(84, 1, TokenType.ONYX, CardType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(80, 1, TokenType.DIAMOND, DeckType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(81, 1, TokenType.SAPPHIRE, DeckType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(82, 1, TokenType.EMERALD, DeckType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(83, 1, TokenType.RUBY, DeckType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(84, 1, TokenType.ONYX, DeckType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
 
-    cards.add(new Card(85, 1, TokenType.DIAMOND, CardType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
-    cards.add(new Card(86, 1, TokenType.SAPPHIRE, CardType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
-    cards.add(new Card(87, 1, TokenType.EMERALD, CardType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
-    cards.add(new Card(88, 1, TokenType.RUBY, CardType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
-    cards.add(new Card(89, 1, TokenType.ONYX, CardType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
+    cards.add(new Card(85, 1, TokenType.DIAMOND, DeckType.BASE3, 1, new CardCost(0, 0, 1, 0, 0)));
+    cards.add(new Card(86, 1, TokenType.SAPPHIRE, DeckType.BASE3, 1, new CardCost(0, 0, 0, 1, 0)));
+    cards.add(new Card(87, 1, TokenType.EMERALD, DeckType.BASE3, 1, new CardCost(0, 0, 0, 0, 1)));
+    cards.add(new Card(88, 1, TokenType.RUBY, DeckType.BASE3, 1, new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(89, 1, TokenType.ONYX, DeckType.BASE3, 1, new CardCost(0, 1, 0, 0, 0)));
   }
 
   @Override
@@ -285,7 +285,8 @@ public class Card implements Comparable<Card> {
   @Override
   public int compareTo(Card card) {
     assert card != null;
-    return this.getTokenType().compareTo(card.getTokenType());
+    return this.getTokenType()
+               .compareTo(card.getTokenType());
   }
 
   public CardCost getCardCost() {
@@ -304,9 +305,9 @@ public class Card implements Comparable<Card> {
   public String toString() {
     return "Card{" +
         "prestige=" + prestige +
-        ", tokenBonus=" + tokenBonus +
-        ", cardType=" + cardType +
-        ", discount=" + discount +
+        ", tokenBonus=" + tokenBonusType +
+        ", deckType=" + deckType +
+        ", discount=" + tokenBonusAmount +
         ", cardCost=" + cardCost +
         '}';
   }

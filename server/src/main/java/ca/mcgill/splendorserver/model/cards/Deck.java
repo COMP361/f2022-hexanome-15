@@ -11,19 +11,17 @@ import java.util.Optional;
 public class Deck {
 
   private final ArrayList<Card> cards;
-  private final CardType        type;
-  private final DeckLevel       level;
+  private final DeckType        type;
 
   /**
    * Creates a deck made of cards of a certain type.
    *
    * @param type The type of cards
    */
-  public Deck(CardType type, DeckLevel level) {
-    assert type != null && level != null;
+  public Deck(DeckType type) {
+    assert type != null;
     this.cards = (ArrayList<Card>) Card.makeDeck(type);
     this.type  = type;
-    this.level = level;
   }
 
   public Card draw() {
@@ -43,16 +41,12 @@ public class Deck {
     return cards.isEmpty();
   }
 
-  public DeckLevel getLevel() {
-    return level;
-  }
-
   /**
    * Returns the card type of the deck.
    *
    * @return the card type of the deck
    */
-  public CardType getType() {
+  public DeckType getType() {
     return type;
   }
 

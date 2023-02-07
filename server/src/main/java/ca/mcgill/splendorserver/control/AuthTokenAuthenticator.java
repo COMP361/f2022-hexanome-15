@@ -86,7 +86,7 @@ public final class AuthTokenAuthenticator {
    * @param accessToken user's access token
    * @throws TokenAuthenticationException if the username and access token dont correspond to each other or if the user isn't a player.
    */
-  public static void isValid(String userName, String accessToken) {
+  public static void authenticate(String userName, String accessToken) {
     if (isSameName(userName, accessToken) && isPlayer(accessToken)) {
       return;
     }

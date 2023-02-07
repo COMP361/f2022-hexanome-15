@@ -4,9 +4,8 @@ import ca.mcgill.splendorserver.games.PlayerWrapper;
 import ca.mcgill.splendorserver.games.TurnManager;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.cards.Card;
-import ca.mcgill.splendorserver.model.cards.CardType;
+import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.Deck;
-import ca.mcgill.splendorserver.model.cards.DeckLevel;
 import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -21,9 +20,9 @@ import java.util.Objects;
 public class GameBoardManager {
 
   private final SessionInfo sessionInfo;
-  private final long gameId;
+  private final long        gameId;
   private final TurnManager turnManager;
-  private GameBoard board;
+  private       GameBoard   board;
 
   /**
    * GameBoardManager constructor.
@@ -56,8 +55,8 @@ public class GameBoardManager {
   }
 
   private void setUpPlayingField(List<Card> playingField, List<Deck> decks) {
-    for (int i = 0; i < DeckLevel.values().length; ++i) {
-      Deck deck = new Deck(CardType.values()[i], DeckLevel.values()[i]);
+    for (int i = 0; i < DeckType.values().length; ++i) {
+      Deck       deck  = new Deck(DeckType.values()[i]);
       List<Card> cards = deck.deal();
       playingField.addAll(cards);
       decks.add(deck);
@@ -83,10 +82,10 @@ public class GameBoardManager {
   }
 
   private void instantiateNewGameboard() {
-    List<TokenPile> piles = new ArrayList<>();
-    List<Deck> decks = new ArrayList<>();
-    List<Card> playingField = new ArrayList<>();
-    List<UserInventory> inventories = new ArrayList<>();
+    List<TokenPile>     piles        = new ArrayList<>();
+    List<Deck>          decks        = new ArrayList<>();
+    List<Card>          playingField = new ArrayList<>();
+    List<UserInventory> inventories  = new ArrayList<>();
     setUpPlayingField(playingField, decks);
     setUpTokenPiles(piles, true);
     setUpUserInventories(inventories);

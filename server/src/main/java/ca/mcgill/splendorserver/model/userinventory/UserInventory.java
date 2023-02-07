@@ -37,13 +37,13 @@ public class UserInventory implements Iterable<Card> {
    */
   public UserInventory(List<TokenPile> pile, PlayerWrapper name) {
     cards         = new ArrayList<>();
-    tokenPiles    = new EnumMap<TokenType, TokenPile>(List.copyOf(pile)
-                                                          .stream()
-                                                          .collect(
-                                                              Collectors.toMap(
-                                                                  TokenPile::getType,
-                                                                  tokens -> tokens
-                                                              )));
+    tokenPiles    = new EnumMap<>(List.copyOf(pile)
+                                      .stream()
+                                      .collect(
+                                          Collectors.toMap(
+                                              TokenPile::getType,
+                                              tokens -> tokens
+                                          )));
     playerWrapper = name;
   }
 
@@ -51,6 +51,7 @@ public class UserInventory implements Iterable<Card> {
   public List<TokenType> getTokenTypes() {
     return tokenPiles.values()
                      .stream()
+                     .filter(tokens -> tokens.getSize() != 0)
                      .map(TokenPile::getType)
                      .toList();
   }

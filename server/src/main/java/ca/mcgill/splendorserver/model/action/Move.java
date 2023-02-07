@@ -2,7 +2,7 @@ package ca.mcgill.splendorserver.model.action;
 
 import ca.mcgill.splendorserver.games.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
-import ca.mcgill.splendorserver.model.cards.DeckLevel;
+import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import java.util.Optional;
 
@@ -17,7 +17,7 @@ public class Move {
   private final Optional<Card>        card;
   private final Optional<TokenType[]> selectedTokenTypes; // which token type if move involves token
   private final Optional<TokenType[]> returnedTokenTypes; // token types selected to be returned
-  private final Optional<DeckLevel>   deckLevel;
+  private final Optional<DeckType>    deckType;
 
   /**
    * Creates a Move.
@@ -26,20 +26,20 @@ public class Move {
    * @param card               The card that was purchased/reserved, can be null if none or not available to
    *                           see by the client.
    * @param player             The player's username.
-   * @param deckLevel          The level of the deck from which they can take from if they want, can be null.
+   * @param deckType           The level of the deck from which they can take from if they want, can be null.
    * @param returnedTokenTypes tokens that are to be returned as a result of having > 10 tokens as
    *                           a result of the tokens taken in this move.
    * @param selectedTokenTypes the type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
-              DeckLevel deckLevel, TokenType[] returnedTokenTypes, TokenType... selectedTokenTypes
+              DeckType deckType, TokenType[] returnedTokenTypes, TokenType... selectedTokenTypes
   ) {
     this.action             = action;
     this.card               = Optional.ofNullable(card);
     this.player             = player;
     this.selectedTokenTypes = Optional.ofNullable(selectedTokenTypes);
     this.returnedTokenTypes = Optional.ofNullable(returnedTokenTypes);
-    this.deckLevel          = Optional.ofNullable(deckLevel);
+    this.deckType           = Optional.ofNullable(deckType);
   }
 
   /**
@@ -60,8 +60,8 @@ public class Move {
     return player;
   }
 
-  public Optional<DeckLevel> getDeckLevel() {
-    return deckLevel;
+  public Optional<DeckType> getDeckType() {
+    return deckType;
   }
 
   public Optional<TokenType[]> getSelectedTokenTypes() {
@@ -88,7 +88,7 @@ public class Move {
         + ", action=" + action
         + ", card=" + card
         + ", tokenTypes=" + selectedTokenTypes
-        + ", deckLevel=" + deckLevel
+        + ", deckLevel=" + deckType
         + '}';
   }
 }

@@ -5,7 +5,7 @@ package ca.mcgill.splendorserver.model.cards;
  * Cards can belong to the base back or the orient pack.
  * The numbers are used to indicate the level of the card
  */
-public enum CardType {
+public enum DeckType {
   /**
    * Base 1 card type.
    */

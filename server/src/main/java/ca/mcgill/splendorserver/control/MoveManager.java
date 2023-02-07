@@ -53,7 +53,7 @@ public class MoveManager {
     }
 
     // authorize the player and their access token
-    AuthTokenAuthenticator.isValid(playerName, accessToken);
+    AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
     // get the game manager instance
     // TODO: should this be broadcast manager?
@@ -106,7 +106,7 @@ public class MoveManager {
       }
 
       // validates the player and their access token
-      AuthTokenAuthenticator.isValid(playerName, accessToken);
+      AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
       // get the game manager instance
       GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid)
@@ -253,7 +253,7 @@ public class MoveManager {
     // players may not have more than three reserved cards in hand
     final int maxNumReservedCards = 3;
     if (inventory.reservedCardCount() > maxNumReservedCards) {
-      throw new IllegalStateException(
+      throw new IllegalGameStateException(
           "Illegal for " + player + " to have more than 3 reserved cards in hand");
     }
 
@@ -279,7 +279,7 @@ public class MoveManager {
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
-        Move takeFromDeck = new Move(action, null, player, deck.getLevel(),
+        Move takeFromDeck = new Move(action, null, player, deck.getType(),
                                      null, null
         );
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
@@ -304,7 +304,7 @@ public class MoveManager {
 
     // list of token types which can be drawn from while selecting 3 tokens from different piles
     List<TokenType> validTake3TokenTypes = new ArrayList<>();
-    for (TokenPile tokenPile : gameBoard.getTokenPiles()) {
+    for (TokenPile tokenPile : gameBoard.getTokenPilesNoGold()) {
       // can take 3 tokens of different colors as long as pile isn't empty
       if (tokenPile.getSize() > 0) {
         validTake3TokenTypes.add(tokenPile.getType());
