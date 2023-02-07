@@ -2,6 +2,7 @@ package ca.mcgill.splendorserver.model.cards;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount
@@ -10,8 +11,8 @@ import java.util.List;
 public class Deck {
 
   private final ArrayList<Card> cards;
-  private final CardType type;
-  private final DeckLevel level;
+  private final CardType        type;
+  private final DeckLevel       level;
 
   /**
    * Creates a deck made of cards of a certain type.
@@ -21,8 +22,25 @@ public class Deck {
   public Deck(CardType type, DeckLevel level) {
     assert type != null && level != null;
     this.cards = (ArrayList<Card>) Card.makeDeck(type);
-    this.type = type;
+    this.type  = type;
     this.level = level;
+  }
+
+  public Card draw() {
+    assert !isEmpty();
+    return cards.remove(0);
+  }
+
+  public Optional<Card> drawOpt() {
+    if (cards.isEmpty()) {
+      return Optional.empty();
+    } else {
+      return Optional.of(cards.remove(0));
+    }
+  }
+
+  public boolean isEmpty() {
+    return cards.isEmpty();
   }
 
   public DeckLevel getLevel() {

@@ -12,29 +12,34 @@ import java.util.Optional;
  */
 public class Move {
 
-  private final PlayerWrapper player;
-  private final Action action;
-  private final Optional<Card> card;
-  private final Optional<TokenType[]> tokenTypes; // which token type if move involves token
-  private final Optional<DeckLevel> deckLevel;
+  private final PlayerWrapper         player;
+  private final Action                action;
+  private final Optional<Card>        card;
+  private final Optional<TokenType[]> selectedTokenTypes; // which token type if move involves token
+  private final Optional<TokenType[]> returnedTokenTypes; // token types selected to be returned
+  private final Optional<DeckLevel>   deckLevel;
 
   /**
    * Creates a Move.
-   *  @param action    The action that a player did.
-   * @param card      The card that was purchased/reserved, can be null if none or not available to
-   *                  see by the client.
-   * @param player    The player's username.
-   * @param deckLevel The level of the deck from which they can take from if they want, can be null.
-   * @param tokenType the type(s) of token if any, can be null.
+   *
+   * @param action             The action that a player did.
+   * @param card               The card that was purchased/reserved, can be null if none or not available to
+   *                           see by the client.
+   * @param player             The player's username.
+   * @param deckLevel          The level of the deck from which they can take from if they want, can be null.
+   * @param returnedTokenTypes tokens that are to be returned as a result of having > 10 tokens as
+   *                           a result of the tokens taken in this move.
+   * @param selectedTokenTypes the type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
-              DeckLevel deckLevel, TokenType... tokenType
+              DeckLevel deckLevel, TokenType[] returnedTokenTypes, TokenType... selectedTokenTypes
   ) {
-    this.action = action;
-    this.card = Optional.ofNullable(card);
-    this.player = player;
-    this.tokenTypes = Optional.ofNullable(tokenType);
-    this.deckLevel = Optional.ofNullable(deckLevel);
+    this.action             = action;
+    this.card               = Optional.ofNullable(card);
+    this.player             = player;
+    this.selectedTokenTypes = Optional.ofNullable(selectedTokenTypes);
+    this.returnedTokenTypes = Optional.ofNullable(returnedTokenTypes);
+    this.deckLevel          = Optional.ofNullable(deckLevel);
   }
 
   /**
@@ -55,6 +60,18 @@ public class Move {
     return player;
   }
 
+  public Optional<DeckLevel> getDeckLevel() {
+    return deckLevel;
+  }
+
+  public Optional<TokenType[]> getSelectedTokenTypes() {
+    return selectedTokenTypes;
+  }
+
+  public Optional<TokenType[]> getReturnedTokenTypes() {
+    return returnedTokenTypes;
+  }
+
   /**
    * Returns the current player's action.
    *
@@ -64,4 +81,14 @@ public class Move {
     return action;
   }
 
+  @Override
+  public String toString() {
+    return "Move{"
+        + "player=" + player
+        + ", action=" + action
+        + ", card=" + card
+        + ", tokenTypes=" + selectedTokenTypes
+        + ", deckLevel=" + deckLevel
+        + '}';
+  }
 }

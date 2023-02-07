@@ -13,8 +13,8 @@ import java.util.Stack;
 public class MoveManagerDepr
 {
   
-  private static MoveManagerDepr INSTANCE = new MoveManagerDepr();
-  private static Stack<Move> moveStack;
+  private static final MoveManagerDepr INSTANCE = new MoveManagerDepr();
+  private static       Stack<Move>     moveStack;
   
   private MoveManagerDepr() {
     moveStack = new Stack<Move>();

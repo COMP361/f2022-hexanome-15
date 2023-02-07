@@ -23,8 +23,8 @@ public class Game implements Iterable<PlayerWrapper>
     private Long gameid; // TODO: implement this from the LS
     private String initGameBoard; // the game-board which initialized the game
     private String lastAction = "";
-    private GameBoard gameBoard;
-    private boolean finished = false;
+    private       GameBoard gameBoard;
+    private final boolean   finished = false;
 
 
     /**

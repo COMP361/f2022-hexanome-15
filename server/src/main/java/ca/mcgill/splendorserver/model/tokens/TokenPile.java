@@ -3,13 +3,15 @@ package ca.mcgill.splendorserver.model.tokens;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import javax.swing.text.html.Option;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.
  */
 public class TokenPile implements Iterable<Token> {
   private final ArrayList<Token> tokens;
-  private final TokenType type;
+  private final TokenType        type;
 
   /**
    * Creates a TokenPile.
@@ -17,7 +19,7 @@ public class TokenPile implements Iterable<Token> {
    * @param tokenType The type of tokens that are in the token pile
    */
   public TokenPile(TokenType tokenType) {
-    this.type = tokenType;
+    this.type   = tokenType;
     this.tokens = new ArrayList<>();
   }
 
@@ -78,16 +80,22 @@ public class TokenPile implements Iterable<Token> {
   }
 
   /**
-   * Removes a token from the token pile.
+   * Removes a token from the token pile. Assumes that the token pile is not empty, otherwise use
+   * the optional version of this method.
    *
    * @return the token that is removed
    */
   public Token removeToken() {
-    if (!tokens.isEmpty()) {
-      Token token = tokens.remove(0);
-      return token;
+    assert !tokens.isEmpty();
+    return tokens.remove(0);
+  }
+
+  public Optional<Token> removeTokenOpt() {
+    if (tokens.isEmpty()) {
+      return Optional.empty();
+    } else {
+      return Optional.of(tokens.remove(0));
     }
-    return null;
   }
 
   /**

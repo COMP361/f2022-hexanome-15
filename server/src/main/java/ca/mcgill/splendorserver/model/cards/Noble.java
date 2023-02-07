@@ -5,8 +5,8 @@ package ca.mcgill.splendorserver.model.cards;
  */
 public class Noble {
 
-  private int[] cardRequirements;
-  private boolean reserved;
+  private final int[]   cardRequirements;
+  private final boolean reserved;
 
   /**
    * Creates a noble.

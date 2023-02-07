@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import java.util.Optional;
 
 /**
  * Represents a Splendor Card with id, prestige, tokenBonus, cardType, discount
@@ -18,10 +19,11 @@ public class Card implements Comparable<Card> {
   private final        int             prestige;
   private final        TokenType       tokenBonus;
   private final        CardType        cardType;
-  // IDK if we need this, but orient pairing can increase discount from 1 to 2 so
+  // TODO: IDK if we need this, but orient pairing can increase discount from 1 to 2 so
   // maybe
   private final        int             discount;
   private final        CardCost        cardCost;
+  private              CardStatus      cardStatus;
 
   /**
    * Creates a card.
@@ -43,7 +45,19 @@ public class Card implements Comparable<Card> {
     this.discount   = discount;
     this.cardCost   = cardCost;
   }
-  // bad design ill get back to this
+  // TODO: bad design ill get back to this
+
+  public boolean isReserved() {
+    return cardStatus == CardStatus.RESERVED;
+  }
+
+  public boolean isPurchased() {
+    return cardStatus == CardStatus.PURCHASED;
+  }
+
+  public boolean notReservedNorPurchased() {
+    return cardStatus == CardStatus.NONE;
+  }
 
   /**
    * Gets a card based on their id.
@@ -257,10 +271,9 @@ public class Card implements Comparable<Card> {
     if (object == this) {
       return true;
     }
-    if (!(object instanceof Card)) {
+    if (!(object instanceof Card card)) {
       return false;
     }
-    Card card = (Card) object;
     return id == card.getId();
   }
 
@@ -277,6 +290,25 @@ public class Card implements Comparable<Card> {
 
   public CardCost getCardCost() {
     return cardCost;
+  }
+
+  public CardStatus getCardStatus() {
+    return cardStatus;
+  }
+
+  public void setCardStatus(CardStatus cardStatus) {
+    this.cardStatus = cardStatus;
+  }
+
+  @Override
+  public String toString() {
+    return "Card{" +
+        "prestige=" + prestige +
+        ", tokenBonus=" + tokenBonus +
+        ", cardType=" + cardType +
+        ", discount=" + discount +
+        ", cardCost=" + cardCost +
+        '}';
   }
 
   // TODO: need things like cost, associated gem discount, and prestige.

@@ -12,10 +12,10 @@ class PlayerWrapperTest {
 
   @Test
   void getaUserName() {
-    PlayerWrapper.newPlayerWrapper("Zack");
-    PlayerWrapper.newPlayerWrapper("Ojas").getName();
+    PlayerWrapper.newPlayerWrapper("Zack", 20);
+    PlayerWrapper.newPlayerWrapper("Ojas", 21).getName();
     assertEquals
       ("Ojas",
-       PlayerWrapper.newPlayerWrapper("Ojas").getName(), "");
+       PlayerWrapper.newPlayerWrapper("Ojas", null).getName(), "");
   }
 }
