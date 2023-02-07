@@ -56,6 +56,7 @@ public class MoveManager {
     AuthTokenAuthenticator.isValid(playerName, accessToken);
 
     // get the game manager instance
+    // TODO: should this be broadcast manager?
     GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid)
                                                         .orElseThrow();
     Optional<PlayerWrapper> playerWrapper = gameBoardManager.getSessionInfo()
@@ -69,8 +70,16 @@ public class MoveManager {
 
     // pass the move along so that the game states are appropriately updated
     Move selectedMove = moves.get(actionMd5);
-    logger.log(Level.INFO, "played: " + selectedMove); // log the move that was selected
+    logger.log(
+        Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
+    // apply the selected move to game board
+    gameBoardManager.getBoard()
+                    .applyMove(selectedMove, playerWrapper.orElseThrow(
+                        () -> new IllegalGameStateException(
+                            "If a valid move has been selected, their must be a corresponding player who selected it but player was found empty")));
 
+    // TODO: implement
+    //BroadcastManager.getActiveGame(gameid).orElseThrow().update();
 
     return null;
   }
