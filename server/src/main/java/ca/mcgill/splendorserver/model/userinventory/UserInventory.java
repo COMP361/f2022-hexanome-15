@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -114,6 +115,7 @@ public class UserInventory implements Iterable<Card> {
     return cards.contains(card) && card.getCardStatus() == CardStatus.RESERVED;
   }
 
+
   /**
    * If the inventory has cards.
    *
@@ -142,9 +144,12 @@ public class UserInventory implements Iterable<Card> {
 
   private boolean hasEnoughFor(TokenType tokenType, int cost) {
     int goldTokenCount = getGoldTokenCount();
-    // TODO: include possible discount
+    int bonusDiscount = cards.stream()
+                             .filter(card -> card.getTokenBonusType() == tokenType)
+                             .map(card -> card.getTokenBonusAmount())
+                             .reduce(0, Integer::sum);
     return tokenPiles.get(tokenType)
-                     .getSize() + goldTokenCount >= cost;
+                     .getSize() + goldTokenCount >= (cost - bonusDiscount);
   }
 
   //TODO: do we check if the card is already in the hand or are the cards all unique???
@@ -166,10 +171,23 @@ public class UserInventory implements Iterable<Card> {
    *
    * @param card purchased card, cannot be null
    */
-  public void addPurchasedCard(Card card) {
+  public EnumMap<TokenType, Integer> addPurchasedCard(Card card) {
     assert card != null;
     card.setCardStatus(CardStatus.PURCHASED);
     cards.add(card);
+
+    EnumMap<TokenType, Integer> costMap = new EnumMap<>(TokenType.class);
+    // loop over all token costs and deduct the correct amount taking into consideration the discounts
+    for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
+                                                   .entrySet()) {
+      int bonusDiscount = cards.stream()
+                               .filter(c -> c.getTokenBonusType() == entry.getKey())
+                               .map(Card::getTokenBonusAmount)
+                               .reduce(0, Integer::sum);
+      int actualCost = entry.getValue() - bonusDiscount;
+      costMap.put(entry.getKey(), actualCost);
+    }
+    return costMap;
   }
 
   /**

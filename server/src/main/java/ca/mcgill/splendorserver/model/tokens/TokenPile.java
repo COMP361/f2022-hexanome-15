@@ -23,6 +23,15 @@ public class TokenPile implements Iterable<Token> {
     this.tokens = new ArrayList<>();
   }
 
+  public void removeTokens(int n) {
+    if (n > tokens.size()) {
+      n = tokens.size();
+    }
+    for (int i = 0; i < n; i++) {
+      tokens.remove(0);
+    }
+  }
+
   /**
    * Sets up the TokenPile upon starting the game.
    *

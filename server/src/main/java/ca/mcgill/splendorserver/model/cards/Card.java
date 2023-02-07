@@ -147,7 +147,7 @@ public class Card implements Comparable<Card> {
    *
    * @return the token bonus type of this card
    */
-  public TokenType getTokenType() {
+  public TokenType getTokenBonusType() {
     return tokenBonusType;
   }
 
@@ -285,8 +285,8 @@ public class Card implements Comparable<Card> {
   @Override
   public int compareTo(Card card) {
     assert card != null;
-    return this.getTokenType()
-               .compareTo(card.getTokenType());
+    return this.getTokenBonusType()
+               .compareTo(card.getTokenBonusType());
   }
 
   public CardCost getCardCost() {

@@ -82,13 +82,17 @@ public class GameBoard {
         if (inventory.hasCardReserved(selectedCard)) {
           // they have the card, and it has been reserved, so they can legally buy it
           // add the card to their inventory as a purchased card
-          inventory.addPurchasedCard(selectedCard);
+          returnTokensToBoard(inventory, inventory.addPurchasedCard(selectedCard)
+                                                  .keySet()
+                                                  .toArray(new TokenType[0]));
           logger.log(Level.INFO, player + " purchased a reserved dev card: " + selectedCard);
         } else if (cardField.contains(selectedCard)) { // purchase face-up dev card
           // purchase card which is face-up on the board
           // purchase card, take it from the face up table and replace that card on table
           int ix = cardField.indexOf(selectedCard);
-          inventory.addPurchasedCard(cardField.remove(ix));
+          returnTokensToBoard(inventory, inventory.addPurchasedCard(cardField.remove(ix))
+                                                  .keySet()
+                                                  .toArray(new TokenType[0]));
           replenish(selectedCard, ix);
 
           logger.log(
@@ -104,6 +108,8 @@ public class GameBoard {
           throw new IllegalGameStateException(
               "Cannot purchase card which isn't reserved or face-up");
         }
+
+        // subtract the cost of the bought card from the inventory
 
       }
       case RESERVE_DEV -> {
