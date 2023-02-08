@@ -1,8 +1,11 @@
 package ca.mcgill.splendorserver.model.userinventory;
 
-import ca.mcgill.splendorserver.games.PlayerWrapper;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardStatus;
+import ca.mcgill.splendorserver.model.cards.Noble;
+import ca.mcgill.splendorserver.model.cards.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -12,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -28,6 +30,8 @@ public class UserInventory implements Iterable<Card> {
   private final List<Card>                    cards;
   private final EnumMap<TokenType, TokenPile> tokenPiles;
   private final PlayerWrapper                 playerWrapper;
+  private       int                           prestigeWon;
+  private final List<Noble>                   visitingNobles;
 
 
   /**
@@ -37,15 +41,21 @@ public class UserInventory implements Iterable<Card> {
    * @param name This player's username
    */
   public UserInventory(List<TokenPile> pile, PlayerWrapper name) {
-    cards         = new ArrayList<>();
-    tokenPiles    = new EnumMap<>(List.copyOf(pile)
-                                      .stream()
-                                      .collect(
-                                          Collectors.toMap(
-                                              TokenPile::getType,
-                                              tokens -> tokens
-                                          )));
-    playerWrapper = name;
+    cards          = new ArrayList<>();
+    tokenPiles     = new EnumMap<>(List.copyOf(pile)
+                                       .stream()
+                                       .collect(
+                                           Collectors.toMap(
+                                               TokenPile::getType,
+                                               tokens -> tokens
+                                           )));
+    playerWrapper  = name;
+    prestigeWon    = 0;
+    visitingNobles = new ArrayList<>();
+  }
+
+  public int getPrestigeWon() {
+    return prestigeWon;
   }
 
 
@@ -95,7 +105,9 @@ public class UserInventory implements Iterable<Card> {
    * @return the number of cards in this inventory.
    */
   public int reservedCardCount() {
-    return cards.size();
+    return (int) cards.stream()
+                      .filter(Card::isReserved)
+                      .count();
   }
 
   /**
@@ -106,7 +118,7 @@ public class UserInventory implements Iterable<Card> {
   public int purchasedCardCount() {
     return (int) cards
         .stream()
-        .filter(card -> card.getCardStatus() == CardStatus.PURCHASED)
+        .filter(Card::isPurchased)
         .count();
   }
 
@@ -129,7 +141,7 @@ public class UserInventory implements Iterable<Card> {
   public boolean canAffordCard(Card card) {
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
-      if (!hasEnoughFor(entry.getKey(), entry.getValue())) {
+      if (!hasEnoughTokensFor(entry.getKey(), entry.getValue())) {
         return false;
       }
     }
@@ -142,11 +154,11 @@ public class UserInventory implements Iterable<Card> {
 
   }
 
-  private boolean hasEnoughFor(TokenType tokenType, int cost) {
+  private boolean hasEnoughTokensFor(TokenType tokenType, int cost) {
     int goldTokenCount = getGoldTokenCount();
     int bonusDiscount = cards.stream()
                              .filter(card -> card.getTokenBonusType() == tokenType)
-                             .map(card -> card.getTokenBonusAmount())
+                             .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
     return tokenPiles.get(tokenType)
                      .getSize() + goldTokenCount >= (cost - bonusDiscount);
@@ -162,32 +174,133 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addReservedCard(Card card) {
     assert card != null;
+
+    // checking that card is not already reserved or purchased
+    if (card.getCardStatus() != CardStatus.NONE) {
+      throw new IllegalGameStateException(
+          "card cannot be reserved if it has already been reserved or purchased");
+    }
+
     card.setCardStatus(CardStatus.RESERVED);
     cards.add(card);
   }
 
   /**
-   * Adds card when it's been purchased.
+   * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
+   * purchased and deducts the appropriate amount of tokens from their inventory also taking
+   * into consideration any token type bonuses they may have from owned cards.
    *
    * @param card purchased card, cannot be null
+   * @return TokenTypes corresponding to the tokens which were removed in order to purchase the
+   * given card taking into consideration any token bonuses for owned cards.
    */
-  public EnumMap<TokenType, Integer> addPurchasedCard(Card card) {
+  public List<Token> purchaseCard(Card card) {
     assert card != null;
+
+    // checking that card is not already purchased
+    if (card.getCardStatus() == CardStatus.PURCHASED) {
+      throw new IllegalGameStateException("Cannot purchase a card which is already purchased");
+    }
+
     card.setCardStatus(CardStatus.PURCHASED);
     cards.add(card);
 
-    EnumMap<TokenType, Integer> costMap = new EnumMap<>(TokenType.class);
+    // accredit the prestige points won by purchasing this card
+    addPrestige(card.getPrestige());
+
+    // check for noble visitation as a result of buying this card
+
+
+    // collect the tokens expended to purchase this card
+    List<Token> costs = new ArrayList<>();
     // loop over all token costs and deduct the correct amount taking into consideration the discounts
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
+      // bonusDiscount = sum(tokenBonusAmount) for owned cards that match the current cost token in iteration
       int bonusDiscount = cards.stream()
-                               .filter(c -> c.getTokenBonusType() == entry.getKey())
+                               .filter(
+                                   c -> c.getTokenBonusType() == entry.getKey() && c.isPurchased())
                                .map(Card::getTokenBonusAmount)
                                .reduce(0, Integer::sum);
       int actualCost = entry.getValue() - bonusDiscount;
-      costMap.put(entry.getKey(), actualCost);
+      costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
     }
-    return costMap;
+    return costs;
+  }
+
+  private void addPrestige(int prestige) {
+    prestigeWon += prestige;
+  }
+
+  public boolean canBeVisitedByNoble(Noble noble) {
+    assert noble != null;
+    // cannot be visited by noble that is already visiting someone else
+    if (noble.getStatus() == NobleStatus.VISITING) {
+      return false;
+    }
+
+    // loop over the visit requirements and see if bonuses in this inventory are sufficient
+    for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
+                                                    .entrySet()) {
+      if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
+        return false;
+      }
+    }
+    // otherwise return true
+    return true;
+  }
+
+  public boolean canBeVisitedByNobleWithCardPurchase(Noble noble, Card card) {
+    assert noble != null && card != null;
+    // cannot be visited by noble that is already visiting someone else
+    if (noble.getStatus() == NobleStatus.VISITING) {
+      return false;
+    }
+
+    // loop over the visit requirements and see if bonuses in this inventory are sufficient
+    // in addition to those gained by the potential purchase of a card
+    for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
+                                                    .entrySet()) {
+      if (card.getTokenBonusType() == entry.getKey() && notEnoughBonusesFor(
+          entry.getKey(),
+          entry.getValue()
+              - card.getTokenBonusAmount()
+      )) {
+        return false;
+      } else if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
+        return false;
+      }
+    }
+    // otherwise return true
+    return true;
+  }
+
+  /**
+   * Assumes that it is legal for the noble to be visiting this inventory based on visit requirement.
+   *
+   * @param noble noble which is visiting this inventory, cannot be null
+   */
+  public void receiveVisitFrom(Noble noble) {
+    assert noble != null;
+    addPrestige(noble.getPrestige());
+    visitingNobles.add(noble);
+  }
+
+  private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {
+    // gets all cards that are purchased and have matching bonus token type
+    // accumulate the result and see if enough for the given amount
+    return cards.stream()
+                .filter(card -> card.getTokenBonusType() == tokenType && card.isPurchased())
+                .map(Card::getTokenBonusAmount)
+                .reduce(0, Integer::sum) < amount;
+  }
+
+  private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
+    List<Token> removed = new ArrayList<>(n);
+    for (int i = 0; i < n; i++) {
+      removed.add(removeTokenByTokenType(tokenType));
+    }
+    return removed;
   }
 
   /**
@@ -261,4 +374,5 @@ public class UserInventory implements Iterable<Card> {
   public Iterator<Card> iterator() {
     return cards.iterator();
   }
+
 }

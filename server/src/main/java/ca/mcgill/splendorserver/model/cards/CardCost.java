@@ -17,11 +17,11 @@ public class CardCost {
   /**
    * Immutable container of the costs associated with a given card.
    *
-   * @param diamondCost cost in diamond tokens
+   * @param diamondCost  cost in diamond tokens
    * @param sapphireCost cost in sapphire
-   * @param emeraldCost cost in emeralds
-   * @param rubyCost cost in rubies
-   * @param onyxCost cost in onyx
+   * @param emeraldCost  cost in emeralds
+   * @param rubyCost     cost in rubies
+   * @param onyxCost     cost in onyx
    */
   public CardCost(int diamondCost, int sapphireCost, int emeraldCost, int rubyCost, int onyxCost) {
     assert diamondCost >= 0 && sapphireCost >= 0 && emeraldCost >= 0 && rubyCost >= 0

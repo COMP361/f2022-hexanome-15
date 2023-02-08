@@ -1,11 +1,10 @@
 package ca.mcgill.splendorserver.model.cards;
 
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import ca.mcgill.splendorserver.model.tokens.TokenType;
 
 /**
  * Represents a Splendor Card with id, prestige, tokenBonus, deckType, discount

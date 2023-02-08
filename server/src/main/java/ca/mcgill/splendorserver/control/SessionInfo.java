@@ -1,6 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.games.PlayerWrapper;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -13,9 +13,9 @@ import java.util.Optional;
 public class SessionInfo implements Iterable<PlayerWrapper> {
 
   private final List<PlayerWrapper> players;
-  private String gameServer;
-  private PlayerWrapper gameCreator;
-  private String saveGameId;
+  private       String              gameServer;
+  private       PlayerWrapper       gameCreator;
+  private       String              saveGameId;
 
   public SessionInfo(List<PlayerWrapper> players) {
     this.players = players;
@@ -31,10 +31,10 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
                      String saveGameId
   ) {
     assert gameServer != null && players != null && gameCreator != null;
-    this.gameServer = gameServer;
-    this.players = players;
+    this.gameServer  = gameServer;
+    this.players     = players;
     this.gameCreator = gameCreator;
-    this.saveGameId = saveGameId;
+    this.saveGameId  = saveGameId;
   }
 
   public List<PlayerWrapper> getPlayers() {
@@ -55,7 +55,8 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
 
   public Optional<PlayerWrapper> getPlayerByName(String pName) {
     for (PlayerWrapper pw : this) {
-      if (pw.getName().equals(pName)) {
+      if (pw.getName()
+            .equals(pName)) {
         return Optional.of(pw);
       }
     }

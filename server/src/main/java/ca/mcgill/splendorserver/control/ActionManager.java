@@ -1,12 +1,14 @@
 package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.games.PlayerWrapper;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
+import ca.mcgill.splendorserver.model.SplendorGame;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
@@ -35,19 +37,20 @@ import org.springframework.web.bind.annotation.RestController;
  * Date: 2/1/23
  */
 @RestController
-public class MoveManager {
+public class ActionManager {
   private final Logger logger = Logger.getAnonymousLogger();
 
   // TODO: do we need the users access token as request param to validate here???
 
   @PostMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
-  public ResponseEntity<String> executeMove(@PathVariable(name = "gameid") long gameid,
-                                            @PathVariable(name = "player") String playerName,
-                                            @PathVariable(name = "actionMD5") String actionMd5,
-                                            @RequestParam(name = "access_token") String accessToken
+  public ResponseEntity<String> performAction(@PathVariable(name = "gameid") long gameid,
+                                              @PathVariable(name = "player") String playerName,
+                                              @PathVariable(name = "actionMD5") String actionMd5,
+                                              @RequestParam(name = "access_token")
+                                              String accessToken
   ) {
     // if the given gameid doesn't exist or isn't active then throw an error
-    if (!BroadcastManager.exists(gameid)) {
+    if (!LocalGameStorage.exists(gameid)) {
       throw new IllegalArgumentException(
           "gameid: " + gameid + " is invalid or represents a game which is not currently active");
     }
@@ -57,11 +60,10 @@ public class MoveManager {
 
     // get the game manager instance
     // TODO: should this be broadcast manager?
-    GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid)
-                                                        .orElseThrow();
-    Optional<PlayerWrapper> playerWrapper = gameBoardManager.getSessionInfo()
-                                                            .getPlayerByName(playerName);
-    Map<String, Move> moves = findMoves(gameBoardManager, playerWrapper);
+    SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
+                                                .orElseThrow();
+    Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
+    Map<String, Move>       moves         = findMoves(splendorGame, playerWrapper);
     // throw error if the action MD5 isn't valid
     if (!moves.containsKey(actionMd5)) {
       throw new IllegalArgumentException(
@@ -73,13 +75,20 @@ public class MoveManager {
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
     // apply the selected move to game board
-    gameBoardManager.getBoard()
-                    .applyMove(selectedMove, playerWrapper.orElseThrow(
-                        () -> new IllegalGameStateException(
-                            "If a valid move has been selected, their must be a corresponding player who selected it but player was found empty")));
+    splendorGame.getBoard()
+                .applyMove(selectedMove, playerWrapper.orElseThrow(
+                    () -> new IllegalGameStateException(
+                        "If a valid move has been selected, their must be a corresponding player who selected it but player was found empty")));
 
     // TODO: implement
-    //BroadcastManager.getActiveGame(gameid).orElseThrow().update();
+    //LocalGameStorage.getActiveGame(gameid).orElseThrow().update();
+
+    // check for terminal game state after action has been performed
+    if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+      logger.log(Level.INFO, "Terminal game state reached");
+      // TODO: handle end of game, needs to go until the first players turn is up
+      // TODO: handle tie game
+    }
 
     return null;
   }
@@ -94,13 +103,13 @@ public class MoveManager {
    */
   @GetMapping(value = "/api/games/{gameid}/players/{player}/actions",
               produces = "application/json; charset=utf-8")
-  public ResponseEntity getMoves(@PathVariable(name = "gameid") long gameid,
-                                 @PathVariable(name = "player") String playerName,
-                                 @RequestParam(name = "access_token") String accessToken
+  public ResponseEntity getAvailableActions(@PathVariable(name = "gameid") long gameid,
+                                            @PathVariable(name = "player") String playerName,
+                                            @RequestParam(name = "access_token") String accessToken
   ) {
     try {
       // if the given gameid doesn't exist or isn't active then throw an error
-      if (!BroadcastManager.exists(gameid)) {
+      if (!LocalGameStorage.exists(gameid)) {
         throw new IllegalArgumentException(
             "gameid: " + gameid + " is invalid or represents a game which is not active");
       }
@@ -109,11 +118,11 @@ public class MoveManager {
       AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
       // get the game manager instance
-      GameBoardManager gameBoardManager = BroadcastManager.getActiveGame(gameid)
-                                                          .orElseThrow();
-      Optional<PlayerWrapper> playerWrapper = gameBoardManager.getSessionInfo()
-                                                              .getPlayerByName(playerName);
-      String serializedMoves = new Gson().toJson(findMoves(gameBoardManager, playerWrapper));
+      SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
+                                                  .orElseThrow();
+      Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
+      String serializedMoves = new Gson().toJson(
+          findMoves(splendorGame, playerWrapper));
       return ResponseEntity.status(HttpStatus.OK)
                            .body(serializedMoves);
     } catch (IllegalArgumentException | IllegalStateException e) {
@@ -166,15 +175,15 @@ public class MoveManager {
   /**
    * Finds the moves able to be made for the given player in the given gameboard.
    *
-   * @param gameBoardManager game board.
-   * @param player           player.
+   * @param splendorGame game board.
+   * @param player       player.
    * @return the possible moves for the player based on the game state.
-   * @throws AssertionError if gameBoardManager or player are null.
+   * @throws AssertionError if splendorGame or player are null.
    */
-  private Map<String, Move> findMoves(GameBoardManager gameBoardManager,
+  private Map<String, Move> findMoves(SplendorGame splendorGame,
                                       Optional<PlayerWrapper> player
   ) {
-    assert gameBoardManager != null;
+    assert splendorGame != null;
 
     // handling an empty player which means player is not in the that game
     if (player.isEmpty()) {
@@ -186,22 +195,20 @@ public class MoveManager {
     PlayerWrapper playerWrapper = player.get();
 
     // if game finished return empty set := no moves
-    if (gameBoardManager.getBoard()
-                        .isFinished()) {
+    if (splendorGame.isFinished()) {
       logger.log(Level.INFO, "game is finished, no moves can be made");
       return new LinkedHashMap<>();
       // if its not the players turn then return no moves
-    } else if (!gameBoardManager.getTurnManager()
-                                .whoseTurn()
-                                .getName()
-                                .equals(playerWrapper.getName())) {
+    } else if (!splendorGame.whoseTurn()
+                            .getName()
+                            .equals(playerWrapper.getName())) {
       logger.log(Level.INFO, "not " + playerWrapper.getName() + " turn -> no moves can be made");
       return new LinkedHashMap<>();
     }
 
     // now search through the gameboard and create a mapping of viable moves the player can make given their state
     // TODO: find the players inventory from the game, scan over their tokens and cards to ascertain what moves are possible
-    GameBoard gameBoard = gameBoardManager.getBoard();
+    GameBoard gameBoard = splendorGame.getBoard();
     // we know that the player is in the game if we make it to this point
     UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
                                            .orElseThrow();
@@ -220,13 +227,9 @@ public class MoveManager {
 
     // cards face-up on table
     for (Card faceUp : gameBoard.getCards()) {
-      if (inventory.canAffordCard(faceUp)) {
-        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-                             null
-        );
-        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                    .toUpperCase();
-        moveMap.put(moveMd5, move);
+      // cannot offer a move involving a card already purchased
+      if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
+        accumlateBuyDevMovesConsideringNobles(moveMap, inventory, gameBoard, player, faceUp);
       }
     }
 
@@ -235,15 +238,63 @@ public class MoveManager {
       // now check if they can afford them
       for (Card card : inventory) {
         if (card.isReserved() && inventory.canAffordCard(card)) {
-          Move move = new Move(Action.PURCHASE_DEV, card, player, null, null,
-                               null
-          );
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                      .toUpperCase();
-          moveMap.put(moveMd5, move);
+          accumlateBuyDevMovesConsideringNobles(moveMap, inventory, gameBoard, player, card);
         }
       }
     }
+
+  }
+
+  private void accumlateBuyDevMovesConsideringNobles(Map<String, Move> moveMap,
+                                                     UserInventory inventory, GameBoard gameBoard,
+                                                     PlayerWrapper player, Card faceUp
+  ) {
+    if (wouldBeVisitedByPurchasing(faceUp, inventory, gameBoard)) {
+      // this card purchase would result in visitation from noble so provide the combination
+      // of nobles that the player can pick (if > 1) otherwise the one that will automatically
+      // visit them after their turn
+      List<Noble> possibleNobleVisitors = getPossibleNobleVisitors(
+          inventory, gameBoard, faceUp);
+      for (Noble noble : possibleNobleVisitors) {
+        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
+                             noble, null
+        );
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                    .toUpperCase();
+        moveMap.put(moveMd5, move);
+      }
+    } else {
+      // purchasing this card wouldn't result in being visited by a noble so proceed as normal
+      Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
+                           null, null
+      );
+      String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                  .toUpperCase();
+      moveMap.put(moveMd5, move);
+    }
+  }
+
+  private boolean wouldBeVisitedByPurchasing(Card card, UserInventory inventory,
+                                             GameBoard gameBoard
+  ) {
+    for (Noble noble : gameBoard.getNobles()) {
+      if (inventory.canBeVisitedByNobleWithCardPurchase(noble, card)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private List<Noble> getPossibleNobleVisitors(UserInventory inventory, GameBoard gameBoard,
+                                               Card faceUp
+  ) {
+    List<Noble> possibleNobleVisitors = new ArrayList<>();
+    for (Noble noble : gameBoard.getNobles()) {
+      if (inventory.canBeVisitedByNobleWithCardPurchase(noble, faceUp)) {
+        possibleNobleVisitors.add(noble);
+      }
+    }
+    return possibleNobleVisitors;
   }
 
 
@@ -269,7 +320,7 @@ public class MoveManager {
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
-      Move takeFaceUp = new Move(action, card, player, null, null, null);
+      Move takeFaceUp = new Move(action, card, player, null, null, null, null);
       String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
                                         .toUpperCase();
       moveMap.put(takeFaceUpMd5, takeFaceUp);
@@ -280,7 +331,7 @@ public class MoveManager {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
         Move takeFromDeck = new Move(action, null, player, deck.getType(),
-                                     null, null
+                                     null, null, null
         );
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
                                             .toUpperCase();
@@ -314,7 +365,9 @@ public class MoveManager {
         Move move;
         if (inventory.tokenCount() <= 8) {
           move = new Move(
-              Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, null, tokenPile.getType());
+              Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, null, null,
+              tokenPile.getType()
+          );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
           moveMap.put(moveMd5, move);
@@ -329,7 +382,7 @@ public class MoveManager {
           // loop over all tokens in their inventory and make a move for all different returns
           for (TokenType tokenType : possibleReturnTokenTypes) {
             move    = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
-                               new TokenType[] {tokenType}, tokenPile.getType()
+                               new TokenType[] {tokenType}, null, tokenPile.getType()
             );
             moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                  .toUpperCase();
@@ -351,7 +404,7 @@ public class MoveManager {
           for (TokenType[] tokenTypes : returnCombinations) {
             move    = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2, null, player, null,
                                tokenTypes,
-                               tokenPile.getType()
+                               null, tokenPile.getType()
             );
             moveMD5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                  .toUpperCase();
@@ -404,7 +457,7 @@ public class MoveManager {
         // matching by action how many tokens need to be returned
         switch (action) {
           case TAKE_3_GEM_TOKENS_DIFF_COL -> {
-            Move move = new Move(action, null, player, null, null, tokenTypes);
+            Move move = new Move(action, null, player, null, null, null, tokenTypes);
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                         .toUpperCase();
             moveMap.put(moveMd5, move);
@@ -426,7 +479,7 @@ public class MoveManager {
         // if we have a move requiring returning, loop through the combinations
         if (action != Action.TAKE_3_GEM_TOKENS_DIFF_COL) {
           for (TokenType[] returns : possibleReturnCombinations) {
-            Move move = new Move(action, null, player, null, returns, tokenTypes);
+            Move move = new Move(action, null, player, null, returns, null, tokenTypes);
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                         .toUpperCase();
             moveMap.put(moveMd5, move);

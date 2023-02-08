@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.games;
 
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,11 +1,11 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.model;
 
-import ca.mcgill.splendorserver.games.PlayerWrapper;
-import ca.mcgill.splendorserver.games.TurnManager;
-import ca.mcgill.splendorserver.model.GameBoard;
+import ca.mcgill.splendorserver.control.SessionInfo;
+import ca.mcgill.splendorserver.control.TurnManager;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
-import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -13,24 +13,24 @@ import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
-/**
- * Encapsulates a game board and contains functionality to alter and/or view the state of the game.
- */
-public class GameBoardManager {
+
+public class SplendorGame {
 
   private final SessionInfo sessionInfo;
   private final long        gameId;
   private final TurnManager turnManager;
   private       GameBoard   board;
+  private       boolean     finished = false;
 
   /**
-   * GameBoardManager constructor.
+   * SplendorGame constructor.
    *
    * @param info   session info, cannot be null
    * @param gameId gameID
    */
-  public GameBoardManager(SessionInfo info, long gameId) {
+  public SplendorGame(SessionInfo info, long gameId) {
     assert info != null;
     sessionInfo = info;
     this.gameId = gameId;
@@ -38,12 +38,24 @@ public class GameBoardManager {
     instantiateNewGameboard();
   }
 
-  public TurnManager getTurnManager() {
-    return turnManager;
+  public boolean isFinished() {
+    return finished;
   }
 
-  public SessionInfo getSessionInfo() {
-    return sessionInfo;
+  public void setFinished() {
+    finished = true;
+  }
+
+  public PlayerWrapper whoseTurn() {
+    return turnManager.whoseTurn();
+  }
+
+  public boolean isStartingPlayer(PlayerWrapper player) {
+    return sessionInfo.getGameCreator() == player;
+  }
+
+  public Optional<PlayerWrapper> getPlayerByName(String name) {
+    return sessionInfo.getPlayerByName(name);
   }
 
   public long getGameId() {
@@ -99,7 +111,7 @@ public class GameBoardManager {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof GameBoardManager that)) {
+    if (!(o instanceof SplendorGame that)) {
       return false;
     }
     return getGameId() == that.getGameId();

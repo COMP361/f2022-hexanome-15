@@ -2,9 +2,7 @@ package ca.mcgill.splendorserver.model.tokens;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.

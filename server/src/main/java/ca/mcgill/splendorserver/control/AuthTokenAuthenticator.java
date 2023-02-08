@@ -3,6 +3,7 @@ package ca.mcgill.splendorserver.control;
 import java.util.Optional;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.springframework.stereotype.Service;
 
 /**
  * Static utility class intended to authenticate user tokens during token restricted actions.
@@ -10,6 +11,7 @@ import kong.unirest.Unirest;
  * @author Zachary Hayden
  * Date: 2/6/23
  */
+@Service
 public final class AuthTokenAuthenticator {
   // TODO: is there a better way than just hardcoding it / what if it changes or isn't there?
   private static final String lobbyServiceLocation = "http://127.0.0.1:4242";

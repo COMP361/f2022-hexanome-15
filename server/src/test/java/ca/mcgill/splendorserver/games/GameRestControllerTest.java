@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-class GameControllerTest {
+class GameRestControllerTest {
   private final PrintStream standardOut = System.out;
   private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
   @BeforeEach
@@ -31,7 +31,7 @@ class GameControllerTest {
     ObjectNode sessionInfo = new ObjectNode(myJson,myMap);
     Long gameid = 270909000L;
     GameRepository repo = null;
-    GameController gc = new GameController();
+    GameRestController gc = new GameRestController();
     gc.launchRequest(sessionInfo, gameid);
     assertEquals(null + "\n" + gameid + "\n",
       outputStreamCaptor.toString().trim(),"");

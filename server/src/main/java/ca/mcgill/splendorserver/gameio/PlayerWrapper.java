@@ -3,10 +3,11 @@
  * TODO
  */
 
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.gameio;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import org.hibernate.annotations.Immutable;
@@ -58,5 +59,21 @@ public class PlayerWrapper {
   @Override
   public String toString() {
     return "Player{" + userName + "}";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof PlayerWrapper that)) {
+      return false;
+    }
+    return userName.equals(that.userName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(userName);
   }
 }

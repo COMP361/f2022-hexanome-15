@@ -5,17 +5,24 @@ package ca.mcgill.splendorserver.model.cards;
  */
 public class Noble {
 
-  private final int[]   cardRequirements;
-  private final boolean reserved;
+  private final CardCost    visitRequirements;
+  private final NobleStatus status;
+  private final int         prestige;
 
   /**
    * Creates a noble.
    *
-   * @param requirements the cards required to acquire this noble
+   * @param visitRequirements the token type bonus requirements for visiting this
    */
-  public Noble(int[] requirements) {
-    this.cardRequirements = requirements;
-    this.reserved = false;
+  public Noble(CardCost visitRequirements, int prestige) {
+    assert visitRequirements != null && prestige >= 0;
+    this.visitRequirements = visitRequirements;
+    this.status            = NobleStatus.ON_BOARD;
+    this.prestige          = prestige;
+  }
+
+  public int getPrestige() {
+    return prestige;
   }
 
   /**
@@ -23,8 +30,8 @@ public class Noble {
    *
    * @return this noble's card requirements
    */
-  public int[] getCardRequirements() {
-    return cardRequirements;
+  public CardCost getVisitRequirements() {
+    return visitRequirements;
   }
 
   /**
@@ -32,7 +39,7 @@ public class Noble {
    *
    * @return the reserved status of this noble
    */
-  public boolean isReserved() {
-    return reserved;
+  public NobleStatus getStatus() {
+    return status;
   }
 }

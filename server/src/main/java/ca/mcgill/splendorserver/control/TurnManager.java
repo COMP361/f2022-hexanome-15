@@ -3,8 +3,9 @@
  * TODO
  */
 
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class TurnManager implements Iterable<PlayerWrapper> {
    * Creating circular data structure to store and update turns
    */
   @OneToMany
-  private final List<PlayerWrapper> turns;
+  private List<PlayerWrapper> turns;
 
   /**
    * Take turn.
@@ -32,6 +33,10 @@ public class TurnManager implements Iterable<PlayerWrapper> {
    */
   public TurnManager(Collection<PlayerWrapper> players) {
     turns = new ArrayList<>(players);
+  }
+
+  public TurnManager() {
+
   }
 
   /**

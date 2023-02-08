@@ -2,7 +2,6 @@ package ca.mcgill.splendorserver.model.action;
 
 
 import com.google.gson.Gson;
-
 import java.util.Stack;
 
 /**
@@ -10,12 +9,11 @@ import java.util.Stack;
  *
  * @author lawrenceberardelli
  */
-public class MoveManagerDepr
-{
-  
+public class MoveManagerDepr {
+
   private static final MoveManagerDepr INSTANCE = new MoveManagerDepr();
   private static       Stack<Move>     moveStack;
-  
+
   private MoveManagerDepr() {
     moveStack = new Stack<Move>();
   }
@@ -28,7 +26,7 @@ public class MoveManagerDepr
   public static MoveManagerDepr getInstance() {
     return INSTANCE;
   }
-  
+
   /**
    * Called as a result of an update from the server.
    * Only notifies observers if move is performed by another user.
@@ -40,7 +38,7 @@ public class MoveManagerDepr
     Move move = gson.fromJson(json, Move.class);
     moveStack.push(move);
   }
- 
+
   /**
    * Returns the most recent move.
    *
