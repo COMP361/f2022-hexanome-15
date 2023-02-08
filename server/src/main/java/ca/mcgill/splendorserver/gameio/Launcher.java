@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.gameio;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
