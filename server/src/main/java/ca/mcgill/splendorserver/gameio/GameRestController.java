@@ -32,28 +32,28 @@ import org.springframework.web.context.request.async.DeferredResult;
  */
 @RestController
 public class GameRestController {
-  private static final Logger                                        LOGGER
-                                                                                     = LoggerFactory.getLogger(
+  private static final Logger                                         LOGGER
+                                                                                      = LoggerFactory.getLogger(
       GameRestController.class);
-  private static final String                                        gameServiceLocation
-                                                                                     = "http://127.0.0.1:8080";
+  private static final String                                         gameServiceLocation
+                                                                                      = "http://127.0.0.1:8080";
   //should probably be final
-  private final        ca.mcgill.splendorserver.games.GameRepository repository;
+  private final        ca.mcgill.splendorserver.gameio.GameRepository repository;
   // 4 threads for the max 4 players
-  private final        ExecutorService                               updaters
-                                                                                     = Executors.newFixedThreadPool(
+  private final        ExecutorService                                updaters
+                                                                                      = Executors.newFixedThreadPool(
       4);
-  private              String                                        gameName;
-  private              boolean                                       updateGameBoard = false;
-  private              boolean                                       updateAction    = false;
-  private              JSONObject                                    adminAuth
-                                                                                     = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(
+  private              String                                         gameName;
+  private              boolean                                        updateGameBoard = false;
+  private              boolean                                        updateAction    = false;
+  private              JSONObject                                     adminAuth
+                                                                                      = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(
       "maex", "abc123_ABC123");
-  private              String                                        refreshToken
-                                                                                     = (String) Parsejson.PARSE_JSON.getFromKey(
+  private              String                                         refreshToken
+                                                                                      = (String) Parsejson.PARSE_JSON.getFromKey(
       adminAuth, "refresh_token");
 
-  public GameRestController(ca.mcgill.splendorserver.games.GameRepository repository) {
+  public GameRestController(GameRepository repository) {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
     this.repository = repository;
@@ -91,8 +91,8 @@ public class GameRestController {
     System.out.println(getRegisteredGameServices().getBody()
                                                   .toPrettyString());
 
-    ca.mcgill.splendorserver.games.GameServiceAccountJson
-        acc = new ca.mcgill.splendorserver.games.GameServiceAccountJson(
+    GameServiceAccountJson
+        acc = new GameServiceAccountJson(
         gameName,
         "Antichrist1!",
         "#000000"
@@ -114,8 +114,8 @@ public class GameRestController {
     adminAuth    = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
     accessToken  = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
-    ca.mcgill.splendorserver.games.GameServiceJson
-        gs = new ca.mcgill.splendorserver.games.GameServiceJson(
+    GameServiceJson
+        gs = new GameServiceJson(
         gameName,
         "Splendor",
         "http://127.0.0.1:8080",
@@ -173,10 +173,10 @@ public class GameRestController {
    */
   @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
-    Game game = repository.findById(gameid)
-                          .orElseThrow(
-                              () -> new ca.mcgill.splendorserver.games.GameNotFoundException(
-                                  gameid));
+    SplendorGame game = repository.findById(gameid)
+                                  .orElseThrow(
+                                      () -> new GameNotFoundException(
+                                          gameid));
     repository.deleteById(gameid);
     LOGGER.info("DELETED GAME ID: " + gameid);
   }
@@ -199,11 +199,11 @@ public class GameRestController {
   ) {
     // access the game object from database and then update the reference to the
     // game-board
-    Game game = repository.findById(gameid)
-                          .orElseThrow(
-                              () -> new ca.mcgill.splendorserver.games.GameNotFoundException(
-                                  gameid));
-    game.updateGameBoard(gameBoard);
+    SplendorGame game = repository.findById(gameid)
+                                  .orElseThrow(
+                                      () -> new GameNotFoundException(
+                                          gameid));
+    //game.updateGameBoard(gameBoard);
     repository.saveAndFlush(game);
     updateGameBoard = true;
   }
@@ -216,11 +216,11 @@ public class GameRestController {
    */
   @PutMapping("/api/games/{gameid}/endturn")
   public void endTurn(@PathVariable(name = "gameid") Long gameid, @RequestBody String action) {
-    Game game = repository.findById(gameid)
-                          .orElseThrow(
-                              () -> new ca.mcgill.splendorserver.games.GameNotFoundException(
-                                  gameid));
-    game.setLastAction(action);
+    SplendorGame game = repository.findById(gameid)
+                                  .orElseThrow(
+                                      () -> new GameNotFoundException(
+                                          gameid));
+    //game.setLastAction(action);
     repository.saveAndFlush(game);
     updateAction = true;
   }
@@ -243,11 +243,11 @@ public class GameRestController {
           e.printStackTrace();
         }
       }
-      Game game = repository.findById(gameid)
-                            .orElseThrow(
-                                () -> new ca.mcgill.splendorserver.games.GameNotFoundException(
-                                    gameid));
-      updatedAction.setResult(game.getLastAction());
+      SplendorGame game = repository.findById(gameid)
+                                    .orElseThrow(
+                                        () -> new GameNotFoundException(
+                                            gameid));
+      //updatedAction.setResult(game.getLastAction());
       updateAction = false;
     });
     return updatedAction;
@@ -294,10 +294,10 @@ public class GameRestController {
         }
       }
       // TODO: implement
-      Game game = repository.findById(gameid)
-                            .orElseThrow(
-                                () -> new ca.mcgill.splendorserver.games.GameNotFoundException(
-                                    gameid));
+      SplendorGame game = repository.findById(gameid)
+                                    .orElseThrow(
+                                        () -> new GameNotFoundException(
+                                            gameid));
       //updatedGameBoard.setResult(game.getGameBoard());
       updateGameBoard = false;
     });

@@ -59,7 +59,6 @@ public class ActionManager {
     AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
     // get the game manager instance
-    // TODO: should this be broadcast manager?
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
                                                 .orElseThrow();
     Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
@@ -80,8 +79,7 @@ public class ActionManager {
                     () -> new IllegalGameStateException(
                         "If a valid move has been selected, their must be a corresponding player who selected it but player was found empty")));
 
-    // TODO: implement
-    //LocalGameStorage.getActiveGame(gameid).orElseThrow().update();
+    // TODO: implement update all game boards via broadcasting manager for players in session
 
     // check for terminal game state after action has been performed
     if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
@@ -90,7 +88,11 @@ public class ActionManager {
       // TODO: handle tie game
     }
 
-    return null;
+    // advance to the next players turn
+    PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
+    return ResponseEntity.status(HttpStatus.OK)
+                         .body(whoseUpNext.getName());
+
   }
 
 

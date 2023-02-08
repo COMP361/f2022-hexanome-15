@@ -1,5 +1,6 @@
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.gameio;
 
+import ca.mcgill.splendorserver.model.SplendorGame;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -7,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author zacharyhayden
  */
-public interface GameRepository extends JpaRepository<Game, Long> {
+public interface GameRepository extends JpaRepository<SplendorGame, Long> {
 
 }

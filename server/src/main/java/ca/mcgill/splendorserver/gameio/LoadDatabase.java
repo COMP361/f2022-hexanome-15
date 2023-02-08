@@ -3,7 +3,7 @@
  * TODO
  */
 
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.gameio;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

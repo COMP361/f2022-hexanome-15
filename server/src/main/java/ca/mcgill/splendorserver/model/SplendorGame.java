@@ -54,6 +54,24 @@ public class SplendorGame {
     return sessionInfo.getGameCreator() == player;
   }
 
+  /**
+   * Checks that it is the passed players turn and then ends their turn, advancing
+   * whose turn.
+   *
+   * @param currentPlayer the player which is calling this, has to be the current player
+   * @return the player whose turn it is after the turn has been ended
+   */
+  public PlayerWrapper endTurn(PlayerWrapper currentPlayer) {
+    assert currentPlayer != null;
+    // checking that given player is the current player and thus valid to end their turn
+    if (currentPlayer != whoseTurn()) {
+      throw new IllegalGameStateException(
+          currentPlayer + " cannot end their turn while " + whoseTurn() + " is the current player");
+    }
+
+    return this.turnManager.endTurn();
+  }
+
   public Optional<PlayerWrapper> getPlayerByName(String name) {
     return sessionInfo.getPlayerByName(name);
   }

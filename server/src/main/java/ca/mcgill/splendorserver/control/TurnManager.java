@@ -61,9 +61,10 @@ public class TurnManager implements Iterable<PlayerWrapper> {
    * Removes the player whose turn it currently is and puts them at the end of the
    * line, moving the next player up.
    *
-   * @return the player fly-weight who's turn it now is
+   * @return the player whose turn it now is
    */
   public PlayerWrapper endTurn() {
+    assert !turns.isEmpty() : "Cannot end turns for a list which isn't populated";
     PlayerWrapper player = turns.get(0);
     turns.remove(0);
     turns.add(player);

@@ -74,7 +74,6 @@ public class GameBoard {
     switch (move.getAction()) {
       case PURCHASE_DEV -> {
         performPurchaseDev(move, player, inventory);
-
       }
       case RESERVE_DEV -> {
         performReserveDev(move, inventory);

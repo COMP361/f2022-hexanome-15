@@ -208,9 +208,6 @@ public class UserInventory implements Iterable<Card> {
     // accredit the prestige points won by purchasing this card
     addPrestige(card.getPrestige());
 
-    // check for noble visitation as a result of buying this card
-
-
     // collect the tokens expended to purchase this card
     List<Token> costs = new ArrayList<>();
     // loop over all token costs and deduct the correct amount taking into consideration the discounts
@@ -250,6 +247,14 @@ public class UserInventory implements Iterable<Card> {
     return true;
   }
 
+  /**
+   * Determines if purchasing the given card in addition to whatever bonuses are already in the inventory is
+   * sufficient to receive a visit from the given noble.
+   *
+   * @param noble noble to check if it will visit
+   * @param card  additional card to consider in checking if noble will visit
+   * @return if the card bonuses as well as the currently owned bonuses yield a visit from given noble
+   */
   public boolean canBeVisitedByNobleWithCardPurchase(Noble noble, Card card) {
     assert noble != null && card != null;
     // cannot be visited by noble that is already visiting someone else
