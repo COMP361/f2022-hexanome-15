@@ -21,6 +21,16 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     this.players = players;
   }
 
+  @Override
+  public String toString() {
+    return "SessionInfo{" +
+             "players=" + players +
+             ", gameServer='" + gameServer + '\'' +
+             ", gameCreator=" + gameCreator +
+             ", saveGameId='" + saveGameId + '\'' +
+             '}';
+  }
+
   /**
    * @param gameServer  the location of the server.
    * @param players     list of players in game.
@@ -63,11 +73,6 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     return Optional.empty();
   }
 
-  @Override
-  public String toString() {
-    return "LaunchInfo{" + "gameServer='" + gameServer + '\'' + ", gameCreator='" + gameCreator
-        + '\'' + '}';
-  }
 
   @Override
   public Iterator<PlayerWrapper> iterator() {
