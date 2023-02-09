@@ -266,11 +266,15 @@ public class GameRestController {
     if (manager.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
-    } else {
+    } 
+    else if (LocalGameStorage.requiresUpdate(gameid)) {
       String json = new Gson().toJson(manager.get()
-                                             .getBoard());
+          .getBoard());
       return ResponseEntity.status(HttpStatus.OK)
-                           .body(json);
+      .body(json);
+    }
+    else {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
   }
 

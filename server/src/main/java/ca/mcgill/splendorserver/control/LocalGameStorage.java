@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorserver.gameio.GameNotFoundException;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
- * Manages and stores the game instances locally. TODO: maybe long polling but seems more nice to have than necessary.
+ * Manages and stores the game instances locally.
  *
  * @author lawrenceberardelli
  */
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class LocalGameStorage {
 
   private static final Map<Long, SplendorGame> activeGames = new HashMap<>();
+  private static final Map<Long, Integer> gameStates = new HashMap<>();
 
   private LocalGameStorage() {
   }
@@ -22,6 +24,7 @@ public class LocalGameStorage {
   public static void addActiveGame(SplendorGame manager) {
     if (!activeGames.containsKey(manager.getGameId())) {
       activeGames.put(manager.getGameId(), manager);
+      gameStates.put(manager.getGameId(), manager.hashCode());
     }
   }
 
@@ -35,7 +38,18 @@ public class LocalGameStorage {
     } else {
       return Optional.empty();
     }
-
+  }
+  
+  public static boolean requiresUpdate(long gameid) {
+    if (activeGames.containsKey(gameid)) {
+      if (gameStates.containsKey(gameid)) {
+        if(activeGames.get(gameid).hashCode() != gameStates.get(gameid))
+          return true;
+        else
+          return false;
+      }
+    }
+    throw new GameNotFoundException(gameid);
   }
 
   /**
