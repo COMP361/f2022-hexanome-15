@@ -1,6 +1,7 @@
 package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 
 /**
  * Model of the gameboard. Necessary due to permanence requirement.
@@ -26,34 +28,47 @@ import java.util.stream.Collectors;
  */
 public class GameBoard {
 
-  private final List<UserInventory> inventories;
-  private final List<Deck> decks;
-  private final List<Card> cardField;
+  private final List<UserInventory>           inventories;
+  private final List<Deck>                    decks;
+  private final List<Card>                    cardField;
   private final EnumMap<TokenType, TokenPile> tokenPiles;
-  private final List<Noble> nobles;
-  private final Logger logger = Logger.getAnonymousLogger();
+  private final List<Noble>                   nobles;
+  private final Logger                        logger = Logger.getAnonymousLogger();
+
+
+  /*
+  The following fields are used for actions that require an additional decision
+  following the action itself (compound action / move). For example: choosing which tokens to return, choosing
+  which noble to be visited by in case there are more than 1.
+  moveCache := move which involved a compound action and is currently being waited on
+  pendingAction := if the game is waiting for an action to be made
+   */
+  private Optional<Action> actionCache;
+  private boolean          pendingAction;
 
   /**
-   * Creates a gameboard.
+   * Creates a game board.
    *
    * @param inventories The player inventories in the game
    * @param decks       The decks in the game
-   * @param cardField   The cards dealt onto the gameboard
-   * @param tokenPiles  The token piles that are on the gameboard
+   * @param cardField   The cards dealt onto the game board
+   * @param tokenPiles  The token piles that are on the game board
    * @param nobles      The nobles in the game
    */
   public GameBoard(List<UserInventory> inventories, List<Deck> decks, List<Card> cardField,
                    List<TokenPile> tokenPiles, List<Noble> nobles
   ) {
-    this.inventories = inventories;
-    this.decks       = decks;
-    this.cardField   = cardField;
-    this.tokenPiles  = new EnumMap<>(tokenPiles.stream()
-                                               .collect(Collectors.toMap(
-                                                   TokenPile::getType,
-                                                   tokens -> tokens
-                                               )));
-    this.nobles      = nobles;
+    this.inventories   = inventories;
+    this.decks         = decks;
+    this.cardField     = cardField;
+    this.tokenPiles    = new EnumMap<>(tokenPiles.stream()
+                                                 .collect(Collectors.toMap(
+                                                     TokenPile::getType,
+                                                     tokens -> tokens
+                                                 )));
+    this.nobles        = nobles;
+    this.pendingAction = false;
+    this.actionCache   = Optional.empty();
   }
 
   /**
@@ -64,53 +79,118 @@ public class GameBoard {
    * @param move   selected move, must be valid move, cannot be null
    * @param player player whose turn it is, cannot be null
    */
-  public void applyMove(Move move, PlayerWrapper player) {
+  public HttpStatus applyMove(Move move, PlayerWrapper player) {
     assert move != null && player != null;
     // getting players inventory or throws exception if not there
     UserInventory inventory = getInventoryByPlayerName(player.getName()).orElseThrow(
         () -> new IllegalArgumentException(
             "player (" + player.getName() + ") wasn't found in this current game board"));
 
-    switch (move.getAction()) {
+    return switch (move.getAction()) {
       case PURCHASE_DEV -> {
         performPurchaseDev(move, player, inventory);
+        yield HttpStatus.OK;
+      }
+      case PURCHASE_DEV_RECEIVE_NOBLE -> {
+        // check if we're waiting for this or not
+        if (waitingForAction(Action.PURCHASE_DEV_RECEIVE_NOBLE)) {
+          performPurchaseDev(move, player, inventory);
+          performClaimNobleAction(move, inventory);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          // this is compound action, request further actions
+          cacheAction(Action.PURCHASE_DEV_RECEIVE_NOBLE);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
       }
       case RESERVE_DEV -> {
         performReserveDev(move, inventory);
+        yield HttpStatus.OK;
       }
       case RESERVE_DEV_TAKE_JOKER -> {
         // gold token added and card reserved
         performReserveDev(move, inventory);
         inventory.addTokens(drawGoldToken());
+        yield HttpStatus.OK;
       }
       case TAKE_2_GEM_TOKENS_SAME_COL -> {
         performTake2GemsSameColor(move, inventory);
+        yield HttpStatus.OK;
       }
       case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
-        final int numberTokensToReturn = 1;
-        performTake2GemsSameColorReturn(move, inventory, numberTokensToReturn);
+        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1)) {
+          performTake2GemsSameColorReturn(move, inventory, 1);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
       }
       case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> {
-        performTake2GemsSameColorReturn(move, inventory, 2);
+        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2)) {
+          performTake2GemsSameColorReturn(move, inventory, 2);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
       }
       case TAKE_3_GEM_TOKENS_DIFF_COL -> {
         performTake3GemsDiffColor(move, inventory);
+        yield HttpStatus.OK;
       }
       case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
-        performTake3GemsDiffColorReturn(move, inventory, 1);
-
+        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1)) {
+          performTake3GemsDiffColorReturn(move, inventory, 1);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
       }
       case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
-        performTake3GemsDiffColorReturn(move, inventory, 2);
+        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2)) {
+          performTake3GemsDiffColorReturn(move, inventory, 2);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
       }
       case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
-        performTake3GemsDiffColorReturn(move, inventory, 3);
+        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3)) {
+          performTake3GemsDiffColorReturn(move, inventory, 3);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
       }
-      default -> throw new IllegalGameStateException(
-          "Expected an instance of type Action instead found: " + move.getAction());
+    };
+  }
 
+  private boolean waitingForAction(Action action) {
+    return pendingAction && actionCache.isPresent() && actionCache.get() == action;
+  }
 
-    }
+  private void cacheAction(Action action) {
+    this.actionCache   = Optional.of(action);
+    this.pendingAction = true;
+  }
+
+  private void unCacheAction() {
+    this.actionCache   = Optional.empty();
+    this.pendingAction = false;
+  }
+
+  private void setPendingAction(boolean isPending) {
+    pendingAction = isPending;
   }
 
   private void performTake3GemsDiffColorReturn(Move move, UserInventory inventory, int n) {
@@ -167,6 +247,23 @@ public class GameBoard {
    * @param n         number of tokens there are in the action to return.
    */
   private void performTake2GemsSameColorReturn(Move move, UserInventory inventory, int n) {
+    checkConditionsForTake2GemsSameColorReturn(move, n);
+
+    // all good, add the selected token twice, and return the token from inventory to the table
+    // we know only 1 element in this array
+    TokenType selected = move.getSelectedTokenTypes()
+                             .get()[0];
+    inventory.addTokens(drawTokenByTokenType(selected));
+    inventory.addTokens(drawTokenByTokenType(selected));
+    // return token(s)
+    for (int i = 0; i < n; i++) {
+      selected = move.getReturnedTokenTypes()
+                     .get()[i];
+      returnTokensToBoardFromInventory(inventory, selected);
+    }
+  }
+
+  private void checkConditionsForTake2GemsSameColorReturn(Move move, int n) {
     if (move.getSelectedTokenTypes()
             .isEmpty() || move.getSelectedTokenTypes()
                               .get().length != 1) {
@@ -183,19 +280,6 @@ public class GameBoard {
               "If move is to take 2 gems of same color and return %d, then gems to return needs to be of size %d",
               n, n
           ));
-    }
-
-    // all good, add the selected token twice, and return the token from inventory to the table
-    // we know only 1 element in this array
-    TokenType selected = move.getSelectedTokenTypes()
-                             .get()[0];
-    inventory.addTokens(drawTokenByTokenType(selected));
-    inventory.addTokens(drawTokenByTokenType(selected));
-    // return token(s)
-    for (int i = 0; i < n; i++) {
-      selected = move.getReturnedTokenTypes()
-                     .get()[i];
-      returnTokensToBoardFromInventory(inventory, selected);
     }
   }
 
@@ -287,6 +371,11 @@ public class GameBoard {
           "Cannot purchase card which isn't reserved or face-up");
     }
 
+    performClaimNobleAction(move, inventory);
+
+  }
+
+  private void performClaimNobleAction(Move move, UserInventory inventory) {
     // see if player has been visited by a noble and if so that this is valid
     if (move.getNoble()
             .isPresent() && inventory.canBeVisitedByNoble(move.getNoble()
@@ -294,8 +383,8 @@ public class GameBoard {
       // add prestige and tile to inventory
       inventory.receiveVisitFrom(move.getNoble()
                                      .get());
+      // TODO: check and see about settlements
     }
-
   }
 
   private void replenishTakenCardFromDeck(DeckType deckType, int replenishIndex) {

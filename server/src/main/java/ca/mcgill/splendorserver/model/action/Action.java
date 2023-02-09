@@ -9,7 +9,7 @@ public enum Action {
   /**
    * Purchase type Action. Card must be face up in middle of table or a previously reserved one.
    */
-  PURCHASE_DEV,
+  PURCHASE_DEV, PURCHASE_DEV_RECEIVE_NOBLE,
   /**
    * Reserve type Action.
    */
