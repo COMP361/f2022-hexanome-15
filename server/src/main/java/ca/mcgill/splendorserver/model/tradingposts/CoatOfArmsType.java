@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.model.tradingpost;
+package ca.mcgill.splendorserver.model.tradingposts;
 
 /**
  * Type of coat of arms.

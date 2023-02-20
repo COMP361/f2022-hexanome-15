@@ -2,12 +2,16 @@ package ca.mcgill.splendorserver.model.cities;
 
 import ca.mcgill.splendorserver.model.cards.CardCost;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a Splendor Cities expansion City with required prestige and gem amount to obtain the city.
  */
 public class City {
   private final int requiredPrestige;
   private final CardCost requiredCardBonuses;
+  private final List<City> cities = new ArrayList<City>();
 
   /**
    * Creates a city.
@@ -37,6 +41,29 @@ public class City {
    */
   public CardCost getRequiredCardBonuses() {
     return requiredCardBonuses;
+  }
+
+  /**
+   * Generates all cities
+   * Then 2-4 random cities will be added to the game.
+   */
+  private void generateCities() {
+    cities.add(new City(13, new CardCost(0,0,0,4,3)));
+    cities.add(new City(13, new CardCost(3,4,0,0,0)));
+    cities.add(new City(17, new CardCost(0,0,0,0,0)));
+    cities.add(new City(13, new CardCost(0,0,3,0,4)));
+    cities.add(new City(13, new CardCost(4,0,0,3,0)));
+    cities.add(new City(16, new CardCost(1,1,1,1,1)));
+    cities.add(new City(14, new CardCost(2,1,1,2,2)));
+    cities.add(new City(11, new CardCost(3,3,0,3,3)));
+    cities.add(new City(11, new CardCost(3,0,3,3,3)));
+    cities.add(new City(13, new CardCost(0,3,4,0,0)));
+    cities.add(new City(13, new CardCost(2,2,2,2,2)));
+
+    //TODO: Make it possible to have a card cost of n cards of the same type
+    /*cities.add(new City(12, new CardCost(6,0,0,0,0)));
+    cities.add(new City(15, new CardCost(5,0,0,0,0)));
+    cities.add(new City(14, new CardCost(0,0,4,4,0)));*/
   }
 
 }

@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.model.tradingpost;
+package ca.mcgill.splendorserver.model.tradingposts;
 
 import java.util.ArrayList;
 import java.util.List;

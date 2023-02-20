@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.model.tradingpost;
+package ca.mcgill.splendorserver.model.tradingposts;
 
 /**
  * Represents a Splendor Trading Posts expansion Coat of Arms with color type.
