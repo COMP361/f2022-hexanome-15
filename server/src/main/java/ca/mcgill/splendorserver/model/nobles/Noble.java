@@ -1,11 +1,13 @@
-package ca.mcgill.splendorserver.model.cards;
+package ca.mcgill.splendorserver.model.nobles;
+
+import ca.mcgill.splendorserver.model.cards.CardCost;
 
 /**
  * Represents a Splendor Noble with reserved status.
  */
 public class Noble {
 
-  private final CardCost    visitRequirements;
+  private final CardCost visitRequirements;
   private final NobleStatus status;
   private final int         prestige;
 

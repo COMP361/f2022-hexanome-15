@@ -64,18 +64,6 @@ public class TokenPile implements Iterable<Token> {
   }
 
   /**
-   * Sets up the TokenPile for Player Inventory. Only for demo.
-   */
-  public void setUpDemo() {
-    if (!getType().equals(TokenType.GOLD)) {
-      for (int i = 0; i < 3; i++) {
-        Token token = new Token(getType());
-        addToken(token);
-      }
-    }
-  }
-
-  /**
    * Adds a token to the token pile.
    *
    * @param token The token to be added

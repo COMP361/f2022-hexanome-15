@@ -3,7 +3,7 @@ package ca.mcgill.splendorserver.model.action;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.DeckType;
-import ca.mcgill.splendorserver.model.cards.Noble;
+import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import java.util.Optional;
 
