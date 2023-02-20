@@ -3,7 +3,7 @@ package ca.mcgill.splendorserver.model.nobles;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 
 /**
- * Represents a Splendor Noble with reserved status.
+ * Represents a Splendor Noble with reserved status and prestige.
  */
 public class Noble {
 
@@ -14,7 +14,8 @@ public class Noble {
   /**
    * Creates a noble.
    *
-   * @param visitRequirements the token type bonus requirements for visiting this
+   * @param visitRequirements the token type bonus requirements for visiting this noble
+   * @param prestige the prestige received upon visiting this noble
    */
   public Noble(CardCost visitRequirements, int prestige) {
     assert visitRequirements != null && prestige >= 0;
@@ -23,6 +24,11 @@ public class Noble {
     this.prestige          = prestige;
   }
 
+  /**
+   * Returns this noble's prestige.
+   *
+   * @return this noble's prestige
+   */
   public int getPrestige() {
     return prestige;
   }

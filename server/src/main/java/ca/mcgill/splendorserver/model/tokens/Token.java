@@ -20,6 +20,7 @@ public class Token {
    * @param type The type of token
    */
   public Token(TokenType type) {
+    assert type != null;
     this.type = type;
   }
 

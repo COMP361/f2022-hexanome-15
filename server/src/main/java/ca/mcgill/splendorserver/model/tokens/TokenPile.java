@@ -2,13 +2,14 @@ package ca.mcgill.splendorserver.model.tokens;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Represents a Splendor Token Pile with tokens and type.
  */
 public class TokenPile implements Iterable<Token> {
-  private final ArrayList<Token> tokens;
+  private final List<Token> tokens;
   private final TokenType        type;
 
   /**
@@ -17,6 +18,7 @@ public class TokenPile implements Iterable<Token> {
    * @param tokenType The type of tokens that are in the token pile
    */
   public TokenPile(TokenType tokenType) {
+    assert tokenType != null;
     this.type   = tokenType;
     this.tokens = new ArrayList<>();
   }
@@ -69,6 +71,7 @@ public class TokenPile implements Iterable<Token> {
    * @param token The token to be added
    */
   public void addToken(Token token) {
+    assert token != null;
     if (token.getType() == type) {
       tokens.add(token);
     }
@@ -94,9 +97,9 @@ public class TokenPile implements Iterable<Token> {
   }
 
   /**
-   * Returns the type of the token.
+   * Returns the type of the token in the token pile.
    *
-   * @return the type of the token
+   * @return the type of the token in the token pile
    */
   public TokenType getType() {
     return type;

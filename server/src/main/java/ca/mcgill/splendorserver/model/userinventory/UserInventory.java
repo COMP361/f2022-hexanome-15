@@ -41,6 +41,7 @@ public class UserInventory implements Iterable<Card> {
    * @param name This player's username
    */
   public UserInventory(List<TokenPile> pile, PlayerWrapper name) {
+    assert pile != null && name != null;
     cards          = new ArrayList<>();
     tokenPiles     = new EnumMap<>(List.copyOf(pile)
                                        .stream()
@@ -68,6 +69,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   public boolean hasTokenType(TokenType tokenType) {
+    assert tokenType != null;
     return tokenPiles.values()
                      .stream()
                      .anyMatch(tokens -> tokens.getType() == tokenType);
@@ -83,11 +85,12 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Assumes that the inventory contains at least one token of the given type.
    *
-   * @param token token to remove, cannot be null
+   * @param type type of token to remove, cannot be null
    * @return the removed token, could be null if this inventory doesn't have any of that specific token
    */
-  public Token removeTokenByTokenType(TokenType token) {
-    return tokenPiles.get(token)
+  public Token removeTokenByTokenType(TokenType type) {
+    assert type != null;
+    return tokenPiles.get(type)
                      .removeToken();
   }
 
@@ -139,6 +142,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   public boolean canAffordCard(Card card) {
+    assert card != null;
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
       if (!hasEnoughTokensFor(entry.getKey(), entry.getValue())) {
@@ -155,6 +159,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   private boolean hasEnoughTokensFor(TokenType tokenType, int cost) {
+    assert tokenType != null && cost >= 0;
     int goldTokenCount = getGoldTokenCount();
     int bonusDiscount = cards.stream()
                              .filter(card -> card.getTokenBonusType() == tokenType)
@@ -226,6 +231,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   private void addPrestige(int prestige) {
+    assert prestige >= 0;
     prestigeWon += prestige;
   }
 
@@ -292,6 +298,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {
+    assert tokenType != null && amount >= 0;
     // gets all cards that are purchased and have matching bonus token type
     // accumulate the result and see if enough for the given amount
     return cards.stream()
@@ -301,6 +308,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
+    assert tokenType != null && n >= 0;
     List<Token> removed = new ArrayList<>(n);
     for (int i = 0; i < n; i++) {
       removed.add(removeTokenByTokenType(tokenType));
@@ -369,6 +377,7 @@ public class UserInventory implements Iterable<Card> {
    * @param pile the pile to be added
    */
   public void addPile(TokenPile pile) {
+    assert pile != null;
     if (!tokenPiles.containsKey(pile.getType())) {
       tokenPiles.put(pile.getType(), pile);
     }

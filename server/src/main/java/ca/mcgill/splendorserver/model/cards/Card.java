@@ -11,7 +11,7 @@ import java.util.Objects;
  * and cost This class implements the Flyweight design pattern.
  */
 public class Card implements Comparable<Card> {
-  private static final ArrayList<Card> cards = new ArrayList<>();
+  private static final List<Card> cards = new ArrayList<>();
   // this eventually will be the png that is on the actual card
   private final        int             id;
   private final        int             prestige;
@@ -34,6 +34,7 @@ public class Card implements Comparable<Card> {
   public Card(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
               TokenBonusAmount tokenBonusAmount, CardCost cardCost
   ) {
+    assert prestige >=0 && tokenBonusType != null && deckType != null && tokenBonusAmount != null && cardCost != null;
     this.id               = id;
     this.prestige         = prestige;
     this.tokenBonusType   = tokenBonusType;
@@ -41,7 +42,6 @@ public class Card implements Comparable<Card> {
     this.tokenBonusAmount = tokenBonusAmount;
     this.cardCost         = cardCost;
   }
-  // TODO: bad design ill get back to this
 
   public boolean isReserved() {
     return cardStatus == CardStatus.RESERVED;
@@ -72,6 +72,7 @@ public class Card implements Comparable<Card> {
    * @return the list of cards in the deck
    */
   public static List<Card> makeDeck(DeckType type) {
+    assert type != null;
     if (cards.size() == 0) {
       generateCards();
     }
@@ -151,8 +152,6 @@ public class Card implements Comparable<Card> {
   public TokenType getTokenBonusType() {
     return tokenBonusType;
   }
-
-  // dw I didn't write this its generated
 
   /**
    * Generates cards for the decks.
