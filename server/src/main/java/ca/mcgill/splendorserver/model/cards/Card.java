@@ -1,6 +1,5 @@
 package ca.mcgill.splendorserver.model.cards;
 
-import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 
 import java.util.*;
@@ -15,7 +14,7 @@ public class Card implements Comparable<Card> {
   private final        int             id;
   private final        int             prestige;
   //TODO: Make tokenBonusType Optional to allow for spice bag Orient cards
-  private final TokenType tokenBonusType;
+  private final Optional<TokenType> tokenBonusType;
   private final TokenBonusAmount tokenBonusAmount;
   private final        DeckType        deckType;
   private final        CardCost        cardCost;
@@ -34,10 +33,10 @@ public class Card implements Comparable<Card> {
   public Card(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
               TokenBonusAmount tokenBonusAmount, CardCost cardCost
   ) {
-    assert prestige >=0 && deckType != null && tokenBonusAmount != null && cardCost != null;
+    assert prestige >= 0 && deckType != null && tokenBonusAmount != null && cardCost != null;
     this.id               = id;
     this.prestige         = prestige;
-    this.tokenBonusType   = tokenBonusType;
+    this.tokenBonusType   = Optional.ofNullable(tokenBonusType);
     this.deckType         = deckType;
     this.tokenBonusAmount = tokenBonusAmount;
     this.cardCost         = cardCost;
@@ -116,9 +115,10 @@ public class Card implements Comparable<Card> {
   public int getTokenBonusAmount() {
     if (tokenBonusAmount == TokenBonusAmount.ONE) {
       return 1;
-    }
-    else {
+    } else if (tokenBonusAmount  == TokenBonusAmount.TWO){
       return 2;
+    } else {
+      return 0;
     }
   }
 
@@ -137,21 +137,28 @@ public class Card implements Comparable<Card> {
    * @return the token bonus type of this card
    */
   public TokenType getTokenBonusType() {
-    assert tokenBonusType != null;
-    return tokenBonusType;
+    assert tokenBonusType.isPresent();
+    return tokenBonusType.get();
   }
 
   /**
    * Generates cards for the decks.
    */
   private static void generateCards() {
-    cards.add(new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(1, 1, 1, 1, 0)));
-    cards.add(new Card(1, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(1, 2, 1, 1, 0)));
-    cards.add(new Card(2, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(2, 2, 0, 1, 0)));
-    cards.add(new Card(3, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(0, 0, 1, 3, 1)));
-    cards.add(new Card(4, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(0, 0, 2, 1, 0)));
-    cards.add(new Card(5, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(0, 0, 3, 0, 0)));
-    cards.add(new Card(6, 1, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(0, 4, 0, 0, 0)));
+    cards.add(new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(1, 1, 1, 1, 0)));
+    cards.add(new Card(1, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(1, 2, 1, 1, 0)));
+    cards.add(new Card(2, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(2, 2, 0, 1, 0)));
+    cards.add(new Card(3, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(0, 0, 1, 3, 1)));
+    cards.add(new Card(4, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(0, 0, 2, 1, 0)));
+    cards.add(new Card(5, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(0, 0, 3, 0, 0)));
+    cards.add(new Card(6, 1, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE,
+        new CardCost(0, 4, 0, 0, 0)));
 
     cards.add(new Card(7, 0, TokenType.SAPPHIRE, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(1, 0, 1, 1, 1)));
     cards.add(new Card(8, 0, TokenType.SAPPHIRE, DeckType.BASE1, TokenBonusAmount.ONE, new CardCost(1, 0, 1, 2, 1)));

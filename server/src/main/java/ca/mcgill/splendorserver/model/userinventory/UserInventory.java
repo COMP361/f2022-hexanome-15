@@ -146,9 +146,11 @@ public class UserInventory implements Iterable<Card> {
 
   public boolean canAffordCard(Card card) {
     assert card != null;
+    int currentGoldTokenCount = getGoldTokenCount();
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
-      if (!hasEnoughTokensFor(entry.getKey(), entry.getValue())) {
+      amountGoldTokensNeeded(entry.getKey(), entry.getValue(), currentGoldTokenCount);
+      if (currentGoldTokenCount < 0) {
         return false;
       }
     }
@@ -161,16 +163,22 @@ public class UserInventory implements Iterable<Card> {
 
   }
 
-  private boolean hasEnoughTokensFor(TokenType tokenType, int cost) {
+  /**
+   * Calculates the amount of gold tokens needed to pay the cost associated with this token type.
+   * If negative then the card cannot be purchased.
+   *
+   * @return the amount of gold tokens needed
+   */
+  private void amountGoldTokensNeeded(TokenType tokenType, int cost, int currentGoldTokenCount) {
     assert tokenType != null && cost >= 0;
-    int goldTokenCount = getGoldTokenCount();
     int bonusDiscount = cards.stream()
                              .filter(card -> card.getTokenBonusType() == tokenType)
                              .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
-    return tokenPiles.get(tokenType)
-                     .getSize() + goldTokenCount >= (cost - bonusDiscount);
+    int actualCost = cost - bonusDiscount;
+    currentGoldTokenCount = actualCost - tokenPiles.get(tokenType).getSize();
   }
+
 
   //TODO: do we check if the card is already in the hand or are the cards all unique???
 
@@ -193,6 +201,7 @@ public class UserInventory implements Iterable<Card> {
     cards.add(card);
   }
 
+  //TODO: Remove gold tokens upon purchase
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
    * purchased and deducts the appropriate amount of tokens from their inventory also taking

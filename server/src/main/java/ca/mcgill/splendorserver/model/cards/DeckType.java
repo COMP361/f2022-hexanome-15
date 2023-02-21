@@ -29,5 +29,5 @@ public enum DeckType {
   /**
    * Orient 3 card type.
    */
-  ORIENT3
+  ORIENT3;
 }

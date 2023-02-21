@@ -24,4 +24,8 @@ public class OrientCard extends Card {
     assert bonusAction != null;
     this.bonusAction = Optional.ofNullable(bonusAction);
   }
+
+  public void pairWithCard(Card card) {
+
+  }
 }

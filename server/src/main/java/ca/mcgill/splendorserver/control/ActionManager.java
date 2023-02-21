@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
  * specific game sessions. Singleton by default.
  *
  * @author Zachary Hayden
- * Date: 2/1/23
  */
 @RestController
 public class ActionManager {
@@ -42,6 +41,15 @@ public class ActionManager {
 
   // TODO: do we need the users access token as request param to validate here???
 
+  /**
+   * Sends a message to the server to perform the given action.
+   *
+   * @param gameid The game id of the game being played
+   * @param playerName The name of the current player
+   * @param actionMd5 The given action, written as a String
+   * @param accessToken The access token
+   * @return
+   */
   @PostMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
   public ResponseEntity<String> performAction(@PathVariable(name = "gameid") long gameid,
                                               @PathVariable(name = "player") String playerName,
@@ -77,7 +85,10 @@ public class ActionManager {
     HttpStatus actionStatus = splendorGame.getBoard()
                                           .applyMove(selectedMove, playerWrapper.orElseThrow(
                                               () -> new IllegalGameStateException(
-                                                  "If a valid move has been selected, their must be a corresponding player who selected it but player was found empty")));
+                                                  "If a valid move has been selected, "
+                                                    + "there must be a corresponding player "
+                                                    + "who selected it "
+                                                    + "but player was found empty")));
 
     // need to handle potential compound actions
     if (actionStatus == HttpStatus.PARTIAL_CONTENT) {
@@ -89,8 +100,8 @@ public class ActionManager {
       List<?> responseBody = switch (selectedMove.getAction()) {
         case PURCHASE_DEV -> null;
         case PURCHASE_DEV_RECEIVE_NOBLE -> {
-          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(), selectedMove.getCard()
-                                                                                         .orElseThrow());
+          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(),
+            selectedMove.getCard().orElseThrow());
         }
         case RESERVE_DEV_TAKE_JOKER -> null;
         case TAKE_3_GEM_TOKENS_DIFF_COL -> null;
@@ -124,11 +135,12 @@ public class ActionManager {
 
 
   /**
-   * Method to discover and retrieve all the possible moves for the specific player in specific game session.
+   * Method to discover and retrieve all the possible moves
+   * for the specific player in specific game session.
    *
    * @param gameid     game ID of the game being played
    * @param playerName player whose turn it currently is
-   * @return the possible moves that can be made in a map w/ key = hash of move object, value = raw move object.
+   * @return the possible moves that can be made in a map (key, value) = (hash, raw move objec)
    */
   @GetMapping(value = "/api/games/{gameid}/players/{player}/actions",
               produces = "application/json; charset=utf-8")
@@ -235,8 +247,10 @@ public class ActionManager {
       return new LinkedHashMap<>();
     }
 
-    // now search through the gameboard and create a mapping of viable moves the player can make given their state
-    // TODO: find the players inventory from the game, scan over their tokens and cards to ascertain what moves are possible
+    // now search through the gameboard
+    // and create a mapping of viable moves the player can make given their state
+    // TODO: find the players inventory from the game,
+    //  scan over their tokens and cards to ascertain what moves are possible
     GameBoard gameBoard = splendorGame.getBoard();
     // we know that the player is in the game if we make it to this point
     UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
@@ -398,11 +412,10 @@ public class ActionManager {
         } else if (inventory.tokenCount() == 9) {
           // must return 1 token after the 2 tokens are taken -> any token in inventory plus
           // selected token if they don't have it already
-
-//          List<TokenType> possibleReturnTokenTypes = inventory.getTokenTypes();
-//          if (!inventory.hasTokenType(tokenPile.getType())) {
-//            possibleReturnTokenTypes.add(tokenPile.getType());
-//          }
+          /*List<TokenType> possibleReturnTokenTypes = inventory.getTokenTypes();
+          if (!inventory.hasTokenType(tokenPile.getType())) {
+            possibleReturnTokenTypes.add(tokenPile.getType());
+          }*/
 
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
                           null, null, tokenPile.getType()
@@ -414,14 +427,14 @@ public class ActionManager {
 
         } else if (inventory.tokenCount() == 10) {
           // have to loop over all possible token return combinations
-//          List<TokenType> availableReturnTokens = inventory.getTokenTypes();
-//          // add the token which is being taken in this move as possible return too
-//          if (!availableReturnTokens.contains(tokenPile.getType())) {
-//            availableReturnTokens.add(tokenPile.getType());
-//          }
-//          // get all combinations of token returns
-//          List<TokenType[]> returnCombinations = generateTokenCombinations(
-//              availableReturnTokens, 2);
+          //List<TokenType> availableReturnTokens = inventory.getTokenTypes();
+          // add the token which is being taken in this move as possible return too
+          /*if (!availableReturnTokens.contains(tokenPile.getType())) {
+            availableReturnTokens.add(tokenPile.getType());
+          }*/
+          // get all combinations of token returns
+          /*List<TokenType[]> returnCombinations = generateTokenCombinations(
+              availableReturnTokens, 2);*/
           // loop through all return combinations now
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2, null, player, null,
                           null,
@@ -457,45 +470,44 @@ public class ActionManager {
             "Inventory of " + player.getName() + " can never exceed 10 tokens");
       }
 
-//      // looping through all the possible return token combinations
+      // looping through all the possible return token combinations
       int numTokensTake = 3;
       List<TokenType[]> possibleTokens = generateTokenCombinations(
           validTake3TokenTypes, numTokensTake);
-//      List<TokenType> possibleReturnTokens;
+      //List<TokenType> possibleReturnTokens;
       for (TokenType[] tokenTypes : possibleTokens) {
-//        // get all tokens in inventory and if the tokens taken for this move aren't there add them
-//        // we know there are 3 token types in the array
-//        possibleReturnTokens = inventory.getTokenTypes();
-//        if (!possibleReturnTokens.contains(tokenTypes[0])) {
-//          possibleReturnTokens.add(tokenTypes[0]);
-//        } else if (!possibleReturnTokens.contains(tokenTypes[1])) {
-//          possibleReturnTokens.add(tokenTypes[1]);
-//        } else if (!possibleReturnTokens.contains(tokenTypes[2])) {
-//          possibleReturnTokens.add(tokenTypes[2]);
-//        }
-
-//        List<TokenType[]> possibleReturnCombinations;
-//        // matching by action how many tokens need to be returned
-//        switch (action) {
-//          case TAKE_3_GEM_TOKENS_DIFF_COL -> {
-//            Move move = new Move(action, null, player, null, null, null, tokenTypes);
-//            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-//                                        .toUpperCase();
-//            moveMap.put(moveMd5, move);
-//            possibleReturnCombinations = null; // this will never be reached bc of the check below
-//          }
-//          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
-//            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 1);
-//          }
-//          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
-//            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 2);
-//          }
-//          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
-//            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 3);
-//          }
-//          default -> throw new IllegalStateException(
-//              "Unexpected Action found, expected one of the \"take 3 token\" moves");
-//        }
+        // get all tokens in inventory and if the tokens taken for this move aren't there add them
+        // we know there are 3 token types in the array
+        /*possibleReturnTokens = inventory.getTokenTypes();
+        if (!possibleReturnTokens.contains(tokenTypes[0])) {
+          possibleReturnTokens.add(tokenTypes[0]);
+        } else if (!possibleReturnTokens.contains(tokenTypes[1])) {
+          possibleReturnTokens.add(tokenTypes[1]);
+        } else if (!possibleReturnTokens.contains(tokenTypes[2])) {
+         possibleReturnTokens.add(tokenTypes[2]);
+        }*/
+        //List<TokenType[]> possibleReturnCombinations;
+        //matching by action how many tokens need to be returned
+        /*switch (action) {
+          case TAKE_3_GEM_TOKENS_DIFF_COL -> {
+            Move move = new Move(action, null, player, null, null, null, tokenTypes);
+            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                        .toUpperCase();
+            moveMap.put(moveMd5, move);
+            possibleReturnCombinations = null; // this will never be reached bc of the check below
+          }
+          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
+            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 1);
+          }
+          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
+            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 2);
+          }
+          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
+            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 3);
+          }
+          default -> throw new IllegalStateException(
+              "Unexpected Action found, expected one of the \"take 3 token\" moves");
+        }*/
 
         // if we have a move requiring returning, loop through the combinations
         Move move = new Move(action, null, player, null, null, null, tokenTypes);

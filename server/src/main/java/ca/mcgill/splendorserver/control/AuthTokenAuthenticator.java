@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
  * Static utility class intended to authenticate user tokens during token restricted actions.
  *
  * @author Zachary Hayden
- * Date: 2/6/23
  */
 @Service
 public final class AuthTokenAuthenticator {
@@ -63,7 +62,8 @@ public final class AuthTokenAuthenticator {
    *
    * @param userName    username
    * @param accessToken auth token
-   * @return if the name associated to the access token is same as given name, if there's no name corresponding to the access token it will return false.
+   * @return if the name associated to the access token is same as given name
+   *     if there's no name corresponding to the access token it will return false
    */
   public static boolean isSameName(String userName, String accessToken) {
     assert userName != null && accessToken != null;
@@ -72,6 +72,12 @@ public final class AuthTokenAuthenticator {
                     .isPresent();
   }
 
+  /**
+   * Checks if the user is a player.
+   *
+   * @param accessToken the access token of the user
+   * @return boolean determining if the given user is a player
+   */
   public static boolean isPlayer(String accessToken) {
     assert accessToken != null;
     Optional<String> otherRole = getRole(accessToken);
@@ -86,7 +92,8 @@ public final class AuthTokenAuthenticator {
    *
    * @param userName    username
    * @param accessToken user's access token
-   * @throws TokenAuthenticationException if the username and access token dont correspond to each other or if the user isn't a player.
+   * @throws TokenAuthenticationException if the username and access token
+   *     don't correspond to each other or if the user isn't a player
    */
   public static void authenticate(String userName, String accessToken) {
     if (isSameName(userName, accessToken) && isPlayer(accessToken)) {
