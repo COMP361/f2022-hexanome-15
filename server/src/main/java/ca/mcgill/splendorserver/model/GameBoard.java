@@ -10,6 +10,7 @@ import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.EnumMap;
 import java.util.List;
@@ -45,6 +46,7 @@ public class GameBoard {
    */
   private Optional<Action> actionCache;
   private boolean          pendingAction;
+  private List<TradingPostSlot> tradingPostSlots;
 
   /**
    * Creates a game board.

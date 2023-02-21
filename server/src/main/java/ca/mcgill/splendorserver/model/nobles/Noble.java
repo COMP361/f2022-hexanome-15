@@ -9,11 +9,10 @@ import java.util.List;
  * Represents a Splendor Noble with reserved status and prestige.
  */
 public class Noble {
-
   private final CardCost visitRequirements;
   private final NobleStatus status;
   private final int         prestige;
-  private final List<Noble> nobles  = new ArrayList<Noble>();
+  private static final List<Noble> nobles  = new ArrayList<Noble>();
 
   /**
    * Creates a noble.
@@ -58,7 +57,7 @@ public class Noble {
    * Generates all nobles.
    * Then 3-5 random nobles will be added to the game.
    */
-  private void generateNobles() {
+  private static void generateNobles() {
     nobles.add(new Noble(new CardCost(3, 3, 3, 0, 0)));
     nobles.add(new Noble(new CardCost(0, 3, 3, 3, 0)));
     nobles.add(new Noble(new CardCost(3, 0, 0, 3, 3)));

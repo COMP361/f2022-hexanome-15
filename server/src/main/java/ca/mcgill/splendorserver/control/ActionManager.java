@@ -100,9 +100,8 @@ public class ActionManager {
         case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> null;
         case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> null;
         case RESERVE_DEV -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
-          // TODO: get possible return combinations for all the compound moves
-        }
+        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
+        // TODO: get possible return combinations for all the compound moves
       };
     }
 

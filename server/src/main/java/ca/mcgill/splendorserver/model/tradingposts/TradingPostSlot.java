@@ -10,6 +10,7 @@ public class TradingPostSlot {
   private final Power power;
   private final CardCost cardRequirements;
   private final List<CoatOfArms> acquiredCoatOfArmsList;
+  private static final List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
 
   /**
    * Creates a Trading Post slot.
@@ -51,5 +52,16 @@ public class TradingPostSlot {
    */
   public CardCost getCardRequirements() {
     return cardRequirements;
+  }
+
+  /**
+   * Generates all trading post slots.
+   */
+  private static void generateTradingPostSlots() {
+    tradingPostSlots.add(new TradingPostSlot(false, Power.PURCHASE_CARD_TAKE_TOKEN, new CardCost(1, 0, 0, 3, 0)));
+    tradingPostSlots.add(new TradingPostSlot(false, Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL, new CardCost(2, 0, 0, 0, 0)));
+    tradingPostSlots.add(new TradingPostSlot(false, Power.GOLD_TOKENS_WORTH_2_GEMS_SAME_COL, new CardCost(0,3, 0,0,1)));
+    tradingPostSlots.add(new TradingPostSlot(true, Power.GAIN_5_PRESTIGE, new CardCost(0,0,5,0,0)));
+    tradingPostSlots.add(new TradingPostSlot(false, Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS, new CardCost(0,0,0,0,3)));
   }
 }

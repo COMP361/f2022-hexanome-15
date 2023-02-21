@@ -9,6 +9,8 @@ import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -32,6 +34,7 @@ public class UserInventory implements Iterable<Card> {
   private final PlayerWrapper                 playerWrapper;
   private       int                           prestigeWon;
   private final List<Noble>                   visitingNobles;
+  private final List<Power> acquiredPowers = new ArrayList<>();
 
 
   /**
@@ -381,6 +384,16 @@ public class UserInventory implements Iterable<Card> {
     if (!tokenPiles.containsKey(pile.getType())) {
       tokenPiles.put(pile.getType(), pile);
     }
+  }
+
+  /**
+   * Adds a power to the user inventory.
+   *
+   * @param power the power to be added
+   */
+  public void addPower(Power power) {
+    assert power != null;
+    acquiredPowers.add(power);
   }
 
 

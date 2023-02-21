@@ -51,10 +51,6 @@ public class Card implements Comparable<Card> {
     return cardStatus == CardStatus.PURCHASED;
   }
 
-  public boolean notReservedNorPurchased() {
-    return cardStatus == CardStatus.NONE;
-  }
-
   /**
    * Gets a card based on their id.
    *

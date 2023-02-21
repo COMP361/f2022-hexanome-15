@@ -11,11 +11,11 @@ public enum Power {
   /**
    * This power allows a player to take an extra different coloured token if they take two tokens of the same colour.
    */
-  TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIFF_COL,
+  TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL,
   /**
-   * This power allows a player to immediately gain 3 prestige.
+   * This power allows a player to immediately gain 5 prestige.
    */
-  GAIN_3_PRESTIGE,
+  GAIN_5_PRESTIGE,
   /**
    * This power allows a player to gain 1 prestige for every coat of arms they placed on the board.
    */

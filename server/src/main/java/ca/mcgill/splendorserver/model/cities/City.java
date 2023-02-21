@@ -11,7 +11,7 @@ import java.util.List;
 public class City {
   private final int requiredPrestige;
   private final CardCost requiredCardBonuses;
-  private final List<City> cities = new ArrayList<City>();
+  private static final List<City> cities = new ArrayList<City>();
 
   /**
    * Creates a city.
@@ -47,7 +47,7 @@ public class City {
    * Generates all cities
    * Then 2-4 random cities will be added to the game.
    */
-  private void generateCities() {
+  private static void generateCities() {
     cities.add(new City(13, new CardCost(0,0,0,4,3)));
     cities.add(new City(13, new CardCost(3,4,0,0,0)));
     cities.add(new City(17, new CardCost(0,0,0,0,0)));
