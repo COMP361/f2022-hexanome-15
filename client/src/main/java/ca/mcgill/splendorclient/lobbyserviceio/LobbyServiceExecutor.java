@@ -3,9 +3,9 @@ package ca.mcgill.splendorclient.lobbyserviceio;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.json.JSONObject;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.json.JSONObject;
 
 /**
  * Executes Lobby Service commands.
@@ -238,17 +238,18 @@ public class LobbyServiceExecutor {
     }
   }
 
+  // TODO: Should be moved to server service controller.
   /**
-   * TODO: Should be moved to server service controller. Sends the move done by a player to the server at the end of their turn.
+   * Sends the move done by a player to the server at the end of their turn.
    *
    * @param gameId The game id
    * @param username The player's username
    * @param move The move that the player made
    */
   public final void end_turn(int gameId, String username, String move) {
-//    String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
-//        SERVERLOCATION, gameId, username, move);
-//    run(command, NullParser.NULLPARSER);
+    //String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
+    // SERVERLOCATION, gameId, username, move);
+    // run(command, NullParser.NULLPARSER);
     HttpResponse<String> response = Unirest.put(String.format("http://127.0.0.1:8080/api/games/%d/endturn", gameId, username))
         .header("Content-Type", "application/json")
         .body(move)
