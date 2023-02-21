@@ -1,10 +1,9 @@
 package ca.mcgill.splendorserver.model.cards;
 
+import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
  * Represents a Splendor Card with id, prestige, tokenBonus, deckType, discount
@@ -15,7 +14,8 @@ public class Card implements Comparable<Card> {
   // this eventually will be the png that is on the actual card
   private final        int             id;
   private final        int             prestige;
-  private final        TokenType       tokenBonusType;
+  //TODO: Make tokenBonusType Optional to allow for spice bag Orient cards
+  private final TokenType tokenBonusType;
   private final TokenBonusAmount tokenBonusAmount;
   private final        DeckType        deckType;
   private final        CardCost        cardCost;
@@ -34,7 +34,7 @@ public class Card implements Comparable<Card> {
   public Card(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
               TokenBonusAmount tokenBonusAmount, CardCost cardCost
   ) {
-    assert prestige >=0 && tokenBonusType != null && deckType != null && tokenBonusAmount != null && cardCost != null;
+    assert prestige >=0 && deckType != null && tokenBonusAmount != null && cardCost != null;
     this.id               = id;
     this.prestige         = prestige;
     this.tokenBonusType   = tokenBonusType;
@@ -123,15 +123,6 @@ public class Card implements Comparable<Card> {
   }
 
   /**
-   * Returns the cost of this card.
-   *
-   * @return the cost of this card
-   */
-  public CardCost getCost() {
-    return cardCost;
-  }
-
-  /**
    * Returns the type of this card.
    *
    * @return the type of this card
@@ -146,6 +137,7 @@ public class Card implements Comparable<Card> {
    * @return the token bonus type of this card
    */
   public TokenType getTokenBonusType() {
+    assert tokenBonusType != null;
     return tokenBonusType;
   }
 
@@ -283,15 +275,31 @@ public class Card implements Comparable<Card> {
                .compareTo(card.getTokenBonusType());
   }
 
+  /**
+   * Returns the cost of this card.
+   *
+   * @return the cost of this card
+   */
   public CardCost getCardCost() {
     return cardCost;
   }
 
+  /**
+   * Returns the status of this card.
+   *
+   * @return the status of this card
+   */
   public CardStatus getCardStatus() {
     return cardStatus;
   }
 
+  /**
+   * Sets the status of this card to the given status
+   *
+   * @param cardStatus the given status
+   */
   public void setCardStatus(CardStatus cardStatus) {
+    assert cardStatus != null;
     this.cardStatus = cardStatus;
   }
 
@@ -305,8 +313,5 @@ public class Card implements Comparable<Card> {
         ", cardCost=" + cardCost +
         '}';
   }
-
-  // TODO: need things like cost, associated gem discount, and prestige.
-  // Robillard might want these to be flyweights.
 
 }

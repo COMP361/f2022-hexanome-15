@@ -70,12 +70,21 @@ public class Deck {
 
   /**
    * Deals cards in the deck to the board.
+   * If the deck is a base game deck, 4 cards will be dealt.
+   * If the deck is an orient expansion deck, 2 cards will be dealt.
    */
   public List<Card> deal() {
     List<Card> playingField = new ArrayList<Card>();
     if (!cards.isEmpty()) {
-      for (int i = 0; i < 4; ++i) {
-        playingField.add(cards.remove(0));
+      if (type == DeckType.BASE1 || type == DeckType.BASE2 || type == DeckType.BASE3) {
+        for (int i = 0; i < 4; i++) {
+          playingField.add(cards.remove(0));
+        }
+      }
+      else {
+        for (int i = 0; i < 2; i++) {
+          playingField.add(cards.remove(0));
+        }
       }
     }
     return playingField;
