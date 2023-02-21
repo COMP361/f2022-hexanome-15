@@ -9,13 +9,14 @@ import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -33,7 +34,8 @@ public class UserInventory implements Iterable<Card> {
   private final PlayerWrapper                 playerWrapper;
   private       int                           prestigeWon;
   private final List<Noble>                   visitingNobles;
-  private final List<Power> acquiredPowers = new ArrayList<>();
+  private final List<Power> acquiredPowers;
+  private final List<CoatOfArmsPile> coatOfArmsPiles;
 
 
   /**
@@ -55,6 +57,12 @@ public class UserInventory implements Iterable<Card> {
     playerWrapper  = name;
     prestigeWon    = 0;
     visitingNobles = new ArrayList<>();
+    acquiredPowers = new ArrayList<>();
+    coatOfArmsPiles = new ArrayList<>();
+    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.RED));
+    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.YELLOW));
+    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.BLACK));
+    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.BLUE));
   }
 
   public int getPrestigeWon() {

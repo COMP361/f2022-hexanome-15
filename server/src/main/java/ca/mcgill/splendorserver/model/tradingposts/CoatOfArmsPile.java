@@ -19,6 +19,7 @@ public class CoatOfArmsPile {
     assert type != null;
     this.type = type;
     this.coatOfArmsList = new ArrayList<>();
+    setUp();
   }
 
   /**
@@ -60,6 +61,16 @@ public class CoatOfArmsPile {
    */
   public int getSize() {
     return coatOfArmsList.size();
+  }
+
+  /**
+   * Sets up the Coat of Arms piles with 5 coat of arms upon starting the game.
+   */
+  public void setUp() {
+    for (int i = 0; i < 5; i++) {
+      CoatOfArms c = new CoatOfArms(this.type);
+      this.coatOfArmsList.add(c);
+    }
   }
 }
 
