@@ -322,8 +322,20 @@ public class UserInventory implements Iterable<Card> {
   private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
     assert tokenType != null && n >= 0;
     List<Token> removed = new ArrayList<>(n);
-    for (int i = 0; i < n; i++) {
-      removed.add(removeTokenByTokenType(tokenType));
+    //Removing gold tokens
+    int goldTokensNeeded = n - tokenPiles.get(tokenType).getSize();
+    if (goldTokensNeeded > 0) {
+      for (int i = 0; i < goldTokensNeeded; i++) {
+        removed.add(removeTokenByTokenType(TokenType.GOLD));
+      }
+      for (int i = 0; i < tokenPiles.get(tokenType).getSize(); i++) {
+        removed.add(removeTokenByTokenType(TokenType.GOLD));
+      }
+    }
+    else {
+      for (int i = 0; i < n; i++) {
+        removed.add(removeTokenByTokenType(tokenType));
+      }
     }
     return removed;
   }
