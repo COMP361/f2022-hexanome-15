@@ -33,7 +33,15 @@ public class OrientCard extends Card {
     this.spiceBag = spiceBag;
   }
 
+  /**
+   * Pairs the given spice bag Orient card with a card in the user inventory.
+   * The spice bag card gains a bonus with the same type as the paired card.
+   *
+   * @param card The card to be paired with the spice bag card
+   */
   public void pairWithCard(Card card) {
-
+    assert this.spiceBag;
+    setBonusAmount(TokenBonusAmount.ONE);
+    setBonusType(card.getTokenBonusType());
   }
 }

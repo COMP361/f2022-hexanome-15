@@ -13,8 +13,8 @@ public class Card implements Comparable<Card> {
   // this eventually will be the png that is on the actual card
   private final        int             id;
   private final        int             prestige;
-  private final Optional<TokenType> tokenBonusType;
-  private final TokenBonusAmount tokenBonusAmount;
+  private Optional<TokenType> tokenBonusType;
+  private TokenBonusAmount tokenBonusAmount;
   private final        DeckType        deckType;
   private final        CardCost        cardCost;
   private              CardStatus      cardStatus;
@@ -119,6 +119,28 @@ public class Card implements Comparable<Card> {
     } else {
       return 0;
     }
+  }
+
+  /**
+   * Sets the token bonus amount to the given amount.
+   * Only used when a spice bag card is paired with a card in the user inventory.
+   *
+   * @param tokenBonusAmount the amount to be set
+   */
+  public void setBonusAmount(TokenBonusAmount tokenBonusAmount) {
+    assert tokenBonusAmount != null;
+    this.tokenBonusAmount = tokenBonusAmount;
+  }
+
+  /**
+   * Sets the token bonus type to the given type.
+   * Only used when a spice bag card is paired with a card in the user inventory.
+   *
+   * @param type the token type to be set
+   */
+  public void setBonusType(TokenType type) {
+    assert type != null;
+    this.tokenBonusType = Optional.of(type);
   }
 
   /**
