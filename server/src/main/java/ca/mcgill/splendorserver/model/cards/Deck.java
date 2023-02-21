@@ -29,13 +29,13 @@ public class Deck {
     return cards.remove(0);
   }
 
-  public Optional<Card> drawOpt() {
+  /*public Optional<Card> drawOpt() {
     if (cards.isEmpty()) {
       return Optional.empty();
     } else {
       return Optional.of(cards.remove(0));
     }
-  }
+  }*/
 
   public boolean isEmpty() {
     return cards.isEmpty();
@@ -80,8 +80,7 @@ public class Deck {
         for (int i = 0; i < 4; i++) {
           playingField.add(cards.remove(0));
         }
-      }
-      else {
+      } else {
         for (int i = 0; i < 2; i++) {
           playingField.add(cards.remove(0));
         }

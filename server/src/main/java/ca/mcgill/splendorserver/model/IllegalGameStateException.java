@@ -1,8 +1,9 @@
 package ca.mcgill.splendorserver.model;
 
 /**
+ * IllegalGameStateException for when unexpected game behaviour happens.
+ *
  * @author Zachary Hayden
- * Date: 2/5/23
  */
 public class IllegalGameStateException extends RuntimeException {
 

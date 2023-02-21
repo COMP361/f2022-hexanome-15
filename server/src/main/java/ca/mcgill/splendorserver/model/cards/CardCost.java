@@ -9,7 +9,6 @@ import java.util.Set;
  * Immutable container holding the costs associated with one card.
  *
  * @author Zachary Hayden
- * Date: 2/4/23
  */
 public class CardCost {
   private final Map<TokenType, Integer> costMap;

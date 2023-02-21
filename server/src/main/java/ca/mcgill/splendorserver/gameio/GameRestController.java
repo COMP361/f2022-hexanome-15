@@ -32,27 +32,26 @@ import org.springframework.web.context.request.async.DeferredResult;
  */
 @RestController
 public class GameRestController {
-  private static final Logger                                         LOGGER
-                                                                                      = LoggerFactory.getLogger(
-      GameRestController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
   private static final String                                         gameServiceLocation
                                                                                       = "http://127.0.0.1:8080";
   //should probably be final
   private final        ca.mcgill.splendorserver.gameio.GameRepository repository;
   // 4 threads for the max 4 players
-  private final        ExecutorService                                updaters
-                                                                                      = Executors.newFixedThreadPool(
-      4);
+  private final ExecutorService updaters = Executors.newFixedThreadPool(4);
   private              String                                         gameName;
   private              boolean                                        updateGameBoard = false;
   private              boolean                                        updateAction    = false;
-  private              JSONObject                                     adminAuth
-                                                                                      = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(
-      "maex", "abc123_ABC123");
-  private              String                                         refreshToken
-                                                                                      = (String) Parsejson.PARSE_JSON.getFromKey(
-      adminAuth, "refresh_token");
+  private JSONObject adminAuth = LobbyServiceExecutor
+                                   .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
+  private String refreshToken = (String) Parsejson
+                                           .PARSE_JSON.getFromKey(adminAuth, "refresh_token");
 
+  /**
+   * Creates a GameRestController.
+   *
+   * @param repository The repository
+   */
   public GameRestController(GameRepository repository) {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
@@ -98,16 +97,16 @@ public class GameRestController {
         "#000000"
     );
 
-    String newUserJSon = new Gson().toJson(acc);
+    String newUserjSon = new Gson().toJson(acc);
 
-    HttpResponse<String> response1 = Unirest.put(
+    final HttpResponse<String> response1 = Unirest.put(
                                                 "http://127.0.0.1:4242/api/users/"
                                                     + gameName
                                                     + "?access_token="
                                                     + accessToken.replace("+", "%2B")
                                             )
                                             .header("Content-Type", "application/json")
-                                            .body(newUserJSon)
+                                            .body(newUserjSon)
                                             .asString();
 
 
@@ -125,7 +124,7 @@ public class GameRestController {
     );
 
     System.out.println("Response from service user registration: " + response1.getBody());
-    String newServiceJSon = new Gson().toJson(gs);
+    String newServicejSon = new Gson().toJson(gs);
 
     HttpResponse<String> response2 = Unirest.put(
                                                 "http://127.0.0.1:4242/api/gameservices/"
@@ -134,13 +133,20 @@ public class GameRestController {
                                                     + accessToken.replace("+", "%2B")
                                             )
                                             .header("Content-Type", "application/json")
-                                            .body(newServiceJSon)
+                                            .body(newServicejSon)
                                             .asString();
     System.out.println("Response from registration request: " + response2.getBody());
     this.gameName = gameName;
     return null;
   }
 
+  /**
+   * Sends a launch request to the server and launches the session.
+   *
+   * @param gameId The game id of the session to be launched
+   * @param sessionInfo The session info of the game to be launched
+   * @return a response entity determining if the request was successful
+   */
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
   public ResponseEntity<String> launchRequest(@PathVariable long gameId,
                                               @RequestBody SessionInfo sessionInfo
@@ -154,8 +160,9 @@ public class GameRestController {
                       .equals(gameName)) {
         throw new Exception();
       }
-      //Getting the players in the session
-      //gameManager.addGame(gameId, sessionInfo.getPlayers().toArray(new Player[launcherInfo.getPlayers().size()]));
+      // Getting the players in the session
+      // gameManager.addGame(gameId, sessionInfo.getPlayers()
+      // .toArray(new Player[launcherInfo.getPlayers().size()]));
       SplendorGame splendorGame = new SplendorGame(sessionInfo, gameId);
       LocalGameStorage.addActiveGame(splendorGame);
       return ResponseEntity.status(HttpStatus.OK)
@@ -260,20 +267,24 @@ public class GameRestController {
     }
   }
 
+  /**
+   * Retrieves the game board from the game with the given game id from the server.
+   *
+   * @param gameid the game id of the game being played
+   * @return a response entity determining if the request was successful
+   */
   @GetMapping("/api/games/{gameid}/board")
   public ResponseEntity<String> getGameBoard(@PathVariable long gameid) {
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(gameid);
     if (manager.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
-    } 
-    else if (LocalGameStorage.requiresUpdate(gameid)) {
+    } else if (LocalGameStorage.requiresUpdate(gameid)) {
       String json = new Gson().toJson(manager.get()
           .getBoard());
       return ResponseEntity.status(HttpStatus.OK)
       .body(json);
-    }
-    else {
+    } else {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
   }

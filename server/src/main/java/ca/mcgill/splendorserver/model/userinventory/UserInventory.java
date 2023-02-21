@@ -10,7 +10,6 @@ import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -62,7 +61,11 @@ public class UserInventory implements Iterable<Card> {
     return prestigeWon;
   }
 
-
+  /**
+   * Returns the token types of all the non-empty token piles in the user inventory.
+   *
+   * @return the list of token types of all the non-empty token piles in the user inventory
+   */
   public List<TokenType> getTokenTypes() {
     return tokenPiles.values()
                      .stream()
@@ -71,6 +74,12 @@ public class UserInventory implements Iterable<Card> {
                      .toList();
   }
 
+  /**
+   * Returns a boolean determining if the token pile of a given token pile
+   * is empty in this user inventory.
+   *
+   * @return the given boolean
+   */
   public boolean hasTokenType(TokenType tokenType) {
     assert tokenType != null;
     return tokenPiles.values()
@@ -78,6 +87,11 @@ public class UserInventory implements Iterable<Card> {
                      .anyMatch(tokens -> tokens.getType() == tokenType);
   }
 
+  /**
+   * Adds tokens to the token pile in the user inventory with the same type.
+   *
+   * @param token the tokens to be added
+   */
   public void addTokens(Token... token) {
     for (Token t : token) {
       tokenPiles.get(t.getType())
@@ -89,7 +103,8 @@ public class UserInventory implements Iterable<Card> {
    * Assumes that the inventory contains at least one token of the given type.
    *
    * @param type type of token to remove, cannot be null
-   * @return the removed token, could be null if this inventory doesn't have any of that specific token
+   * @return the removed token,
+   *     could be null if this inventory doesn't have any of that specific token
    */
   public Token removeTokenByTokenType(TokenType type) {
     assert type != null;
@@ -97,13 +112,13 @@ public class UserInventory implements Iterable<Card> {
                      .removeToken();
   }
 
-  public Optional<Token> removeTokenOpt(Token token) {
+  /*public Optional<Token> removeTokenOpt(Token token) {
     if (tokenPiles.containsKey(token.getType()) && tokenPiles.get(token.getType()) != null) {
       return tokenPiles.get(token.getType())
                        .removeTokenOpt();
     }
     return Optional.empty();
-  }
+  }*/
 
   /**
    * Gets the number of cards in inventory.
@@ -144,6 +159,12 @@ public class UserInventory implements Iterable<Card> {
                 .anyMatch(card -> card.getCardStatus() == CardStatus.RESERVED);
   }
 
+  /**
+   * Checks if the current player can afford a card with their current card bonuses and tokens.
+   *
+   * @param card The card the player would like to purchase
+   * @return a boolean determining whether the player can afford a card
+   */
   public boolean canAffordCard(Card card) {
     assert card != null;
     int currentGoldTokenCount = getGoldTokenCount();
@@ -209,7 +230,7 @@ public class UserInventory implements Iterable<Card> {
    *
    * @param card purchased card, cannot be null
    * @return TokenTypes corresponding to the tokens which were removed in order to purchase the
-   * given card taking into consideration any token bonuses for owned cards.
+   *     given card taking into consideration any token bonuses for owned cards.
    */
   public List<Token> purchaseCard(Card card) {
     assert card != null;
@@ -227,10 +248,12 @@ public class UserInventory implements Iterable<Card> {
 
     // collect the tokens expended to purchase this card
     List<Token> costs = new ArrayList<>();
-    // loop over all token costs and deduct the correct amount taking into consideration the discounts
+    // loop over all token costs and deduct the correct amount
+    // taking into consideration the discounts
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
-      // bonusDiscount = sum(tokenBonusAmount) for owned cards that match the current cost token in iteration
+      // bonusDiscount = sum(tokenBonusAmount)
+      // for owned cards that match the current cost token in iteration
       int bonusDiscount = cards.stream()
                                .filter(
                                    c -> c.getTokenBonusType() == entry.getKey() && c.isPurchased())
@@ -247,6 +270,12 @@ public class UserInventory implements Iterable<Card> {
     prestigeWon += prestige;
   }
 
+  /**
+   * Checks if the current player can be visited by a noble at the end of their turn.
+   *
+   * @param noble the noble to be visited
+   * @return a boolean determining whether the current player can be visited by this noble
+   */
   public boolean canBeVisitedByNoble(Noble noble) {
     assert noble != null;
     // cannot be visited by noble that is already visiting someone else
@@ -266,12 +295,13 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Determines if purchasing the given card in addition to whatever bonuses are already in the inventory is
-   * sufficient to receive a visit from the given noble.
+   * Determines if purchasing the given card in addition to whatever bonuses
+   * are already in the inventory is sufficient to receive a visit from the given noble.
    *
    * @param noble noble to check if it will visit
    * @param card  additional card to consider in checking if noble will visit
-   * @return if the card bonuses as well as the currently owned bonuses yield a visit from given noble
+   * @return if the card bonuses as well as
+   *     the currently owned bonuses yield a visit from given noble
    */
   public boolean canBeVisitedByNobleWithCardPurchase(Noble noble, Card card) {
     assert noble != null && card != null;
@@ -299,7 +329,8 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Assumes that it is legal for the noble to be visiting this inventory based on visit requirement.
+   * Assumes that it is legal for the noble
+   * to be visiting this inventory based on visit requirement.
    *
    * @param noble noble which is visiting this inventory, cannot be null
    */
@@ -331,8 +362,7 @@ public class UserInventory implements Iterable<Card> {
       for (int i = 0; i < tokenPiles.get(tokenType).getSize(); i++) {
         removed.add(removeTokenByTokenType(TokenType.GOLD));
       }
-    }
-    else {
+    } else {
       for (int i = 0; i < n; i++) {
         removed.add(removeTokenByTokenType(tokenType));
       }
@@ -361,38 +391,38 @@ public class UserInventory implements Iterable<Card> {
     return playerWrapper;
   }
 
-//  @Override
-//  public void onAction(CardView cardView) {
-//    boolean affordable = true;
-//    for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
-//      for (TokenPile tokenPile : tokenPiles) {
-//        if (tokenPile.getType().ordinal() == i) {
-//          if (cardView.getCard().get().getCost()[i] > 0
-//                && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
-//            affordable = false;
-//          }
-//        }
-//      }
-//    }
-//    if (affordable) {
-//      notifyObservers(cardView.getCard().get());
-//      cards.add(cardView.getCard().get());
-//      for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
-//        for (TokenPile tokenPile : tokenPiles) {
-//          if (tokenPile.getType().ordinal() == i) {
-//            if (cardView.getCard().get().getCost()[i] > 0
-//                  && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
-//              for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
-//                tokenPile.removeToken();
-//              }
-//            }
-//          }
-//        }
-//      }
-//    } else {
-//      cardView.revokePurchaseAttempt();
-//    }
-//  }
+  /* @Override
+  public void onAction(CardView cardView) {
+    boolean affordable = true;
+    for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
+      for (TokenPile tokenPile : tokenPiles) {
+        if (tokenPile.getType().ordinal() == i) {
+          if (cardView.getCard().get().getCost()[i] > 0
+                && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
+            affordable = false;
+          }
+        }
+      }
+    }
+    if (affordable) {
+      notifyObservers(cardView.getCard().get());
+      cards.add(cardView.getCard().get());
+      for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
+        for (TokenPile tokenPile : tokenPiles) {
+          if (tokenPile.getType().ordinal() == i) {
+            if (cardView.getCard().get().getCost()[i] > 0
+                  && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
+              for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
+                tokenPile.removeToken();
+              }
+            }
+          }
+        }
+      }
+    } else {
+      cardView.revokePurchaseAttempt();
+    }
+  }*/
 
 
   /**

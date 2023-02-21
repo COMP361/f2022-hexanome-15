@@ -23,6 +23,11 @@ public class TokenPile implements Iterable<Token> {
     this.tokens = new ArrayList<>();
   }
 
+  /**
+   * Removes tokens from this token pile.
+   *
+   * @param n the amount of tokens to be removed
+   */
   public void removeTokens(int n) {
     if (n > tokens.size()) {
       n = tokens.size();
@@ -88,13 +93,13 @@ public class TokenPile implements Iterable<Token> {
     return tokens.remove(0);
   }
 
-  public Optional<Token> removeTokenOpt() {
+  /*public Optional<Token> removeTokenOpt() {
     if (tokens.isEmpty()) {
       return Optional.empty();
     } else {
       return Optional.of(tokens.remove(0));
     }
-  }
+  }*/
 
   /**
    * Returns the type of the token in the token pile.

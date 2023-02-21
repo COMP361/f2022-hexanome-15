@@ -1,7 +1,6 @@
 package ca.mcgill.splendorserver.model.nobles;
 
 import ca.mcgill.splendorserver.model.cards.CardCost;
-
 import java.util.ArrayList;
 import java.util.List;
 

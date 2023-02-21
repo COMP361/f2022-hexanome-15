@@ -9,7 +9,6 @@ import ca.mcgill.splendorserver.model.userinventory.UserInventory;
  * creator of the session ie the starting player.
  *
  * @author Zachary Hayden
- * Date: 2/7/23
  */
 public final class TerminalGameStateManager {
   private static final int prestigePointsToWin = 15;

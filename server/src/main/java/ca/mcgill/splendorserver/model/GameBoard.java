@@ -39,7 +39,8 @@ public class GameBoard {
 
   /*
   The following fields are used for actions that require an additional decision
-  following the action itself (compound action / move). For example: choosing which tokens to return, choosing
+  following the action itself (compound action / move).
+  For example: choosing which tokens to return, choosing
   which noble to be visited by in case there are more than 1.
   moveCache := move which involved a compound action and is currently being waited on
   pendingAction := if the game is waiting for an action to be made
@@ -210,7 +211,8 @@ public class GameBoard {
                               .get().length != n) {
       throw new IllegalGameStateException(
           String.format(
-              "If move is to take 3 gems of different colors and return %d token, then selected gems needs to be of size 3 and returned gems of size %d",
+              "If move is to take 3 gems of different colors and return %d token, "
+                + "then selected gems needs to be of size 3 and returned gems of size %d",
               n, n
           ));
     }
@@ -279,7 +281,8 @@ public class GameBoard {
                               .get().length != n) {
       throw new IllegalGameStateException(
           String.format(
-              "If move is to take 2 gems of same color and return %d, then gems to return needs to be of size %d",
+              "If move is to take 2 gems of same color and return %d, "
+                + "then gems to return needs to be of size %d",
               n, n
           ));
     }
@@ -336,7 +339,11 @@ public class GameBoard {
                             .orElse(getCardByDeckLevel(move.getDeckType()
                                                            .orElseThrow(
                                                                () -> new IllegalGameStateException(
-                                                                   "If move is to reserve dev card, a card or deck level to draw a card from must be chosen"))));
+                                                                   "If move is to reserve dev "
+                                                                     + "card, a card "
+                                                                     + "or deck level to draw "
+                                                                     + "a card from "
+                                                                     + "must be chosen"))));
     return selectedCard;
   }
 
@@ -344,7 +351,8 @@ public class GameBoard {
     // checking to see whether they're buying from reserved card in hand / table or from deck
     Card selectedCard = move.getCard()
                             .orElseThrow(() -> new IllegalGameStateException(
-                                "if selected move is to purchase a dev card, there needs to be a card selected"));
+                                "if selected move is to purchase a dev card, "
+                                  + "there needs to be a card selected"));
     // check to make sure that the card they wish to purchase from their hand is valid
     if (inventory.hasCardReserved(selectedCard)) {
       // they have the card, and it has been reserved, so they can legally buy it
@@ -367,7 +375,8 @@ public class GameBoard {
       // cannot purchase card if it's not reserved in hand or face-up
       logger.log(
           Level.SEVERE,
-          "A card has been attempted to be purchased but it wasn't reserved in inventory nor face-up on game board"
+          "A card has been attempted to be purchased "
+            + "but it wasn't reserved in inventory nor face-up on game board"
       );
       throw new IllegalGameStateException(
           "Cannot purchase card which isn't reserved or face-up");
@@ -453,6 +462,12 @@ public class GameBoard {
                      .removeToken();
   }
 
+  /**
+   * Returns the user inventory belonging to the player with the given username.
+   *
+   * @param playerName the player's username
+   * @return the given player's inventory
+   */
   public Optional<UserInventory> getInventoryByPlayerName(String playerName) {
     for (UserInventory userInventory : inventories) {
       if (userInventory.getPlayer()
@@ -476,12 +491,17 @@ public class GameBoard {
     return cardField;
   }
 
-  public List<TokenPile> getTokenPiles() {
+  /*public List<TokenPile> getTokenPiles() {
     return tokenPiles.values()
                      .stream()
                      .toList();
-  }
+  }*/
 
+  /**
+   * Retrieves the token piles on the game board except for the gold token pile.
+   *
+   * @return the token piles on the game board
+   */
   public List<TokenPile> getTokenPilesNoGold() {
     return tokenPiles.values()
                      .stream()
@@ -511,10 +531,11 @@ public class GameBoard {
     if (!(o instanceof GameBoard gameBoard)) {
       return false;
     }
-    return Objects.equals(inventories, gameBoard.inventories) &&
-        Objects.equals(decks, gameBoard.decks) && Objects.equals(cardField, gameBoard.cardField) &&
-        Objects.equals(tokenPiles, gameBoard.tokenPiles) &&
-        Objects.equals(nobles, gameBoard.nobles);
+    return Objects.equals(inventories, gameBoard.inventories)
+             && Objects.equals(decks, gameBoard.decks)
+             && Objects.equals(cardField, gameBoard.cardField)
+             && Objects.equals(tokenPiles, gameBoard.tokenPiles)
+             && Objects.equals(nobles, gameBoard.nobles);
   }
 
   @Override

@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-
+/**
+ * SplendorGame object which keeps track of all game info including the session info,
+ * game id, the turn manage, and the game board.
+ */
 public class SplendorGame {
 
   private final SessionInfo sessionInfo;
@@ -93,10 +96,10 @@ public class SplendorGame {
     }
   }
 
-  private void setUpTokenPiles(List<TokenPile> piles, boolean bSetUp) {
+  private void setUpTokenPiles(List<TokenPile> piles, boolean setUp) {
     for (int i = 0; i < TokenType.values().length; ++i) {
       TokenPile pile = new TokenPile(TokenType.values()[i]);
-      if (bSetUp) {
+      if (setUp) {
         pile.setUp(sessionInfo.getNumPlayers());
       }
       piles.add(pile);

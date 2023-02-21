@@ -9,7 +9,8 @@ public enum Power {
    */
   PURCHASE_CARD_TAKE_TOKEN,
   /**
-   * This power allows a player to take an extra different coloured token if they take two tokens of the same colour.
+   * This power allows a player to take an extra different coloured token
+   * if they take two tokens of the same colour.
    */
   TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL,
   /**

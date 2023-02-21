@@ -21,6 +21,11 @@ public class LocalGameStorage {
   private LocalGameStorage() {
   }
 
+  /**
+   * Adds an active game to the map of active games.
+   *
+   * @param manager the game to be added
+   */
   public static void addActiveGame(SplendorGame manager) {
     if (!activeGames.containsKey(manager.getGameId())) {
       activeGames.put(manager.getGameId(), manager);
@@ -32,6 +37,12 @@ public class LocalGameStorage {
     activeGames.remove(manager.getGameId());
   }
 
+  /**
+   * Retrieves the active game with the given id.
+   *
+   * @param gameid the id of the active game
+   * @return the active game
+   */
   public static Optional<SplendorGame> getActiveGame(long gameid) {
     if (activeGames.containsKey(gameid)) {
       return Optional.of(activeGames.get(gameid));
@@ -39,14 +50,21 @@ public class LocalGameStorage {
       return Optional.empty();
     }
   }
-  
+
+  /**
+   * Checks if an update is required.
+   *
+   * @param gameid the game id of the active game
+   * @return a boolean determining if an update is required
+   */
   public static boolean requiresUpdate(long gameid) {
     if (activeGames.containsKey(gameid)) {
       if (gameStates.containsKey(gameid)) {
-        if(activeGames.get(gameid).hashCode() != gameStates.get(gameid))
+        if (activeGames.get(gameid).hashCode() != gameStates.get(gameid)) {
           return true;
-        else
+        } else {
           return false;
+        }
       }
     }
     throw new GameNotFoundException(gameid);

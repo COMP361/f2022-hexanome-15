@@ -23,15 +23,17 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
 
   @Override
   public String toString() {
-    return "SessionInfo{" +
-             "players=" + players +
-             ", gameServer='" + gameServer + '\'' +
-             ", gameCreator=" + gameCreator +
-             ", saveGameId='" + saveGameId + '\'' +
-             '}';
+    return "SessionInfo{"
+             + "players=" + players
+             + ", gameServer='" + gameServer + '\''
+             + ", gameCreator=" + gameCreator
+             + ", saveGameId='" + saveGameId + '\''
+             + '}';
   }
 
   /**
+   * Creates a SessionInfo object.
+   *
    * @param gameServer  the location of the server.
    * @param players     list of players in game.
    * @param gameCreator game creator name.
@@ -63,10 +65,16 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     return players.size();
   }
 
-  public Optional<PlayerWrapper> getPlayerByName(String pName) {
+  /**
+   * Retrieves the player with the given username.
+   *
+   * @param username the given username
+   * @return the requested player
+   */
+  public Optional<PlayerWrapper> getPlayerByName(String username) {
     for (PlayerWrapper pw : this) {
       if (pw.getName()
-            .equals(pName)) {
+            .equals(username)) {
         return Optional.of(pw);
       }
     }

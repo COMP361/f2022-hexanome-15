@@ -25,13 +25,16 @@ public class Move {
    * Creates a Move.
    *
    * @param action             The action that a player did.
-   * @param card               The card that was purchased/reserved, can be null if none or not available to
+   * @param card               The card that was purchased/reserved,
+   *                           can be null if none or not available to
    *                           see by the client.
    * @param player             The player's username.
-   * @param deckType           The level of the deck from which they can take from if they want, can be null.
+   * @param deckType           The level of the deck from which
+   *                           they can take from if they want, can be null.
    * @param returnedTokenTypes tokens that are to be returned as a result of having > 10 tokens as
    *                           a result of the tokens taken in this move.
-   * @param noble              a noble tile that represents the noble which will visit as a result of selecting this move
+   * @param noble              a noble tile that represents the noble
+   *                           which will visit as a result of selecting this move
    * @param selectedTokenTypes the type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
