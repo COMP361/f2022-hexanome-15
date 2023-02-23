@@ -68,15 +68,15 @@ public class TradingPostSlot {
   }
 
   /**
-   * Checks whether the trading post slot already has
-   * a coat of arms of a certain color that is placed.
+   * Adds a Coat of Arms to the trading post slot.
    *
-   * @param coatOfArms the given coat of arms
-   * @return a boolean determining whether the given coatOfArms
-   *     has been placed on this trading post slot
+   * @param coatOfArms The Coat of Arms to be added
    */
-  public boolean isPlaced(CoatOfArms coatOfArms) {
-    return  acquiredCoatOfArmsList.contains(coatOfArms);
+  public void addCoatOfArms(CoatOfArms coatOfArms) {
+    assert coatOfArms != null;
+    if (!isFull() && !acquiredCoatOfArmsList.contains(coatOfArms)) {
+      acquiredCoatOfArmsList.add(coatOfArms);
+    }
   }
 
   /**
