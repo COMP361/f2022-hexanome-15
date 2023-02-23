@@ -2,8 +2,6 @@ package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
