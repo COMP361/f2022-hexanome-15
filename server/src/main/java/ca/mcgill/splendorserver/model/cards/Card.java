@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.model.cards;
 
+import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -371,6 +372,99 @@ public class Card implements Comparable<Card> {
         new CardCost(0, 3, 6, 3, 0)));
     cards.add(new Card(89, 5, TokenType.RUBY, DeckType.BASE3, TokenBonusAmount.ONE,
         new CardCost(0, 0, 7, 3, 0)));
+
+    cards.add(new OrientCard(90, 0, TokenType.GOLD, DeckType.ORIENT1, TokenBonusAmount.TWO,
+      new CardCost(0, 0, 3, 0, 0), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(91, 0, TokenType.GOLD, DeckType.ORIENT1, TokenBonusAmount.TWO,
+      new CardCost(0, 3, 0,0, 0), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(92, 0, TokenType.GOLD, DeckType.ORIENT1, TokenBonusAmount.TWO,
+      new CardCost(3, 0, 0, 0, 0), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(93, 0, TokenType.GOLD, DeckType.ORIENT1, TokenBonusAmount.TWO,
+      new CardCost(0, 0, 0, 0, 3), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(94, 0, TokenType.GOLD, DeckType.ORIENT1, TokenBonusAmount.TWO,
+      new CardCost(0, 0, 0, 3, 0), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(95, 0, null, DeckType.ORIENT1, TokenBonusAmount.ZERO,
+      new CardCost(0, 3, 2, 0, 0), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
+    cards.add(new OrientCard(96, 0, null, DeckType.ORIENT1, TokenBonusAmount.ZERO,
+      new CardCost(0, 0, 3, 0, 2), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
+    cards.add(new OrientCard(97, 0, null, DeckType.ORIENT1, TokenBonusAmount.ZERO,
+      new CardCost(2, 0, 0, 0, 3), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
+    cards.add(new OrientCard(98, 0, null, DeckType.ORIENT1, TokenBonusAmount.ZERO,
+      new CardCost(0, 2, 0, 3, 0), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
+    cards.add(new OrientCard(99, 0, null, DeckType.ORIENT1, TokenBonusAmount.ZERO,
+      new CardCost(3, 0, 0, 2, 0), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
+
+    cards.add(new OrientCard(100, 1, TokenType.DIAMOND, DeckType.ORIENT2, TokenBonusAmount.ONE,
+      new CardCost(0, 2, 2, 2, 2), false,
+      new ArrayList<>(List.of(Action.RESERVE_NOBLE))));
+    cards.add(new OrientCard(101, 1, TokenType.EMERALD, DeckType.ORIENT2, TokenBonusAmount.ONE,
+      new CardCost(2, 2, 0, 2, 2), false,
+      new ArrayList<>(List.of(Action.RESERVE_NOBLE))));
+    cards.add(new OrientCard(102, 1, TokenType.RUBY, DeckType.ORIENT2, TokenBonusAmount.ONE,
+      new CardCost(2, 2, 2, 0, 2), false,
+      new ArrayList<>(List.of(Action.RESERVE_NOBLE))));
+    cards.add(new OrientCard(103, 0, null, DeckType.ORIENT2, TokenBonusAmount.ZERO,
+      new CardCost(0, 0, 4, 3, 1), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD, Action.CASCADE_LEVEL_1))));
+    cards.add(new OrientCard(104, 0, null, DeckType.ORIENT2, TokenBonusAmount.ZERO,
+      new CardCost(4, 3, 0, 0, 1), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD, Action.CASCADE_LEVEL_1))));
+    cards.add(new OrientCard(105, 0, TokenType.DIAMOND, DeckType.ORIENT2, TokenBonusAmount.TWO,
+      new CardCost(0, 4, 3, 0, 0), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(106, 0, TokenType.SAPPHIRE, DeckType.ORIENT2, TokenBonusAmount.TWO,
+      new CardCost(3, 0, 0, 0, 4), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(107, 0, TokenType.EMERALD, DeckType.ORIENT2, TokenBonusAmount.TWO,
+      new CardCost(4, 0, 0, 3, 0), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(108, 0, TokenType.RUBY, DeckType.ORIENT2, TokenBonusAmount.TWO,
+      new CardCost(0, 0, 4, 0, 3), false,
+      new ArrayList<>()));
+    cards.add(new OrientCard(109, 0, TokenType.ONYX, DeckType.ORIENT2, TokenBonusAmount.TWO,
+      new CardCost(0, 3, 0, 4, 0), false,
+      new ArrayList<>()));
+
+    cards.add(new OrientCard(110, 0, TokenType.DIAMOND, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(1, 6, 3, 0, 0), false,
+      new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
+    cards.add(new OrientCard(111, 0, TokenType.SAPPHIRE, DeckType.ORIENT3, TokenBonusAmount.ONE,
+        new CardCost(0, 1, 6, 3, 0), false,
+        new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
+    cards.add(new OrientCard(112, 0, TokenType.EMERALD, DeckType.ORIENT3, TokenBonusAmount.ONE,
+        new CardCost(0, 0, 1, 6, 3), false,
+        new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
+    cards.add(new OrientCard(113, 0, TokenType.RUBY, DeckType.ORIENT3, TokenBonusAmount.ONE,
+        new CardCost(3, 0, 0, 1, 6), false,
+        new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
+    cards.add(new OrientCard(114, 0, TokenType.ONYX, DeckType.ORIENT3, TokenBonusAmount.ONE,
+        new CardCost(6, 3, 0, 0, 1), false,
+        new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
+    cards.add(new OrientCard(115, 3, TokenType.DIAMOND, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_2_BLACK_CARDS))));
+    cards.add(new OrientCard(116, 3, TokenType.SAPPHIRE, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_2_WHITE_CARDS))));
+    cards.add(new OrientCard(117, 3, TokenType.EMERALD, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_2_BLUE_CARDS))));
+    cards.add(new OrientCard(118, 3, TokenType.RUBY, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_2_GREEN_CARDS))));
+    cards.add(new OrientCard(119, 3, TokenType.ONYX, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_2_RED_CARDS))));
 
   }
 

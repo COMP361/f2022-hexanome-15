@@ -16,31 +16,9 @@ public enum Action {
    */
   PURCHASE_DEV_RECEIVE_NOBLE,
   /**
-   * Reserve type Action. A gold token is received upon reserving a card.
-   */
-  RESERVE_DEV_TAKE_JOKER,
-  /**
    * This action allows players to take 3 different-coloured gem tokens.
    */
   TAKE_3_GEM_TOKENS_DIFF_COL,
-  /**
-   * This action allows players to take 2 same-coloured gem tokens.
-   * This action is only possible if there are at least 4 tokens of the chosen color left
-   * when the player takes them.
-  */
-  TAKE_2_GEM_TOKENS_SAME_COL,
-  /**
-   * This action allows players to take 2 same-coloured gem tokens.
-   * 1 token must be returned to the bank
-   * because the player has 11 tokens after taking the 2 new tokens.
-   */
-  TAKE_2_GEM_TOKENS_SAME_COL_RET_1,
-  /**
-   * This action allows players to take 2 same-coloured gem tokens.
-   * 2 tokens must be returned to the bank
-   * because the player has 12 tokens after taking the 2 new tokens.
-   */
-  TAKE_2_GEM_TOKENS_SAME_COL_RET_2,
   /**
    * This action allows players to take 3 different-coloured gem tokens.
    * 1 token must be returned to the bank
@@ -60,15 +38,36 @@ public enum Action {
    */
   TAKE_3_GEM_TOKENS_DIFF_COL_RET_3,
   /**
+   * This action allows players to take 2 same-coloured gem tokens.
+   * This action is only possible if there are at least 4 tokens of the chosen color left
+   * when the player takes them.
+  */
+  TAKE_2_GEM_TOKENS_SAME_COL,
+  /**
+   * This action allows players to take 2 same-coloured gem tokens.
+   * 1 token must be returned to the bank
+   * because the player has 11 tokens after taking the 2 new tokens.
+   */
+  TAKE_2_GEM_TOKENS_SAME_COL_RET_1,
+  /**
+   * This action allows players to take 2 same-coloured gem tokens.
+   * 2 tokens must be returned to the bank
+   * because the player has 12 tokens after taking the 2 new tokens.
+   */
+  TAKE_2_GEM_TOKENS_SAME_COL_RET_2,
+  /**
    * Reserve type action.
    * A gold token is not received upon reserving a card because there are no gold tokens left.
    */
   RESERVE_DEV,
   /**
+   * Reserve type Action. A gold token is received upon reserving a card.
+   */
+  RESERVE_DEV_TAKE_JOKER,
+  /**
    * Reserve noble type action.
    * Some Orient expansion cards allow a player to reserve a noble upon purchasing the card.
    */
-
   RESERVE_NOBLE,
   /**
    * Cascade level 1 type action.
@@ -92,11 +91,40 @@ public enum Action {
    */
   PAIR_SPICE_CARD,
   /**
-   * Discard 2 cards type action.
+   * Discard 2 white cards type action.
    * Some Orient expansion cards force a player
-   * to discard 2 cards in their inventory upon purchasing the card.
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
    */
-  DISCARD_2_CARDS,
+  DISCARD_2_WHITE_CARDS,
+  /**
+   * Discard 2 blue cards type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_2_BLUE_CARDS,
+  /**
+   * Discard 2 green cards type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_2_GREEN_CARDS,
+  /**
+   * Discard 2 red cards type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_2_RED_CARDS,
+  /**
+   * Discard 2 black cards type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_2_BLACK_CARDS,
   /**
    * Take 1 gem token type action.
    * This is used for two Trading post expansion powers.
