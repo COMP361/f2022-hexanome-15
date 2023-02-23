@@ -4,6 +4,8 @@ import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Make Nobles flyweights
+
 /**
  * Represents a Splendor Noble with reserved status and prestige.
  */

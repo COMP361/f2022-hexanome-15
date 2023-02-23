@@ -10,7 +10,6 @@ import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
-import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -35,7 +34,7 @@ public class UserInventory implements Iterable<Card> {
   private       int                           prestigeWon;
   private final List<Noble>                   visitingNobles;
   private final List<Power> acquiredPowers;
-  private final List<CoatOfArmsPile> coatOfArmsPiles;
+  private CoatOfArmsPile coatOfArmsPile;
 
 
   /**
@@ -58,11 +57,6 @@ public class UserInventory implements Iterable<Card> {
     prestigeWon    = 0;
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
-    coatOfArmsPiles = new ArrayList<>();
-    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.RED));
-    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.YELLOW));
-    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.BLACK));
-    coatOfArmsPiles.add(new CoatOfArmsPile(CoatOfArmsType.BLUE));
   }
 
   public int getPrestigeWon() {
@@ -230,7 +224,6 @@ public class UserInventory implements Iterable<Card> {
     cards.add(card);
   }
 
-  //TODO: Remove gold tokens upon purchase
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
    * purchased and deducts the appropriate amount of tokens from their inventory also taking
@@ -451,7 +444,7 @@ public class UserInventory implements Iterable<Card> {
    * @param power the power to be added
    */
   public void addPower(Power power) {
-    assert power != null;
+    assert power != null && !acquiredPowers.contains(power);
     acquiredPowers.add(power);
   }
 

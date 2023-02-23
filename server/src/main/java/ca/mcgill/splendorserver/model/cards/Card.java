@@ -1,8 +1,13 @@
 package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-import java.util.*;
+//TODO: Make cards flyweights
 
 /**
  * Represents a Splendor Card with id, prestige, tokenBonus, deckType, discount
@@ -81,6 +86,12 @@ public class Card implements Comparable<Card> {
       case BASE3:
         toSend = new ArrayList<>(cards.subList(70, 90));
         break;
+      case ORIENT1:
+        toSend = new ArrayList<>(cards.subList(90, 100));
+      case ORIENT2:
+        toSend = new ArrayList<>(cards.subList(100, 110));
+      case ORIENT3:
+        toSend = new ArrayList<>(cards.subList(110, 120));
       default:
         return null;
     }

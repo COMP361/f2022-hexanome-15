@@ -2,7 +2,9 @@ package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
-import java.util.Optional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents an Orient expansion development card in Splendor.
@@ -11,7 +13,7 @@ import java.util.Optional;
 public class OrientCard extends Card {
 
   private final boolean spiceBag;
-  private final Optional<Action> bonusAction;
+  private final List<Action> bonusActions;
 
   /**
    * Creates a card.
@@ -22,14 +24,15 @@ public class OrientCard extends Card {
    * @param deckType         The type of card
    * @param tokenBonusAmount The amount of bonus gems a card is worth
    * @param cardCost         The cost of the card
-   * @param bonusAction      The bonus action that may occur when this Orient card is purchased
+   * @param bonusActions     The bonus actions that may occur when this Orient card is purchased
    */
   public OrientCard(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
                     TokenBonusAmount tokenBonusAmount,
-                    CardCost cardCost, Action bonusAction, boolean spiceBag) {
+                    CardCost cardCost, boolean spiceBag,
+                    List<Action> bonusActions) {
     super(id, prestige, tokenBonusType, deckType, tokenBonusAmount, cardCost);
-    assert bonusAction != null;
-    this.bonusAction = Optional.ofNullable(bonusAction);
+    assert bonusActions != null;
+    this.bonusActions = bonusActions;
     this.spiceBag = spiceBag;
   }
 

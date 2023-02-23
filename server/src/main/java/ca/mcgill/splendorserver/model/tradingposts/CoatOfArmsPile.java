@@ -49,7 +49,7 @@ public class CoatOfArmsPile {
    *
    * @return the coat of arms that is removed
    */
-  public CoatOfArms removeToken() {
+  public CoatOfArms removeCoatOfArms() {
     assert !coatOfArmsList.isEmpty();
     return coatOfArmsList.remove(0);
   }

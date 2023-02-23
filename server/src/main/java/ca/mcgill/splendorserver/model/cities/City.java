@@ -4,6 +4,8 @@ import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Make cities flyweights
+
 /**
  * Represents a Splendor Cities expansion City
  * with required prestige and gem amount to obtain the city.

@@ -59,6 +59,27 @@ public class TradingPostSlot {
   }
 
   /**
+   * Checks whether the trading post slot has all possible coat of arms placed on it.
+   *
+   * @return a boolean determining whether the trading post slot is full
+   */
+  public boolean isFull() {
+    return acquiredCoatOfArmsList.size() >= 4;
+  }
+
+  /**
+   * Checks whether the trading post slot already has
+   * a coat of arms of a certain color that is placed.
+   *
+   * @param coatOfArms the given coat of arms
+   * @return a boolean determining whether the given coatOfArms
+   *     has been placed on this trading post slot
+   */
+  public boolean isPlaced(CoatOfArms coatOfArms) {
+    return  acquiredCoatOfArmsList.contains(coatOfArms);
+  }
+
+  /**
    * Generates all trading post slots.
    */
   private static void generateTradingPostSlots() {
