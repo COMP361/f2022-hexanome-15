@@ -54,6 +54,11 @@ public class Noble {
     return status;
   }
 
+  public void setStatus(NobleStatus nobleStatus) {
+    assert nobleStatus != null;
+    this.status = nobleStatus;
+  }
+
   /**
    * Generates all nobles.
    * Then 3-5 random nobles will be added to the game.

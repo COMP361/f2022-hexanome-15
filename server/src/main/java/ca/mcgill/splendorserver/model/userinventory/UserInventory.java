@@ -225,6 +225,24 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Reserves noble card as part of Orient card bonus action ands adds it to inventory.
+   * @param noble noble being reserved
+   * @throws AssertionError if noble == null
+   */
+  public void addReservedNoble(Noble noble) {
+    assert noble != null;
+
+    if (noble.getStatus() != NobleStatus.ON_BOARD) {
+      throw new IllegalGameStateException(
+              "Noble cannot be reserved if it has already been reserved or is currently visiting a player");
+      )
+    }
+
+    noble.setStatus(NobleStatus.RESERVED);
+    visitingNobles.add(noble);
+  }
+
+  /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
    * purchased and deducts the appropriate amount of tokens from their inventory also taking
    * into consideration any token type bonuses they may have from owned cards.

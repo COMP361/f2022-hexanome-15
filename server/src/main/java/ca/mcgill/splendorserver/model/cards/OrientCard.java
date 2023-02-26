@@ -46,3 +46,4 @@ public class OrientCard extends Card {
     setBonusType(card.getTokenBonusType());
   }
 }
+
