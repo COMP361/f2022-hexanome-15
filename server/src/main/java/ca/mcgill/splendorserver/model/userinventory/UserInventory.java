@@ -235,7 +235,6 @@ public class UserInventory implements Iterable<Card> {
     if (noble.getStatus() != NobleStatus.ON_BOARD) {
       throw new IllegalGameStateException(
               "Noble cannot be reserved if it has already been reserved or is currently visiting a player");
-      )
     }
 
     noble.setStatus(NobleStatus.RESERVED);
