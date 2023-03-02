@@ -113,6 +113,17 @@ public class ActionManager {
         case RESERVE_DEV -> null;
         case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
         // TODO: get possible return combinations for all the compound moves
+        case RESERVE_NOBLE -> null;
+        case CASCADE_LEVEL_1 -> null;
+        case CASCADE_LEVEL_2 -> null;
+        case PAIR_SPICE_CARD -> null;
+        case DISCARD_2_WHITE_CARDS -> null;
+        case DISCARD_2_BLUE_CARDS -> null;
+        case DISCARD_2_GREEN_CARDS -> null;
+        case DISCARD_2_RED_CARDS -> null;
+        case DISCARD_2_BLACK_CARDS -> null;
+        case TAKE_1_GEM_TOKEN -> null;
+        case PLACE_COAT_OF_ARMS -> null;
       };
     }
 
