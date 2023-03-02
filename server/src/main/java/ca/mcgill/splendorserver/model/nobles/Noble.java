@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Noble {
   private final CardCost visitRequirements;
-  private final NobleStatus status;
+  private NobleStatus status;
   private final int         prestige;
   private static final List<Noble> nobles  = new ArrayList<Noble>();
 

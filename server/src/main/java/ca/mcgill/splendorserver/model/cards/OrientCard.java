@@ -45,5 +45,17 @@ public class OrientCard extends Card {
     setBonusAmount(TokenBonusAmount.ONE);
     setBonusType(card.getTokenBonusType());
   }
+
+  public boolean isSpiceBag() {
+    return this.spiceBag;
+  }
+
+  /**
+   *
+   * @return bonusActions The list of bonus actions provided by the Orient card
+   */
+  public List<Action> getBonusActions() {
+    return bonusActions;
+  }
 }
 

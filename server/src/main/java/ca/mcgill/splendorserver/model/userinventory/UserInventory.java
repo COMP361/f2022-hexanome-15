@@ -4,6 +4,8 @@ import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardStatus;
+import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
@@ -235,12 +237,65 @@ public class UserInventory implements Iterable<Card> {
     if (noble.getStatus() != NobleStatus.ON_BOARD) {
       throw new IllegalGameStateException(
               "Noble cannot be reserved if it has already been reserved or is currently visiting a player");
-      )
     }
 
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
   }
+
+  /**
+   * Adds the chosen level one Orient card to the inventory.
+   * @param card orient level one card to add
+   * @throws AssertionError if card == null
+   */
+  public void addCascadeLevelOne(OrientCard card) {
+    assert card != null;
+
+    if (card.getDeckType() == DeckType.ORIENT1) {
+      card.setCardStatus(CardStatus.PURCHASED);
+      cards.add(card);
+    }
+  }
+
+  /**
+   * Adds the chosen level two Orient card to the inventory.
+   * @param card orient level two card to add
+   * @throws AssertionError if card == null
+   */
+  public void addCascadeLevelTwo(OrientCard card) {
+    assert card != null;
+
+    if (card.getDeckType() == DeckType.ORIENT2) {
+      card.setCardStatus(CardStatus.PURCHASED);
+      cards.add(card);
+    }
+  }
+
+  /**
+   * Removes card from deck based on bonus colour, prioritizes spice bag cards
+   * @param tokenType the token type of the element to remove
+   * @throws AssertionError if tokenType == null
+   */
+public void discardByBonusType(TokenType tokenType) {
+    assert tokenType != null;
+    for (int i = 0; i < cards.size(); i++) {
+      Card current = cards.get(i);
+
+      if (current.getTokenBonusType() == tokenType && current.getCardStatus() != CardStatus.RESERVED &&
+              ((OrientCard) current).isSpiceBag()) {
+        cards.remove(i);
+        return;
+      }
+    }
+    for (int j = 0; j < cards.size(); j++) {
+      if (cards.get(j).getTokenBonusType() == tokenType && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
+        cards.remove(j);
+        return;
+      }
+    }
+}
+
+
 
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
