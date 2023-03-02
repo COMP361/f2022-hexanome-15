@@ -19,6 +19,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.persistence.Embeddable;
+
 import org.springframework.http.HttpStatus;
 
 /**
@@ -27,6 +30,7 @@ import org.springframework.http.HttpStatus;
  *
  * @author lawrenceberardelli
  */
+@Embeddable
 public class GameBoard {
 
   private final List<UserInventory>           inventories;

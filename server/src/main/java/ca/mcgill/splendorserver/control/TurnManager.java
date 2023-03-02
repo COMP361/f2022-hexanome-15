@@ -23,7 +23,6 @@ public class TurnManager implements Iterable<PlayerWrapper> {
   /*
    * Creating circular data structure to store and update turns
    */
-  @OneToMany
   private List<PlayerWrapper> turns;
 
   /**

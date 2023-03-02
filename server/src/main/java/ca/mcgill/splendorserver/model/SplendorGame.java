@@ -15,15 +15,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  * SplendorGame object which keeps track of all game info including the session info,
  * game id, the turn manage, and the game board.
  */
+@Entity
 public class SplendorGame {
 
+  @Embedded
   private final SessionInfo sessionInfo;
+  @Id
   private final long        gameId;
+  @Embedded
   private final TurnManager turnManager;
+  @Embedded
   private       GameBoard   board;
   private       boolean     finished = false;
 
@@ -79,6 +88,7 @@ public class SplendorGame {
     return sessionInfo.getPlayerByName(name);
   }
 
+  @Id
   public long getGameId() {
     return gameId;
   }

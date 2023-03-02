@@ -1,0 +1,24 @@
+{
+	"players": [{
+			"playername": "maex",
+			"inventory": {
+				"cards": [{"id" : "id", "type" : "type"}],
+				"tokens": ["tokentype", "tokentype"],
+				"prestige": 5
+			}
+		},
+		{
+			"playername": "linus",
+			"inventory": {
+				"cards": [{"id" : "id", "type" : "type"}],
+				"tokens": ["tokentype", "tokentype"],
+				"prestige": 5
+			}
+		}
+	],
+	"playingField": [{
+		"location": "code",
+		"id": "idno"
+	}]
+
+}

@@ -6,6 +6,7 @@ import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import com.google.gson.Gson;
+
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * GameRestController.
@@ -33,15 +33,10 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
-  private static final String                                         gameServiceLocation
-                                                                                      = "http://127.0.0.1:8080";
-  //should probably be final
-  private final        ca.mcgill.splendorserver.gameio.GameRepository repository;
+  private static final String gameServiceLocation = "http://127.0.0.1:8080";
   // 4 threads for the max 4 players
   private final ExecutorService updaters = Executors.newFixedThreadPool(4);
-  private              String                                         gameName;
-  private              boolean                                        updateGameBoard = false;
-  private              boolean                                        updateAction    = false;
+  private String gameName;
   private JSONObject adminAuth = LobbyServiceExecutor
                                    .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
   private String refreshToken = (String) Parsejson
@@ -52,10 +47,9 @@ public class GameRestController {
    *
    * @param repository The repository
    */
-  public GameRestController(GameRepository repository) {
+  public GameRestController() {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
-    this.repository = repository;
     System.out.println("in here");
   }
 
@@ -180,85 +174,15 @@ public class GameRestController {
    */
   @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
-    SplendorGame game = repository.findById(gameid)
-                                  .orElseThrow(
-                                      () -> new GameNotFoundException(
-                                          gameid));
-    repository.deleteById(gameid);
+//    SplendorGame game = repository.findById(gameid)
+//                                  .orElseThrow(
+//                                      () -> new GameNotFoundException(
+//                                          gameid));
+//    repository.deleteById(gameid);
+    LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid).get());
     LOGGER.info("DELETED GAME ID: " + gameid);
   }
 
-  /*
-   * TODO: encoding for the game state. Create initial for when the LS contacts
-   * server -> send to all users in the session via get
-   */
-
-  /**
-   * Sends the gameboard to the server.
-   * This is called by LobbyServiceExecutor.
-   *
-   * @param gameid    The game id
-   * @param gameBoard The current gameboard
-   */
-  @PutMapping("/api/games/{gameid}/gameboard")
-  public void setGameBoard(@PathVariable(name = "gameid") Long gameid,
-                           @RequestBody String gameBoard
-  ) {
-    // access the game object from database and then update the reference to the
-    // game-board
-    SplendorGame game = repository.findById(gameid)
-                                  .orElseThrow(
-                                      () -> new GameNotFoundException(
-                                          gameid));
-    //game.updateGameBoard(gameBoard);
-    repository.saveAndFlush(game);
-    updateGameBoard = true;
-  }
-
-  /**
-   * Updates the last action of the specified game, flags for game update to be sent.
-   *
-   * @param gameid The game id
-   * @param action The last action that was made
-   */
-  @PutMapping("/api/games/{gameid}/endturn")
-  public void endTurn(@PathVariable(name = "gameid") Long gameid, @RequestBody String action) {
-    SplendorGame game = repository.findById(gameid)
-                                  .orElseThrow(
-                                      () -> new GameNotFoundException(
-                                          gameid));
-    //game.setLastAction(action);
-    repository.saveAndFlush(game);
-    updateAction = true;
-  }
-
-  /**
-   * Gets the last action that a player made.
-   *
-   * @param gameid The game id
-   * @return The last action
-   */
-  @GetMapping("/api/games/{gameid}/endturn")
-  public DeferredResult<String> getLastAction(@PathVariable(name = "gameid") Long gameid) {
-    DeferredResult<String> updatedAction = new DeferredResult<>();
-    updaters.execute(() -> {
-      while (!updateAction) {
-        try {
-          Thread.sleep(5000);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-      SplendorGame game = repository.findById(gameid)
-                                    .orElseThrow(
-                                        () -> new GameNotFoundException(
-                                            gameid));
-      //updatedAction.setResult(game.getLastAction());
-      updateAction = false;
-    });
-    return updatedAction;
-  }
 
   //copied from LobbyServiceExecutor, to be refactored later
   private void checkNotNullNotEmpty(String... args) {
@@ -287,38 +211,6 @@ public class GameRestController {
     } else {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-  }
-
-  /**
-   * Returns the current gameboard.
-   *
-   * @param gameid The game id
-   * @return the current gameboard
-   */
-  @GetMapping("/api/games/{gameid}/gameboard")
-  public DeferredResult<String> currentGameBoard(@PathVariable Long gameid) {
-    DeferredResult<String> updatedGameBoard = new DeferredResult<>();
-    updaters.execute(() -> {
-      while (!updateGameBoard) {
-        // just wait
-        try {
-          Thread.sleep(5000);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-      // TODO: implement
-      SplendorGame game = repository.findById(gameid)
-                                    .orElseThrow(
-                                        () -> new GameNotFoundException(
-                                            gameid));
-      //updatedGameBoard.setResult(game.getGameBoard());
-      updateGameBoard = false;
-    });
-
-    return updatedGameBoard;
-
   }
 
 
