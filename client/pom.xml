@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.mcgill</groupId>
 	<artifactId>splendorclient</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -26,7 +26,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>ca.mcgill.splendorclient.gui.lobbyservice.Splendor</mainClass>
+                    <mainClass>ca.mcgill.splendorclient.control.Splendor</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -84,7 +84,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ca.mcgill.splendorclient.gui.lobbyservice.Splendor</mainClass>
+							<mainClass>ca.mcgill.splendorclient.control.Splendor</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

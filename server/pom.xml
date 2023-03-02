@@ -19,8 +19,6 @@
 		<java.version>16</java.version>
 		<build.name>splendorServer</build.name>
 	</properties>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -30,7 +28,7 @@
 		<dependency>
 			<groupId>ca.mcgill</groupId>
 			<artifactId>splendorclient</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
     		<groupId>com.konghq</groupId>

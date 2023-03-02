@@ -1,1 +1,5 @@
 /target/
+docs/
+
+# matches for any .idea directory anywhere in the repository
+/.idea/
