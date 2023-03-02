@@ -175,6 +175,17 @@ public class GameBoard {
           yield HttpStatus.PARTIAL_CONTENT;
         }
       }
+      case RESERVE_NOBLE -> null;
+      case CASCADE_LEVEL_1 -> null;
+      case CASCADE_LEVEL_2 -> null;
+      case PAIR_SPICE_CARD -> null;
+      case DISCARD_2_WHITE_CARDS -> null;
+      case DISCARD_2_BLUE_CARDS -> null;
+      case DISCARD_2_GREEN_CARDS -> null;
+      case DISCARD_2_RED_CARDS -> null;
+      case DISCARD_2_BLACK_CARDS -> null;
+      case TAKE_1_GEM_TOKEN -> null;
+      case PLACE_COAT_OF_ARMS -> null;
     };
   }
 
