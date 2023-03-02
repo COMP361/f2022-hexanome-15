@@ -121,6 +121,8 @@ public class LobbyController implements Initializable {
                   if (sessionInfo.getBoolean("launched")) {
                     Platform.runLater(() -> {
                       Splendor.transitionToGameScreen(Long.valueOf(sessionToJoin), sessionInfo);
+                      GameController.getInstance().setGameId(Long.valueOf(sessionToJoin));
+                      GameController.start();
                     });
                     break;
                   }

@@ -11,7 +11,7 @@ public class GameController {
   private Long gameId;
   private int currentState;
   
-  private static GameController instance;
+  private static GameController instance = new GameController();
   
   private GameController() {
     
