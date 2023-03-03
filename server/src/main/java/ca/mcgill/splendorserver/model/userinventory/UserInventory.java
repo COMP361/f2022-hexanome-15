@@ -315,6 +315,7 @@ public class UserInventory implements Iterable<Card> {
     if (card.getDeckType() == DeckType.ORIENT1) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
+      addPrestige(card.getPrestige());
     }
   }
 
@@ -330,6 +331,7 @@ public class UserInventory implements Iterable<Card> {
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
+      addPrestige(card.getPrestige());
     }
   }
 
