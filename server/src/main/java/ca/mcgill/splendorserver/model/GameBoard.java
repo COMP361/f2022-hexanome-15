@@ -186,8 +186,24 @@ public class GameBoard {
       case DISCARD_2_GREEN_CARDS -> null;
       case DISCARD_2_RED_CARDS -> null;
       case DISCARD_2_BLACK_CARDS -> null;
-      case TAKE_1_GEM_TOKEN -> null;
-      case PLACE_COAT_OF_ARMS -> null;
+      case TAKE_1_GEM_TOKEN -> {
+        performTake1Gem(move, inventory);
+        yield HttpStatus.OK;
+      }
+      case TAKE_1_GEM_TOKEN_RET_1 -> {
+        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
+          performTake1GemReturn(move, inventory);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
+      }
+      case PLACE_COAT_OF_ARMS -> {
+        performPlaceCoatOfArms(move, inventory);
+        yield HttpStatus.OK;
+      }
     };
   }
 
@@ -476,7 +492,7 @@ public class GameBoard {
     }
   }
 
-  private void placeCoatOfArms(Move move, UserInventory inventory) {
+  private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked the power associated with this trading post slot
     if (move.getTradingPostSlot().isPresent()
           && !move.getTradingPostSlot().get().isFull()
