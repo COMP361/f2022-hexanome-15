@@ -232,6 +232,11 @@ public class UserInventory implements Iterable<Card> {
     return true;
   }
 
+  /**
+   * Gets the number of gold tokens in the user inventory.
+   *
+   * @return the number of users in the user inventory
+   */
   private int getGoldTokenCount() {
     return tokenPiles.computeIfAbsent(TokenType.GOLD, TokenPile::new)
                      .getSize();
