@@ -416,7 +416,7 @@ public class ActionManager {
         if (inventory.tokenCount() <= 8) {
           move = new Move(
               Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, null, null,
-              tokenPile.getType()
+            null, tokenPile.getType()
           );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
@@ -430,7 +430,7 @@ public class ActionManager {
           }*/
 
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
-                          null, null, tokenPile.getType()
+                          null, null, null, tokenPile.getType()
           );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
@@ -450,7 +450,7 @@ public class ActionManager {
           // loop through all return combinations now
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2, null, player, null,
                           null,
-                          null, tokenPile.getType()
+                          null, null, tokenPile.getType()
           );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
@@ -522,7 +522,7 @@ public class ActionManager {
         }*/
 
         // if we have a move requiring returning, loop through the combinations
-        Move move = new Move(action, null, player, null, null, null, tokenTypes);
+        Move move = new Move(action, null, player, null, null, null, null, tokenTypes);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                     .toUpperCase();
         moveMap.put(moveMd5, move);

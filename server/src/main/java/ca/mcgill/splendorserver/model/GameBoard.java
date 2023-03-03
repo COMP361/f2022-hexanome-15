@@ -411,6 +411,10 @@ public class GameBoard {
     }
   }
 
+  private void placeCoatOfArms(Move move, UserInventory inventory) {
+    // See if the player has unlocked a power
+  }
+
   private void replenishTakenCardFromDeck(DeckType deckType, int replenishIndex) {
     // empty card field means we cant replenish because otherwise it would have been replenished alr
     for (Deck deck : decks) {

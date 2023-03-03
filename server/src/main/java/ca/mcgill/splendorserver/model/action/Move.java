@@ -5,6 +5,7 @@ import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
 import java.util.Optional;
 
 /**
@@ -19,6 +20,7 @@ public class Move {
   private final Optional<TokenType[]> selectedTokenTypes; // which token type if move involves token
   private final Optional<TokenType[]> returnedTokenTypes; // token types selected to be returned
   private final Optional<DeckType>    deckType;
+  private final Optional<CoatOfArms>  coatOfArms;
   private final Optional<Noble>       noble;
 
   /**
@@ -35,10 +37,11 @@ public class Move {
    *                           a result of the tokens taken in this move.
    * @param noble              a noble tile that represents the noble
    *                           which will visit as a result of selecting this move
-   * @param selectedTokenTypes the type(s) of token if any, can be null.
+   * @param coatOfArms         The coat of  arms that is being placed on a trading route slot
+   * @param selectedTokenTypes The type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
-              DeckType deckType, TokenType[] returnedTokenTypes, Noble noble,
+              DeckType deckType, TokenType[] returnedTokenTypes, Noble noble, CoatOfArms coatOfArms,
               TokenType... selectedTokenTypes
   ) {
     this.action             = action;
@@ -47,6 +50,7 @@ public class Move {
     this.selectedTokenTypes = Optional.ofNullable(selectedTokenTypes);
     this.returnedTokenTypes = Optional.ofNullable(returnedTokenTypes);
     this.deckType           = Optional.ofNullable(deckType);
+    this.coatOfArms         = Optional.ofNullable(coatOfArms);
     this.noble              = Optional.ofNullable(noble);
   }
 
@@ -68,20 +72,49 @@ public class Move {
     return player;
   }
 
+  /**
+   * Returns the deck type of the deck the player is taking a card from.
+   *
+   * @return the deck type of the deck the player is taking a card from
+   */
   public Optional<DeckType> getDeckType() {
     return deckType;
   }
 
+  /**
+   * Returns the token types of token piles the player is taking from.
+   *
+   * @return the token types of token piles the player is taking from
+   */
   public Optional<TokenType[]> getSelectedTokenTypes() {
     return selectedTokenTypes;
   }
 
+  /**
+   * Returns the token types of tokens the player is returning to the board.
+   *
+   * @return the token types of tokens the player is returning to the board
+   */
   public Optional<TokenType[]> getReturnedTokenTypes() {
     return returnedTokenTypes;
   }
 
+  /**
+   * Returns the noble that is visiting the player.
+   *
+   * @return the noble that is visiting the player
+   */
   public Optional<Noble> getNoble() {
     return noble;
+  }
+
+  /**
+   * Returns the coat of arms that a player is being placed on a trading route slot.
+   *
+   * @return the coat of arms that a player is being placed on a trading route slot
+   */
+  public Optional<CoatOfArms> getCoatOfArms() {
+    return coatOfArms;
   }
 
   /**
@@ -90,17 +123,19 @@ public class Move {
    * @return the current player's action
    */
   public Action getAction() {
+
     return action;
   }
 
   @Override
   public String toString() {
     return "Move{"
-        + "player=" + player
-        + ", action=" + action
-        + ", card=" + card
-        + ", tokenTypes=" + selectedTokenTypes
-        + ", deckLevel=" + deckType
-        + '}';
+             + "player=" + player
+             + ", action=" + action
+             + ", card=" + card
+             + ", tokenTypes=" + selectedTokenTypes
+             + ", deckLevel=" + deckType
+             + ", coatOfArms=" + coatOfArms
+             + '}';
   }
 }
