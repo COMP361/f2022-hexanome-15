@@ -6,6 +6,7 @@ import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
@@ -20,6 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
+
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -180,14 +183,33 @@ public class GameBoard {
       case RESERVE_NOBLE -> null;
       case CASCADE_LEVEL_1 -> null;
       case CASCADE_LEVEL_2 -> null;
-      case PAIR_SPICE_CARD -> null;
+      case PAIR_SPICE_CARD -> {
+        performPairSpiceCard(move, inventory);
+        yield HttpStatus.OK;
+      }
       case DISCARD_2_WHITE_CARDS -> null;
       case DISCARD_2_BLUE_CARDS -> null;
       case DISCARD_2_GREEN_CARDS -> null;
       case DISCARD_2_RED_CARDS -> null;
       case DISCARD_2_BLACK_CARDS -> null;
-      case TAKE_1_GEM_TOKEN -> null;
-      case PLACE_COAT_OF_ARMS -> null;
+      case TAKE_1_GEM_TOKEN -> {
+        performTake1Gem(move, inventory);
+        yield HttpStatus.OK;
+      }
+      case TAKE_1_GEM_TOKEN_RET_1 -> {
+        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
+          performTake1GemReturn(move, inventory);
+          unCacheAction();
+          yield HttpStatus.OK;
+        } else {
+          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
+          yield HttpStatus.PARTIAL_CONTENT;
+        }
+      }
+      case PLACE_COAT_OF_ARMS -> {
+        performPlaceCoatOfArms(move, inventory);
+        yield HttpStatus.OK;
+      }
     };
   }
 
@@ -318,13 +340,78 @@ public class GameBoard {
                     .get().length);
     }
 
-    // all good, add the selected tokens to their inventory twice
+    // all good, add the selected token to their inventory twice
     // we know there is only 1 element in this array
     inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
                                                  .get()[0]));
     inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
                                                  .get()[0]));
   }
+
+  /**
+   * Performs take 1 gem and return 1 token action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performTake1GemReturn(Move move, UserInventory inventory) {
+    checkConditionsForTake1GemReturn(move);
+
+    // all good, add the selected token, and return the token from inventory to the table
+    // we know only 1 element in this array
+    TokenType selected = move.getSelectedTokenTypes()
+                           .get()[0];
+    inventory.addTokens(drawTokenByTokenType(selected));
+    // return token(s)
+    selected = move.getReturnedTokenTypes().get()[0];
+    returnTokensToBoardFromInventory(inventory, selected);
+  }
+
+  private void checkConditionsForTake1GemReturn(Move move) {
+    if (move.getSelectedTokenTypes()
+          .isEmpty() || move.getSelectedTokenTypes()
+                          .get().length != 1) {
+      throw new IllegalGameStateException(
+        "If move is to take 2 gems of same color, then gems needs to be of size 1");
+    }
+
+    // check that the token to return is not empty and proper size
+    if (move.getReturnedTokenTypes()
+          .isEmpty() || move.getReturnedTokenTypes()
+                          .get().length != 1) {
+      throw new IllegalGameStateException(
+        String.format(
+          "If move is to take 2 gems of same color and return %d, "
+            + "then gems to return needs to be of size %d",
+          1, 1
+        ));
+    }
+  }
+
+  private void performTake1Gem(Move move, UserInventory inventory) {
+    // if there are no token types then throw error
+    if (move.getSelectedTokenTypes()
+          .isEmpty()) {
+      throw new IllegalGameStateException(
+        "If move is to take 1 gem of same color, then gems cannot be empty");
+    }
+
+    // the length of the array should be 1, for the one token type which they're taking 2 of
+    if (move.getSelectedTokenTypes()
+          .get().length != 1) {
+      throw new IllegalGameStateException(
+        "Expected to see only one token type selected, instead found: "
+          + move.getSelectedTokenTypes()
+              .get().length);
+    }
+
+    // all good, add the selected token to their inventory
+    // we know there is only 1 element in this array
+    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
+                                               .get()[0]));
+  }
+
+
 
   private void performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
@@ -399,6 +486,13 @@ public class GameBoard {
 
   }
 
+  private void performPairSpiceCard(Move move, UserInventory inventory) {
+    Card spiceCard = inventory.getUnpairedSpiceCard();
+    if (move.getCard().isPresent() && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
+      ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+    }
+  }
+
   private void performClaimNobleAction(Move move, UserInventory inventory) {
     // see if player has been visited by a noble and if so that this is valid
     if (move.getNoble()
@@ -408,6 +502,16 @@ public class GameBoard {
       inventory.receiveVisitFrom(move.getNoble()
                                      .get());
       // TODO: check and see about settlements
+    }
+  }
+
+  private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
+    // See if the player has unlocked the power associated with this trading post slot
+    if (move.getTradingPostSlot().isPresent()
+          && !move.getTradingPostSlot().get().isFull()
+          && !inventory.canReceivePower(move.getTradingPostSlot().get().getPower())) {
+      inventory.addPower(move.getTradingPostSlot().get().getPower());
+      move.getTradingPostSlot().get().addCoatOfArms(inventory.getCoatOfArmsPile().get().removeCoatOfArms());
     }
   }
 

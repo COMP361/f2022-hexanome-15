@@ -43,7 +43,7 @@ public class OrientCard extends Card {
   public void pairWithCard(Card card) {
     assert this.spiceBag;
     setBonusAmount(TokenBonusAmount.ONE);
-    setBonusType(card.getTokenBonusType());
+    setBonusType(card.getTokenBonusType().get());
   }
 
   /**

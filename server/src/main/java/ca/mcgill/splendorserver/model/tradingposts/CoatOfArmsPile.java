@@ -66,7 +66,7 @@ public class CoatOfArmsPile {
   /**
    * Sets up the Coat of Arms piles with 5 coat of arms upon starting the game.
    */
-  public void setUp() {
+  private void setUp() {
     for (int i = 0; i < 5; i++) {
       CoatOfArms c = new CoatOfArms(this.type);
       this.coatOfArmsList.add(c);
