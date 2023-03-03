@@ -129,7 +129,8 @@ public class SplendorGame {
     for (PlayerWrapper playerName : sessionInfo) {
       List<TokenPile> piles = new ArrayList<>();
       setUpTokenPiles(piles, false);
-      inventories.add(new UserInventory(piles, playerName, Optional.ofNullable(CoatOfArmsType.values()[i])));
+      inventories.add(new UserInventory(piles, playerName,
+          Optional.ofNullable(CoatOfArmsType.values()[i])));
       i++;
     }
   }

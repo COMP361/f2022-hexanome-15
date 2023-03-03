@@ -21,8 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
-
-import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -488,7 +486,8 @@ public class GameBoard {
 
   private void performPairSpiceCard(Move move, UserInventory inventory) {
     Card spiceCard = inventory.getUnpairedSpiceCard();
-    if (move.getCard().isPresent() && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
+    if (move.getCard().isPresent()
+          && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
       ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
     }
   }
@@ -511,7 +510,8 @@ public class GameBoard {
           && !move.getTradingPostSlot().get().isFull()
           && !inventory.canReceivePower(move.getTradingPostSlot().get().getPower())) {
       inventory.addPower(move.getTradingPostSlot().get().getPower());
-      move.getTradingPostSlot().get().addCoatOfArms(inventory.getCoatOfArmsPile().get().removeCoatOfArms());
+      move.getTradingPostSlot().get()
+        .addCoatOfArms(inventory.getCoatOfArmsPile().get().removeCoatOfArms());
     }
   }
 
