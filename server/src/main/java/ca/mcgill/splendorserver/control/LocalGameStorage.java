@@ -61,8 +61,13 @@ public class LocalGameStorage {
     if (activeGames.containsKey(gameid)) {
       if (gameStates.containsKey(gameid)) {
         if (activeGames.get(gameid).hashCode() != gameStates.get(gameid)) {
+          gameStates.put(gameid, activeGames.get(gameid).hashCode());
           return true;
         } else {
+          if (activeGames.get(gameid).getRequiresUpdate()) {
+            activeGames.get(gameid).setRequiresUpdate(false);
+            return true;
+          }
           return false;
         }
       }

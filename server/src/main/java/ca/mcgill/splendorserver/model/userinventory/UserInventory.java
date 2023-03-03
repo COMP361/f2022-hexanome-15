@@ -295,8 +295,8 @@ public class UserInventory implements Iterable<Card> {
 
     if (noble.getStatus() != NobleStatus.ON_BOARD) {
       throw new IllegalGameStateException(
-              "Noble cannot be reserved if it "
-                + "has already been reserved or is currently visiting a player");
+              "Noble cannot be reserved if it has already been "
+              + "reserved or is currently visiting a player");
     }
 
     noble.setStatus(NobleStatus.RESERVED);
@@ -345,7 +345,6 @@ public class UserInventory implements Iterable<Card> {
     assert tokenType != null;
     for (int i = 0; i < cards.size(); i++) {
       Card current = cards.get(i);
-
       if (current.getTokenBonusType().get() == tokenType
             && current.getCardStatus() != CardStatus.RESERVED
             && ((OrientCard) current).isSpiceBag()) {
@@ -604,6 +603,26 @@ public class UserInventory implements Iterable<Card> {
   public Iterator<Card> iterator() {
 
     return cards.iterator();
+  }
+  
+  public List<Card> getCards() {
+    return cards;
+  }
+  
+  public EnumMap<TokenType, TokenPile> getTokenPiles() {
+    return tokenPiles;
+  }
+  
+  public List<Noble> getNobles() {
+    return visitingNobles;
+  }
+  
+  public List<Power> getPowers() {
+    return acquiredPowers;
+  }
+  
+  public CoatOfArmsPile getCoatOfArmsPile() {
+    return coatOfArmsPile;
   }
 
 }

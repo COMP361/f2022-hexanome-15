@@ -48,7 +48,7 @@ public class ActionManager {
    * @param playerName The name of the current player
    * @param actionMd5 The given action, written as a String
    * @param accessToken The access token
-   * @return null
+   * @return If there is a pending action it indicates, otherwise it indicates the next player up.
    */
   @PostMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
   public ResponseEntity<String> performAction(@PathVariable(name = "gameid") long gameid,
@@ -196,20 +196,17 @@ public class ActionManager {
     int[]             ixs          = new int[r]; // keep indexes
 
     if (r <= tokenTypes.size()) {
-      for (int i = 0; (ixs[i] = i) < r - 1; i++) {
-        combinations.add(getSubset(tokenTypes, ixs));
-      }
+    for (int i = 0; (ixs[i] = i) < r - 1; i++) {}
+      combinations.add(getSubset(tokenTypes, ixs));
       for (; ; ) {
         int i;
-        for (i = r - 1; i >= 0 && ixs[i] == tokenTypes.size() - r + i; i--) {
-          if (i < 0) {
-            break;
-          }
-          ixs[i]++;
-          for (i++; i < r; i++) {
-            ixs[i] = ixs[i - 1] + 1;
-          }
-          combinations.add(getSubset(tokenTypes, ixs));
+        for (i = r - 1; i >= 0 && ixs[i] == tokenTypes.size() - r + i; i--) {}
+        if (i < 0) {
+          break;
+        }
+        ixs[i]++;
+        for (i++; i < r; i++) {
+          ixs[i] = ixs[i - 1] + 1;
         }
       }
 

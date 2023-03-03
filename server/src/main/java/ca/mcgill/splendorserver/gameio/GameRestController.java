@@ -4,8 +4,16 @@ import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
+import ca.mcgill.splendorserver.model.GameBoard;
+import ca.mcgill.splendorserver.model.GameBoardJson;
+import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
+import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,9 +51,10 @@ public class GameRestController {
 
   /**
    * Creates a GameRestController.
+   *
    */
   public GameRestController() {
-    String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+        String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
         "SplendorOrient", "Splendor", true);
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
@@ -53,7 +62,31 @@ public class GameRestController {
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
         "SplendorOrient+Cities", "Splendor", true);
     System.out.println("in here");
+    
+    //debugging
+    List<PlayerWrapper> wrappers = 
+        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
+    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
+    LocalGameStorage.addActiveGame(splendorGame);
+    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
+    String json = buildGameBoardJson(manager.get().getBoard());
+    System.out.println(json);
   }
+  
+  private String buildGameBoardJson(GameBoard gameboard) {
+    List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    for (UserInventory inventory : gameboard.getInventories()) {
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
+          inventory.getTokenPiles(), inventory.getPlayer().getName(), 
+          inventory.getPrestigeWon(), inventory.getNobles(), 
+          inventory.getPowers(), inventory.getCoatOfArmsPile());
+      inventories.add(inventoryJson);
+    }
+    GameBoardJson gameBoardJson = new GameBoardJson(inventories, 
+        gameboard.getDecks(), gameboard.getNobles(), 
+        gameboard.getCards(), gameboard.getTokenPiles());
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(gameBoardJson);
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {
     return Unirest.get("http://127.0.0.1:4242/api/gameservices")
@@ -73,9 +106,8 @@ public class GameRestController {
    * @param gameName          the name of the game
    * @param displayName       the name of the display
    * @param webSupport        boolean value for webSupport
-   * @return null
    */
-  private final Object register_gameservice(String accessToken, String gameLocation,
+  private final void register_gameservice(String accessToken, String gameLocation,
                                             int maxSessionPlayers,
                                             int minSessionPlayers, String gameName,
                                             String displayName,
@@ -133,7 +165,6 @@ public class GameRestController {
                                             .asString();
     System.out.println("Response from registration request: " + response2.getBody());
     this.gameName = gameName;
-    return null;
   }
 
   /**
@@ -176,9 +207,6 @@ public class GameRestController {
    */
   @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
-    /*SplendorGame game = repository.findById(gameid).
-    orElseThrow(() -> new GameNotFoundException(gameid));
-    repository.deleteById(gameid);*/
     LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid).get());
     LOGGER.info("DELETED GAME ID: " + gameid);
   }
