@@ -3,6 +3,7 @@ package ca.mcgill.splendorserver.model.cities;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 //TODO: Make cities flyweights
 
@@ -14,6 +15,7 @@ public class City {
   private final int requiredPrestige;
   private final CardCost requiredCardBonuses;
   private static final List<City> cities = new ArrayList<City>();
+  private static final List<City> citiesInGame = new ArrayList<>();
 
   /**
    * Creates a city.
@@ -43,6 +45,27 @@ public class City {
    */
   public CardCost getRequiredCardBonuses() {
     return requiredCardBonuses;
+  }
+
+  /**
+   * Returns the cities that are currently on the game board.
+   *
+   * @param numPlayers the number of players in the game
+   * @return a list of cities that are currently on the game board
+   */
+  public static List<City> getCities(int numPlayers) {
+    if (cities.size() == 0) {
+      generateCities();
+    }
+    Random random = new Random();
+    if (citiesInGame.size() == 0) {
+      for (int i = 0; i < numPlayers; i++) {
+        int randomIndex = random.nextInt(cities.size());
+        City randomCity = cities.get(randomIndex);
+        citiesInGame.add(randomCity);
+      }
+    }
+    return citiesInGame;
   }
 
   /**

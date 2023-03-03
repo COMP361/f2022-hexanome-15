@@ -80,6 +80,18 @@ public class TradingPostSlot {
   }
 
   /**
+   * Returns the trading post slots that are currently in the game.
+   *
+   * @return a list of trading post slots that are currently in the game
+   */
+  public static List<TradingPostSlot> getTradingPostSlots() {
+    if (tradingPostSlots.size() == 0) {
+      generateTradingPostSlots();
+    }
+    return tradingPostSlots;
+  }
+
+  /**
    * Generates all trading post slots.
    */
   private static void generateTradingPostSlots() {

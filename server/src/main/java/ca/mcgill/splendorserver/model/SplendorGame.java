@@ -6,9 +6,12 @@ import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,21 +132,45 @@ public class SplendorGame {
     for (PlayerWrapper playerName : sessionInfo) {
       List<TokenPile> piles = new ArrayList<>();
       setUpTokenPiles(piles, false);
-      inventories.add(new UserInventory(piles, playerName));
+      inventories.add(new UserInventory(piles, playerName, Optional.empty()));
     }
   }
+
+  private void setUpUserInventoriesTradingPosts(List<UserInventory> inventories) {
+    int i = 0;
+    for (PlayerWrapper playerName : sessionInfo) {
+      List<TokenPile> piles = new ArrayList<>();
+      setUpTokenPiles(piles, false);
+      inventories.add(new UserInventory(piles, playerName,
+          Optional.ofNullable(CoatOfArmsType.values()[i])));
+      i++;
+    }
+  }
+
 
   private void instantiateNewGameboard() {
     List<TokenPile>     piles        = new ArrayList<>();
     List<Deck>          decks        = new ArrayList<>();
     List<Card>          playingField = new ArrayList<>();
     List<UserInventory> inventories  = new ArrayList<>();
+    List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     setUpPlayingField(playingField, decks);
     setUpTokenPiles(piles, true);
-    setUpUserInventories(inventories);
 
-    List<Noble> nobles = new ArrayList<>();
-    board = new GameBoard(inventories, decks, playingField, piles, nobles);
+    if (sessionInfo.getGameServer().equals("SplendorOrient+TradingPosts")) {
+      setUpUserInventoriesTradingPosts(inventories);
+      tradingPostSlots = TradingPostSlot.getTradingPostSlots();
+    } else if (sessionInfo.getGameServer().equals("SplendorOrient+Cities")) {
+      setUpUserInventories(inventories);
+      cities = City.getCities(sessionInfo.getNumPlayers());
+    } else {
+      setUpUserInventories(inventories);
+    }
+
+    List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
+    board = new GameBoard(inventories, decks, playingField,
+      piles, nobles, tradingPostSlots, cities);
   }
 
   @Override

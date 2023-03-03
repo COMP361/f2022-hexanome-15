@@ -137,6 +137,16 @@ public enum Action {
    */
   TAKE_1_GEM_TOKEN,
   /**
+   * Take 1 gem token type action.
+   * This is used for two Trading post expansion powers.
+   * One where a player is allowed to take 1 token after purchasing a card.
+   * The other where a player is allowed to take 1 token
+   * of a different colour after taking 2 same-coloured gems.
+   * 1 token must be returned to the bank
+   * because the player has 11 tokens after taking the 2 new tokens.
+   */
+  TAKE_1_GEM_TOKEN_RET_1,
+  /**
    * Place coat of arms type action.
    * This occurs automatically after noble visitation.
    * If a player qualifies for a trading post slot the coat of arms

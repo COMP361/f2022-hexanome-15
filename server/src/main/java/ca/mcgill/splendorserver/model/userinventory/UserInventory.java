@@ -12,12 +12,14 @@ import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -36,7 +38,7 @@ public class UserInventory implements Iterable<Card> {
   private       int                           prestigeWon;
   private final List<Noble>                   visitingNobles;
   private final List<Power> acquiredPowers;
-  private CoatOfArmsPile coatOfArmsPile;
+  private final Optional<CoatOfArmsPile> coatOfArmsPile;
 
 
   /**
@@ -44,8 +46,10 @@ public class UserInventory implements Iterable<Card> {
    *
    * @param pile The token piles in a user's inventory
    * @param name This player's username
+   * @param coatOfArmsType The color of coat of arms this player is using
    */
-  public UserInventory(List<TokenPile> pile, PlayerWrapper name) {
+  public UserInventory(List<TokenPile> pile, PlayerWrapper name,
+                       Optional<CoatOfArmsType> coatOfArmsType) {
     assert pile != null && name != null;
     cards          = new ArrayList<>();
     tokenPiles     = new EnumMap<>(List.copyOf(pile)
@@ -59,10 +63,30 @@ public class UserInventory implements Iterable<Card> {
     prestigeWon    = 0;
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
+    if (coatOfArmsType.isPresent()) {
+      coatOfArmsPile = Optional.of(new CoatOfArmsPile(coatOfArmsType.get()));
+    } else {
+      coatOfArmsPile = Optional.empty();
+    }
   }
 
+  /**
+   * Returns the amount of prestige won by this player.
+   *
+   * @return the amount of prestige won by this player
+   */
   public int getPrestigeWon() {
+
     return prestigeWon;
+  }
+
+  /**
+   * Returns the coat of arms pile belonging to this player.
+   *
+   * @return the coat of arms pile belonging to this player
+   */
+  public Optional<CoatOfArmsPile> getCoatOfArmsPile() {
+    return coatOfArmsPile;
   }
 
   /**
@@ -136,9 +160,9 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Number of purchased cards.
+   * Number of purchased cards in the user inventory.
    *
-   * @return number of purchased cards.
+   * @return number of purchased cards in the user inventory
    */
   public int purchasedCardCount() {
     return (int) cards
@@ -147,9 +171,43 @@ public class UserInventory implements Iterable<Card> {
         .count();
   }
 
+  /**
+   * Returns an unpaired spice card in the user inventory.
+   *
+   * @return an unpaired spice card
+   */
+  public OrientCard getUnpairedSpiceCard() {
+    for (Card card : cards) {
+      if (card instanceof OrientCard
+            && ((OrientCard) card).isSpiceBag()
+            && card.getTokenBonusType().isEmpty()
+            && card.getTokenBonusAmount() == 0) {
+        return (OrientCard) card;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Checks if the selected card is reserved.
+   *
+   * @param card the selected card
+   * @return a boolean determining if the selected card is reserved
+   */
   public boolean hasCardReserved(Card card) {
     assert card != null;
     return cards.contains(card) && card.getCardStatus() == CardStatus.RESERVED;
+  }
+
+  /**
+   * Checks if the selected card has been purchased by this player.
+   *
+   * @param card the selected card
+   * @return a boolean determining if the selected card is purchased by this player
+   */
+  public boolean hasCard(Card card) {
+    assert card != null;
+    return cards.contains(card) && card.getCardStatus() == CardStatus.PURCHASED;
   }
 
 
@@ -197,7 +255,7 @@ public class UserInventory implements Iterable<Card> {
   private void amountGoldTokensNeeded(TokenType tokenType, int cost, int currentGoldTokenCount) {
     assert tokenType != null && cost >= 0;
     int bonusDiscount = cards.stream()
-                             .filter(card -> card.getTokenBonusType() == tokenType)
+                             .filter(card -> card.getTokenBonusType().get() == tokenType)
                              .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
     int actualCost = cost - bonusDiscount;
@@ -257,6 +315,7 @@ public class UserInventory implements Iterable<Card> {
     if (card.getDeckType() == DeckType.ORIENT1) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
+      addPrestige(card.getPrestige());
     }
   }
 
@@ -272,6 +331,7 @@ public class UserInventory implements Iterable<Card> {
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
+      addPrestige(card.getPrestige());
     }
   }
 
@@ -285,17 +345,16 @@ public class UserInventory implements Iterable<Card> {
     assert tokenType != null;
     for (int i = 0; i < cards.size(); i++) {
       Card current = cards.get(i);
-
-      if (current.getTokenBonusType() == tokenType 
-          && current.getCardStatus() != CardStatus.RESERVED 
-          && ((OrientCard) current).isSpiceBag()) {
+      if (current.getTokenBonusType().get() == tokenType
+            && current.getCardStatus() != CardStatus.RESERVED
+            && ((OrientCard) current).isSpiceBag()) {
         cards.remove(i);
         return;
       }
     }
     for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType() == tokenType 
-          && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
+      if (cards.get(j).getTokenBonusType().get() == tokenType
+            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
         cards.remove(j);
         return;
       }
@@ -337,7 +396,8 @@ public class UserInventory implements Iterable<Card> {
       // for owned cards that match the current cost token in iteration
       int bonusDiscount = cards.stream()
                                .filter(
-                                   c -> c.getTokenBonusType() == entry.getKey() && c.isPurchased())
+                                   c -> c.getTokenBonusType().get()
+                                          == entry.getKey() && c.isPurchased())
                                .map(Card::getTokenBonusAmount)
                                .reduce(0, Integer::sum);
       int actualCost = entry.getValue() - bonusDiscount;
@@ -395,7 +455,7 @@ public class UserInventory implements Iterable<Card> {
     // in addition to those gained by the potential purchase of a card
     for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
                                                     .entrySet()) {
-      if (card.getTokenBonusType() == entry.getKey() && notEnoughBonusesFor(
+      if (card.getTokenBonusType().get() == entry.getKey() && notEnoughBonusesFor(
           entry.getKey(),
           entry.getValue()
               - card.getTokenBonusAmount()
@@ -426,7 +486,7 @@ public class UserInventory implements Iterable<Card> {
     // gets all cards that are purchased and have matching bonus token type
     // accumulate the result and see if enough for the given amount
     return cards.stream()
-                .filter(card -> card.getTokenBonusType() == tokenType && card.isPurchased())
+                .filter(card -> card.getTokenBonusType().get() == tokenType && card.isPurchased())
                 .map(Card::getTokenBonusAmount)
                 .reduce(0, Integer::sum) < amount;
   }
@@ -441,7 +501,7 @@ public class UserInventory implements Iterable<Card> {
         removed.add(removeTokenByTokenType(TokenType.GOLD));
       }
       for (int i = 0; i < tokenPiles.get(tokenType).getSize(); i++) {
-        removed.add(removeTokenByTokenType(TokenType.GOLD));
+        removed.add(removeTokenByTokenType(tokenType));
       }
     } else {
       for (int i = 0; i < n; i++) {
@@ -524,13 +584,24 @@ public class UserInventory implements Iterable<Card> {
    * @param power the power to be added
    */
   public void addPower(Power power) {
-    assert power != null && !acquiredPowers.contains(power);
+    assert power != null;
     acquiredPowers.add(power);
+  }
+
+  /**
+   * Checks if the player can receive a power.
+   *
+   * @return a boolean determining if the player can receive a power
+   */
+  public boolean canReceivePower(Power power) {
+    assert power != null;
+    return !acquiredPowers.contains(power);
   }
 
 
   @Override
   public Iterator<Card> iterator() {
+
     return cards.iterator();
   }
   

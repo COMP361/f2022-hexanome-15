@@ -45,7 +45,7 @@ public class GameBoardView {
   /**
    * Creates a DeckView for the given deck and returns it.
    *
-   * @param deck       the deck that is being represented by the DeckView
+   * @param type       the type of deck that is being represented by the DeckView
    * @param screenSize the size of the screen
    */
   private static DeckView createDeckView(CardType type, Dimension screenSize) {
@@ -71,10 +71,10 @@ public class GameBoardView {
    */
   private static void createCardFieldColumn(VBox column, Dimension screenSize,
                                          List<CardView> aggregator, int columnCount) {
-    int nRows = 3;
-    for (int i = 0; i < nRows; ++i) {
+    int numRows = 3;
+    for (int i = 0; i < numRows; ++i) {
       //flatten the 2d playing field for cardview location data.
-      int location = columnCount*nRows + i;
+      int location = columnCount * numRows + i;
       CardView cardView = createCardView(screenSize, "C" + location);
       column.getChildren().add(cardView);
       aggregator.add(cardView);
@@ -92,7 +92,8 @@ public class GameBoardView {
                                final UserInventoryView userInventoryView) {
     int i = 0;
     for (CardColumnView cardColumn : userInventoryView) {
-      TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
+      TokenPileView pileView =
+          new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
       miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
       Counter cardCounter = cardColumn.getNumCardsDisplay();
@@ -103,7 +104,8 @@ public class GameBoardView {
     }
     //  Token Display for gold tokens
     final HBox tokenRow = new HBox();
-    TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
+    TokenPileView pileView =
+        new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
     Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
     Counter cardCounter = new Counter(0);
     miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
@@ -121,7 +123,8 @@ public class GameBoardView {
                                                              Dimension screenSize, int numPlayers) {
     for (int i = 0; i < TokenType.values().length; ++i) {
       final VBox tokenColumn = new VBox();
-      TokenPileView pileView = new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
+      TokenPileView pileView =
+          new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
     }
@@ -133,7 +136,8 @@ public class GameBoardView {
    * @param inventoryView   the view the user's inventory
    * @param screenSize the size of the screen
    */
-  private static void populateUserInventoryView(UserInventoryView inventoryView, Dimension screenSize) {
+  private static void populateUserInventoryView(UserInventoryView inventoryView,
+                                                Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
       inventoryView.addCardColumn(new CardColumnView(TokenType.values()[i], screenSize));
     }
@@ -219,7 +223,7 @@ public class GameBoardView {
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
       HBox userInventoryView =
-          buildUserInventoryView(i, screenSize, (String)players.get(i));
+          buildUserInventoryView(i, screenSize, (String) players.get(i));
       allUserInventoryViews.add(userInventoryView);
     }
 

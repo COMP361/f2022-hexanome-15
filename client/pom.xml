@@ -53,19 +53,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <configLocation>google_checks.xml</configLocation>
-                    <consoleOutput>false</consoleOutput>
-                    <violationSeverity>warning</violationSeverity>
-                    <failOnViolation>false</failOnViolation>
-                    <failsOnError>false</failsOnError>
-                    <linkXRef>false</linkXRef>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.4.0</version>
                 <configuration>
@@ -75,6 +62,17 @@
                     </reportOutputDirectory>
                     <destDir>docs</destDir>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarnings>false</failOnWarnings>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
 				<!-- Build an executable JAR -->

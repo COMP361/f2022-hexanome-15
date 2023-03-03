@@ -43,14 +43,20 @@ public class OrientCard extends Card {
   public void pairWithCard(Card card) {
     assert this.spiceBag;
     setBonusAmount(TokenBonusAmount.ONE);
-    setBonusType(card.getTokenBonusType());
+    setBonusType(card.getTokenBonusType().get());
   }
 
+  /**
+   * Checks if this Orient card is a spice bag card.
+   *
+   * @return a boolean determining if this Orient card is a spice bag card
+   */
   public boolean isSpiceBag() {
     return this.spiceBag;
   }
 
   /**
+   * Returns the list of bonus actions provided by the Orient card.
    *
    * @return bonusActions The list of bonus actions provided by the Orient card
    */

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.persistence.Embeddable;
-
 //TODO: Make cards flyweights
 
 /**
@@ -491,8 +489,8 @@ public class Card implements Comparable<Card> {
   @Override
   public int compareTo(Card card) {
     assert card != null;
-    return this.getTokenBonusType()
-               .compareTo(card.getTokenBonusType());
+    return this.getTokenBonusType().get()
+               .compareTo(card.getTokenBonusType().get());
   }
 
   /**

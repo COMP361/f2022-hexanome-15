@@ -54,8 +54,14 @@ public class GameRestController {
    *
    */
   public GameRestController() {
-    String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
-    register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
+        String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrient", "Splendor", true);
+    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrient+TradingPosts", "Splendor", true);
+    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrient+Cities", "Splendor", true);
+    System.out.println("in here");
     
     //debugging
     List<PlayerWrapper> wrappers = 
@@ -81,7 +87,6 @@ public class GameRestController {
         gameboard.getCards(), gameboard.getTokenPiles());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
-  }
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {
     return Unirest.get("http://127.0.0.1:4242/api/gameservices")

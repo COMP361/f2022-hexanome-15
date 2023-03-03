@@ -123,6 +123,7 @@ public class ActionManager {
         case DISCARD_2_RED_CARDS -> null;
         case DISCARD_2_BLACK_CARDS -> null;
         case TAKE_1_GEM_TOKEN -> null;
+        case TAKE_1_GEM_TOKEN_RET_1 -> null;
         case PLACE_COAT_OF_ARMS -> null;
       };
     }
@@ -195,7 +196,7 @@ public class ActionManager {
     int[]             ixs          = new int[r]; // keep indexes
 
     if (r <= tokenTypes.size()) {
-      for (int i = 0; (ixs[i] = i) < r - 1; i++) {}
+    for (int i = 0; (ixs[i] = i) < r - 1; i++) {}
       combinations.add(getSubset(tokenTypes, ixs));
       for (; ; ) {
         int i;
@@ -207,8 +208,6 @@ public class ActionManager {
         for (i++; i < r; i++) {
           ixs[i] = ixs[i - 1] + 1;
         }
-        combinations.add(getSubset(tokenTypes, ixs));
-
       }
 
     }
@@ -415,7 +414,7 @@ public class ActionManager {
         if (inventory.tokenCount() <= 8) {
           move = new Move(
               Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, null, null,
-              tokenPile.getType()
+            null, tokenPile.getType()
           );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
@@ -429,7 +428,7 @@ public class ActionManager {
           }*/
 
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
-                          null, null, tokenPile.getType()
+                          null, null, null, tokenPile.getType()
           );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
@@ -449,7 +448,7 @@ public class ActionManager {
           // loop through all return combinations now
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2, null, player, null,
                           null,
-                          null, tokenPile.getType()
+                          null, null, tokenPile.getType()
           );
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                       .toUpperCase();
@@ -521,7 +520,7 @@ public class ActionManager {
         }*/
 
         // if we have a move requiring returning, loop through the combinations
-        Move move = new Move(action, null, player, null, null, null, tokenTypes);
+        Move move = new Move(action, null, player, null, null, null, null, tokenTypes);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                                     .toUpperCase();
         moveMap.put(moveMd5, move);

@@ -8,7 +8,6 @@ import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
 import ca.mcgill.splendorclient.model.users.Role;
 import ca.mcgill.splendorclient.model.users.User;
-
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -67,13 +66,14 @@ public class StartupController implements Initializable {
             wrongCredentialsAlert.showAndWait();
             System.out.println(
                 "Incorrect credentials attempted: (" + usernameField.getText() + ")");
-          }
-          else {
+          } else {
             System.out.println("Successfully logged in " + usernameField.getText());
             Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
             //TODO: actually get the role
-            String accessToken = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo, "access_token");
-            String refreshToken = (String) Parsejson.PARSE_JSON.getFromKey((JSONObject) userInfo, "refresh_token");
+            String accessToken = (String) Parsejson.PARSE_JSON
+                                            .getFromKey((JSONObject) userInfo, "access_token");
+            String refreshToken = (String) Parsejson.PARSE_JSON
+                                             .getFromKey((JSONObject) userInfo, "refresh_token");
             User.newUser(usernameField.getText(), accessToken, refreshToken, Role.PLAYER, true);
           }
         }
