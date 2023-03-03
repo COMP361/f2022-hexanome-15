@@ -18,13 +18,10 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
 import org.springframework.http.HttpStatus;
 
-import com.google.gson.annotations.Expose;
 
 /**
  * Model of the gameboard. Necessary due to permanence requirement.

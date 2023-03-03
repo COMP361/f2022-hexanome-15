@@ -10,17 +10,17 @@ import ca.mcgill.splendorserver.model.cards.DeckType;
  */
 public class DeckJson {
   
-  private int nCards;
+  private int ncards;
   private DeckType type;
   
   /**
    * Creates new deckjson should be based on actual deck from splendorgame.
    *
-   * @param nCards
-   * @param type
+   * @param ncards The number of cards in the deck
+   * @param type The type of deck
    */
   public DeckJson(int ncards, DeckType type) {
-    this.nCards = ncards;
+    this.ncards = ncards;
     this.type = type;
   }
 }

@@ -196,20 +196,21 @@ public class ActionManager {
     int[]             ixs          = new int[r]; // keep indexes
 
     if (r <= tokenTypes.size()) {
-    for (int i = 0; (ixs[i] = i) < r - 1; i++) {}
-      combinations.add(getSubset(tokenTypes, ixs));
+      for (int i = 0; (ixs[i] = i) < r - 1; i++) {
+        combinations.add(getSubset(tokenTypes, ixs));
+      }
       for (; ; ) {
         int i;
-        for (i = r - 1; i >= 0 && ixs[i] == tokenTypes.size() - r + i; i--) {}
-        if (i < 0) {
-          break;
-        }
-        ixs[i]++;
-        for (i++; i < r; i++) {
-          ixs[i] = ixs[i - 1] + 1;
+        for (i = r - 1; i >= 0 && ixs[i] == tokenTypes.size() - r + i; i--) {
+          if (i < 0) {
+            break;
+          }
+          ixs[i]++;
+          for (i++; i < r; i++) {
+            ixs[i] = ixs[i - 1] + 1;
+          }
         }
       }
-
     }
     return combinations;
   }

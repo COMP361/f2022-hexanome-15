@@ -5,7 +5,6 @@ import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -29,11 +28,11 @@ public class GameBoardJson {
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
    *
-   * @param inventories, the player inventories
-   * @param decks, the decks on the field
-   * @param nobles, nobles on the field
-   * @param cardField, cards on the card field
-   * @param tokenField, tokens on the playing field
+   * @param inventories the player inventories
+   * @param decks the decks on the field
+   * @param nobles nobles on the field
+   * @param cardField cards on the card field
+   * @param tokenField tokens on the playing field
    */
   public GameBoardJson(List<InventoryJson> inventories, List<Deck> decks, 
       List<Noble> nobles, List<Card> cardField, EnumMap<TokenType, TokenPile> tokenField) {
