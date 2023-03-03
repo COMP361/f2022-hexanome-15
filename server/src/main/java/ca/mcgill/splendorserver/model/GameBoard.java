@@ -6,6 +6,7 @@ import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
@@ -20,6 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
+
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -180,7 +183,10 @@ public class GameBoard {
       case RESERVE_NOBLE -> null;
       case CASCADE_LEVEL_1 -> null;
       case CASCADE_LEVEL_2 -> null;
-      case PAIR_SPICE_CARD -> null;
+      case PAIR_SPICE_CARD -> {
+        performPairSpiceCard(move, inventory);
+        yield HttpStatus.OK;
+      }
       case DISCARD_2_WHITE_CARDS -> null;
       case DISCARD_2_BLUE_CARDS -> null;
       case DISCARD_2_GREEN_CARDS -> null;
@@ -478,6 +484,13 @@ public class GameBoard {
 
     performClaimNobleAction(move, inventory);
 
+  }
+
+  private void performPairSpiceCard(Move move, UserInventory inventory) {
+    Card spiceCard = inventory.getUnpairedSpiceCard();
+    if (move.getCard().isPresent() && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
+      ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+    }
   }
 
   private void performClaimNobleAction(Move move, UserInventory inventory) {
