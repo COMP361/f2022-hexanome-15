@@ -38,7 +38,7 @@ public class UserInventory implements Iterable<Card> {
   private       int                           prestigeWon;
   private final List<Noble>                   visitingNobles;
   private final List<Power> acquiredPowers;
-  private final Optional<CoatOfArmsPile> coatOfArmsPile;
+  private final CoatOfArmsPile coatOfArmsPile;
 
 
   /**
@@ -64,9 +64,9 @@ public class UserInventory implements Iterable<Card> {
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
     if (coatOfArmsType.isPresent()) {
-      coatOfArmsPile = Optional.of(new CoatOfArmsPile(coatOfArmsType.get()));
+      coatOfArmsPile = new CoatOfArmsPile(coatOfArmsType.get());
     } else {
-      coatOfArmsPile = Optional.empty();
+      coatOfArmsPile = null;
     }
   }
 
@@ -78,15 +78,6 @@ public class UserInventory implements Iterable<Card> {
   public int getPrestigeWon() {
 
     return prestigeWon;
-  }
-
-  /**
-   * Returns the coat of arms pile belonging to this player.
-   *
-   * @return the coat of arms pile belonging to this player
-   */
-  public Optional<CoatOfArmsPile> getCoatOfArmsPile() {
-    return coatOfArmsPile;
   }
 
   /**
@@ -180,7 +171,7 @@ public class UserInventory implements Iterable<Card> {
     for (Card card : cards) {
       if (card instanceof OrientCard
             && ((OrientCard) card).isSpiceBag()
-            && card.getTokenBonusType().isEmpty()
+            && card.getTokenBonusType() != null
             && card.getTokenBonusAmount() == 0) {
         return (OrientCard) card;
       }
@@ -255,7 +246,7 @@ public class UserInventory implements Iterable<Card> {
   private void amountGoldTokensNeeded(TokenType tokenType, int cost, int currentGoldTokenCount) {
     assert tokenType != null && cost >= 0;
     int bonusDiscount = cards.stream()
-                             .filter(card -> card.getTokenBonusType().get() == tokenType)
+                             .filter(card -> card.getTokenBonusType() == tokenType)
                              .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
     int actualCost = cost - bonusDiscount;
@@ -345,7 +336,7 @@ public class UserInventory implements Iterable<Card> {
     assert tokenType != null;
     for (int i = 0; i < cards.size(); i++) {
       Card current = cards.get(i);
-      if (current.getTokenBonusType().get() == tokenType
+      if (current.getTokenBonusType() == tokenType
             && current.getCardStatus() != CardStatus.RESERVED
             && ((OrientCard) current).isSpiceBag()) {
         cards.remove(i);
@@ -353,7 +344,7 @@ public class UserInventory implements Iterable<Card> {
       }
     }
     for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType().get() == tokenType
+      if (cards.get(j).getTokenBonusType() == tokenType
             && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
         cards.remove(j);
         return;
@@ -396,7 +387,7 @@ public class UserInventory implements Iterable<Card> {
       // for owned cards that match the current cost token in iteration
       int bonusDiscount = cards.stream()
                                .filter(
-                                   c -> c.getTokenBonusType().get()
+                                   c -> c.getTokenBonusType()
                                           == entry.getKey() && c.isPurchased())
                                .map(Card::getTokenBonusAmount)
                                .reduce(0, Integer::sum);
@@ -455,7 +446,7 @@ public class UserInventory implements Iterable<Card> {
     // in addition to those gained by the potential purchase of a card
     for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
                                                     .entrySet()) {
-      if (card.getTokenBonusType().get() == entry.getKey() && notEnoughBonusesFor(
+      if (card.getTokenBonusType() == entry.getKey() && notEnoughBonusesFor(
           entry.getKey(),
           entry.getValue()
               - card.getTokenBonusAmount()
@@ -486,7 +477,7 @@ public class UserInventory implements Iterable<Card> {
     // gets all cards that are purchased and have matching bonus token type
     // accumulate the result and see if enough for the given amount
     return cards.stream()
-                .filter(card -> card.getTokenBonusType().get() == tokenType && card.isPurchased())
+                .filter(card -> card.getTokenBonusType() == tokenType && card.isPurchased())
                 .map(Card::getTokenBonusAmount)
                 .reduce(0, Integer::sum) < amount;
   }

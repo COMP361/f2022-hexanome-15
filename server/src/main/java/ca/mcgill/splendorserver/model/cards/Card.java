@@ -489,8 +489,8 @@ public class Card implements Comparable<Card> {
   @Override
   public int compareTo(Card card) {
     assert card != null;
-    return this.getTokenBonusType().get()
-               .compareTo(card.getTokenBonusType().get());
+    return this.getTokenBonusType()
+               .compareTo(card.getTokenBonusType());
   }
 
   /**

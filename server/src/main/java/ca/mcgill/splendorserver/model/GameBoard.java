@@ -514,7 +514,7 @@ public class GameBoard {
           && !inventory.canReceivePower(move.getTradingPostSlot().get().getPower())) {
       inventory.addPower(move.getTradingPostSlot().get().getPower());
       move.getTradingPostSlot().get()
-        .addCoatOfArms(inventory.getCoatOfArmsPile().get().removeCoatOfArms());
+        .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }
 

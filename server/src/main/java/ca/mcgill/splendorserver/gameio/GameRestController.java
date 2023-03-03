@@ -87,6 +87,7 @@ public class GameRestController {
         gameboard.getCards(), gameboard.getTokenPiles());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
+  }
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {
     return Unirest.get("http://127.0.0.1:4242/api/gameservices")
