@@ -441,7 +441,7 @@ public class UserInventory implements Iterable<Card> {
         removed.add(removeTokenByTokenType(TokenType.GOLD));
       }
       for (int i = 0; i < tokenPiles.get(tokenType).getSize(); i++) {
-        removed.add(removeTokenByTokenType(TokenType.GOLD));
+        removed.add(removeTokenByTokenType(tokenType));
       }
     } else {
       for (int i = 0; i < n; i++) {
