@@ -25,7 +25,7 @@ public class PlayerWrapper {
 
   private static final Map<String, PlayerWrapper> PLAYER_MAP = new HashMap<>();
 
-  private PlayerWrapper(String userName) {
+  PlayerWrapper(String userName) {
     this.userName = userName;
   }
 

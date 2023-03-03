@@ -21,7 +21,7 @@ public class Card implements Comparable<Card> {
   // this eventually will be the png that is on the actual card
   private final        int             id;
   private final        int             prestige;
-  private Optional<TokenType> tokenBonusType;
+  private TokenType tokenBonusType;
   private TokenBonusAmount tokenBonusAmount;
   private final        DeckType        deckType;
   private final        CardCost        cardCost;
@@ -43,7 +43,7 @@ public class Card implements Comparable<Card> {
     assert prestige >= 0 && deckType != null && tokenBonusAmount != null && cardCost != null;
     this.id               = id;
     this.prestige         = prestige;
-    this.tokenBonusType   = Optional.ofNullable(tokenBonusType);
+    this.tokenBonusType   = tokenBonusType;
     this.deckType         = deckType;
     this.tokenBonusAmount = tokenBonusAmount;
     this.cardCost         = cardCost;
@@ -157,7 +157,7 @@ public class Card implements Comparable<Card> {
    */
   public void setBonusType(TokenType type) {
     assert type != null;
-    this.tokenBonusType = Optional.of(type);
+    this.tokenBonusType = type;
   }
 
   /**
@@ -175,8 +175,7 @@ public class Card implements Comparable<Card> {
    * @return the token bonus type of this card
    */
   public TokenType getTokenBonusType() {
-    assert tokenBonusType.isPresent();
-    return tokenBonusType.get();
+    return tokenBonusType;
   }
 
   /**

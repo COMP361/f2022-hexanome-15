@@ -4,9 +4,18 @@ import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
+import ca.mcgill.splendorserver.model.GameBoard;
+import ca.mcgill.splendorserver.model.GameBoardJson;
+import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
-import com.google.gson.Gson;
+import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,7 +59,28 @@ public class GameRestController {
   public GameRestController() {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
-    System.out.println("in here");
+    
+    //debugging
+    List<PlayerWrapper> wrappers = Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
+    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
+    LocalGameStorage.addActiveGame(splendorGame);
+    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
+    String json = buildGameBoardJson(manager.get().getBoard());
+    System.out.println(json);
+  }
+  
+  private String buildGameBoardJson(GameBoard gameboard) {
+    List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    for (UserInventory inventory : gameboard.getInventories()) {
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
+          inventory.getTokenPiles(), inventory.getPlayer().getName(), 
+          inventory.getPrestigeWon(), inventory.getNobles(), inventory.getPowers(), inventory.getCoatOfArmsPile());
+      inventories.add(inventoryJson);
+    }
+    GameBoardJson gameBoardJson = new GameBoardJson(inventories, 
+        gameboard.getDecks(), gameboard.getNobles(), gameboard.getCards(), gameboard.getTokenPiles());
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(gameBoardJson);
   }
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {

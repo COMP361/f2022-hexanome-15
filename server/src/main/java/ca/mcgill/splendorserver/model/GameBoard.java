@@ -24,6 +24,8 @@ import javax.persistence.Embeddable;
 
 import org.springframework.http.HttpStatus;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Model of the gameboard. Necessary due to permanence requirement.
  * Only ever used for initial setup, the rest can be taken care of by the actions.
@@ -38,7 +40,6 @@ public class GameBoard {
   private final List<Card>                    cardField;
   private final EnumMap<TokenType, TokenPile> tokenPiles;
   private final List<Noble>                   nobles;
-  private final Logger                        logger = Logger.getAnonymousLogger();
 
 
   /*
@@ -49,8 +50,8 @@ public class GameBoard {
   moveCache := move which involved a compound action and is currently being waited on
   pendingAction := if the game is waiting for an action to be made
    */
-  private Optional<Action> actionCache;
-  private boolean          pendingAction;
+  private Action actionCache;
+  private boolean pendingAction;
   private List<TradingPostSlot> tradingPostSlots;
 
   /**
@@ -75,7 +76,6 @@ public class GameBoard {
                                                  )));
     this.nobles        = nobles;
     this.pendingAction = false;
-    this.actionCache   = Optional.empty();
   }
 
   /**
@@ -194,16 +194,16 @@ public class GameBoard {
   }
 
   private boolean waitingForAction(Action action) {
-    return pendingAction && actionCache.isPresent() && actionCache.get() == action;
+    return pendingAction && actionCache != null && actionCache == action;
   }
 
   private void cacheAction(Action action) {
-    this.actionCache   = Optional.of(action);
+    this.actionCache   = action;
     this.pendingAction = true;
   }
 
   private void unCacheAction() {
-    this.actionCache   = Optional.empty();
+    this.actionCache   = null;
     this.pendingAction = false;
   }
 
@@ -374,7 +374,7 @@ public class GameBoard {
       // add the card to their inventory as a purchased card
       // return the required tokens to purchase the card from user to board
       returnTokensToBoard(inventory.purchaseCard(selectedCard));
-      logger.log(Level.INFO, player + " purchased a reserved dev card: " + selectedCard);
+      System.out.println( player + " purchased a reserved dev card: " + selectedCard);
     } else if (cardField.contains(selectedCard)) { // purchase face-up dev card
       // purchase card which is face-up on the board
       // purchase card, take it from the face up table and replace that card on table
@@ -382,14 +382,12 @@ public class GameBoard {
       returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
 
-      logger.log(
-          Level.INFO,
+      System.out.println(
           player + " purchased a face-up dev card from game board: " + selectedCard
       );
     } else {
       // cannot purchase card if it's not reserved in hand or face-up
-      logger.log(
-          Level.SEVERE,
+      System.out.println(
           "A card has been attempted to be purchased "
             + "but it wasn't reserved in inventory nor face-up on game board"
       );
@@ -522,6 +520,10 @@ public class GameBoard {
                      .stream()
                      .filter(tokens -> tokens.getType() != TokenType.GOLD)
                      .toList();
+  }
+  
+  public EnumMap<TokenType, TokenPile> getTokenPiles() {
+    return tokenPiles;
   }
 
   /**

@@ -35,6 +35,7 @@ public class SplendorGame {
   @Embedded
   private       GameBoard   board;
   private       boolean     finished = false;
+  private boolean bRequiresUpdate;
 
   /**
    * SplendorGame constructor.
@@ -47,7 +48,16 @@ public class SplendorGame {
     sessionInfo = info;
     this.gameId = gameId;
     turnManager = new TurnManager(info.getPlayers());
+    bRequiresUpdate = true;
     instantiateNewGameboard();
+  }
+  
+  public boolean getRequiresUpdate() {
+    return bRequiresUpdate;
+  }
+  
+  public void setRequiresUpdate(boolean requiresUpdate) {
+    bRequiresUpdate = requiresUpdate;
   }
 
   public boolean isFinished() {
