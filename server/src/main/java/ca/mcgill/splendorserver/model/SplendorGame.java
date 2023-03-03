@@ -143,7 +143,6 @@ public class SplendorGame {
     List<Deck>          decks        = new ArrayList<>();
     List<Card>          playingField = new ArrayList<>();
     List<UserInventory> inventories  = new ArrayList<>();
-    List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
     List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
     List<City> cities = new ArrayList<>();
     setUpPlayingField(playingField, decks);
@@ -152,16 +151,16 @@ public class SplendorGame {
     if (sessionInfo.getGameServer().equals("SplendorOrient+TradingPosts")) {
       setUpUserInventoriesTradingPosts(inventories);
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
-    }
-    else if (sessionInfo.getGameServer().equals("SplendorOrient+Cities")) {
+    } else if (sessionInfo.getGameServer().equals("SplendorOrient+Cities")) {
       setUpUserInventories(inventories);
       cities = City.getCities(sessionInfo.getNumPlayers());
-    }
-    else {
+    } else {
       setUpUserInventories(inventories);
     }
 
-    board = new GameBoard(inventories, decks, playingField, piles, nobles, tradingPostSlots, cities);
+    List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
+    board = new GameBoard(inventories, decks, playingField,
+      piles, nobles, tradingPostSlots, cities);
   }
 
   @Override
