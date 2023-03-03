@@ -273,16 +273,16 @@ public class ActionManager {
         //TODO: calculate available pairings for spice card.
         break;
       default:
-        getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        //getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
         getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        getSelectTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        //getSelectTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
     }
 
     return moveMap;
   }
 
-  private void getBuyDevMoves(Map<String, Move> moveMap, UserInventory inventory,
+  /*private void getBuyDevMoves(Map<String, Move> moveMap, UserInventory inventory,
                               GameBoard gameBoard, PlayerWrapper player
   ) {
     // player can buy dev card from face-up on the table or reserved in their hand
@@ -305,9 +305,9 @@ public class ActionManager {
       }
     }
 
-  }
+  }*/
 
-  private void accumulateBuyDevMovesConsideringNobles(Map<String, Move> moveMap,
+  /*private void accumulateBuyDevMovesConsideringNobles(Map<String, Move> moveMap,
                                                       UserInventory inventory, GameBoard gameBoard,
                                                       PlayerWrapper player, Card faceUp
   ) {
@@ -329,7 +329,7 @@ public class ActionManager {
                                   .toUpperCase();
       moveMap.put(moveMd5, move);
     }
-  }
+  }*/
 
   private boolean wouldBeVisitedByPurchasing(Card card, UserInventory inventory,
                                              GameBoard gameBoard
@@ -405,7 +405,7 @@ public class ActionManager {
    * @param gameBoard the game board on which the session is taking place.
    * @param player    the player whose turn it currently is.
    */
-  private void getSelectTokenMoves(Map<String, Move> moveMap, UserInventory inventory,
+  /*private void getSelectTokenMoves(Map<String, Move> moveMap, UserInventory inventory,
                                    GameBoard gameBoard, PlayerWrapper player
   ) {
     // checking select token moves:
@@ -431,10 +431,10 @@ public class ActionManager {
         } else if (inventory.tokenCount() == 9) {
           // must return 1 token after the 2 tokens are taken -> any token in inventory plus
           // selected token if they don't have it already
-          /*List<TokenType> possibleReturnTokenTypes = inventory.getTokenTypes();
+          List<TokenType> possibleReturnTokenTypes = inventory.getTokenTypes();
           if (!inventory.hasTokenType(tokenPile.getType())) {
             possibleReturnTokenTypes.add(tokenPile.getType());
-          }*/
+          }
 
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
                           null, null, null, tokenPile.getType()
@@ -448,12 +448,12 @@ public class ActionManager {
           // have to loop over all possible token return combinations
           //List<TokenType> availableReturnTokens = inventory.getTokenTypes();
           // add the token which is being taken in this move as possible return too
-          /*if (!availableReturnTokens.contains(tokenPile.getType())) {
+          if (!availableReturnTokens.contains(tokenPile.getType())) {
             availableReturnTokens.add(tokenPile.getType());
-          }*/
+          }
           // get all combinations of token returns
-          /*List<TokenType[]> returnCombinations = generateTokenCombinations(
-              availableReturnTokens, 2);*/
+          List<TokenType[]> returnCombinations = generateTokenCombinations(
+              availableReturnTokens, 2);
           // loop through all return combinations now
           move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2, null, player, null,
                           null,
@@ -497,17 +497,17 @@ public class ActionManager {
       for (TokenType[] tokenTypes : possibleTokens) {
         // get all tokens in inventory and if the tokens taken for this move aren't there add them
         // we know there are 3 token types in the array
-        /*possibleReturnTokens = inventory.getTokenTypes();
+        possibleReturnTokens = inventory.getTokenTypes();
         if (!possibleReturnTokens.contains(tokenTypes[0])) {
           possibleReturnTokens.add(tokenTypes[0]);
         } else if (!possibleReturnTokens.contains(tokenTypes[1])) {
           possibleReturnTokens.add(tokenTypes[1]);
         } else if (!possibleReturnTokens.contains(tokenTypes[2])) {
          possibleReturnTokens.add(tokenTypes[2]);
-        }*/
+        }
         //List<TokenType[]> possibleReturnCombinations;
         //matching by action how many tokens need to be returned
-        /*switch (action) {
+        switch (action) {
           case TAKE_3_GEM_TOKENS_DIFF_COL -> {
             Move move = new Move(action, null, player, null, null, null, tokenTypes);
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
@@ -526,7 +526,7 @@ public class ActionManager {
           }
           default -> throw new IllegalStateException(
               "Unexpected Action found, expected one of the \"take 3 token\" moves");
-        }*/
+        }
 
         // if we have a move requiring returning, loop through the combinations
         Move move = new Move(action, null, player, null, null, null, null, tokenTypes);
@@ -539,6 +539,5 @@ public class ActionManager {
 
 
     }
-  }
-
+  }*/
 }
