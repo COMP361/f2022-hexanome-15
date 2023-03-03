@@ -73,7 +73,7 @@ public class Noble {
     }
     Random random = new Random();
     if (noblesInGame.size() == 0) {
-      for (int i = 0; i < numPlayers; i++) {
+      for (int i = 0; i < numPlayers + 1; i++) {
         int randomIndex = random.nextInt(nobles.size());
         Noble randomNoble = nobles.get(randomIndex);
         noblesInGame.add(randomNoble);
