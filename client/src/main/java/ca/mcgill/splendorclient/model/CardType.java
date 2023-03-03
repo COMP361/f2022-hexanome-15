@@ -7,7 +7,7 @@ package ca.mcgill.splendorclient.model;
  */
 public enum CardType {
   /**
-   * Base 1 card type, green cards
+   * Base 1 card type, green cards.
    */
   BASE1,
   /**
@@ -15,7 +15,7 @@ public enum CardType {
    */
   BASE2,
   /**
-   * Base 3 card type, blue cards
+   * Base 3 card type, blue cards.
    */
   BASE3,
   /**

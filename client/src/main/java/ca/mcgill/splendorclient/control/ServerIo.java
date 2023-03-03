@@ -1,5 +1,8 @@
 package ca.mcgill.splendorclient.control;
 
-public class ServerIO {
+/**
+ * Server io.
+ */
+public class ServerIo {
 
 }

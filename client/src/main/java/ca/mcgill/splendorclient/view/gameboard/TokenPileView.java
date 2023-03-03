@@ -30,11 +30,11 @@ public class TokenPileView extends Circle {
   
   /**
    * Creates a clickable TokenPileView for the gameboard view.
-   * On click it continues generating a token request code
-   * 
-   * @param radius
-   * @param type
-   * @param locationCode
+   * On click, it continues generating a token request code.
+   *
+   * @param radius the radius of the token pile view
+   * @param type the type of tokens in the token pile
+   * @param locationCode the location code of the token pile
    */
   public TokenPileView(float radius, TokenType type, String locationCode) {
     super(radius);
@@ -44,7 +44,8 @@ public class TokenPileView extends Circle {
 
       @Override
       public void handle(MouseEvent event) {
-        //TODO: make this more user friendly, as is a user wouldn't know when a take token attempt starts and finishes.
+        // TODO: make this more user friendly,
+        // as is a user wouldn't know when a take token attempt starts and finishes.
         ActionManager.getInstance().addToRequest(type);
       }
       

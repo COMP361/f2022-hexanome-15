@@ -6,6 +6,9 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 
+/**
+ * Game Controller.
+ */
 public class GameController {
   
   private Long gameId;
@@ -40,7 +43,7 @@ public class GameController {
 
     @Override
     public void run() {
-      while(true) {
+      while (true) {
         HttpResponse<JsonNode> response = Unirest
             .get(String.format("http://%s/api/games/%d/board", LobbyServiceExecutor.SERVERLOCATION, gameId))
             .asJson();

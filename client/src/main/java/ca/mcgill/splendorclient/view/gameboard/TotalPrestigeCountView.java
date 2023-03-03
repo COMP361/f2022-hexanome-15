@@ -18,6 +18,11 @@ public class TotalPrestigeCountView extends Text {
     setText(startupText);
   }
 
+  /**
+   * Increments the prestige count and updates the label.
+   *
+   * @param amount the amount of prestige to add
+   */
   public void increment(int amount) {
     totalPrestigeCount += amount;
     String text = String.format("Total Prestige Count: %d", totalPrestigeCount);

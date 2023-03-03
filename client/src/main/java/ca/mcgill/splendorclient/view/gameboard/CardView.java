@@ -1,7 +1,5 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
-import java.util.Optional;
-
 import ca.mcgill.splendorclient.control.ActionManager;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
@@ -38,11 +36,11 @@ public class CardView extends StackPane {
   }
   
   /**
-   * Creates a CardView in the field of play
-   * 
-   * @param height
-   * @param width
-   * @param locationCode
+   * Creates a CardView in the field of play.
+   *
+   * @param height The height of the CardView
+   * @param width The width of the CardView
+   * @param locationCode The locationCode of the CardView
    */
   public CardView(float height, float width, String locationCode) {
     this.outer = new Rectangle(height, width);
@@ -56,17 +54,14 @@ public class CardView extends StackPane {
       if (arg0.getButton() == MouseButton.SECONDARY) {
         try {
           ActionManager.forwardCardRequest(locationCode + "R");
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
           //TODO: add a turn field to the response from the .../board call. 
         }
-      }
-      else {
+      } else {
         try {
           ActionManager.forwardCardRequest(locationCode + "P");
-        }
-        catch (JSONException e) {
-          
+        } catch (JSONException e) {
+          //TODO: add something in catch block
         }
       }
     });

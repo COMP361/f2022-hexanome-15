@@ -39,7 +39,7 @@ public class DeckView extends Rectangle {
   
   /**
    * Sets the number of cards display for a deck view.
-   * 
+   *
    * @param count to display
    */
   public void setNumCardsDisplay(int count) {
