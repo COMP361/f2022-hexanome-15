@@ -12,12 +12,14 @@ import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -36,7 +38,7 @@ public class UserInventory implements Iterable<Card> {
   private       int                           prestigeWon;
   private final List<Noble>                   visitingNobles;
   private final List<Power> acquiredPowers;
-  private CoatOfArmsPile coatOfArmsPile;
+  private final Optional<CoatOfArmsPile> coatOfArmsPile;
 
 
   /**
@@ -44,8 +46,9 @@ public class UserInventory implements Iterable<Card> {
    *
    * @param pile The token piles in a user's inventory
    * @param name This player's username
+   * @param coatOfArmsType The color of coat of arms this player is using
    */
-  public UserInventory(List<TokenPile> pile, PlayerWrapper name) {
+  public UserInventory(List<TokenPile> pile, PlayerWrapper name, Optional<CoatOfArmsType> coatOfArmsType) {
     assert pile != null && name != null;
     cards          = new ArrayList<>();
     tokenPiles     = new EnumMap<>(List.copyOf(pile)
@@ -59,10 +62,31 @@ public class UserInventory implements Iterable<Card> {
     prestigeWon    = 0;
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
+    if (coatOfArmsType.isPresent()) {
+      coatOfArmsPile = Optional.of(new CoatOfArmsPile(coatOfArmsType.get()));
+    }
+    else {
+      coatOfArmsPile = Optional.empty();
+    }
   }
 
+  /**
+   * Returns the amount of prestige won by this player.
+   *
+   * @return the amount of prestige won by this player
+   */
   public int getPrestigeWon() {
+
     return prestigeWon;
+  }
+
+  /**
+   * Returns the coat of arms pile belonging to this player.
+   *
+   * @return the coat of arms pile belonging to this player
+   */
+  public Optional<CoatOfArmsPile> getCoatOfArmsPile() {
+    return coatOfArmsPile;
   }
 
   /**
@@ -441,7 +465,7 @@ public class UserInventory implements Iterable<Card> {
         removed.add(removeTokenByTokenType(TokenType.GOLD));
       }
       for (int i = 0; i < tokenPiles.get(tokenType).getSize(); i++) {
-        removed.add(removeTokenByTokenType(TokenType.GOLD));
+        removed.add(removeTokenByTokenType(tokenType));
       }
     } else {
       for (int i = 0; i < n; i++) {
@@ -524,13 +548,24 @@ public class UserInventory implements Iterable<Card> {
    * @param power the power to be added
    */
   public void addPower(Power power) {
-    assert power != null && !acquiredPowers.contains(power);
+    assert power != null;
     acquiredPowers.add(power);
+  }
+
+  /**
+   * Checks if the player can receive a power.
+   *
+   * @return a boolean determining if the player can receive a power
+   */
+  public boolean canReceivePower(Power power) {
+    assert power != null;
+    return !acquiredPowers.contains(power);
   }
 
 
   @Override
   public Iterator<Card> iterator() {
+
     return cards.iterator();
   }
 

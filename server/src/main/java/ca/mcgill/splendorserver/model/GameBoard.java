@@ -413,6 +413,12 @@ public class GameBoard {
 
   private void placeCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked a power
+    if (move.getTradingPostSlot().isPresent()
+          && !move.getTradingPostSlot().get().isFull()
+          && !inventory.canReceivePower(move.getTradingPostSlot().get().getPower())) {
+      inventory.addPower(move.getTradingPostSlot().get().getPower());
+      move.getTradingPostSlot().get().addCoatOfArms(inventory.getCoatOfArmsPile().get().removeCoatOfArms());
+    }
   }
 
   private void replenishTakenCardFromDeck(DeckType deckType, int replenishIndex) {

@@ -5,7 +5,7 @@ import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
-import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import java.util.Optional;
 
 /**
@@ -20,7 +20,7 @@ public class Move {
   private final Optional<TokenType[]> selectedTokenTypes; // which token type if move involves token
   private final Optional<TokenType[]> returnedTokenTypes; // token types selected to be returned
   private final Optional<DeckType>    deckType;
-  private final Optional<CoatOfArms>  coatOfArms;
+  private final Optional<TradingPostSlot>  tradingPostSlot;
   private final Optional<Noble>       noble;
 
   /**
@@ -37,11 +37,12 @@ public class Move {
    *                           a result of the tokens taken in this move.
    * @param noble              a noble tile that represents the noble
    *                           which will visit as a result of selecting this move
-   * @param coatOfArms         The coat of  arms that is being placed on a trading route slot
+   * @param tradingPostSlot    The trading post slot that the player is acquiring a power from
    * @param selectedTokenTypes The type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
-              DeckType deckType, TokenType[] returnedTokenTypes, Noble noble, CoatOfArms coatOfArms,
+              DeckType deckType, TokenType[] returnedTokenTypes, Noble noble,
+              TradingPostSlot tradingPostSlot,
               TokenType... selectedTokenTypes
   ) {
     this.action             = action;
@@ -50,7 +51,7 @@ public class Move {
     this.selectedTokenTypes = Optional.ofNullable(selectedTokenTypes);
     this.returnedTokenTypes = Optional.ofNullable(returnedTokenTypes);
     this.deckType           = Optional.ofNullable(deckType);
-    this.coatOfArms         = Optional.ofNullable(coatOfArms);
+    this.tradingPostSlot    = Optional.ofNullable(tradingPostSlot);
     this.noble              = Optional.ofNullable(noble);
   }
 
@@ -109,12 +110,12 @@ public class Move {
   }
 
   /**
-   * Returns the coat of arms that a player is being placed on a trading route slot.
+   * Returns the trading post slot that a player is unlocking.
    *
-   * @return the coat of arms that a player is being placed on a trading route slot
+   * @return the trading post slot that a player is unlocking
    */
-  public Optional<CoatOfArms> getCoatOfArms() {
-    return coatOfArms;
+  public Optional<TradingPostSlot> getTradingPostSlot() {
+    return tradingPostSlot;
   }
 
   /**
@@ -135,7 +136,7 @@ public class Move {
              + ", card=" + card
              + ", tokenTypes=" + selectedTokenTypes
              + ", deckLevel=" + deckType
-             + ", coatOfArms=" + coatOfArms
+             + ", tradingPostSlot=" + tradingPostSlot
              + '}';
   }
 }

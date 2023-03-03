@@ -9,6 +9,7 @@ import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,9 +120,20 @@ public class SplendorGame {
     for (PlayerWrapper playerName : sessionInfo) {
       List<TokenPile> piles = new ArrayList<>();
       setUpTokenPiles(piles, false);
-      inventories.add(new UserInventory(piles, playerName));
+      inventories.add(new UserInventory(piles, playerName, Optional.empty()));
     }
   }
+
+  private void setUpUserInventoriesTradingPosts(List<UserInventory> inventories) {
+    int i = 0;
+    for (PlayerWrapper playerName : sessionInfo) {
+      List<TokenPile> piles = new ArrayList<>();
+      setUpTokenPiles(piles, false);
+      inventories.add(new UserInventory(piles, playerName, Optional.ofNullable(CoatOfArmsType.values()[i])));
+      i++;
+    }
+  }
+
 
   private void instantiateNewGameboard() {
     List<TokenPile>     piles        = new ArrayList<>();
