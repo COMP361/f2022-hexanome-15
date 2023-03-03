@@ -97,38 +97,36 @@ public class ActionManager {
                                             .orElseThrow();
       // can only be a few types: purchase dev receive noble, take 2 or 3 and return 1,2, or 3
       // TODO: figure out how to get the appropriate options in body of response
-//      List<?> responseBody = switch (selectedMove.getAction()) {
-//        case PURCHASE_DEV -> null;
-//        case PURCHASE_DEV_RECEIVE_NOBLE -> {
-//          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(),
-//            selectedMove.getCard().orElseThrow());
-//        }
-//        case RESERVE_DEV_TAKE_JOKER -> null;
-//        case TAKE_3_GEM_TOKENS_DIFF_COL -> null;
-//        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> null;
-//        case TAKE_2_GEM_TOKENS_SAME_COL -> null;
-//        case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> null;
-//        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> null;
-//        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> null;
-//        case RESERVE_DEV -> null;
-//        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
-//        // TODO: get possible return combinations for all the compound moves
-//        case RESERVE_NOBLE -> null;
-//        case CASCADE_LEVEL_1 -> null;
-//        case CASCADE_LEVEL_2 -> null;
-//        case PAIR_SPICE_CARD -> null;
-//        case DISCARD_2_WHITE_CARDS -> null;
-//        case DISCARD_2_BLUE_CARDS -> null;
-//        case DISCARD_2_GREEN_CARDS -> null;
-//        case DISCARD_2_RED_CARDS -> null;
-//        case DISCARD_2_BLACK_CARDS -> null;
-//        case TAKE_1_GEM_TOKEN -> null;
-//        case TAKE_1_GEM_TOKEN_RET_1 -> null;
-//        case PLACE_COAT_OF_ARMS -> null;
-//      };
+      /*List<?> responseBody = switch (selectedMove.getAction()) {
+        case PURCHASE_DEV -> null;
+        case PURCHASE_DEV_RECEIVE_NOBLE -> {
+          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(),
+            selectedMove.getCard().orElseThrow());
+        }
+        case RESERVE_DEV_TAKE_JOKER -> null;
+        case TAKE_3_GEM_TOKENS_DIFF_COL -> null;
+        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> null;
+        case TAKE_2_GEM_TOKENS_SAME_COL -> null;
+        case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> null;
+        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> null;
+        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> null;
+        case RESERVE_DEV -> null;
+        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
+        case RESERVE_NOBLE -> null;
+        case CASCADE_LEVEL_1 -> null;
+        case CASCADE_LEVEL_2 -> null;
+        case PAIR_SPICE_CARD -> null;
+        case DISCARD_2_WHITE_CARDS -> null;
+        case DISCARD_2_BLUE_CARDS -> null;
+        case DISCARD_2_GREEN_CARDS -> null;
+        case DISCARD_2_RED_CARDS -> null;
+        case DISCARD_2_BLACK_CARDS -> null;
+        case TAKE_1_GEM_TOKEN -> null;
+        case TAKE_1_GEM_TOKEN_RET_1 -> null;
+        case PLACE_COAT_OF_ARMS -> null;
+      };*/
       return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingaction.toString());
-    }
-    else {
+    } else {
       //TODO: check for end of turn pending actions.
       
       // check for terminal game state after action has been performed
@@ -143,8 +141,8 @@ public class ActionManager {
 
     // TODO: implement update all game boards via broadcasting manager for players in session
 
-      // TODO: handle end of game, needs to go until the first players turn is up
-      // TODO: handle tie game
+    // TODO: handle end of game, needs to go until the first players turn is up
+    // TODO: handle tie game
   }
 
 

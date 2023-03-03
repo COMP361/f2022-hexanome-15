@@ -14,7 +14,6 @@ import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.Embeddable;
-import org.springframework.http.HttpStatus;
 
 
 /**
@@ -104,8 +102,7 @@ public class GameBoard {
         if (pendingAction != null) {
           actionPending = pendingAction;
           yield pendingAction;
-        }
-        else {
+        } else {
           yield null;
         }
       }
@@ -114,8 +111,7 @@ public class GameBoard {
         if (pendingAction != null) {
           actionPending = pendingAction;
           yield pendingAction;
-        }
-        else {
+        } else {
           yield null;
         }
       }
@@ -506,7 +502,7 @@ public class GameBoard {
     }
     
     if (selectedCard instanceof OrientCard) {
-      List<Action> actions = ((OrientCard)selectedCard).getBonusActions();
+      List<Action> actions = ((OrientCard) selectedCard).getBonusActions();
       if (actions.size() > 0) {
         moveCache.add(move);
         return actions.get(0);
@@ -524,13 +520,13 @@ public class GameBoard {
       ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
       moveCache.add(move);
       for (Action bonusAction : spiceCard.getBonusActions()) {
-        boolean bDoneAction = false;
+        boolean doneAction = false;
         for (Move pastMove : moveCache) {
           if (bonusAction == pastMove.getAction()) {
-            bDoneAction = true;
+            doneAction = true;
           }
         }
-        if (!bDoneAction) {
+        if (!doneAction) {
           return bonusAction;
         }
       }

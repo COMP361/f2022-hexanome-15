@@ -57,20 +57,20 @@ public class GameRestController {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
         "SplendorOrient", "Splendor", true);
-//    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-//        "SplendorOrient+TradingPosts", "Splendor", true);
-//    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-//        "SplendorOrient+Cities", "Splendor", true);
+    /*register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrient+TradingPosts", "Splendor", true);
+    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrient+Cities", "Splendor", true);*/
     System.out.println("in here");
     
-    //debugging
-//    List<PlayerWrapper> wrappers = 
-//        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
-//    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
-//    LocalGameStorage.addActiveGame(splendorGame);
-//    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
-//    String json = buildGameBoardJson(manager.get().getBoard());
-//    System.out.println(json);
+    /*debugging
+    List<PlayerWrapper> wrappers =
+        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
+    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
+    LocalGameStorage.addActiveGame(splendorGame);
+    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
+    String json = buildGameBoardJson(manager.get().getBoard());
+    System.out.println(json);*/
   }
   
   private String buildGameBoardJson(GameBoard gameboard) {

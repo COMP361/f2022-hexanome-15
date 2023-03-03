@@ -223,7 +223,8 @@ public class UserInventory implements Iterable<Card> {
     int currentGoldTokenCount = getGoldTokenCount();
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
-      currentGoldTokenCount = amountGoldTokensNeeded(entry.getKey(), entry.getValue(), currentGoldTokenCount);
+      currentGoldTokenCount = amountGoldTokensNeeded(entry.getKey(),
+          entry.getValue(), currentGoldTokenCount);
       if (currentGoldTokenCount < 0) {
         return false;
       }
