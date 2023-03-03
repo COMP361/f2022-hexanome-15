@@ -7,6 +7,7 @@ import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
@@ -51,6 +52,7 @@ public class GameBoard {
   private Optional<Action> actionCache;
   private boolean          pendingAction;
   private final List<TradingPostSlot> tradingPostSlots;
+  private final List<City> cities;
 
   /**
    * Creates a game board.
@@ -62,7 +64,8 @@ public class GameBoard {
    * @param nobles      The nobles in the game
    */
   public GameBoard(List<UserInventory> inventories, List<Deck> decks, List<Card> cardField,
-                   List<TokenPile> tokenPiles, List<Noble> nobles
+                   List<TokenPile> tokenPiles, List<Noble> nobles,
+                   List<TradingPostSlot> tradingPostSlots, List<City> cities
   ) {
     this.inventories   = inventories;
     this.decks         = decks;
@@ -75,7 +78,8 @@ public class GameBoard {
     this.nobles        = nobles;
     this.pendingAction = false;
     this.actionCache   = Optional.empty();
-    this.tradingPostSlots = TradingPostSlot.getTradingPostSlots();
+    this.tradingPostSlots = tradingPostSlots;
+    this.cities = cities;
   }
 
   /**

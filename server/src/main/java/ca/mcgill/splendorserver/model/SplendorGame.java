@@ -6,10 +6,12 @@ import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,13 +143,25 @@ public class SplendorGame {
     List<Deck>          decks        = new ArrayList<>();
     List<Card>          playingField = new ArrayList<>();
     List<UserInventory> inventories  = new ArrayList<>();
+    List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
+    List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     setUpPlayingField(playingField, decks);
     setUpTokenPiles(piles, true);
-    setUpUserInventories(inventories);
 
-    List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
+    if (sessionInfo.getGameServer().equals("SplendorOrient+TradingPosts")) {
+      setUpUserInventoriesTradingPosts(inventories);
+      tradingPostSlots = TradingPostSlot.getTradingPostSlots();
+    }
+    else if (sessionInfo.getGameServer().equals("SplendorOrient+Cities")) {
+      setUpUserInventories(inventories);
+      cities = City.getCities(sessionInfo.getNumPlayers());
+    }
+    else {
+      setUpUserInventories(inventories);
+    }
 
-    board = new GameBoard(inventories, decks, playingField, piles, nobles);
+    board = new GameBoard(inventories, decks, playingField, piles, nobles, tradingPostSlots, cities);
   }
 
   @Override
