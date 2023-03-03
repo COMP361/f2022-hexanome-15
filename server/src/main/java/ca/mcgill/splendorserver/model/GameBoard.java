@@ -374,7 +374,7 @@ public class GameBoard {
       // add the card to their inventory as a purchased card
       // return the required tokens to purchase the card from user to board
       returnTokensToBoard(inventory.purchaseCard(selectedCard));
-      System.out.println( player + " purchased a reserved dev card: " + selectedCard);
+      System.out.println(player + " purchased a reserved dev card: " + selectedCard);
     } else if (cardField.contains(selectedCard)) { // purchase face-up dev card
       // purchase card which is face-up on the board
       // purchase card, take it from the face up table and replace that card on table

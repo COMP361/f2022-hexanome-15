@@ -9,10 +9,8 @@ import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,14 +52,14 @@ public class GameRestController {
   /**
    * Creates a GameRestController.
    *
-   * @param repository The repository
    */
   public GameRestController() {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2, "splendorBase1", "Splendor", true);
     
     //debugging
-    List<PlayerWrapper> wrappers = Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
+    List<PlayerWrapper> wrappers = 
+        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
     SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
     LocalGameStorage.addActiveGame(splendorGame);
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
@@ -74,11 +72,13 @@ public class GameRestController {
     for (UserInventory inventory : gameboard.getInventories()) {
       InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
           inventory.getTokenPiles(), inventory.getPlayer().getName(), 
-          inventory.getPrestigeWon(), inventory.getNobles(), inventory.getPowers(), inventory.getCoatOfArmsPile());
+          inventory.getPrestigeWon(), inventory.getNobles(), 
+          inventory.getPowers(), inventory.getCoatOfArmsPile());
       inventories.add(inventoryJson);
     }
     GameBoardJson gameBoardJson = new GameBoardJson(inventories, 
-        gameboard.getDecks(), gameboard.getNobles(), gameboard.getCards(), gameboard.getTokenPiles());
+        gameboard.getDecks(), gameboard.getNobles(), 
+        gameboard.getCards(), gameboard.getTokenPiles());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
   }
@@ -101,9 +101,8 @@ public class GameRestController {
    * @param gameName          the name of the game
    * @param displayName       the name of the display
    * @param webSupport        boolean value for webSupport
-   * @return
    */
-  private final Object register_gameservice(String accessToken, String gameLocation,
+  private final void register_gameservice(String accessToken, String gameLocation,
                                             int maxSessionPlayers,
                                             int minSessionPlayers, String gameName,
                                             String displayName,
@@ -161,7 +160,6 @@ public class GameRestController {
                                             .asString();
     System.out.println("Response from registration request: " + response2.getBody());
     this.gameName = gameName;
-    return null;
   }
 
   /**
@@ -204,11 +202,6 @@ public class GameRestController {
    */
   @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
-//    SplendorGame game = repository.findById(gameid)
-//                                  .orElseThrow(
-//                                      () -> new GameNotFoundException(
-//                                          gameid));
-//    repository.deleteById(gameid);
     LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid).get());
     LOGGER.info("DELETED GAME ID: " + gameid);
   }

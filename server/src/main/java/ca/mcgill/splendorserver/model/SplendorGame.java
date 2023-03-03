@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,7 +34,7 @@ public class SplendorGame {
   @Embedded
   private       GameBoard   board;
   private       boolean     finished = false;
-  private boolean bRequiresUpdate;
+  private boolean requiresUpdate;
 
   /**
    * SplendorGame constructor.
@@ -48,16 +47,16 @@ public class SplendorGame {
     sessionInfo = info;
     this.gameId = gameId;
     turnManager = new TurnManager(info.getPlayers());
-    bRequiresUpdate = true;
+    requiresUpdate = true;
     instantiateNewGameboard();
   }
   
   public boolean getRequiresUpdate() {
-    return bRequiresUpdate;
+    return requiresUpdate;
   }
   
   public void setRequiresUpdate(boolean requiresUpdate) {
-    bRequiresUpdate = requiresUpdate;
+    this.requiresUpdate = requiresUpdate;
   }
 
   public boolean isFinished() {
