@@ -123,6 +123,7 @@ public class ActionManager {
         case DISCARD_2_RED_CARDS -> null;
         case DISCARD_2_BLACK_CARDS -> null;
         case TAKE_1_GEM_TOKEN -> null;
+        case TAKE_1_GEM_TOKEN_RET_1 -> null;
         case PLACE_COAT_OF_ARMS -> null;
       };
     }
