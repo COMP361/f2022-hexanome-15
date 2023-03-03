@@ -15,49 +15,31 @@ public enum Action {
    */
   PURCHASE_DEV,
   /**
-   * Purchase type Action. A noble visits the current player after they have purchased a card.
+   * Noble visit type Action.
    */
-  PURCHASE_DEV_RECEIVE_NOBLE,
+  RECEIVE_NOBLE,
   /**
    * This action allows players to take 3 different-coloured gem tokens.
    */
   TAKE_3_GEM_TOKENS_DIFF_COL,
   /**
-   * This action allows players to take 3 different-coloured gem tokens.
-   * 1 token must be returned to the bank
-   * because the player has 11 tokens after taking the 3 new tokens.
+   * This action allows players to return 1 token to the bank.
    */
-  TAKE_3_GEM_TOKENS_DIFF_COL_RET_1,
+  RET_1_TOKEN,
   /**
-   * This action allows players to take 3 different-coloured gem tokens.
-   * 2 tokens must be returned to the bank
-   * because the player has 12 tokens after taking the 3 new tokens.
+   * This action allows players to return 2 tokens to the bank.
    */
-  TAKE_3_GEM_TOKENS_DIFF_COL_RET_2,
+  RET_2_TOKENS,
   /**
-   * This action allows players to take 3 different-coloured gem tokens.
-   * 3 tokens must be returned to the bank
-   * because the player has 13 tokens after taking the 3 new tokens.
+   * This action allows players to return 3 tokens to the bank.
    */
-  TAKE_3_GEM_TOKENS_DIFF_COL_RET_3,
+  RET_3_TOKENS,
   /**
    * This action allows players to take 2 same-coloured gem tokens.
    * This action is only possible if there are at least 4 tokens of the chosen color left
    * when the player takes them.
-  */
+   */
   TAKE_2_GEM_TOKENS_SAME_COL,
-  /**
-   * This action allows players to take 2 same-coloured gem tokens.
-   * 1 token must be returned to the bank
-   * because the player has 11 tokens after taking the 2 new tokens.
-   */
-  TAKE_2_GEM_TOKENS_SAME_COL_RET_1,
-  /**
-   * This action allows players to take 2 same-coloured gem tokens.
-   * 2 tokens must be returned to the bank
-   * because the player has 12 tokens after taking the 2 new tokens.
-   */
-  TAKE_2_GEM_TOKENS_SAME_COL_RET_2,
   /**
    * Reserve type action.
    * A gold token is not received upon reserving a card because there are no gold tokens left.
@@ -136,16 +118,6 @@ public enum Action {
    * of a different colour after taking 2 same-coloured gems.
    */
   TAKE_1_GEM_TOKEN,
-  /**
-   * Take 1 gem token type action.
-   * This is used for two Trading post expansion powers.
-   * One where a player is allowed to take 1 token after purchasing a card.
-   * The other where a player is allowed to take 1 token
-   * of a different colour after taking 2 same-coloured gems.
-   * 1 token must be returned to the bank
-   * because the player has 11 tokens after taking the 2 new tokens.
-   */
-  TAKE_1_GEM_TOKEN_RET_1,
   /**
    * Place coat of arms type action.
    * This occurs automatically after noble visitation.
