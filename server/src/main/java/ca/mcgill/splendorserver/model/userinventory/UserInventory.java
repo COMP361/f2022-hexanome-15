@@ -223,7 +223,7 @@ public class UserInventory implements Iterable<Card> {
     int currentGoldTokenCount = getGoldTokenCount();
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
-      amountGoldTokensNeeded(entry.getKey(), entry.getValue(), currentGoldTokenCount);
+      currentGoldTokenCount = amountGoldTokensNeeded(entry.getKey(), entry.getValue(), currentGoldTokenCount);
       if (currentGoldTokenCount < 0) {
         return false;
       }
@@ -243,14 +243,15 @@ public class UserInventory implements Iterable<Card> {
    *
    * @return the amount of gold tokens needed
    */
-  private void amountGoldTokensNeeded(TokenType tokenType, int cost, int currentGoldTokenCount) {
+  private int amountGoldTokensNeeded(TokenType tokenType, int cost, int currentGoldTokenCount) {
     assert tokenType != null && cost >= 0;
     int bonusDiscount = cards.stream()
                              .filter(card -> card.getTokenBonusType() == tokenType)
                              .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
     int actualCost = cost - bonusDiscount;
-    currentGoldTokenCount = actualCost - tokenPiles.get(tokenType).getSize();
+    currentGoldTokenCount += actualCost - tokenPiles.get(tokenType).getSize();
+    return  currentGoldTokenCount;
   }
 
 
