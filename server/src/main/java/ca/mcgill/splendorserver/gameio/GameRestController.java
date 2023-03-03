@@ -57,20 +57,20 @@ public class GameRestController {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
         "SplendorOrient", "Splendor", true);
-    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrient+TradingPosts", "Splendor", true);
-    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrient+Cities", "Splendor", true);
+//    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+//        "SplendorOrient+TradingPosts", "Splendor", true);
+//    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+//        "SplendorOrient+Cities", "Splendor", true);
     System.out.println("in here");
     
     //debugging
-    List<PlayerWrapper> wrappers = 
-        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
-    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
-    LocalGameStorage.addActiveGame(splendorGame);
-    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
-    String json = buildGameBoardJson(manager.get().getBoard());
-    System.out.println(json);
+//    List<PlayerWrapper> wrappers = 
+//        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
+//    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
+//    LocalGameStorage.addActiveGame(splendorGame);
+//    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
+//    String json = buildGameBoardJson(manager.get().getBoard());
+//    System.out.println(json);
   }
   
   private String buildGameBoardJson(GameBoard gameboard) {
@@ -184,10 +184,6 @@ public class GameRestController {
       if (sessionInfo == null || sessionInfo.getGameServer() == null) {
         throw new Exception();
       }
-      if (!sessionInfo.getGameServer()
-                      .equals(gameName)) {
-        throw new Exception();
-      }
       // Getting the players in the session
       // gameManager.addGame(gameId, sessionInfo.getPlayers()
       // .toArray(new Player[launcherInfo.getPlayers().size()]));
@@ -232,13 +228,10 @@ public class GameRestController {
     if (manager.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
-    } else if (LocalGameStorage.requiresUpdate(gameid)) {
-      String json = new Gson().toJson(manager.get()
-          .getBoard());
+    } else {
+      String json = buildGameBoardJson(manager.get().getBoard());
       return ResponseEntity.status(HttpStatus.OK)
       .body(json);
-    } else {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
   }
 

@@ -82,7 +82,7 @@ public class ActionManager {
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
     // apply the selected move to game board
-    HttpStatus actionStatus = splendorGame.getBoard()
+    Action pendingaction = splendorGame.getBoard()
                                           .applyMove(selectedMove, playerWrapper.orElseThrow(
                                               () -> new IllegalGameStateException(
                                                   "If a valid move has been selected, "
@@ -91,58 +91,60 @@ public class ActionManager {
                                                     + "but player was found empty")));
 
     // need to handle potential compound actions
-    if (actionStatus == HttpStatus.PARTIAL_CONTENT) {
+    if (pendingaction != null) {
       UserInventory inventory = splendorGame.getBoard()
                                             .getInventoryByPlayerName(playerName)
                                             .orElseThrow();
       // can only be a few types: purchase dev receive noble, take 2 or 3 and return 1,2, or 3
       // TODO: figure out how to get the appropriate options in body of response
-      List<?> responseBody = switch (selectedMove.getAction()) {
-        case PURCHASE_DEV -> null;
-        case PURCHASE_DEV_RECEIVE_NOBLE -> {
-          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(),
-            selectedMove.getCard().orElseThrow());
-        }
-        case RESERVE_DEV_TAKE_JOKER -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> null;
-        case RESERVE_DEV -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
-        // TODO: get possible return combinations for all the compound moves
-        case RESERVE_NOBLE -> null;
-        case CASCADE_LEVEL_1 -> null;
-        case CASCADE_LEVEL_2 -> null;
-        case PAIR_SPICE_CARD -> null;
-        case DISCARD_2_WHITE_CARDS -> null;
-        case DISCARD_2_BLUE_CARDS -> null;
-        case DISCARD_2_GREEN_CARDS -> null;
-        case DISCARD_2_RED_CARDS -> null;
-        case DISCARD_2_BLACK_CARDS -> null;
-        case TAKE_1_GEM_TOKEN -> null;
-        case TAKE_1_GEM_TOKEN_RET_1 -> null;
-        case PLACE_COAT_OF_ARMS -> null;
-      };
+//      List<?> responseBody = switch (selectedMove.getAction()) {
+//        case PURCHASE_DEV -> null;
+//        case PURCHASE_DEV_RECEIVE_NOBLE -> {
+//          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(),
+//            selectedMove.getCard().orElseThrow());
+//        }
+//        case RESERVE_DEV_TAKE_JOKER -> null;
+//        case TAKE_3_GEM_TOKENS_DIFF_COL -> null;
+//        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> null;
+//        case TAKE_2_GEM_TOKENS_SAME_COL -> null;
+//        case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> null;
+//        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> null;
+//        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> null;
+//        case RESERVE_DEV -> null;
+//        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
+//        // TODO: get possible return combinations for all the compound moves
+//        case RESERVE_NOBLE -> null;
+//        case CASCADE_LEVEL_1 -> null;
+//        case CASCADE_LEVEL_2 -> null;
+//        case PAIR_SPICE_CARD -> null;
+//        case DISCARD_2_WHITE_CARDS -> null;
+//        case DISCARD_2_BLUE_CARDS -> null;
+//        case DISCARD_2_GREEN_CARDS -> null;
+//        case DISCARD_2_RED_CARDS -> null;
+//        case DISCARD_2_BLACK_CARDS -> null;
+//        case TAKE_1_GEM_TOKEN -> null;
+//        case TAKE_1_GEM_TOKEN_RET_1 -> null;
+//        case PLACE_COAT_OF_ARMS -> null;
+//      };
+      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingaction.toString());
+    }
+    else {
+      //TODO: check for end of turn pending actions.
+      
+      // check for terminal game state after action has been performed
+      if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+        logger.log(Level.INFO, "Terminal game state reached");
+      }
+      // advance to the next players turn
+      PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(whoseUpNext.getName());
     }
 
     // TODO: implement update all game boards via broadcasting manager for players in session
 
-    // check for terminal game state after action has been performed
-    if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
-      logger.log(Level.INFO, "Terminal game state reached");
       // TODO: handle end of game, needs to go until the first players turn is up
       // TODO: handle tie game
-    }
-
-    // advance to the next players turn
-    PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
-
-    return ResponseEntity.status(actionStatus)
-                         .body(whoseUpNext.getName());
-
   }
 
 
@@ -267,9 +269,17 @@ public class ActionManager {
     UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
                                            .orElseThrow();
     Map<String, Move> moveMap = new LinkedHashMap<>();
-    getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-    getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-    getSelectTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+    //TODO: switch on pending actions in gameboard.
+    switch (splendorGame.getBoard().getPendingAction()) {
+      case PAIR_SPICE_CARD:
+        //TODO: calculate available pairings for spice card.
+        break;
+      default:
+        getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        getSelectTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
+    }
 
     return moveMap;
   }

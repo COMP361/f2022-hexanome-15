@@ -14,6 +14,8 @@ import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
+
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
@@ -47,8 +49,9 @@ public class GameBoard {
   moveCache := move which involved a compound action and is currently being waited on
   pendingAction := if the game is waiting for an action to be made
    */
-  private Action actionCache;
+  private List<Move> moveCache = new ArrayList<>();
   private boolean pendingAction;
+  private Action actionPending;
   private List<TradingPostSlot> tradingPostSlots;
   private final List<City> cities;
 
@@ -87,148 +90,170 @@ public class GameBoard {
    * @param move   selected move, must be valid move, cannot be null
    * @param player player whose turn it is, cannot be null
    */
-  public HttpStatus applyMove(Move move, PlayerWrapper player) {
+  public Action applyMove(Move move, PlayerWrapper player) {
     assert move != null && player != null;
     // getting players inventory or throws exception if not there
     UserInventory inventory = getInventoryByPlayerName(player.getName()).orElseThrow(
         () -> new IllegalArgumentException(
             "player (" + player.getName() + ") wasn't found in this current game board"));
 
+    Action pendingAction;
     return switch (move.getAction()) {
       case PURCHASE_DEV -> {
-        performPurchaseDev(move, player, inventory);
-        yield HttpStatus.OK;
-      }
-      case PURCHASE_DEV_RECEIVE_NOBLE -> {
-        // check if we're waiting for this or not
-        if (waitingForAction(Action.PURCHASE_DEV_RECEIVE_NOBLE)) {
-          performPurchaseDev(move, player, inventory);
-          performClaimNobleAction(move, inventory);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          // this is compound action, request further actions
-          cacheAction(Action.PURCHASE_DEV_RECEIVE_NOBLE);
-          yield HttpStatus.PARTIAL_CONTENT;
+        pendingAction = performPurchaseDev(move, player, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          yield pendingAction;
+        }
+        else {
+          yield null;
         }
       }
-      case RESERVE_DEV -> {
-        performReserveDev(move, inventory);
-        yield HttpStatus.OK;
-      }
-      case RESERVE_DEV_TAKE_JOKER -> {
-        // gold token added and card reserved
-        performReserveDev(move, inventory);
-        inventory.addTokens(drawGoldToken());
-        yield HttpStatus.OK;
-      }
-      case TAKE_2_GEM_TOKENS_SAME_COL -> {
-        performTake2GemsSameColor(move, inventory);
-        yield HttpStatus.OK;
-      }
-      case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
-        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1)) {
-          performTake2GemsSameColorReturn(move, inventory, 1);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1);
-          yield HttpStatus.PARTIAL_CONTENT;
-        }
-      }
-      case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> {
-        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2)) {
-          performTake2GemsSameColorReturn(move, inventory, 2);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2);
-          yield HttpStatus.PARTIAL_CONTENT;
-        }
-      }
-      case TAKE_3_GEM_TOKENS_DIFF_COL -> {
-        performTake3GemsDiffColor(move, inventory);
-        yield HttpStatus.OK;
-      }
-      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
-        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1)) {
-          performTake3GemsDiffColorReturn(move, inventory, 1);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1);
-          yield HttpStatus.PARTIAL_CONTENT;
-        }
-      }
-      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
-        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2)) {
-          performTake3GemsDiffColorReturn(move, inventory, 2);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2);
-          yield HttpStatus.PARTIAL_CONTENT;
-        }
-      }
-      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
-        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3)) {
-          performTake3GemsDiffColorReturn(move, inventory, 3);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3);
-          yield HttpStatus.PARTIAL_CONTENT;
-        }
-      }
-      case RESERVE_NOBLE -> null;
-      case CASCADE_LEVEL_1 -> null;
-      case CASCADE_LEVEL_2 -> null;
       case PAIR_SPICE_CARD -> {
-        performPairSpiceCard(move, inventory);
-        yield HttpStatus.OK;
-      }
-      case DISCARD_2_WHITE_CARDS -> null;
-      case DISCARD_2_BLUE_CARDS -> null;
-      case DISCARD_2_GREEN_CARDS -> null;
-      case DISCARD_2_RED_CARDS -> null;
-      case DISCARD_2_BLACK_CARDS -> null;
-      case TAKE_1_GEM_TOKEN -> {
-        performTake1Gem(move, inventory);
-        yield HttpStatus.OK;
-      }
-      case TAKE_1_GEM_TOKEN_RET_1 -> {
-        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
-          performTake1GemReturn(move, inventory);
-          unCacheAction();
-          yield HttpStatus.OK;
-        } else {
-          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
-          yield HttpStatus.PARTIAL_CONTENT;
+        pendingAction = performPairSpiceCard(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          yield pendingAction;
+        }
+        else {
+          yield null;
         }
       }
-      case PLACE_COAT_OF_ARMS -> {
-        performPlaceCoatOfArms(move, inventory);
-        yield HttpStatus.OK;
+      default -> {
+        yield null;
       }
+//      case PURCHASE_DEV_RECEIVE_NOBLE -> {
+//        // check if we're waiting for this or not
+//        if (waitingForAction(Action.PURCHASE_DEV_RECEIVE_NOBLE)) {
+//          performPurchaseDev(move, player, inventory);
+//          performClaimNobleAction(move, inventory);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          // this is compound action, request further actions
+//          cacheAction(Action.PURCHASE_DEV_RECEIVE_NOBLE);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case RESERVE_DEV -> {
+//        performReserveDev(move, inventory);
+//        yield null;
+//      }
+//      case RESERVE_DEV_TAKE_JOKER -> {
+//        // gold token added and card reserved
+//        performReserveDev(move, inventory);
+//        inventory.addTokens(drawGoldToken());
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_2_GEM_TOKENS_SAME_COL -> {
+//        performTake2GemsSameColor(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
+//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1)) {
+//          performTake2GemsSameColorReturn(move, inventory, 1);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> {
+//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2)) {
+//          performTake2GemsSameColorReturn(move, inventory, 2);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL -> {
+//        performTake3GemsDiffColor(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
+//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1)) {
+//          performTake3GemsDiffColorReturn(move, inventory, 1);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
+//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2)) {
+//          performTake3GemsDiffColorReturn(move, inventory, 2);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
+//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3)) {
+//          performTake3GemsDiffColorReturn(move, inventory, 3);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case RESERVE_NOBLE -> null;
+//      case CASCADE_LEVEL_1 -> null;
+//      case CASCADE_LEVEL_2 -> null;
+//      case PAIR_SPICE_CARD -> {
+//        performPairSpiceCard(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case DISCARD_2_WHITE_CARDS -> null;
+//      case DISCARD_2_BLUE_CARDS -> null;
+//      case DISCARD_2_GREEN_CARDS -> null;
+//      case DISCARD_2_RED_CARDS -> null;
+//      case DISCARD_2_BLACK_CARDS -> null;
+//      case TAKE_1_GEM_TOKEN -> {
+//        performTake1Gem(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_1_GEM_TOKEN_RET_1 -> {
+//        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
+//          performTake1GemReturn(move, inventory);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case PLACE_COAT_OF_ARMS -> {
+//        performPlaceCoatOfArms(move, inventory);
+//        yield HttpStatus.OK;
+//      }
     };
   }
 
   private boolean waitingForAction(Action action) {
-    return pendingAction && actionCache != null && actionCache == action;
+    return pendingAction;
   }
 
   private void cacheAction(Action action) {
-    this.actionCache   = action;
     this.pendingAction = true;
   }
 
   private void unCacheAction() {
-    this.actionCache   = null;
     this.pendingAction = false;
   }
 
   private void setPendingAction(boolean isPending) {
     pendingAction = isPending;
+  }
+  
+  public Action getPendingAction() {
+    return actionPending;
   }
 
   private void performTake3GemsDiffColorReturn(Move move, UserInventory inventory, int n) {
@@ -447,7 +472,7 @@ public class GameBoard {
     return selectedCard;
   }
 
-  private void performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
+  private Action performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
     // checking to see whether they're buying from reserved card in hand / table or from deck
     Card selectedCard = move.getCard()
                             .orElseThrow(() -> new IllegalGameStateException(
@@ -479,17 +504,41 @@ public class GameBoard {
       throw new IllegalGameStateException(
           "Cannot purchase card which isn't reserved or face-up");
     }
-
-    performClaimNobleAction(move, inventory);
+    
+    if (selectedCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard)selectedCard).getBonusActions();
+      if (actions.size() > 0) {
+        moveCache.add(move);
+        return actions.get(0);
+      }
+    }
+    
+    return null;
 
   }
 
-  private void performPairSpiceCard(Move move, UserInventory inventory) {
-    Card spiceCard = inventory.getUnpairedSpiceCard();
+  private Action performPairSpiceCard(Move move, UserInventory inventory) {
+    OrientCard spiceCard = inventory.getUnpairedSpiceCard();
     if (move.getCard().isPresent()
           && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
       ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+      moveCache.add(move);
+      for (Action bonusAction : spiceCard.getBonusActions()) {
+        boolean bDoneAction = false;
+        for (Move pastMove : moveCache) {
+          if (bonusAction == pastMove.getAction()) {
+            bDoneAction = true;
+          }
+        }
+        if (!bDoneAction) {
+          return bonusAction;
+        }
+      }
     }
+    moveCache.clear();
+    actionPending = null;
+    pendingAction = false;
+    return null;
   }
 
   private void performClaimNobleAction(Move move, UserInventory inventory) {
