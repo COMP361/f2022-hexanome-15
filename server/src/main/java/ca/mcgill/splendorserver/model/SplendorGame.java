@@ -145,7 +145,8 @@ public class SplendorGame {
     setUpTokenPiles(piles, true);
     setUpUserInventories(inventories);
 
-    List<Noble> nobles = new ArrayList<>();
+    List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
+
     board = new GameBoard(inventories, decks, playingField, piles, nobles);
   }
 

@@ -3,6 +3,7 @@ package ca.mcgill.splendorserver.model.nobles;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 //TODO: Make Nobles flyweights
 
@@ -14,6 +15,7 @@ public class Noble {
   private NobleStatus status;
   private final int         prestige;
   private static final List<Noble> nobles  = new ArrayList<Noble>();
+  private static final List<Noble> noblesInGame = new ArrayList<>();
 
   /**
    * Creates a noble.
@@ -57,6 +59,27 @@ public class Noble {
   public void setStatus(NobleStatus nobleStatus) {
     assert nobleStatus != null;
     this.status = nobleStatus;
+  }
+
+  /**
+   * Returns the nobles that are currently in the game.
+   *
+   * @param numPlayers the number of players in the game
+   * @return a list of nobles that are currently in the game
+   */
+  public static List<Noble> getNobles(int numPlayers) {
+    if (nobles.size() == 0) {
+      generateNobles();
+    }
+    Random random = new Random();
+    if (noblesInGame.size() == 0) {
+      for (int i = 0; i < numPlayers; i++) {
+        int randomIndex = random.nextInt(nobles.size());
+        Noble randomNoble = nobles.get(randomIndex);
+        noblesInGame.add(randomNoble);
+      }
+    }
+    return noblesInGame;
   }
 
   /**

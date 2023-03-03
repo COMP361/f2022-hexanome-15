@@ -1,8 +1,8 @@
 package ca.mcgill.splendorserver.model.cards;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount
@@ -21,6 +21,7 @@ public class Deck {
   public Deck(DeckType type) {
     assert type != null;
     this.cards = (ArrayList<Card>) Card.makeDeck(type);
+    Collections.shuffle(this.cards);
     this.type  = type;
   }
 

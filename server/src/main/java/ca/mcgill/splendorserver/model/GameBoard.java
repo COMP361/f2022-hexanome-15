@@ -50,7 +50,7 @@ public class GameBoard {
    */
   private Optional<Action> actionCache;
   private boolean          pendingAction;
-  private List<TradingPostSlot> tradingPostSlots;
+  private final List<TradingPostSlot> tradingPostSlots;
 
   /**
    * Creates a game board.
@@ -75,6 +75,7 @@ public class GameBoard {
     this.nobles        = nobles;
     this.pendingAction = false;
     this.actionCache   = Optional.empty();
+    this.tradingPostSlots = TradingPostSlot.getTradingPostSlots();
   }
 
   /**
