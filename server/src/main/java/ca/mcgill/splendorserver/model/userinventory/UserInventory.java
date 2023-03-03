@@ -228,6 +228,7 @@ public class UserInventory implements Iterable<Card> {
 
   /**
    * Reserves noble card as part of Orient card bonus action ands adds it to inventory.
+   *
    * @param noble noble being reserved
    * @throws AssertionError if noble == null
    */
@@ -236,7 +237,8 @@ public class UserInventory implements Iterable<Card> {
 
     if (noble.getStatus() != NobleStatus.ON_BOARD) {
       throw new IllegalGameStateException(
-              "Noble cannot be reserved if it has already been reserved or is currently visiting a player");
+              "Noble cannot be reserved if it "
+                + "has already been reserved or is currently visiting a player");
     }
 
     noble.setStatus(NobleStatus.RESERVED);
@@ -245,6 +247,7 @@ public class UserInventory implements Iterable<Card> {
 
   /**
    * Adds the chosen level one Orient card to the inventory.
+   *
    * @param card orient level one card to add
    * @throws AssertionError if card == null
    */
@@ -259,6 +262,7 @@ public class UserInventory implements Iterable<Card> {
 
   /**
    * Adds the chosen level two Orient card to the inventory.
+   *
    * @param card orient level two card to add
    * @throws AssertionError if card == null
    */
@@ -272,28 +276,31 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Removes card from deck based on bonus colour, prioritizes spice bag cards
+   * Removes card from deck based on bonus colour, prioritizes spice bag cards.
+   *
    * @param tokenType the token type of the element to remove
    * @throws AssertionError if tokenType == null
    */
-public void discardByBonusType(TokenType tokenType) {
+  public void discardByBonusType(TokenType tokenType) {
     assert tokenType != null;
     for (int i = 0; i < cards.size(); i++) {
       Card current = cards.get(i);
 
-      if (current.getTokenBonusType() == tokenType && current.getCardStatus() != CardStatus.RESERVED &&
-              ((OrientCard) current).isSpiceBag()) {
+      if (current.getTokenBonusType() == tokenType
+            && current.getCardStatus() != CardStatus.RESERVED
+            && ((OrientCard) current).isSpiceBag()) {
         cards.remove(i);
         return;
       }
     }
     for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType() == tokenType && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
+      if (cards.get(j).getTokenBonusType() == tokenType
+            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
         cards.remove(j);
         return;
       }
     }
-}
+  }
 
 
 

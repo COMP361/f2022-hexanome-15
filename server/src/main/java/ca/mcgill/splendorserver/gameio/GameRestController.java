@@ -6,7 +6,6 @@ import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import com.google.gson.Gson;
-
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,8 +43,6 @@ public class GameRestController {
 
   /**
    * Creates a GameRestController.
-   *
-   * @param repository The repository
    */
   public GameRestController() {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
@@ -71,7 +68,7 @@ public class GameRestController {
    * @param gameName          the name of the game
    * @param displayName       the name of the display
    * @param webSupport        boolean value for webSupport
-   * @return
+   * @return null
    */
   private final Object register_gameservice(String accessToken, String gameLocation,
                                             int maxSessionPlayers,
@@ -174,11 +171,9 @@ public class GameRestController {
    */
   @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
-//    SplendorGame game = repository.findById(gameid)
-//                                  .orElseThrow(
-//                                      () -> new GameNotFoundException(
-//                                          gameid));
-//    repository.deleteById(gameid);
+    /*SplendorGame game = repository.findById(gameid).
+    orElseThrow(() -> new GameNotFoundException(gameid));
+    repository.deleteById(gameid);*/
     LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid).get());
     LOGGER.info("DELETED GAME ID: " + gameid);
   }
