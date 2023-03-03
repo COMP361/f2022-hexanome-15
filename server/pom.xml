@@ -63,11 +63,6 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ca.mcgill</groupId>
-            <artifactId>splendorclient</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
 	<build>
