@@ -12,6 +12,7 @@ import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
@@ -653,11 +654,6 @@ public class GameBoard {
     return cardField;
   }
 
-  /*public List<TokenPile> getTokenPiles() {
-    return tokenPiles.values()
-                     .stream()
-                     .toList();
-  }*/
 
   /**
    * Retrieves the token piles on the game board except for the gold token pile.
