@@ -394,7 +394,7 @@ public class GameBoard {
           .isEmpty() || move.getSelectedTokenTypes()
                           .get().length != 1) {
       throw new IllegalGameStateException(
-        "If move is to take 2 gems of same color, then gems needs to be of size 1");
+        "If move is to take 1 gem, then gems needs to be of size 1");
     }
 
     // check that the token to return is not empty and proper size
@@ -403,7 +403,7 @@ public class GameBoard {
                           .get().length != 1) {
       throw new IllegalGameStateException(
         String.format(
-          "If move is to take 2 gems of same color and return %d, "
+          "If move is to take 1 gem and return %d, "
             + "then gems to return needs to be of size %d",
           1, 1
         ));
