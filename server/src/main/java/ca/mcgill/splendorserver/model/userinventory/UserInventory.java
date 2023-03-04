@@ -551,6 +551,8 @@ public class UserInventory implements Iterable<Card> {
       addPrestige(5);
     } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
       addPrestige(acquiredPowers.size());
+    } else if (acquiredPowers.contains(Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS)) {
+      addPrestige(1);
     }
   }
 
