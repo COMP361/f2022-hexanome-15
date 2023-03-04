@@ -370,12 +370,6 @@ public class GameBoard {
                                                  .get()[0]));
   }
 
-  /**
-   * Performs take 1 gem and return 1 token action routine.
-   *
-   * @param move      the move to perform
-   * @param inventory the inventory to apply the move side effects to
-   */
   private void performTake1GemReturn(Move move, UserInventory inventory) {
     checkConditionsForTake1GemReturn(move);
 
@@ -433,9 +427,13 @@ public class GameBoard {
                                                .get()[0]));
   }
 
-
-
-  private void performReserveDev(Move move, UserInventory inventory) {
+  /**
+   * Performs a reserve development type action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
     Card selectedCard = getSelectedCardOrThrow(move);
     // if we're taking from the table, replenish table from the deck
@@ -453,6 +451,21 @@ public class GameBoard {
     }
     // add to inventory as reserved card now
     inventory.addReservedCard(selectedCard);
+
+    for (Noble noble : inventory.getNobles()) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.canReceivePower(tradingPostSlot)) {
+        moveCache.add(move);
+        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
+
+    return null;
   }
 
   private Card getSelectedCardOrThrow(Move move) {
@@ -469,6 +482,14 @@ public class GameBoard {
     return selectedCard;
   }
 
+  /**
+   * Performs a purchase development card action routine.
+   *
+   * @param move      the move to perform
+   * @param player    the player performing the move
+   * @param inventory the inventory to apply the move side effects to
+   * @return any bonus actions that need to be performed
+   */
   private Action performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
     // checking to see whether they're buying from reserved card in hand / table or from deck
     Card selectedCard = move.getCard()
@@ -526,6 +547,13 @@ public class GameBoard {
 
   }
 
+  /**
+   * Performs a purchase development card action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   * @return any bonus actions that need to be performed
+   */
   private Action performPairSpiceCard(Move move, UserInventory inventory) {
     if (move.getCard().isEmpty()) {
       throw new IllegalGameStateException(
@@ -559,6 +587,12 @@ public class GameBoard {
     return null;
   }
 
+  /**
+   * Performs a claim noble type action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
   private void performClaimNobleAction(Move move, UserInventory inventory) {
     // see if player has been visited by a noble and if so that this is valid
     if (move.getNoble()
@@ -570,6 +604,12 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Performs a place coat of arms type action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
   private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked the power associated with this trading post slot
     if (move.getTradingPostSlot().isPresent()
@@ -581,6 +621,13 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Draws a card from the top of the deck and adds it to the game board.
+   * This is used after a card is purchased or reserved.
+   *
+   * @param deckType the type of deck to deal from
+   * @param replenishIndex the index of the card that was removed from the game board
+   */
   private void replenishTakenCardFromDeck(DeckType deckType, int replenishIndex) {
     // empty card field means we cant replenish because otherwise it would have been replenished alr
     for (Deck deck : decks) {
@@ -591,12 +638,24 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Draws tokens from the token bank and adds them to the user inventory.
+   *
+   * @param inventory the current player's inventory
+   * @param selected the types of tokens selected
+   */
   private void moveTokensToUserInventory(UserInventory inventory, TokenType[] selected) {
     for (TokenType tokenType : selected) {
       inventory.addTokens(drawTokenByTokenType(tokenType));
     }
   }
 
+  /**
+   * Returns tokens from the user inventory and adds them to the token bank.
+   *
+   * @param inventory the current player's inventory
+   * @param selected the types of tokens selected
+   */
   private void returnTokensToBoardFromInventory(UserInventory inventory, TokenType... selected) {
     for (TokenType tokenType : selected) {
       tokenPiles.get(tokenType)
@@ -604,6 +663,12 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Returns tokens from the user inventory and adds them to the token bank.
+   * Used when purchasing cards.
+   *
+   * @param tokens the returned tokens
+   */
   private void returnTokensToBoard(List<Token> tokens) {
     for (Token token : tokens) {
       tokenPiles.get(token.getType())
@@ -611,11 +676,19 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Draws a card from the top of the deck with the specified deck level.
+   *
+   * @param deckLevel the level of the deck
+   * @return the card from the top of the deck
+   */
   private Card getCardByDeckLevel(DeckType deckLevel) {
     assert deckLevel != null;
     for (Deck deck : decks) {
       if (deck.getType() == deckLevel) {
-        return deck.draw();
+        if (!deck.isEmpty()) {
+          return deck.draw();
+        }
       }
     }
 

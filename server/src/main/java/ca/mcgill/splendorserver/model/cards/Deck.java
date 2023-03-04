@@ -30,14 +30,6 @@ public class Deck {
     return cards.remove(0);
   }
 
-  /*public Optional<Card> drawOpt() {
-    if (cards.isEmpty()) {
-      return Optional.empty();
-    } else {
-      return Optional.of(cards.remove(0));
-    }
-  }*/
-
   public boolean isEmpty() {
     return cards.isEmpty();
   }

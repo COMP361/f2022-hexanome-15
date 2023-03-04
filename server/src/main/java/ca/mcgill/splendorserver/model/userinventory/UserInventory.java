@@ -82,6 +82,56 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Returns the list of cards in the user inventory.
+   *
+   * @return the list of cards in the user inventory
+   */
+  public List<Card> getCards() {
+
+    return cards;
+  }
+
+  /**
+   * Returns the token piles in the user inventory.
+   *
+   * @return the token piles in the user inventory
+   */
+  public EnumMap<TokenType, TokenPile> getTokenPiles() {
+
+    return tokenPiles;
+  }
+
+  /**
+   * Returns the list of nobles in the user inventory.
+   *
+   * @return the list of nobles in the user inventory
+   */
+  public List<Noble> getNobles() {
+
+    return visitingNobles;
+  }
+
+  /**
+   * Returns the list of powers in the user inventory.
+   *
+   * @return the list of powers in the user inventory
+   */
+  public List<Power> getPowers() {
+
+    return acquiredPowers;
+  }
+
+  /**
+   * Returns the coat of arms pile in the user inventory.
+   *
+   * @return the coat of arms pile in the user inventory
+   */
+  public CoatOfArmsPile getCoatOfArmsPile() {
+
+    return coatOfArmsPile;
+  }
+
+  /**
    * Returns the token types of all the non-empty token piles in the user inventory.
    *
    * @return the list of token types of all the non-empty token piles in the user inventory
@@ -233,6 +283,11 @@ public class UserInventory implements Iterable<Card> {
     return true;
   }
 
+  /**
+   * Returns the amount of gold tokens in the user inventory.
+   *
+   * @return the amount of gold tokens in the user inventory
+   */
   private int getGoldTokenCount() {
     return tokenPiles.computeIfAbsent(TokenType.GOLD, TokenPile::new)
                      .getSize();
@@ -255,9 +310,6 @@ public class UserInventory implements Iterable<Card> {
     currentGoldTokenCount += actualCost - tokenPiles.get(tokenType).getSize();
     return  currentGoldTokenCount;
   }
-
-
-  //TODO: do we check if the card is already in the hand or are the cards all unique???
 
   /**
    * Adds card to user inventory.
@@ -400,6 +452,11 @@ public class UserInventory implements Iterable<Card> {
     return costs;
   }
 
+  /**
+   * Adds prestige to the user inventory.
+   *
+   * @param prestige the amount of prestige to be added
+   */
   private void addPrestige(int prestige) {
     assert prestige >= 0;
     prestigeWon += prestige;
@@ -451,6 +508,13 @@ public class UserInventory implements Iterable<Card> {
                 .reduce(0, Integer::sum) < amount;
   }
 
+  /**
+   * Removes tokens from the user inventory.
+   *
+   * @param tokenType the type of tokens to be removed
+   * @param n the number of tokens to be removed
+   * @return the list of removed tokens
+   */
   private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
     assert tokenType != null && n >= 0;
     List<Token> removed = new ArrayList<>(n);
@@ -549,26 +613,6 @@ public class UserInventory implements Iterable<Card> {
   public Iterator<Card> iterator() {
 
     return cards.iterator();
-  }
-  
-  public List<Card> getCards() {
-    return cards;
-  }
-  
-  public EnumMap<TokenType, TokenPile> getTokenPiles() {
-    return tokenPiles;
-  }
-  
-  public List<Noble> getNobles() {
-    return visitingNobles;
-  }
-  
-  public List<Power> getPowers() {
-    return acquiredPowers;
-  }
-  
-  public CoatOfArmsPile getCoatOfArmsPile() {
-    return coatOfArmsPile;
   }
 
 }
