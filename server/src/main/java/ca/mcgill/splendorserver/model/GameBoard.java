@@ -527,21 +527,30 @@ public class GameBoard {
   }
 
   private Action performPairSpiceCard(Move move, UserInventory inventory) {
+    if (move.getCard().isEmpty()) {
+      throw new IllegalGameStateException(
+        "If move to pair a spice card, then card cannot be empty");
+    }
+    if (!inventory.hasCard(move.getCard().get())) {
+      throw new IllegalGameStateException(
+        "If move to pair a spice card, then card has to be in user inventory");
+    }
     OrientCard spiceCard = inventory.getUnpairedSpiceCard();
-    if (move.getCard().isPresent()
-          && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
-      ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
-      moveCache.add(move);
-      for (Action bonusAction : spiceCard.getBonusActions()) {
-        boolean doneAction = false;
-        for (Move pastMove : moveCache) {
-          if (bonusAction == pastMove.getAction()) {
-            doneAction = true;
-          }
+    if (spiceCard == null) {
+      throw new IllegalGameStateException(
+        "If move to pair a spice card, then an unpaired spice card has to be in user inventory");
+    }
+    ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+    moveCache.add(move);
+    for (Action bonusAction : spiceCard.getBonusActions()) {
+      boolean doneAction = false;
+      for (Move pastMove : moveCache) {
+        if (bonusAction == pastMove.getAction()) {
+          doneAction = true;
         }
-        if (!doneAction) {
-          return bonusAction;
-        }
+      }
+      if (!doneAction) {
+        return bonusAction;
       }
     }
     moveCache.clear();
@@ -653,16 +662,49 @@ public class GameBoard {
     return Optional.empty();
   }
 
+  /**
+   * Returns the list of inventories in the game board.
+   *
+   * @return the list of inventories in the game board
+   */
   public List<UserInventory> getInventories() {
     return inventories;
   }
 
+  /**
+   * Returns the list of decks in the game board.
+   *
+   * @return the list of decks in the game board
+   */
   public List<Deck> getDecks() {
     return decks;
   }
 
+  /**
+   * Returns the list of cards dealt onto the game board.
+   *
+   * @return the list of cards dealt onto the game board
+   */
   public List<Card> getCards() {
     return cardField;
+  }
+
+  /**
+   * Returns the list of trading posts in the game board.
+   *
+   * @return the list of trading posts in the game board
+   */
+  public List<TradingPostSlot> getTradingPostSlots() {
+    return tradingPostSlots;
+  }
+
+  /**
+   * Returns the list of cities in the game board.
+   *
+   * @return the list of cities in the game board
+   */
+  public List<City> getCities() {
+    return cities;
   }
 
 
@@ -677,7 +719,12 @@ public class GameBoard {
                      .filter(tokens -> tokens.getType() != TokenType.GOLD)
                      .toList();
   }
-  
+
+  /**
+   * Returns the map of token piles in the game board.
+   *
+   * @return the map of token piles in the game board
+   */
   public EnumMap<TokenType, TokenPile> getTokenPiles() {
     return tokenPiles;
   }
@@ -692,6 +739,11 @@ public class GameBoard {
                      .getSize() == 0;
   }
 
+  /**
+   * Returns the list of nobles in the game board.
+   *
+   * @return the list of nobles in the game board
+   */
   public List<Noble> getNobles() {
     return nobles;
   }

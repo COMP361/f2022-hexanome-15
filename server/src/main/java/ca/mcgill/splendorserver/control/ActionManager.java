@@ -11,6 +11,7 @@ import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -270,7 +271,7 @@ public class ActionManager {
     //TODO: switch on pending actions in gameboard.
     switch (splendorGame.getBoard().getPendingAction()) {
       case PAIR_SPICE_CARD:
-        //TODO: calculate available pairings for spice card.
+        getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
       case RET_3_TOKENS:
       case RET_2_TOKENS:
@@ -286,6 +287,8 @@ public class ActionManager {
       case RESERVE_NOBLE:
       case RECEIVE_NOBLE:
       case PLACE_COAT_OF_ARMS:
+        getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
       default:
         getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
         getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
@@ -297,8 +300,7 @@ public class ActionManager {
   }
 
   private void getBuyDevMoves(Map<String, Move> moveMap, UserInventory inventory,
-                              GameBoard gameBoard, PlayerWrapper player
-  ) {
+                              GameBoard gameBoard, PlayerWrapper player) {
     // player can buy dev card from face-up on the table or reserved in their hand
 
     // cards face-up on table
@@ -306,7 +308,7 @@ public class ActionManager {
       // cannot offer a move involving a card already purchased
       if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
         Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-          null, null);
+            null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -319,7 +321,7 @@ public class ActionManager {
       for (Card card : inventory) {
         if (card.isReserved() && inventory.canAffordCard(card)) {
           Move move = new Move(Action.PURCHASE_DEV, card, player, null, null,
-            null, null);
+              null, null);
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                              .toUpperCase();
           moveMap.put(moveMd5, move);
@@ -377,6 +379,44 @@ public class ActionManager {
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
                                             .toUpperCase();
         moveMap.put(takeFromDeckMd5, takeFromDeck);
+      }
+    }
+  }
+
+  private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                     GameBoard gameBoard, PlayerWrapper player) {
+    if (inventory.getCards().size() == 0) {
+      throw new IllegalGameStateException(
+        "Illegal for spice card to have be purchased when inventory has 0 cards");
+    }
+    if (inventory.getUnpairedSpiceCard() == null) {
+      throw new IllegalGameStateException(
+        "Illegal to pair spice card when inventory does not contain an unpaired spice card");
+    }
+    for (Card card : inventory.getCards()) {
+      if (card.getTokenBonusType() != null) {
+        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null, null, null, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                           .toUpperCase();
+        moveMap.put(moveMd5, move);
+      }
+    }
+  }
+
+  private void getPlaceCoatOfArmsMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                       GameBoard gameBoard, PlayerWrapper player) {
+    if (inventory.getPowers().size() == 5) {
+      throw new IllegalGameStateException(
+        "Illegal for player to receive more than 5 powers");
+    }
+
+    for (TradingPostSlot tradingPostSlot : gameBoard.getTradingPostSlots()) {
+      if (!tradingPostSlot.isFull() && inventory.canReceivePower(tradingPostSlot)) {
+        Move move = new Move(Action.PLACE_COAT_OF_ARMS, null,
+            player, null, null, null, tradingPostSlot);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                           .toUpperCase();
+        moveMap.put(moveMd5, move);
       }
     }
   }
