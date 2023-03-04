@@ -15,7 +15,6 @@ import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -560,7 +559,8 @@ public class UserInventory implements Iterable<Card> {
     if (acquiredPowers.contains(tradingPostSlot.getPower())) {
       return false;
     }
-    // loop over the trading route unlock requirements and see if bonuses in this inventory are sufficient
+    // loop over the trading route unlock requirements
+    // and see if bonuses in this inventory are sufficient
     for (Map.Entry<TokenType, Integer> entry : tradingPostSlot.getCardRequirements().entrySet()) {
       if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
         return false;

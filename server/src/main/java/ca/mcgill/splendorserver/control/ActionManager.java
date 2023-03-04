@@ -397,14 +397,7 @@ public class ActionManager {
     }
   }
 
-  /**
-   * Gets the legal moves possible in terms of selecting tokens.
-   *
-   * @param moveMap   map of valid moves.
-   * @param inventory the users inventory whose turn it is.
-   * @param gameBoard the game board on which the session is taking place.
-   * @param player    the player whose turn it currently is.
-   */
+
   /*private void getSelectTokenMoves(Map<String, Move> moveMap, UserInventory inventory,
                                    GameBoard gameBoard, PlayerWrapper player
   ) {
