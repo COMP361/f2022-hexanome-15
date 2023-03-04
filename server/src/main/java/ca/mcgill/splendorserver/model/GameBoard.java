@@ -97,27 +97,27 @@ public class GameBoard {
             "player (" + player.getName() + ") wasn't found in this current game board"));
 
     Action pendingAction;
-    return switch (move.getAction()) {
+    switch (move.getAction()) {
       case PURCHASE_DEV -> {
         pendingAction = performPurchaseDev(move, player, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
-          yield pendingAction;
+          return pendingAction;
         } else {
-          yield null;
+          return null;
         }
       }
       case PAIR_SPICE_CARD -> {
         pendingAction = performPairSpiceCard(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
-          yield pendingAction;
+          return pendingAction;
         } else {
-          yield null;
+          return null;
         }
       }
       default -> {
-        yield null;
+        return null;
       }
 //      case PURCHASE_DEV_RECEIVE_NOBLE -> {
 //        // check if we're waiting for this or not
@@ -509,6 +509,18 @@ public class GameBoard {
         return actions.get(0);
       }
     }
+    for (Noble noble : inventory.getNobles()) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.canReceivePower(tradingPostSlot)) {
+        moveCache.add(move);
+        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
     
     return null;
 
@@ -546,7 +558,6 @@ public class GameBoard {
       // add prestige and tile to inventory
       inventory.receiveVisitFrom(move.getNoble()
                                      .get());
-      // TODO: check and see about settlements
     }
   }
 
