@@ -53,27 +53,56 @@ public class SplendorGame {
     requiresUpdate = true;
     instantiateNewGameboard();
   }
-  
+
+  /**
+   * Checks if the game requires an update.
+   *
+   * @return a boolean determining if the game requires an update
+   */
   public boolean getRequiresUpdate() {
     return requiresUpdate;
   }
-  
+
+  /**
+   * Sets the requiresUpdate boolean.
+   *
+   * @param requiresUpdate the boolean to be set
+   */
   public void setRequiresUpdate(boolean requiresUpdate) {
     this.requiresUpdate = requiresUpdate;
   }
 
+  /**
+   * Checks if the game is finished.
+   *
+   * @return a boolean determining if the game is finished
+   */
   public boolean isFinished() {
     return finished;
   }
 
+  /**
+   * Sets the finished boolean to true.
+   */
   public void setFinished() {
     finished = true;
   }
 
+  /**
+   * Returns the player whose turn it is.
+   *
+   * @return the player whose turn it is
+   */
   public PlayerWrapper whoseTurn() {
     return turnManager.whoseTurn();
   }
 
+  /**
+   * Checks if the given player is the player who starts the game.
+   *
+   * @param player the given player
+   * @return a boolean determining if the given player is the player who starts the game
+   */
   public boolean isStartingPlayer(PlayerWrapper player) {
     return sessionInfo.getGameCreator() == player;
   }
@@ -96,19 +125,43 @@ public class SplendorGame {
     return this.turnManager.endTurn();
   }
 
+  /**
+   * Retrieves the player with the given username and returns it.
+   *
+   * @param name the player's username
+   * @return the player
+   */
   public Optional<PlayerWrapper> getPlayerByName(String name) {
+
     return sessionInfo.getPlayerByName(name);
   }
 
+  /**
+   * Returns the game id.
+   *
+   * @return the game id
+   */
   @Id
   public long getGameId() {
+
     return gameId;
   }
 
+  /**
+   * Returns the game board of the game.
+   *
+   * @return the game board
+   */
   public GameBoard getBoard() {
     return board;
   }
 
+  /**
+   * Sets up the playing field upon starting the game.
+   *
+   * @param playingField the cards on the game board
+   * @param decks the decks on the game board
+   */
   private void setUpPlayingField(List<Card> playingField, List<Deck> decks) {
     for (int i = 0; i < DeckType.values().length; ++i) {
       Deck       deck  = new Deck(DeckType.values()[i]);
@@ -118,6 +171,12 @@ public class SplendorGame {
     }
   }
 
+  /**
+   * Sets up the token piles upon starting the game.
+   *
+   * @param piles the token piles
+   * @param setUp a boolean determining if tokens need to be added to the token piles
+   */
   private void setUpTokenPiles(List<TokenPile> piles, boolean setUp) {
     for (int i = 0; i < TokenType.values().length; ++i) {
       TokenPile pile = new TokenPile(TokenType.values()[i]);
@@ -128,6 +187,11 @@ public class SplendorGame {
     }
   }
 
+  /**
+   * Sets up the user inventories upon starting the game.
+   *
+   * @param inventories the user inventories in the game
+   */
   private void setUpUserInventories(List<UserInventory> inventories) {
     for (PlayerWrapper playerName : sessionInfo) {
       List<TokenPile> piles = new ArrayList<>();
@@ -136,6 +200,12 @@ public class SplendorGame {
     }
   }
 
+  /**
+   * Sets up the user inventories upon starting the game.
+   * This is used strictly for trading posts expansion.
+   *
+   * @param inventories the user inventories in the game
+   */
   private void setUpUserInventoriesTradingPosts(List<UserInventory> inventories) {
     int i = 0;
     for (PlayerWrapper playerName : sessionInfo) {
@@ -147,7 +217,9 @@ public class SplendorGame {
     }
   }
 
-
+  /**
+   * Instantiates the game board upon starting the game.
+   */
   private void instantiateNewGameboard() {
     List<TokenPile>     piles        = new ArrayList<>();
     List<Deck>          decks        = new ArrayList<>();

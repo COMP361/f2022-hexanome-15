@@ -40,6 +40,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ActionManager {
   private final Logger logger = Logger.getAnonymousLogger();
 
+  /**
+   * Creates an ActionManager.
+   */
+  public ActionManager() {
+  }
+
   // TODO: do we need the users access token as request param to validate here???
 
   /**
@@ -153,6 +159,7 @@ public class ActionManager {
    *
    * @param gameid     game ID of the game being played
    * @param playerName player whose turn it currently is
+   * @param accessToken the access token
    * @return the possible moves that can be made in a map (key, value) = (hash, raw move objec)
    */
   @GetMapping(value = "/api/games/{gameid}/players/{player}/actions",

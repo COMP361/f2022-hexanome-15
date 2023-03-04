@@ -145,9 +145,10 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns a boolean determining if the token pile of a given token pile
+   * Returns a boolean determining if a given token pile
    * is empty in this user inventory.
    *
+   * @param tokenType the token type of the token pile
    * @return the given boolean
    */
   public boolean hasTokenType(TokenType tokenType) {
@@ -589,6 +590,7 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Checks if the player can receive a power.
    *
+   * @param tradingPostSlot the trading post slot that the player wishes to unlock
    * @return a boolean determining if the player can receive a power
    */
   public boolean canReceivePower(TradingPostSlot tradingPostSlot) {

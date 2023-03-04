@@ -62,6 +62,8 @@ public class GameBoard {
    * @param cardField   The cards dealt onto the game board
    * @param tokenPiles  The token piles that are on the game board
    * @param nobles      The nobles in the game
+   * @param tradingPostSlots The trading post slots in the game
+   * @param cities      The cities in the game
    */
   public GameBoard(List<UserInventory> inventories, List<Deck> decks, List<Card> cardField,
                    List<TokenPile> tokenPiles, List<Noble> nobles,
@@ -88,6 +90,7 @@ public class GameBoard {
    *
    * @param move   selected move, must be valid move, cannot be null
    * @param player player whose turn it is, cannot be null
+   * @return a possible bonus action
    */
   public Action applyMove(Move move, PlayerWrapper player) {
     assert move != null && player != null;
@@ -248,7 +251,12 @@ public class GameBoard {
   private void setPendingAction(boolean isPending) {
     pendingAction = isPending;
   }
-  
+
+  /**
+   * Returns a pending action.
+   *
+   * @return a pending action
+   */
   public Action getPendingAction() {
     return actionPending;
   }

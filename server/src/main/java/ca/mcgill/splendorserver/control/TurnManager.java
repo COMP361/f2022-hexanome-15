@@ -34,6 +34,9 @@ public class TurnManager implements Iterable<PlayerWrapper> {
     turns = new ArrayList<>(players);
   }
 
+  /**
+   * Creates a turn manager.
+   */
   public TurnManager() {
 
   }

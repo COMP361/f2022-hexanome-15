@@ -27,6 +27,9 @@ public class GameServiceJson {
     this.webSupport        = webSupport;
   }
 
+  /**
+   * Creates a GameServiceJson object.
+   */
   public GameServiceJson() {
 
   }

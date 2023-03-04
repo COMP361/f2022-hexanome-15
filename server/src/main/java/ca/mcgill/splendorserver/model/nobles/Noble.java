@@ -56,6 +56,11 @@ public class Noble {
     return status;
   }
 
+  /**
+   * Sets the noble status to the given status.
+   *
+   * @param nobleStatus the given status
+   */
   public void setStatus(NobleStatus nobleStatus) {
     assert nobleStatus != null;
     this.status = nobleStatus;
