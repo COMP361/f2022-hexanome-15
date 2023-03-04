@@ -430,40 +430,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Determines if purchasing the given card in addition to whatever bonuses
-   * are already in the inventory is sufficient to receive a visit from the given noble.
-   *
-   * @param noble noble to check if it will visit
-   * @param card  additional card to consider in checking if noble will visit
-   * @return if the card bonuses as well as
-   *     the currently owned bonuses yield a visit from given noble
-   */
-  public boolean canBeVisitedByNobleWithCardPurchase(Noble noble, Card card) {
-    assert noble != null && card != null;
-    // cannot be visited by noble that is already visiting someone else
-    if (noble.getStatus() == NobleStatus.VISITING) {
-      return false;
-    }
-
-    // loop over the visit requirements and see if bonuses in this inventory are sufficient
-    // in addition to those gained by the potential purchase of a card
-    for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
-                                                    .entrySet()) {
-      if (card.getTokenBonusType() == entry.getKey() && notEnoughBonusesFor(
-          entry.getKey(),
-          entry.getValue()
-              - card.getTokenBonusAmount()
-      )) {
-        return false;
-      } else if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
-        return false;
-      }
-    }
-    // otherwise return true
-    return true;
-  }
-
-  /**
    * Assumes that it is legal for the noble
    * to be visiting this inventory based on visit requirement.
    *

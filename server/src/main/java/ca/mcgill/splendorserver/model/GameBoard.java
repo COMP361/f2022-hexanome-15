@@ -230,7 +230,7 @@ public class GameBoard {
 //        performPlaceCoatOfArms(move, inventory);
 //        yield HttpStatus.OK;
 //      }
-    };
+    }
   }
 
   private boolean waitingForAction(Action action) {

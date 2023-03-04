@@ -272,8 +272,22 @@ public class ActionManager {
       case PAIR_SPICE_CARD:
         //TODO: calculate available pairings for spice card.
         break;
+      case RET_3_TOKENS:
+      case RET_2_TOKENS:
+      case RET_1_TOKEN:
+      case TAKE_1_GEM_TOKEN:
+      case CASCADE_LEVEL_2:
+      case CASCADE_LEVEL_1:
+      case DISCARD_2_WHITE_CARDS:
+      case DISCARD_2_BLUE_CARDS:
+      case DISCARD_2_GREEN_CARDS:
+      case DISCARD_2_RED_CARDS:
+      case DISCARD_2_BLACK_CARDS:
+      case RESERVE_NOBLE:
+      case RECEIVE_NOBLE:
+      case PLACE_COAT_OF_ARMS:
       default:
-        //getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
         getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
         //getSelectTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
@@ -282,7 +296,7 @@ public class ActionManager {
     return moveMap;
   }
 
-  /*private void getBuyDevMoves(Map<String, Move> moveMap, UserInventory inventory,
+  private void getBuyDevMoves(Map<String, Move> moveMap, UserInventory inventory,
                               GameBoard gameBoard, PlayerWrapper player
   ) {
     // player can buy dev card from face-up on the table or reserved in their hand
@@ -291,7 +305,11 @@ public class ActionManager {
     for (Card faceUp : gameBoard.getCards()) {
       // cannot offer a move involving a card already purchased
       if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
-        accumulateBuyDevMovesConsideringNobles(moveMap, inventory, gameBoard, player, faceUp);
+        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
+          null, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                           .toUpperCase();
+        moveMap.put(moveMd5, move);
       }
     }
 
@@ -300,54 +318,20 @@ public class ActionManager {
       // now check if they can afford them
       for (Card card : inventory) {
         if (card.isReserved() && inventory.canAffordCard(card)) {
-          accumulateBuyDevMovesConsideringNobles(moveMap, inventory, gameBoard, player, card);
+          Move move = new Move(Action.PURCHASE_DEV, card, player, null, null,
+            null, null);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
         }
       }
     }
-
-  }*/
-
-  /*private void accumulateBuyDevMovesConsideringNobles(Map<String, Move> moveMap,
-                                                      UserInventory inventory, GameBoard gameBoard,
-                                                      PlayerWrapper player, Card faceUp
-  ) {
-    if (wouldBeVisitedByPurchasing(faceUp, inventory, gameBoard)) {
-      // this card purchase would result in visitation from noble
-      Move move = new Move(Action.PURCHASE_DEV_RECEIVE_NOBLE, faceUp, player, null, null,
-                           null, null
-      );
-      String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                  .toUpperCase();
-      moveMap.put(moveMd5, move);
-
-    } else {
-      // purchasing this card wouldn't result in being visited by a noble so proceed as normal
-      Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-                           null, null
-      );
-      String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                  .toUpperCase();
-      moveMap.put(moveMd5, move);
-    }
-  }*/
-
-  private boolean wouldBeVisitedByPurchasing(Card card, UserInventory inventory,
-                                             GameBoard gameBoard
-  ) {
-    for (Noble noble : gameBoard.getNobles()) {
-      if (inventory.canBeVisitedByNobleWithCardPurchase(noble, card)) {
-        return true;
-      }
-    }
-    return false;
   }
 
-  private List<Noble> getPossibleNobleVisitors(UserInventory inventory, GameBoard gameBoard,
-                                               Card faceUp
-  ) {
+  private List<Noble> getPossibleNobleVisitors(UserInventory inventory, GameBoard gameBoard) {
     List<Noble> possibleNobleVisitors = new ArrayList<>();
     for (Noble noble : gameBoard.getNobles()) {
-      if (inventory.canBeVisitedByNobleWithCardPurchase(noble, faceUp)) {
+      if (inventory.canBeVisitedByNoble(noble)) {
         possibleNobleVisitors.add(noble);
       }
     }

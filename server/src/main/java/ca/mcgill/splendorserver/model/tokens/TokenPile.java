@@ -93,14 +93,6 @@ public class TokenPile implements Iterable<Token> {
     return tokens.remove(0);
   }
 
-  /*public Optional<Token> removeTokenOpt() {
-    if (tokens.isEmpty()) {
-      return Optional.empty();
-    } else {
-      return Optional.of(tokens.remove(0));
-    }
-  }*/
-
   /**
    * Returns the type of the token in the token pile.
    *
