@@ -20,6 +20,9 @@ public class GameServiceAccountJson {
     this.role            = "ROLE_SERVICE";
   }
 
+  /**
+   * Creates a GameServiceAccountJson object.
+   */
   public GameServiceAccountJson() {
 
   }

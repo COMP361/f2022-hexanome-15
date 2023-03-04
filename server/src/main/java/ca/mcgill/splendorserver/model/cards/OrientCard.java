@@ -23,6 +23,7 @@ public class OrientCard extends Card {
    * @param tokenBonusAmount The amount of bonus gems a card is worth
    * @param cardCost         The cost of the card
    * @param bonusActions     The bonus actions that may occur when this Orient card is purchased
+   * @param spiceBag         Whether a card is a spice bag card or not
    */
   public OrientCard(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
                     TokenBonusAmount tokenBonusAmount,

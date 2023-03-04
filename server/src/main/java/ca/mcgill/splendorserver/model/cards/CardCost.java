@@ -49,6 +49,11 @@ public class CardCost {
     return "CardCost{" + costMap + '}';
   }
 
+  /**
+   * Returns the cost map.
+   *
+   * @return the cost map
+   */
   public Set<Map.Entry<TokenType, Integer>> entrySet() {
     return costMap.entrySet();
   }

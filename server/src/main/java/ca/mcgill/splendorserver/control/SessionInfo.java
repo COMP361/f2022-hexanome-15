@@ -17,6 +17,11 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
   private       PlayerWrapper       gameCreator;
   private       String              saveGameId;
 
+  /**
+   * Creates a SessionInfo object.
+   *
+   * @param players the players in the session
+   */
   public SessionInfo(List<PlayerWrapper> players) {
     this.players = players;
   }
@@ -49,18 +54,38 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     this.saveGameId  = saveGameId;
   }
 
+  /**
+   * Returns the players in the session.
+   *
+   * @return the players in the session
+   */
   public List<PlayerWrapper> getPlayers() {
     return players;
   }
 
+  /**
+   * Returns the game server of the session.
+   *
+   * @return the game server of the session
+   */
   public String getGameServer() {
     return gameServer;
   }
 
+  /**
+   * Returns the game creator of the session.
+   *
+   * @return the game creator of the session
+   */
   public PlayerWrapper getGameCreator() {
     return gameCreator;
   }
 
+  /**
+   * Returns the number of players in the session.
+   *
+   * @return the number of players in the session
+   */
   public int getNumPlayers() {
     return players.size();
   }

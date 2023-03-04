@@ -82,6 +82,56 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Returns the list of cards in the user inventory.
+   *
+   * @return the list of cards in the user inventory
+   */
+  public List<Card> getCards() {
+
+    return cards;
+  }
+
+  /**
+   * Returns the token piles in the user inventory.
+   *
+   * @return the token piles in the user inventory
+   */
+  public EnumMap<TokenType, TokenPile> getTokenPiles() {
+
+    return tokenPiles;
+  }
+
+  /**
+   * Returns the list of nobles in the user inventory.
+   *
+   * @return the list of nobles in the user inventory
+   */
+  public List<Noble> getNobles() {
+
+    return visitingNobles;
+  }
+
+  /**
+   * Returns the list of powers in the user inventory.
+   *
+   * @return the list of powers in the user inventory
+   */
+  public List<Power> getPowers() {
+
+    return acquiredPowers;
+  }
+
+  /**
+   * Returns the coat of arms pile in the user inventory.
+   *
+   * @return the coat of arms pile in the user inventory
+   */
+  public CoatOfArmsPile getCoatOfArmsPile() {
+
+    return coatOfArmsPile;
+  }
+
+  /**
    * Returns the token types of all the non-empty token piles in the user inventory.
    *
    * @return the list of token types of all the non-empty token piles in the user inventory
@@ -95,9 +145,10 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns a boolean determining if the token pile of a given token pile
+   * Returns a boolean determining if a given token pile
    * is empty in this user inventory.
    *
+   * @param tokenType the token type of the token pile
    * @return the given boolean
    */
   public boolean hasTokenType(TokenType tokenType) {
@@ -233,6 +284,11 @@ public class UserInventory implements Iterable<Card> {
     return true;
   }
 
+  /**
+   * Returns the amount of gold tokens in the user inventory.
+   *
+   * @return the amount of gold tokens in the user inventory
+   */
   private int getGoldTokenCount() {
     return tokenPiles.computeIfAbsent(TokenType.GOLD, TokenPile::new)
                      .getSize();
@@ -255,9 +311,6 @@ public class UserInventory implements Iterable<Card> {
     currentGoldTokenCount += actualCost - tokenPiles.get(tokenType).getSize();
     return  currentGoldTokenCount;
   }
-
-
-  //TODO: do we check if the card is already in the hand or are the cards all unique???
 
   /**
    * Adds card to user inventory.
@@ -400,6 +453,11 @@ public class UserInventory implements Iterable<Card> {
     return costs;
   }
 
+  /**
+   * Adds prestige to the user inventory.
+   *
+   * @param prestige the amount of prestige to be added
+   */
   private void addPrestige(int prestige) {
     assert prestige >= 0;
     prestigeWon += prestige;
@@ -430,40 +488,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Determines if purchasing the given card in addition to whatever bonuses
-   * are already in the inventory is sufficient to receive a visit from the given noble.
-   *
-   * @param noble noble to check if it will visit
-   * @param card  additional card to consider in checking if noble will visit
-   * @return if the card bonuses as well as
-   *     the currently owned bonuses yield a visit from given noble
-   */
-  public boolean canBeVisitedByNobleWithCardPurchase(Noble noble, Card card) {
-    assert noble != null && card != null;
-    // cannot be visited by noble that is already visiting someone else
-    if (noble.getStatus() == NobleStatus.VISITING) {
-      return false;
-    }
-
-    // loop over the visit requirements and see if bonuses in this inventory are sufficient
-    // in addition to those gained by the potential purchase of a card
-    for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
-                                                    .entrySet()) {
-      if (card.getTokenBonusType() == entry.getKey() && notEnoughBonusesFor(
-          entry.getKey(),
-          entry.getValue()
-              - card.getTokenBonusAmount()
-      )) {
-        return false;
-      } else if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
-        return false;
-      }
-    }
-    // otherwise return true
-    return true;
-  }
-
-  /**
    * Assumes that it is legal for the noble
    * to be visiting this inventory based on visit requirement.
    *
@@ -485,6 +509,13 @@ public class UserInventory implements Iterable<Card> {
                 .reduce(0, Integer::sum) < amount;
   }
 
+  /**
+   * Removes tokens from the user inventory.
+   *
+   * @param tokenType the type of tokens to be removed
+   * @param n the number of tokens to be removed
+   * @return the list of removed tokens
+   */
   private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
     assert tokenType != null && n >= 0;
     List<Token> removed = new ArrayList<>(n);
@@ -559,6 +590,7 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Checks if the player can receive a power.
    *
+   * @param tradingPostSlot the trading post slot that the player wishes to unlock
    * @return a boolean determining if the player can receive a power
    */
   public boolean canReceivePower(TradingPostSlot tradingPostSlot) {
@@ -583,26 +615,6 @@ public class UserInventory implements Iterable<Card> {
   public Iterator<Card> iterator() {
 
     return cards.iterator();
-  }
-  
-  public List<Card> getCards() {
-    return cards;
-  }
-  
-  public EnumMap<TokenType, TokenPile> getTokenPiles() {
-    return tokenPiles;
-  }
-  
-  public List<Noble> getNobles() {
-    return visitingNobles;
-  }
-  
-  public List<Power> getPowers() {
-    return acquiredPowers;
-  }
-  
-  public CoatOfArmsPile getCoatOfArmsPile() {
-    return coatOfArmsPile;
   }
 
 }

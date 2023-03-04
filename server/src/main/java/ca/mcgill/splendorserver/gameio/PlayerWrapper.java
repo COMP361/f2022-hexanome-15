@@ -25,10 +25,19 @@ public class PlayerWrapper {
 
   private static final Map<String, PlayerWrapper> PLAYER_MAP = new HashMap<>();
 
+  /**
+   * Creates a PlayerWrapper object.
+   *
+   * @param userName the player's username
+   */
   PlayerWrapper(String userName) {
+
     this.userName = userName;
   }
 
+  /**
+   * Creates a PlayerWrapper object.
+   */
   public PlayerWrapper() {
 
   }

@@ -47,10 +47,20 @@ public class Card implements Comparable<Card> {
     this.cardCost         = cardCost;
   }
 
+  /**
+   * Checks if the card is reserved.
+   *
+   * @return a boolean determining if the card is reserved
+   */
   public boolean isReserved() {
     return cardStatus == CardStatus.RESERVED;
   }
 
+  /**
+   * Checks if the card is purchased.
+   *
+   * @return a boolean determining if the card is purchased
+   */
   public boolean isPurchased() {
     return cardStatus == CardStatus.PURCHASED;
   }
