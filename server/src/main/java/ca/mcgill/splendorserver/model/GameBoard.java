@@ -553,7 +553,7 @@ public class GameBoard {
     // See if the player has unlocked the power associated with this trading post slot
     if (move.getTradingPostSlot().isPresent()
           && !move.getTradingPostSlot().get().isFull()
-          && !inventory.canReceivePower(move.getTradingPostSlot().get().getPower())) {
+          && !inventory.canReceivePower(move.getTradingPostSlot().get())) {
       inventory.addPower(move.getTradingPostSlot().get().getPower());
       move.getTradingPostSlot().get()
         .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());

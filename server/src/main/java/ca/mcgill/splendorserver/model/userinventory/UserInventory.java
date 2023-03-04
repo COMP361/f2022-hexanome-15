@@ -14,6 +14,8 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -525,39 +527,6 @@ public class UserInventory implements Iterable<Card> {
     return playerWrapper;
   }
 
-  /* @Override
-  public void onAction(CardView cardView) {
-    boolean affordable = true;
-    for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
-      for (TokenPile tokenPile : tokenPiles) {
-        if (tokenPile.getType().ordinal() == i) {
-          if (cardView.getCard().get().getCost()[i] > 0
-                && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
-            affordable = false;
-          }
-        }
-      }
-    }
-    if (affordable) {
-      notifyObservers(cardView.getCard().get());
-      cards.add(cardView.getCard().get());
-      for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
-        for (TokenPile tokenPile : tokenPiles) {
-          if (tokenPile.getType().ordinal() == i) {
-            if (cardView.getCard().get().getCost()[i] > 0
-                  && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
-              for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
-                tokenPile.removeToken();
-              }
-            }
-          }
-        }
-      }
-    } else {
-      cardView.revokePurchaseAttempt();
-    }
-  }*/
-
 
   /**
    * Adds a token pile to the user inventory.
@@ -586,9 +555,20 @@ public class UserInventory implements Iterable<Card> {
    *
    * @return a boolean determining if the player can receive a power
    */
-  public boolean canReceivePower(Power power) {
-    assert power != null;
-    return !acquiredPowers.contains(power);
+  public boolean canReceivePower(TradingPostSlot tradingPostSlot) {
+    assert tradingPostSlot != null;
+    if (acquiredPowers.contains(tradingPostSlot.getPower())) {
+      return false;
+    }
+    // loop over the trading route unlock requirements and see if bonuses in this inventory are sufficient
+    for (Map.Entry<TokenType, Integer> entry : tradingPostSlot.getCardRequirements().entrySet()) {
+      if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
+        return false;
+      } else if (tradingPostSlot.isRequiresNoble() && visitingNobles.size() == 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
 
