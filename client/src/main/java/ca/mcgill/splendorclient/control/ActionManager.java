@@ -24,12 +24,16 @@ public class ActionManager {
   private static String tokenTypeToLocationCode(TokenType type) {
     return "T" + Arrays.asList(TokenType.values()).indexOf(type);
   }
-  
-  
+
   private ActionManager() {
     instance = new ActionManager();
   }
-  
+
+  /**
+   * Returns this instance of ActionManager.
+   *
+   * @return this instance of ActionManager
+   */
   public static ActionManager getInstance() {
     return instance;
   }

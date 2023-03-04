@@ -60,7 +60,13 @@ public class Splendor extends Application {
       stage.setTitle("");
     }
   }
-  
+
+  /**
+   * Transitions to the game screen.
+   *
+   * @param gameId the id of the game
+   * @param sessionInfo the session info of the game
+   */
   public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
     SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players")));
     stage.setScene(SceneManager.getGameScreen());  

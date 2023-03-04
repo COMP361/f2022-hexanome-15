@@ -177,6 +177,7 @@ public class GameBoardView {
   /**
    * Initializes the game board.
    *
+   * @param players the players in the game
    * @return the gameboard scene
    */
   public static Scene setupGameBoard(JSONArray players) {
