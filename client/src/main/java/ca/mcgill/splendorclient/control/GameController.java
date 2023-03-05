@@ -1,6 +1,10 @@
 package ca.mcgill.splendorclient.control;
 
+import com.google.gson.Gson;
+
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.model.GameBoardJson;
+import ca.mcgill.splendorclient.model.users.User;
 import javafx.application.Platform;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -50,6 +54,8 @@ public class GameController {
         if (response.getBody().toPrettyString() != currentState) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
+          GameBoardJson gameboardJson = new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
+          String currentTurn = gameboardJson.getWhoseTurn();
           Platform.runLater(new Runnable() {
 
             @Override
@@ -58,6 +64,13 @@ public class GameController {
             }
             
           });
+          if (currentTurn.equals(User.THISUSER.getUsername())) {
+            HttpResponse<JsonNode> moveMap = Unirest
+                .get(String.format("http://%s/api/games/%d/players/%s/action", 
+                    LobbyServiceExecutor.SERVERLOCATION, gameId, currentTurn))
+                .asJson();
+            System.out.println(moveMap.getBody().toPrettyString()); 
+          }
         }
         try {
           Thread.sleep(2000);
