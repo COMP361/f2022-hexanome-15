@@ -340,12 +340,6 @@ public class UserInventory implements Iterable<Card> {
   public void addReservedNoble(Noble noble) {
     assert noble != null;
 
-    if (noble.getStatus() != NobleStatus.ON_BOARD) {
-      throw new IllegalGameStateException(
-              "Noble cannot be reserved if it has already been "
-              + "reserved or is currently visiting a player");
-    }
-
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
   }
@@ -359,11 +353,9 @@ public class UserInventory implements Iterable<Card> {
   public void addCascadeLevelOne(OrientCard card) {
     assert card != null;
 
-    if (card.getDeckType() == DeckType.ORIENT1) {
-      card.setCardStatus(CardStatus.PURCHASED);
-      cards.add(card);
-      addPrestige(card.getPrestige());
-    }
+    card.setCardStatus(CardStatus.PURCHASED);
+    cards.add(card);
+    addPrestige(card.getPrestige());
   }
 
   /**
@@ -374,14 +366,12 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null;
-
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());
     }
   }
-
 
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
@@ -448,6 +438,10 @@ public class UserInventory implements Iterable<Card> {
     if (noble.getStatus() == NobleStatus.VISITING) {
       return false;
     }
+    // cannot be visited by a noble that is reserved by another player
+    if (!visitingNobles.contains(noble) && noble.getStatus() == NobleStatus.RESERVED) {
+      return false;
+    }
 
     // loop over the visit requirements and see if bonuses in this inventory are sufficient
     for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
@@ -470,6 +464,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null;
     addPrestige(noble.getPrestige());
     visitingNobles.add(noble);
+    noble.setStatus(NobleStatus.VISITING);
   }
 
   private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {

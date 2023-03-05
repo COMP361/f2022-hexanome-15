@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
@@ -8,7 +9,10 @@ import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
@@ -285,13 +289,19 @@ public class ActionManager {
       case RET_1_TOKEN:
       case TAKE_1_GEM_TOKEN:
       case CASCADE_LEVEL_2:
+        getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
       case CASCADE_LEVEL_1:
+        getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
       case DISCARD_2_WHITE_CARDS:
       case DISCARD_2_BLUE_CARDS:
       case DISCARD_2_GREEN_CARDS:
       case DISCARD_2_RED_CARDS:
       case DISCARD_2_BLACK_CARDS:
       case RESERVE_NOBLE:
+        getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
       case RECEIVE_NOBLE:
       case PLACE_COAT_OF_ARMS:
         getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
@@ -341,6 +351,11 @@ public class ActionManager {
     List<Noble> possibleNobleVisitors = new ArrayList<>();
     for (Noble noble : gameBoard.getNobles()) {
       if (inventory.canBeVisitedByNoble(noble)) {
+        possibleNobleVisitors.add(noble);
+      }
+    }
+    for (Noble noble : inventory.getNobles()) {
+      if (noble.getStatus() == NobleStatus.RESERVED) {
         possibleNobleVisitors.add(noble);
       }
     }
@@ -423,6 +438,71 @@ public class ActionManager {
             player, null, null, null, tradingPostSlot);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
+        moveMap.put(moveMd5, move);
+      }
+    }
+  }
+
+  /**
+   * Calculates the moves of reserving nobles available to the player and adds them to move map.
+   *
+   * @param moveMap map of possible moves for the player based on game state
+   * @param inventory the inventory of the player
+   * @param gameBoard the game board
+   * @param player the current player
+   */
+  private void getReserveNobleMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                    GameBoard gameBoard, PlayerWrapper player) {
+
+    for (Noble noble : gameBoard.getNobles()) {
+      Move move = new Move(Action.RESERVE_NOBLE, null, player,
+              null, null, noble, null);
+      String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+              .toUpperCase();
+      moveMap.put(moveMd5, move);
+    }
+
+  }
+
+  /**
+   * Calculates the moves of the level one cascade bonus action available
+   * to the player and adds them to move map.
+   *
+   * @param moveMap map of possible moves for the player based on game state
+   * @param inventory the inventory of the player
+   * @param gameBoard the game board
+   * @param player the current player
+   */
+  private void getCascadeLevelOneMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                       GameBoard gameBoard, PlayerWrapper player) {
+    for (Card card : gameBoard.getCards()) {
+      if (card.getDeckType() == DeckType.ORIENT1) {
+        Move move = new Move(Action.CASCADE_LEVEL_1, card, player,
+                DeckType.ORIENT1, null, null, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                .toUpperCase();
+        moveMap.put(moveMd5, move);
+      }
+    }
+  }
+
+  /**
+   * Calculates the moves of the level two cascade bonus action available
+   * to the player and adds them to move map.
+   *
+   * @param moveMap map of possible moves for the player based on game state
+   * @param inventory the inventory of the player
+   * @param gameBoard the game board
+   * @param player the current player
+   */
+  private void getCascadeLevelTwoMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                       GameBoard gameBoard, PlayerWrapper player) {
+    for (Card card : gameBoard.getCards()) {
+      if (card.getDeckType() == DeckType.ORIENT2) {
+        Move move = new Move(Action.CASCADE_LEVEL_2, card, player,
+                DeckType.ORIENT2, null, null, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                .toUpperCase();
         moveMap.put(moveMd5, move);
       }
     }
