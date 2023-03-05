@@ -115,120 +115,39 @@ public class GameBoard {
           yield null;
         }
       }
+      case TAKE_TOKEN -> {
+        performTakeToken(move, inventory);
+        if (moveCache.isEmpty()) {
+          moveCache.add(move);
+          actionPending = Action.TAKE_TOKEN;
+          this.pendingAction = true;
+          yield actionPending;
+        }
+        else if (moveCache.size() == 1) {
+          //selected two of the same token
+          if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
+            moveCache.clear();
+            actionPending = null;
+            this.pendingAction = false;
+            yield null;
+          }
+          else {
+            moveCache.add(move);
+            actionPending = Action.TAKE_TOKEN;
+            this.pendingAction = true;
+            yield actionPending;
+          }
+        }
+        else {
+          moveCache.clear();
+          actionPending = null;
+          this.pendingAction = false;
+          yield null;
+        }
+      }
       default -> {
         yield null;
       }
-//      case PURCHASE_DEV_RECEIVE_NOBLE -> {
-//        // check if we're waiting for this or not
-//        if (waitingForAction(Action.PURCHASE_DEV_RECEIVE_NOBLE)) {
-//          performPurchaseDev(move, player, inventory);
-//          performClaimNobleAction(move, inventory);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          // this is compound action, request further actions
-//          cacheAction(Action.PURCHASE_DEV_RECEIVE_NOBLE);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case RESERVE_DEV -> {
-//        performReserveDev(move, inventory);
-//        yield null;
-//      }
-//      case RESERVE_DEV_TAKE_JOKER -> {
-//        // gold token added and card reserved
-//        performReserveDev(move, inventory);
-//        inventory.addTokens(drawGoldToken());
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_2_GEM_TOKENS_SAME_COL -> {
-//        performTake2GemsSameColor(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
-//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1)) {
-//          performTake2GemsSameColorReturn(move, inventory, 1);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> {
-//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2)) {
-//          performTake2GemsSameColorReturn(move, inventory, 2);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL -> {
-//        performTake3GemsDiffColor(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
-//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1)) {
-//          performTake3GemsDiffColorReturn(move, inventory, 1);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
-//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2)) {
-//          performTake3GemsDiffColorReturn(move, inventory, 2);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
-//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3)) {
-//          performTake3GemsDiffColorReturn(move, inventory, 3);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case RESERVE_NOBLE -> null;
-//      case CASCADE_LEVEL_1 -> null;
-//      case CASCADE_LEVEL_2 -> null;
-//      case PAIR_SPICE_CARD -> {
-//        performPairSpiceCard(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case DISCARD_2_WHITE_CARDS -> null;
-//      case DISCARD_2_BLUE_CARDS -> null;
-//      case DISCARD_2_GREEN_CARDS -> null;
-//      case DISCARD_2_RED_CARDS -> null;
-//      case DISCARD_2_BLACK_CARDS -> null;
-//      case TAKE_1_GEM_TOKEN -> {
-//        performTake1Gem(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_1_GEM_TOKEN_RET_1 -> {
-//        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
-//          performTake1GemReturn(move, inventory);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case PLACE_COAT_OF_ARMS -> {
-//        performPlaceCoatOfArms(move, inventory);
-//        yield HttpStatus.OK;
-//      }
     };
   }
 
@@ -251,185 +170,12 @@ public class GameBoard {
   public Action getPendingAction() {
     return actionPending;
   }
-
-  private void performTake3GemsDiffColorReturn(Move move, UserInventory inventory, int n) {
-    // check that tokens selected is not empty
-    if (move.getSelectedTokenTypes()
-            .isEmpty() || move.getSelectedTokenTypes()
-                              .get().length != n) {
-      throw new IllegalGameStateException(
-          "If move is to take 3 gems of different colors, then gems needs to be of size 3");
-    }
-
-    // check that the return token is selected
-    if (move.getReturnedTokenTypes()
-            .isEmpty() || move.getReturnedTokenTypes()
-                              .get().length != n) {
-      throw new IllegalGameStateException(
-          String.format(
-              "If move is to take 3 gems of different colors and return %d token, "
-                + "then selected gems needs to be of size 3 and returned gems of size %d",
-              n, n
-          ));
-    }
-
-    // all good, add the selected tokens
-    TokenType[] selected = move.getSelectedTokenTypes()
-                               .get();
-    moveTokensToUserInventory(inventory, selected);
-
-    // return the selected
-    returnTokensToBoardFromInventory(inventory, move.getReturnedTokenTypes()
-                                                    .get());
-
-  }
-
-  private void performTake3GemsDiffColor(Move move, UserInventory inventory) {
-    // check that tokens selected is not empty
-    if (move.getSelectedTokenTypes()
-            .isEmpty() || move.getSelectedTokenTypes()
-                              .get().length != 3) {
-      throw new IllegalGameStateException(
-          "If move is to take 3 gems of different colors, then gems needs to be of size 3");
-    }
-
-    // all good, add the selected tokens
-    TokenType[] selected = move.getSelectedTokenTypes()
-                               .get();
-    moveTokensToUserInventory(inventory, selected);
-  }
-
-  /**
-   * Performs take 2 gems of same color and return n tokens action routine.
-   *
-   * @param move      the move to perform
-   * @param inventory the inventory to apply the move side effects to
-   * @param n         number of tokens there are in the action to return.
-   */
-  private void performTake2GemsSameColorReturn(Move move, UserInventory inventory, int n) {
-    checkConditionsForTake2GemsSameColorReturn(move, n);
-
-    // all good, add the selected token twice, and return the token from inventory to the table
-    // we know only 1 element in this array
-    TokenType selected = move.getSelectedTokenTypes()
-                             .get()[0];
-    inventory.addTokens(drawTokenByTokenType(selected));
-    inventory.addTokens(drawTokenByTokenType(selected));
-    // return token(s)
-    for (int i = 0; i < n; i++) {
-      selected = move.getReturnedTokenTypes()
-                     .get()[i];
-      returnTokensToBoardFromInventory(inventory, selected);
-    }
-  }
-
-  private void checkConditionsForTake2GemsSameColorReturn(Move move, int n) {
-    if (move.getSelectedTokenTypes()
-            .isEmpty() || move.getSelectedTokenTypes()
-                              .get().length != 1) {
-      throw new IllegalGameStateException(
-          "If move is to take 2 gems of same color, then gems needs to be of size 1");
-    }
-
-    // check that the token to return is not empty and proper size
-    if (move.getReturnedTokenTypes()
-            .isEmpty() || move.getReturnedTokenTypes()
-                              .get().length != n) {
-      throw new IllegalGameStateException(
-          String.format(
-              "If move is to take 2 gems of same color and return %d, "
-                + "then gems to return needs to be of size %d",
-              n, n
-          ));
-    }
-  }
-
-  private void performTake2GemsSameColor(Move move, UserInventory inventory) {
-    // if there are no token types then throw error
-    if (move.getSelectedTokenTypes()
-            .isEmpty()) {
-      throw new IllegalGameStateException(
-          "If move is to take 2 gems of same color, then gems cannot be empty");
-    }
-
-    // the length of the array should be 1, for the one token type which they're taking 2 of
-    if (move.getSelectedTokenTypes()
-            .get().length != 1) {
-      throw new IllegalGameStateException(
-          "Expected to see only one token type selected, instead found: "
-              + move.getSelectedTokenTypes()
-                    .get().length);
-    }
-
-    // all good, add the selected token to their inventory twice
-    // we know there is only 1 element in this array
-    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
-                                                 .get()[0]));
-    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
-                                                 .get()[0]));
-  }
-
-  /**
-   * Performs take 1 gem and return 1 token action routine.
-   *
-   * @param move      the move to perform
-   * @param inventory the inventory to apply the move side effects to
-   */
-  private void performTake1GemReturn(Move move, UserInventory inventory) {
-    checkConditionsForTake1GemReturn(move);
-
-    // all good, add the selected token, and return the token from inventory to the table
-    // we know only 1 element in this array
-    TokenType selected = move.getSelectedTokenTypes()
-                           .get()[0];
-    inventory.addTokens(drawTokenByTokenType(selected));
-    // return token(s)
-    selected = move.getReturnedTokenTypes().get()[0];
-    returnTokensToBoardFromInventory(inventory, selected);
-  }
-
-  private void checkConditionsForTake1GemReturn(Move move) {
-    if (move.getSelectedTokenTypes()
-          .isEmpty() || move.getSelectedTokenTypes()
-                          .get().length != 1) {
-      throw new IllegalGameStateException(
-        "If move is to take 2 gems of same color, then gems needs to be of size 1");
-    }
-
-    // check that the token to return is not empty and proper size
-    if (move.getReturnedTokenTypes()
-          .isEmpty() || move.getReturnedTokenTypes()
-                          .get().length != 1) {
-      throw new IllegalGameStateException(
-        String.format(
-          "If move is to take 2 gems of same color and return %d, "
-            + "then gems to return needs to be of size %d",
-          1, 1
-        ));
-    }
-  }
-
-  private void performTake1Gem(Move move, UserInventory inventory) {
-    // if there are no token types then throw error
-    if (move.getSelectedTokenTypes()
-          .isEmpty()) {
-      throw new IllegalGameStateException(
-        "If move is to take 1 gem of same color, then gems cannot be empty");
-    }
-
-    // the length of the array should be 1, for the one token type which they're taking 2 of
-    if (move.getSelectedTokenTypes()
-          .get().length != 1) {
-      throw new IllegalGameStateException(
-        "Expected to see only one token type selected, instead found: "
-          + move.getSelectedTokenTypes()
-              .get().length);
-    }
-
-    // all good, add the selected token to their inventory
-    // we know there is only 1 element in this array
-    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
-                                               .get()[0]));
+  
+  private void performTakeToken(Move move, UserInventory inventory) {
+    TokenType type = move.getSelectedTokenTypes().get();
+    TokenPile pile = this.tokenPiles.get(type);
+    Token token = pile.removeToken();
+    inventory.addTokens(token);
   }
 
 
@@ -673,6 +419,10 @@ public class GameBoard {
   
   public EnumMap<TokenType, TokenPile> getTokenPiles() {
     return tokenPiles;
+  }
+  
+  public List<Move> getMoveCache() {
+    return moveCache;
   }
 
   /**

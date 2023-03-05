@@ -14,6 +14,11 @@ public enum Action {
    * Purchase type Action. Card must be face up in middle of table or a previously reserved one.
    */
   PURCHASE_DEV,
+  
+  /**
+   * Taking one token at a time. 
+   */
+  TAKE_TOKEN,
   /**
    * Purchase type Action. A noble visits the current player after they have purchased a card.
    */
