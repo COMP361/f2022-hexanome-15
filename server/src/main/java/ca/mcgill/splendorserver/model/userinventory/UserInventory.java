@@ -471,13 +471,15 @@ public class UserInventory implements Iterable<Card> {
       //Removing double gold cards
       int goldTokensNeeded = actualCost - tokenPiles.get(entry.getKey()).getSize();
       int goldCardAmount = purchasedCardCountByType(TokenType.GOLD);
-      int goldCardsNeeded = goldTokensNeeded/2;
+      int goldCardsNeeded = goldTokensNeeded / 2;
       if (goldCardsNeeded == 0 || goldCardAmount == 0) {
         costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
       } else {
         int goldCardsUsed = 0;
         for (Card c : cards) {
-          if (c.getTokenBonusType() == TokenType.GOLD && goldCardsNeeded > 0 && goldCardsUsed <= goldCardAmount) {
+          if (c.getTokenBonusType() == TokenType.GOLD 
+              && goldCardsNeeded > 0 
+              && goldCardsUsed <= goldCardAmount) {
             cards.remove(card);
             goldCardsNeeded -= 1;
             goldCardsUsed += 1;
