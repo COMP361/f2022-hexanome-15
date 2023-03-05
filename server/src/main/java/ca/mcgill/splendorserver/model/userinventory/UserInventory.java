@@ -284,7 +284,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public boolean canAffordCard(Card card) {
     assert card != null;
-    int currentGoldTokenCount = getGoldTokenCount();
+    int currentGoldTokenCount = getGoldTokenCount() + purchasedCardCountByType(TokenType.GOLD) * 2;
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
       currentGoldTokenCount = amountGoldTokensNeeded(entry.getKey(),
@@ -359,7 +359,9 @@ public class UserInventory implements Iterable<Card> {
                              .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
     int actualCost = cost - bonusDiscount;
-    currentGoldTokenCount += actualCost - tokenPiles.get(tokenType).getSize();
+    if (actualCost > tokenPiles.get(tokenType).getSize()) {
+      currentGoldTokenCount -= actualCost - tokenPiles.get(tokenType).getSize();
+    }
     return  currentGoldTokenCount;
   }
 
@@ -465,8 +467,23 @@ public class UserInventory implements Iterable<Card> {
                                .reduce(0, Integer::sum);
       int actualCost = entry.getValue() - bonusDiscount;
       costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
+
+      //Removing double gold cards
       int goldTokensNeeded = actualCost - tokenPiles.get(entry.getKey()).getSize();
-      if (goldTokensNeeded > 0) {
+      int goldCardAmount = purchasedCardCountByType(TokenType.GOLD);
+      int goldCardsNeeded = goldTokensNeeded/2;
+      if (goldCardsNeeded == 0 || goldCardAmount == 0) {
+        costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
+      } else {
+        int goldCardsUsed = 0;
+        for (Card c : cards) {
+          if (c.getTokenBonusType() == TokenType.GOLD && goldCardsNeeded > 0 && goldCardsUsed <= goldCardAmount) {
+            cards.remove(card);
+            goldCardsNeeded -= 1;
+            goldCardsUsed += 1;
+          }
+        }
+        goldTokensNeeded -= goldCardsUsed * 2;
         costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
       }
     }
