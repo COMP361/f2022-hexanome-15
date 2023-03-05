@@ -292,6 +292,8 @@ public class ActionManager {
         getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
       case CASCADE_LEVEL_1:
+        getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
       case DISCARD_2_WHITE_CARDS:
       case DISCARD_2_BLUE_CARDS:
       case DISCARD_2_GREEN_CARDS:

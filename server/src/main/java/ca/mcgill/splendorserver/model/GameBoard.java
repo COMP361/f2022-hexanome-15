@@ -122,6 +122,24 @@ public class GameBoard {
           return null;
         }
       }
+      case CASCADE_LEVEL_1 -> {
+        pendingAction = performCascadeLevelOne(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      }
+      case CASCADE_LEVEL_2 -> {
+        pendingAction = performCascadeLevelTwo(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      }
       default -> {
         return null;
       }
