@@ -465,6 +465,10 @@ public class UserInventory implements Iterable<Card> {
                                .reduce(0, Integer::sum);
       int actualCost = entry.getValue() - bonusDiscount;
       costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
+      int goldTokensNeeded = actualCost - tokenPiles.get(entry.getKey()).getSize();
+      if (goldTokensNeeded > 0) {
+        costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
+      }
     }
     return costs;
   }
