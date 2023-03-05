@@ -294,8 +294,8 @@ public class UserInventory implements Iterable<Card> {
       }
     }
     if (card instanceof OrientCard) {
-      if (!((OrientCard) card).getBonusActions().isEmpty()){
-        switch (((OrientCard) card).getBonusActions().get(0)){
+      if (!((OrientCard) card).getBonusActions().isEmpty()) {
+        switch (((OrientCard) card).getBonusActions().get(0)) {
           case DISCARD_2_WHITE_CARDS -> {
             if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
               return false;
@@ -325,6 +325,9 @@ public class UserInventory implements Iterable<Card> {
             if (purchasedCardCount() < 1) {
               return false;
             }
+          }
+          default -> {
+            return true;
           }
         }
       }
@@ -474,6 +477,16 @@ public class UserInventory implements Iterable<Card> {
   private void addPrestige(int prestige) {
     assert prestige >= 0;
     prestigeWon += prestige;
+  }
+
+  /**
+   * Removes prestige from the user inventory.
+   *
+   * @param prestige the amount of prestige to be removed
+   */
+  private void removePrestige(int prestige) {
+    assert prestige >= 0;
+    prestigeWon -= prestige;
   }
 
   /**
@@ -638,6 +651,11 @@ public class UserInventory implements Iterable<Card> {
   public Power removePower(Power power) {
     assert power != null && acquiredPowers.contains(power);
     int index = acquiredPowers.indexOf(power);
+    if (power == Power.GAIN_5_PRESTIGE) {
+      removePrestige(5);
+    } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
+      removePrestige(acquiredPowers.size());
+    }
     return acquiredPowers.remove(index);
   }
 
@@ -652,6 +670,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null && visitingNobles.contains(noble)
              && noble.getStatus() == NobleStatus.VISITING;
     int index = visitingNobles.indexOf(noble);
+    removePrestige(3);
     return visitingNobles.remove(index);
   }
 
