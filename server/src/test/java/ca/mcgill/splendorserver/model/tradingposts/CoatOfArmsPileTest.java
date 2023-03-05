@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CoatOfArmsPileTest {
 
+
   @Test
   void getType() {
+
   }
 
   @Test
