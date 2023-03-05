@@ -172,7 +172,7 @@ public class GameBoard {
   }
   
   private void performTakeToken(Move move, UserInventory inventory) {
-    TokenType type = move.getSelectedTokenTypes().get();
+    TokenType type = move.getSelectedTokenTypes();
     TokenPile pile = this.tokenPiles.get(type);
     Token token = pile.removeToken();
     inventory.addTokens(token);
@@ -182,16 +182,14 @@ public class GameBoard {
 
   private void performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
-    Card selectedCard = getSelectedCardOrThrow(move);
+    Card selectedCard = move.getCard();
     // if we're taking from the table, replenish table from the deck
-    if (move.getCard()
-            .isPresent()) {
+    if (move.getCard() != null) {
       // remove the selected card from the board and replenish from same deck type
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
       replenishTakenCardFromDeck(
           move.getCard()
-              .get()
               .getDeckType(),
           ix
       );
@@ -200,26 +198,9 @@ public class GameBoard {
     inventory.addReservedCard(selectedCard);
   }
 
-  private Card getSelectedCardOrThrow(Move move) {
-    // throws an error if a card nor deck level to choose from weren't chosen
-    Card selectedCard = move.getCard()
-                            .orElse(getCardByDeckLevel(move.getDeckType()
-                                                           .orElseThrow(
-                                                               () -> new IllegalGameStateException(
-                                                                   "If move is to reserve dev "
-                                                                     + "card, a card "
-                                                                     + "or deck level to draw "
-                                                                     + "a card from "
-                                                                     + "must be chosen"))));
-    return selectedCard;
-  }
-
   private Action performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
     // checking to see whether they're buying from reserved card in hand / table or from deck
-    Card selectedCard = move.getCard()
-                            .orElseThrow(() -> new IllegalGameStateException(
-                                "if selected move is to purchase a dev card, "
-                                  + "there needs to be a card selected"));
+    Card selectedCard = move.getCard();
     // check to make sure that the card they wish to purchase from their hand is valid
     if (inventory.hasCardReserved(selectedCard)) {
       // they have the card, and it has been reserved, so they can legally buy it
@@ -261,9 +242,9 @@ public class GameBoard {
 
   private Action performPairSpiceCard(Move move, UserInventory inventory) {
     OrientCard spiceCard = inventory.getUnpairedSpiceCard();
-    if (move.getCard().isPresent()
-          && inventory.hasCard(move.getCard().get()) && spiceCard != null) {
-      ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+    if (move.getCard() != null
+          && inventory.hasCard(move.getCard()) && spiceCard != null) {
+      ((OrientCard) spiceCard).pairWithCard(move.getCard());
       moveCache.add(move);
       for (Action bonusAction : spiceCard.getBonusActions()) {
         boolean doneAction = false;
@@ -286,22 +267,20 @@ public class GameBoard {
   private void performClaimNobleAction(Move move, UserInventory inventory) {
     // see if player has been visited by a noble and if so that this is valid
     if (move.getNoble()
-            .isPresent() && inventory.canBeVisitedByNoble(move.getNoble()
-                                                              .get())) {
+            != null && inventory.canBeVisitedByNoble(move.getNoble())) {
       // add prestige and tile to inventory
-      inventory.receiveVisitFrom(move.getNoble()
-                                     .get());
+      inventory.receiveVisitFrom(move.getNoble());
       // TODO: check and see about settlements
     }
   }
 
   private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked the power associated with this trading post slot
-    if (move.getTradingPostSlot().isPresent()
-          && !move.getTradingPostSlot().get().isFull()
-          && !inventory.canReceivePower(move.getTradingPostSlot().get().getPower())) {
-      inventory.addPower(move.getTradingPostSlot().get().getPower());
-      move.getTradingPostSlot().get()
+    if (move.getTradingPostSlot() != null
+          && !move.getTradingPostSlot().isFull()
+          && !inventory.canReceivePower(move.getTradingPostSlot().getPower())) {
+      inventory.addPower(move.getTradingPostSlot().getPower());
+      move.getTradingPostSlot()
         .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }

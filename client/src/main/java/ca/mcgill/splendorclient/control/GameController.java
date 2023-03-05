@@ -12,7 +12,7 @@ import kong.unirest.Unirest;
 public class GameController {
   
   private Long gameId;
-  private int currentState;
+  private String currentState;
   
   private static GameController instance = new GameController();
   
@@ -47,9 +47,9 @@ public class GameController {
         HttpResponse<JsonNode> response = Unirest
             .get(String.format("http://%s/api/games/%d/board", LobbyServiceExecutor.SERVERLOCATION, gameId))
             .asJson();
-        if (response.hashCode() != currentState) {
+        if (response.getBody().toPrettyString() != currentState) {
           System.out.println(response.getBody().toPrettyString());
-          currentState = response.hashCode();
+          currentState = response.getBody().toPrettyString();
           Platform.runLater(new Runnable() {
 
             @Override

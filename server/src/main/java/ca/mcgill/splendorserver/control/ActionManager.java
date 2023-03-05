@@ -241,10 +241,6 @@ public class ActionManager {
       return new LinkedHashMap<>();
     }
 
-    // now search through the gameboard
-    // and create a mapping of viable moves the player can make given their state
-    // TODO: find the players inventory from the game,
-    //  scan over their tokens and cards to ascertain what moves are possible
     GameBoard gameBoard = splendorGame.getBoard();
     // we know that the player is in the game if we make it to this point
     UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
