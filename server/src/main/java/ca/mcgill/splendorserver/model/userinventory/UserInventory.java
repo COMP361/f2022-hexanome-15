@@ -203,7 +203,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Number of purchased cards in the user inventory.
+   * Returns the number of purchased cards in the user inventory.
    *
    * @return number of purchased cards in the user inventory
    */
@@ -212,6 +212,18 @@ public class UserInventory implements Iterable<Card> {
         .stream()
         .filter(Card::isPurchased)
         .count();
+  }
+
+  /**
+   * Returns the number of purchased cards of a certain token type in the user inventory.
+   *
+   * @return the number of purchased cards of a certain token type in the user inventory
+   */
+  public int purchasedCardCountByType(TokenType type) {
+    return (int) cards
+                   .stream()
+                   .filter(card -> card.isPurchased() && card.getTokenBonusType() == type)
+                   .count();
   }
 
   /**
@@ -281,6 +293,45 @@ public class UserInventory implements Iterable<Card> {
         return false;
       }
     }
+    if (card instanceof OrientCard) {
+      if (!((OrientCard) card).getBonusActions().isEmpty()) {
+        switch (((OrientCard) card).getBonusActions().get(0)) {
+          case DISCARD_2_WHITE_CARDS -> {
+            if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_BLUE_CARDS -> {
+            if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_GREEN_CARDS -> {
+            if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_RED_CARDS -> {
+            if (purchasedCardCountByType(TokenType.RUBY) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_BLACK_CARDS -> {
+            if (purchasedCardCountByType(TokenType.ONYX) < 2) {
+              return false;
+            }
+          }
+          case PAIR_SPICE_CARD -> {
+            if (purchasedCardCount() < 1) {
+              return false;
+            }
+          }
+          default -> {
+            return true;
+          }
+        }
+      }
+    }
     return true;
   }
 
@@ -340,12 +391,6 @@ public class UserInventory implements Iterable<Card> {
   public void addReservedNoble(Noble noble) {
     assert noble != null;
 
-    if (noble.getStatus() != NobleStatus.ON_BOARD) {
-      throw new IllegalGameStateException(
-              "Noble cannot be reserved if it has already been "
-              + "reserved or is currently visiting a player");
-    }
-
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
   }
@@ -374,14 +419,12 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null;
-
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());
     }
   }
-
 
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
@@ -422,6 +465,10 @@ public class UserInventory implements Iterable<Card> {
                                .reduce(0, Integer::sum);
       int actualCost = entry.getValue() - bonusDiscount;
       costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
+      int goldTokensNeeded = actualCost - tokenPiles.get(entry.getKey()).getSize();
+      if (goldTokensNeeded > 0) {
+        costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
+      }
     }
     return costs;
   }
@@ -437,6 +484,16 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Removes prestige from the user inventory.
+   *
+   * @param prestige the amount of prestige to be removed
+   */
+  private void removePrestige(int prestige) {
+    assert prestige >= 0;
+    prestigeWon -= prestige;
+  }
+
+  /**
    * Checks if the current player can be visited by a noble at the end of their turn.
    *
    * @param noble the noble to be visited
@@ -446,6 +503,10 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null;
     // cannot be visited by noble that is already visiting someone else
     if (noble.getStatus() == NobleStatus.VISITING) {
+      return false;
+    }
+    // cannot be visited by a noble that is reserved by another player
+    if (!visitingNobles.contains(noble) && noble.getStatus() == NobleStatus.RESERVED) {
       return false;
     }
 
@@ -470,6 +531,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null;
     addPrestige(noble.getPrestige());
     visitingNobles.add(noble);
+    noble.setStatus(NobleStatus.VISITING);
   }
 
   private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {
@@ -593,6 +655,11 @@ public class UserInventory implements Iterable<Card> {
   public Power removePower(Power power) {
     assert power != null && acquiredPowers.contains(power);
     int index = acquiredPowers.indexOf(power);
+    if (power == Power.GAIN_5_PRESTIGE) {
+      removePrestige(5);
+    } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
+      removePrestige(acquiredPowers.size());
+    }
     return acquiredPowers.remove(index);
   }
 
@@ -607,6 +674,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null && visitingNobles.contains(noble)
              && noble.getStatus() == NobleStatus.VISITING;
     int index = visitingNobles.indexOf(noble);
+    removePrestige(3);
     return visitingNobles.remove(index);
   }
 

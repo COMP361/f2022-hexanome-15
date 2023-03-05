@@ -1,14 +1,17 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -112,6 +115,24 @@ public class GameBoard {
       }
       case PAIR_SPICE_CARD -> {
         pendingAction = performPairSpiceCard(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      }
+      case CASCADE_LEVEL_1 -> {
+        pendingAction = performCascadeLevelOne(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      }
+      case CASCADE_LEVEL_2 -> {
+        pendingAction = performCascadeLevelTwo(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
           return pendingAction;
@@ -603,9 +624,11 @@ public class GameBoard {
    */
   private void performClaimNobleAction(Move move, UserInventory inventory) {
     // see if player has been visited by a noble and if so that this is valid
-    if (move.getNoble()
-            .isPresent() && inventory.canBeVisitedByNoble(move.getNoble()
-                                                              .get())) {
+    if (move.getNoble().isEmpty()) {
+      throw new IllegalGameStateException("If move to visit noble, "
+                                            + "then noble cannot be empty");
+    }
+    if (inventory.canBeVisitedByNoble(move.getNoble().get())) {
       // add prestige and tile to inventory
       inventory.receiveVisitFrom(move.getNoble()
                                      .get());
@@ -620,13 +643,106 @@ public class GameBoard {
    */
   private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked the power associated with this trading post slot
-    if (move.getTradingPostSlot().isPresent()
-          && !move.getTradingPostSlot().get().isFull()
-          && !inventory.canReceivePower(move.getTradingPostSlot().get())) {
+    if (move.getTradingPostSlot().isEmpty()) {
+      throw new IllegalGameStateException("If move is to place coat of arms,"
+                                            + "then trading post slot cannot be empty");
+    }
+    if (move.getTradingPostSlot().get().isFull()) {
+      throw new IllegalGameStateException("If move is to place coat of arms,"
+                                            + "then trading post slot cannot be full");
+    }
+    if (inventory.canReceivePower(move.getTradingPostSlot().get())) {
       inventory.addPower(move.getTradingPostSlot().get().getPower());
       move.getTradingPostSlot().get()
         .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
+  }
+
+  /**
+   * Performs reserving of noble action from Orient expansion bonus actions.
+   *
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performReserveNoble(Move move, UserInventory inventory) {
+    if (move.getNoble().isEmpty()) {
+      throw new IllegalGameStateException("If move to reserve noble, "
+                                            + "then noble cannot be empty");
+    }
+    if (move.getNoble().get().getStatus() != NobleStatus.ON_BOARD) {
+      throw new IllegalGameStateException(
+              "Noble cannot be reserved if it has already been "
+                      + "reserved or is currently visiting a player");
+    }
+    inventory.addReservedNoble(move.getNoble().get());
+  }
+
+  /**
+   * Performs the cascade action with a level one Orient card for the bonus action.
+   *
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performCascadeLevelOne(Move move, UserInventory inventory) {
+    if (move.getCard().isEmpty()) {
+      throw new IllegalGameStateException("If move is to choose a cascade level one card,"
+                                            + "then card cannot be empty");
+    }
+    if (move.getCard().get().getDeckType() != DeckType.ORIENT1) {
+      throw new IllegalGameStateException("If move is to choose a cascade level one card,"
+                                            + "then card must be from Orient 1 deck");
+    }
+    if (move.getCard().get().getCardStatus() != CardStatus.NONE) {
+      throw new IllegalGameStateException(
+        "Card cannot be taken if it has already been "
+          + "reserved or purchased by a player");
+    }
+
+    OrientCard levelOneCard = (OrientCard) move.getCard().get();
+    inventory.addCascadeLevelOne(levelOneCard);
+
+    if (levelOneCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
+      if (actions.size() > 0) {
+        moveCache.add(move);
+        return actions.get(0);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Performs the cascade action with a level two Orient card for the bonus action.
+   *
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performCascadeLevelTwo(Move move, UserInventory inventory) {
+    if (move.getCard().isEmpty()) {
+      throw new IllegalGameStateException("If move is to choose a cascade level two card,"
+                                            + "then card cannot be empty");
+    }
+    if (move.getCard().get().getDeckType() != DeckType.ORIENT2) {
+      throw new IllegalGameStateException("If move is to choose a cascade level two card,"
+                                            + "then card must be from Orient 2 deck");
+    }
+    if (move.getCard().get().getCardStatus() != CardStatus.NONE) {
+      throw new IllegalGameStateException(
+        "Card cannot be taken if it has already been "
+          + "reserved or purchased by a player");
+    }
+
+    OrientCard levelTwoCard = (OrientCard) move.getCard().get();
+    inventory.addCascadeLevelTwo(levelTwoCard);
+
+    if (levelTwoCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
+      if (actions.size() > 0) {
+        moveCache.add(move);
+        return actions.get(0);
+      }
+    }
+    return null;
   }
 
   /**
