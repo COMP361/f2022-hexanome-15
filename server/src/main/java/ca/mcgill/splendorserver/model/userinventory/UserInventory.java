@@ -353,9 +353,11 @@ public class UserInventory implements Iterable<Card> {
   public void addCascadeLevelOne(OrientCard card) {
     assert card != null;
 
-    card.setCardStatus(CardStatus.PURCHASED);
-    cards.add(card);
-    addPrestige(card.getPrestige());
+    if (card.getDeckType() == DeckType.ORIENT1) {
+      card.setCardStatus(CardStatus.PURCHASED);
+      cards.add(card);
+      addPrestige(card.getPrestige());
+    }
   }
 
   /**
