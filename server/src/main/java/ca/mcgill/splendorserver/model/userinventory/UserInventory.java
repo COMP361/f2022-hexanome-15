@@ -382,33 +382,6 @@ public class UserInventory implements Iterable<Card> {
     }
   }
 
-  /**
-   * Removes card from deck based on bonus colour, prioritizes spice bag cards.
-   *
-   * @param tokenType the token type of the element to remove
-   * @throws AssertionError if tokenType == null
-   */
-  public void discardByBonusType(TokenType tokenType) {
-    assert tokenType != null;
-    for (int i = 0; i < cards.size(); i++) {
-      Card current = cards.get(i);
-      if (current.getTokenBonusType() == tokenType
-            && current.getCardStatus() != CardStatus.RESERVED
-            && ((OrientCard) current).isSpiceBag()) {
-        cards.remove(i);
-        return;
-      }
-    }
-    for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType() == tokenType
-            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
-        cards.remove(j);
-        return;
-      }
-    }
-  }
-
-
 
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
@@ -608,6 +581,33 @@ public class UserInventory implements Iterable<Card> {
       }
     }
     return true;
+  }
+
+  /**
+   * Removes a power from the list of acquired powers in the user inventory.
+   * Must be done if discarding cards makes the player unable to reach the requirements.
+   *
+   * @param power the power to be discarded
+   * @return the discarded power
+   */
+  public Power removePower(Power power) {
+    assert power != null && acquiredPowers.contains(power);
+    int index = acquiredPowers.indexOf(power);
+    return acquiredPowers.remove(index);
+  }
+
+  /**
+   * Removes a noble from the list of visiting nobles in the user inventory.
+   * Must be done if discarding cards make the player unable to reach the requirements.
+   *
+   * @param noble the noble to be discarded
+   * @return the discarded noble
+   */
+  public Noble removeNoble(Noble noble) {
+    assert noble != null && visitingNobles.contains(noble)
+             && noble.getStatus() == NobleStatus.VISITING;
+    int index = visitingNobles.indexOf(noble);
+    return visitingNobles.remove(index);
   }
 
 
