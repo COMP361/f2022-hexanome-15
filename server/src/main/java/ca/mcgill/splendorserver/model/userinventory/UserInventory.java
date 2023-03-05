@@ -203,7 +203,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Number of purchased cards in the user inventory.
+   * Returns the number of purchased cards in the user inventory.
    *
    * @return number of purchased cards in the user inventory
    */
@@ -212,6 +212,18 @@ public class UserInventory implements Iterable<Card> {
         .stream()
         .filter(Card::isPurchased)
         .count();
+  }
+
+  /**
+   * Returns the number of purchased cards of a certain token type in the user inventory.
+   *
+   * @return the number of purchased cards of a certain token type in the user inventory
+   */
+  public int purchasedCardCountByType(TokenType type) {
+    return (int) cards
+                   .stream()
+                   .filter(card -> card.isPurchased() && card.getTokenBonusType() == type)
+                   .count();
   }
 
   /**
@@ -279,6 +291,42 @@ public class UserInventory implements Iterable<Card> {
           entry.getValue(), currentGoldTokenCount);
       if (currentGoldTokenCount < 0) {
         return false;
+      }
+    }
+    if (card instanceof OrientCard) {
+      if (!((OrientCard) card).getBonusActions().isEmpty()){
+        switch (((OrientCard) card).getBonusActions().get(0)){
+          case DISCARD_2_WHITE_CARDS -> {
+            if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_BLUE_CARDS -> {
+            if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_GREEN_CARDS -> {
+            if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_RED_CARDS -> {
+            if (purchasedCardCountByType(TokenType.RUBY) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_BLACK_CARDS -> {
+            if (purchasedCardCountByType(TokenType.ONYX) < 2) {
+              return false;
+            }
+          }
+          case PAIR_SPICE_CARD -> {
+            if (purchasedCardCount() < 1) {
+              return false;
+            }
+          }
+        }
       }
     }
     return true;
