@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.games;
+package ca.mcgill.splendorserver.gameio;
 
 import org.junit.jupiter.api.BeforeEach;
 import java.io.ByteArrayOutputStream;
