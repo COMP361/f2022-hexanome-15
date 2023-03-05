@@ -373,34 +373,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Removes card from deck based on bonus colour, prioritizes spice bag cards.
-   *
-   * @param tokenType the token type of the element to remove
-   * @throws AssertionError if tokenType == null
-   */
-  public void discardByBonusType(TokenType tokenType) {
-    assert tokenType != null;
-    for (int i = 0; i < cards.size(); i++) {
-      Card current = cards.get(i);
-      if (current.getTokenBonusType() == tokenType
-            && current.getCardStatus() != CardStatus.RESERVED
-            && ((OrientCard) current).isSpiceBag()) {
-        cards.remove(i);
-        return;
-      }
-    }
-    for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType() == tokenType
-            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
-        cards.remove(j);
-        return;
-      }
-    }
-  }
-
-
-
-  /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
    * purchased and deducts the appropriate amount of tokens from their inventory also taking
    * into consideration any token type bonuses they may have from owned cards.
@@ -465,6 +437,10 @@ public class UserInventory implements Iterable<Card> {
     if (noble.getStatus() == NobleStatus.VISITING) {
       return false;
     }
+    // cannot be visited by a noble that is reserved by another player
+    if (!visitingNobles.contains(noble) && noble.getStatus() == NobleStatus.RESERVED) {
+      return false;
+    }
 
     // loop over the visit requirements and see if bonuses in this inventory are sufficient
     for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
@@ -487,6 +463,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null;
     addPrestige(noble.getPrestige());
     visitingNobles.add(noble);
+    noble.setStatus(NobleStatus.VISITING);
   }
 
   private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {
