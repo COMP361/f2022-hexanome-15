@@ -340,12 +340,6 @@ public class UserInventory implements Iterable<Card> {
   public void addReservedNoble(Noble noble) {
     assert noble != null;
 
-    if (noble.getStatus() != NobleStatus.ON_BOARD) {
-      throw new IllegalGameStateException(
-              "Noble cannot be reserved if it has already been "
-              + "reserved or is currently visiting a player");
-    }
-
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
   }
@@ -359,11 +353,9 @@ public class UserInventory implements Iterable<Card> {
   public void addCascadeLevelOne(OrientCard card) {
     assert card != null;
 
-    if (card.getDeckType() == DeckType.ORIENT1) {
-      card.setCardStatus(CardStatus.PURCHASED);
-      cards.add(card);
-      addPrestige(card.getPrestige());
-    }
+    card.setCardStatus(CardStatus.PURCHASED);
+    cards.add(card);
+    addPrestige(card.getPrestige());
   }
 
   /**
@@ -375,11 +367,9 @@ public class UserInventory implements Iterable<Card> {
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null;
 
-    if (card.getDeckType() == DeckType.ORIENT2) {
-      card.setCardStatus(CardStatus.PURCHASED);
-      cards.add(card);
-      addPrestige(card.getPrestige());
-    }
+    card.setCardStatus(CardStatus.PURCHASED);
+    cards.add(card);
+    addPrestige(card.getPrestige());
   }
 
   /**

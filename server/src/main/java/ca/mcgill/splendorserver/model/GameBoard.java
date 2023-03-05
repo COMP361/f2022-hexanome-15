@@ -1,14 +1,13 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
-import ca.mcgill.splendorserver.model.cards.Card;
-import ca.mcgill.splendorserver.model.cards.Deck;
-import ca.mcgill.splendorserver.model.cards.DeckType;
-import ca.mcgill.splendorserver.model.cards.OrientCard;
+import ca.mcgill.splendorserver.model.cards.*;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -626,6 +625,46 @@ public class GameBoard {
       inventory.addPower(move.getTradingPostSlot().get().getPower());
       move.getTradingPostSlot().get()
         .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
+    }
+  }
+
+  /**
+   * Performs reserving of noble action from Orient expansion bonus actions.
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performReserveNoble(Move move, UserInventory inventory) {
+    if (move.getNoble().get().getStatus() != NobleStatus.ON_BOARD) {
+      throw new IllegalGameStateException(
+              "Noble cannot be reserved if it has already been "
+                      + "reserved or is currently visiting a player");
+    }
+    inventory.addReservedNoble(move.getNoble().get());
+  }
+
+  /**
+   * Performs the cascade action with a level one Orient card for the bonus action.
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performCascadeLevelOne(Move move, UserInventory inventory) {
+    OrientCard levelOneCard = (OrientCard) move.getCard().get();
+    if (levelOneCard.getDeckType() == DeckType.ORIENT1 && levelOneCard.getCardStatus()
+    == CardStatus.NONE) {
+      inventory.addCascadeLevelOne(levelOneCard);
+    }
+  }
+
+  /**
+   * Performs the cascade action with a level two Orient card for the bonus action.
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performCascadeLevelTwo(Move move, UserInventory inventory) {
+    OrientCard levelTwoCard = (OrientCard) move.getCard().get();
+    if (levelTwoCard.getDeckType() == DeckType.ORIENT1 && levelTwoCard.getCardStatus()
+            == CardStatus.NONE) {
+      inventory.addCascadeLevelOne(levelTwoCard);
     }
   }
 
