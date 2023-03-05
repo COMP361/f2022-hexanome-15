@@ -366,10 +366,11 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null;
-
-    card.setCardStatus(CardStatus.PURCHASED);
-    cards.add(card);
-    addPrestige(card.getPrestige());
+    if (card.getDeckType() == DeckType.ORIENT2) {
+      card.setCardStatus(CardStatus.PURCHASED);
+      cards.add(card);
+      addPrestige(card.getPrestige());
+    }
   }
 
   /**
@@ -575,6 +576,33 @@ public class UserInventory implements Iterable<Card> {
       }
     }
     return true;
+  }
+
+  /**
+   * Removes a power from the list of acquired powers in the user inventory.
+   * Must be done if discarding cards makes the player unable to reach the requirements.
+   *
+   * @param power the power to be discarded
+   * @return the discarded power
+   */
+  public Power removePower(Power power) {
+    assert power != null && acquiredPowers.contains(power);
+    int index = acquiredPowers.indexOf(power);
+    return acquiredPowers.remove(index);
+  }
+
+  /**
+   * Removes a noble from the list of visiting nobles in the user inventory.
+   * Must be done if discarding cards make the player unable to reach the requirements.
+   *
+   * @param noble the noble to be discarded
+   * @return the discarded noble
+   */
+  public Noble removeNoble(Noble noble) {
+    assert noble != null && visitingNobles.contains(noble)
+             && noble.getStatus() == NobleStatus.VISITING;
+    int index = visitingNobles.indexOf(noble);
+    return visitingNobles.remove(index);
   }
 
 
