@@ -16,6 +16,27 @@ public class ColorManager {
   public ColorManager() {
 
   }
+  
+  public static Color getColor(int cardID) {
+	if (cardID < 40) {
+	  return Color.GREENYELLOW;
+	}
+	if (cardID < 70) {
+	  return Color.GOLD;
+	}
+	if (cardID < 90) {
+	  return Color.DEEPSKYBLUE;
+	}
+	if (cardID < 100) {
+	  return Color.DARKRED;
+	}
+	if (cardID < 110) {
+	  return Color.FIREBRICK;
+	}
+	else {
+	  return Color.CRIMSON;
+	}
+  }
 
   /**
    * Returns the color for a given token type.
