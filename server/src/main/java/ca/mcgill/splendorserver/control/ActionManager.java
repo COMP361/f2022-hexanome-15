@@ -93,19 +93,19 @@ public class ActionManager {
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
     // apply the selected move to game board
-    Action pendingaction = splendorGame.getBoard()
+    Action pendingBonusAction = splendorGame.getBoard()
                                           .applyMove(selectedMove, playerWrapper.orElseThrow(
                                               () -> new IllegalGameStateException(
                                                   "If a valid move has been selected, "
                                                     + "there must be a corresponding player "
                                                     + "who selected it "
                                                     + "but player was found empty")));
+    UserInventory inventory = splendorGame.getBoard()
+                                .getInventoryByPlayerName(playerName)
+                                .orElseThrow();
 
     // need to handle potential compound actions
-    if (pendingaction != null) {
-      UserInventory inventory = splendorGame.getBoard()
-                                            .getInventoryByPlayerName(playerName)
-                                            .orElseThrow();
+    if (pendingBonusAction != null) {
       // can only be a few types: purchase dev receive noble, take 2 or 3 and return 1,2, or 3
       // TODO: figure out how to get the appropriate options in body of response
       /*List<?> responseBody = switch (selectedMove.getAction()) {
@@ -136,10 +136,17 @@ public class ActionManager {
         case TAKE_1_GEM_TOKEN_RET_1 -> null;
         case PLACE_COAT_OF_ARMS -> null;
       };*/
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingaction.toString());
+      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingBonusAction.toString());
     } else {
       //TODO: check for end of turn pending actions.
-      
+      Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
+
+      if (endOfTurnAction != null) {
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(endOfTurnAction.toString());
+      }
+
+      splendorGame.getBoard().endTurn();
+
       // check for terminal game state after action has been performed
       if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
         logger.log(Level.INFO, "Terminal game state reached");
