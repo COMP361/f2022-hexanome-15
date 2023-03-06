@@ -202,9 +202,11 @@ public class GameBoardView {
     VBox faceupCardsSecondColumn = new VBox();
     VBox faceupCardsThirdColumn = new VBox();
     VBox faceupCardsFourthColumn = new VBox();
+    VBox faceupCardsFifthColumn = new VBox();
+    VBox faceupCardsSixthColumn = new VBox();
     List<CardView> cardViewAggregator = new ArrayList<>();
     List<VBox> columns = Arrays.asList(faceupCardsFirstColumn, faceupCardsSecondColumn,
-        faceupCardsThirdColumn, faceupCardsFourthColumn);
+        faceupCardsThirdColumn, faceupCardsFourthColumn, faceupCardsFifthColumn, faceupCardsSixthColumn);
 
     int columnCount = 0;
     for (VBox column : columns) {
