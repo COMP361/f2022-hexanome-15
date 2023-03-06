@@ -21,6 +21,8 @@ import kong.unirest.json.JSONArray;
  * Represents the view of the Splendor game board.
  */
 public class GameBoardView {
+  
+  private final static ArrayList<CardView> cardViews = new ArrayList<CardView>();
 
   /**
    * Creates a GameBoardView.
@@ -59,7 +61,9 @@ public class GameBoardView {
    * @param screenSize the size of the screen
    */
   private static CardView createCardView(Dimension screenSize, String location) {
-    return new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
+    CardView newView = new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
+    cardViews.add(newView);
+    return newView;
   }
 
   /**
@@ -252,5 +256,11 @@ public class GameBoardView {
     root.getChildren().addAll(allUserInventoryViews);
     return new Scene(root, screenSize.width, screenSize.height);
   }
-
+  public static void updateCardViews(int[] field) {
+	int viewIndex = 0;
+	for (CardView view : cardViews) {
+	  view.updateView(field[viewIndex]);
+	  viewIndex++;
+	}
+  }
 }
