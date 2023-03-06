@@ -487,6 +487,12 @@ public class GameBoard {
         return Action.RECEIVE_NOBLE;
       }
     }
+    for (Noble noble : nobles) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.canReceivePower(tradingPostSlot)) {
         moveCache.add(move);
@@ -560,6 +566,12 @@ public class GameBoard {
       }
     }
     for (Noble noble : inventory.getNobles()) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (Noble noble : nobles) {
       if (inventory.canBeVisitedByNoble(noble)) {
         moveCache.add(move);
         return Action.RECEIVE_NOBLE;
