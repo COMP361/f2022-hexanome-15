@@ -16,12 +16,12 @@ public class Move {
 
   private final PlayerWrapper         player;
   private final Action                action;
-  private final Optional<Card>        card;
-  private final Optional<TokenType[]> selectedTokenTypes; // which token type if move involves token
-  private final Optional<TokenType[]> returnedTokenTypes; // token types selected to be returned
-  private final Optional<DeckType>    deckType;
-  private final Optional<TradingPostSlot>  tradingPostSlot;
-  private final Optional<Noble>       noble;
+  private final Card        card;
+  private final TokenType selectedTokenTypes; // which token type if move involves token
+  private final TokenType returnedTokenTypes; // token types selected to be returned
+  private final DeckType    deckType;
+  private final TradingPostSlot  tradingPostSlot;
+  private final Noble     noble;
 
   /**
    * Creates a Move.
@@ -41,18 +41,18 @@ public class Move {
    * @param selectedTokenTypes The type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
-              DeckType deckType, TokenType[] returnedTokenTypes, Noble noble,
+              DeckType deckType, TokenType returnedTokenTypes, Noble noble,
               TradingPostSlot tradingPostSlot,
-              TokenType... selectedTokenTypes
+              TokenType selectedTokenTypes
   ) {
     this.action             = action;
-    this.card               = Optional.ofNullable(card);
+    this.card               = card;
     this.player             = player;
-    this.selectedTokenTypes = Optional.ofNullable(selectedTokenTypes);
-    this.returnedTokenTypes = Optional.ofNullable(returnedTokenTypes);
-    this.deckType           = Optional.ofNullable(deckType);
-    this.tradingPostSlot    = Optional.ofNullable(tradingPostSlot);
-    this.noble              = Optional.ofNullable(noble);
+    this.selectedTokenTypes = selectedTokenTypes;
+    this.returnedTokenTypes = returnedTokenTypes;
+    this.deckType           = deckType;
+    this.tradingPostSlot    = tradingPostSlot;
+    this.noble              = noble;
   }
 
   /**
@@ -60,7 +60,7 @@ public class Move {
    *
    * @return the card purchased during this move
    */
-  public Optional<Card> getCard() {
+  public Card getCard() {
     return card;
   }
 
@@ -78,7 +78,7 @@ public class Move {
    *
    * @return the deck type of the deck the player is taking a card from
    */
-  public Optional<DeckType> getDeckType() {
+  public DeckType getDeckType() {
     return deckType;
   }
 
@@ -87,7 +87,7 @@ public class Move {
    *
    * @return the token types of token piles the player is taking from
    */
-  public Optional<TokenType[]> getSelectedTokenTypes() {
+  public TokenType getSelectedTokenTypes() {
     return selectedTokenTypes;
   }
 
@@ -96,7 +96,7 @@ public class Move {
    *
    * @return the token types of tokens the player is returning to the board
    */
-  public Optional<TokenType[]> getReturnedTokenTypes() {
+  public TokenType getReturnedTokenTypes() {
     return returnedTokenTypes;
   }
 
@@ -105,7 +105,7 @@ public class Move {
    *
    * @return the noble that is visiting the player
    */
-  public Optional<Noble> getNoble() {
+  public Noble getNoble() {
     return noble;
   }
 
@@ -114,7 +114,7 @@ public class Move {
    *
    * @return the trading post slot that a player is unlocking
    */
-  public Optional<TradingPostSlot> getTradingPostSlot() {
+  public TradingPostSlot getTradingPostSlot() {
     return tradingPostSlot;
   }
 
@@ -126,6 +126,10 @@ public class Move {
   public Action getAction() {
 
     return action;
+  }
+  
+  public String getPlayerName() {
+    return player.getName();
   }
 
   @Override

@@ -23,8 +23,8 @@ class MoveTest
   CardCost cardc = new CardCost(1,2,3,4,5);
   Noble anoble = new Noble(cardc);
   TradingPostSlot aTPS = new TradingPostSlot(false,PURCHASE_CARD_TAKE_TOKEN,cardc);
-  TokenType[] tkps = {DIAMOND};
-  TokenType[] rtkps = {EMERALD};
+  TokenType tkps = DIAMOND;
+  TokenType rtkps = EMERALD;
   PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
   Card acard = new Card(1,2,DIAMOND,BASE2,ONE,cardc);
   Action mAction = PURCHASE_DEV;
