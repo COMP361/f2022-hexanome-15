@@ -1,19 +1,21 @@
 package ca.mcgill.splendorserver.model.action;
 
-import javax.persistence.Embeddable;
-
 /**
  * Represents an action made in the Splendor game.
  * A player can purchase cards, reserve cards or take gem tokens.
  * Additional actions are added for extensions.
  */
-@Embeddable
 public enum Action {
 
   /**
    * Purchase type Action. Card must be face up in middle of table or a previously reserved one.
    */
   PURCHASE_DEV,
+  
+  /**
+   * Taking one token at a time. 
+   */
+  TAKE_TOKEN,
   /**
    * Noble visit type Action.
    */

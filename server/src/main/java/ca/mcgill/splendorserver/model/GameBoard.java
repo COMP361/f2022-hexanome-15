@@ -85,6 +85,10 @@ public class GameBoard {
     this.tradingPostSlots = tradingPostSlots;
     this.cities = cities;
   }
+  
+  public List<Move> getMoveCache() {
+    return moveCache;
+  }
 
   /**
    * Applies the given move to this game board model. Note that we can assume that for any move that
@@ -106,25 +110,73 @@ public class GameBoard {
     switch (move.getAction()) {
       case PURCHASE_DEV -> {
         pendingAction = performPurchaseDev(move, player, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
       }
       case PAIR_SPICE_CARD -> {
         pendingAction = performPairSpiceCard(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
       }
       case CASCADE_LEVEL_1 -> {
         pendingAction = performCascadeLevelOne(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
       }
       case CASCADE_LEVEL_2 -> {
         pendingAction = performCascadeLevelTwo(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      }
+      case TAKE_TOKEN -> {
+        performTakeToken(move, inventory);
+        if (moveCache.isEmpty()) {
+          moveCache.add(move);
+          actionPending = Action.TAKE_TOKEN;
+          this.pendingAction = true;
+          return actionPending;
+        }
+        else if (moveCache.size() == 1) {
+          //selected two of the same token
+          if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
+            moveCache.clear();
+            actionPending = null;
+            this.pendingAction = false;
+            return null;
+          }
+          else {
+            moveCache.add(move);
+            actionPending = Action.TAKE_TOKEN;
+            this.pendingAction = true;
+            return actionPending;
+          }
+        }
+        else {
+          moveCache.clear();
+          actionPending = null;
+          this.pendingAction = false;
+          return null;
+        }
       }
       default -> {
-        pendingAction = null;
+        return null;
       }
-    }
-    if (pendingAction != null) {
-      actionPending = pendingAction;
-      return pendingAction;
-    } else {
-      return null;
     }
   }
 
@@ -151,6 +203,13 @@ public class GameBoard {
    */
   public Action getPendingAction() {
     return actionPending;
+  }
+  
+  private void performTakeToken(Move move, UserInventory inventory) {
+    TokenType type = move.getSelectedTokenTypes();
+    TokenPile pile = this.tokenPiles.get(type);
+    Token token = pile.removeToken();
+    inventory.addTokens(token);
   }
 
   /**
@@ -192,218 +251,29 @@ public class GameBoard {
     pendingAction = false;
   }
 
-  private void performTake3GemsDiffColorReturn(Move move, UserInventory inventory, int n) {
-    // check that tokens selected is not empty
-    if (move.getSelectedTokenTypes()
-            .isEmpty() || move.getSelectedTokenTypes()
-                              .get().length != n) {
-      throw new IllegalGameStateException(
-          "If move is to take 3 gems of different colors, then gems needs to be of size 3");
-    }
-
-    // check that the return token is selected
-    if (move.getReturnedTokenTypes()
-            .isEmpty() || move.getReturnedTokenTypes()
-                              .get().length != n) {
-      throw new IllegalGameStateException(
-          String.format(
-              "If move is to take 3 gems of different colors and return %d token, "
-                + "then selected gems needs to be of size 3 and returned gems of size %d",
-              n, n
-          ));
-    }
-
-    // all good, add the selected tokens
-    TokenType[] selected = move.getSelectedTokenTypes()
-                               .get();
-    moveTokensToUserInventory(inventory, selected);
-
-    // return the selected
-    returnTokensToBoardFromInventory(inventory, move.getReturnedTokenTypes()
-                                                    .get());
-
-  }
-
-  private void performTake3GemsDiffColor(Move move, UserInventory inventory) {
-    // check that tokens selected is not empty
-    if (move.getSelectedTokenTypes()
-            .isEmpty() || move.getSelectedTokenTypes()
-                              .get().length != 3) {
-      throw new IllegalGameStateException(
-          "If move is to take 3 gems of different colors, then gems needs to be of size 3");
-    }
-
-    // all good, add the selected tokens
-    TokenType[] selected = move.getSelectedTokenTypes()
-                               .get();
-    moveTokensToUserInventory(inventory, selected);
-  }
-
-  /**
-   * Performs take 2 gems of same color and return n tokens action routine.
-   *
-   * @param move      the move to perform
-   * @param inventory the inventory to apply the move side effects to
-   * @param n         number of tokens there are in the action to return.
-   */
-  private void performTake2GemsSameColorReturn(Move move, UserInventory inventory, int n) {
-    checkConditionsForTake2GemsSameColorReturn(move, n);
-
-    // all good, add the selected token twice, and return the token from inventory to the table
-    // we know only 1 element in this array
-    TokenType selected = move.getSelectedTokenTypes()
-                             .get()[0];
-    inventory.addTokens(drawTokenByTokenType(selected));
-    inventory.addTokens(drawTokenByTokenType(selected));
-    // return token(s)
-    for (int i = 0; i < n; i++) {
-      selected = move.getReturnedTokenTypes()
-                     .get()[i];
-      returnTokensToBoardFromInventory(inventory, selected);
-    }
-  }
-
-  private void checkConditionsForTake2GemsSameColorReturn(Move move, int n) {
-    if (move.getSelectedTokenTypes()
-            .isEmpty() || move.getSelectedTokenTypes()
-                              .get().length != 1) {
-      throw new IllegalGameStateException(
-          "If move is to take 2 gems of same color, then gems needs to be of size 1");
-    }
-
-    // check that the token to return is not empty and proper size
-    if (move.getReturnedTokenTypes()
-            .isEmpty() || move.getReturnedTokenTypes()
-                              .get().length != n) {
-      throw new IllegalGameStateException(
-          String.format(
-              "If move is to take 2 gems of same color and return %d, "
-                + "then gems to return needs to be of size %d",
-              n, n
-          ));
-    }
-  }
-
-  private void performTake2GemsSameColor(Move move, UserInventory inventory) {
-    // if there are no token types then throw error
-    if (move.getSelectedTokenTypes()
-            .isEmpty()) {
-      throw new IllegalGameStateException(
-          "If move is to take 2 gems of same color, then gems cannot be empty");
-    }
-
-    // the length of the array should be 1, for the one token type which they're taking 2 of
-    if (move.getSelectedTokenTypes()
-            .get().length != 1) {
-      throw new IllegalGameStateException(
-          "Expected to see only one token type selected, instead found: "
-              + move.getSelectedTokenTypes()
-                    .get().length);
-    }
-
-    // all good, add the selected token to their inventory twice
-    // we know there is only 1 element in this array
-    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
-                                                 .get()[0]));
-    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
-                                                 .get()[0]));
-  }
-
-  private void performTake1GemReturn(Move move, UserInventory inventory) {
-    checkConditionsForTake1GemReturn(move);
-
-    // all good, add the selected token, and return the token from inventory to the table
-    // we know only 1 element in this array
-    TokenType selected = move.getSelectedTokenTypes()
-                           .get()[0];
-    inventory.addTokens(drawTokenByTokenType(selected));
-    // return token(s)
-    selected = move.getReturnedTokenTypes().get()[0];
-    returnTokensToBoardFromInventory(inventory, selected);
-  }
-
-  private void checkConditionsForTake1GemReturn(Move move) {
-    if (move.getSelectedTokenTypes()
-          .isEmpty() || move.getSelectedTokenTypes()
-                          .get().length != 1) {
-      throw new IllegalGameStateException(
-        "If move is to take 1 gem, then gems needs to be of size 1");
-    }
-
-    // check that the token to return is not empty and proper size
-    if (move.getReturnedTokenTypes()
-          .isEmpty() || move.getReturnedTokenTypes()
-                          .get().length != 1) {
-      throw new IllegalGameStateException(
-        String.format(
-          "If move is to take 1 gem and return %d, "
-            + "then gems to return needs to be of size %d",
-          1, 1
-        ));
-    }
-  }
-
-  private void performTake1Gem(Move move, UserInventory inventory) {
-    // if there are no token types then throw error
-    if (move.getSelectedTokenTypes()
-          .isEmpty()) {
-      throw new IllegalGameStateException(
-        "If move is to take 1 gem of same color, then gems cannot be empty");
-    }
-
-    // the length of the array should be 1, for the one token type which they're taking 2 of
-    if (move.getSelectedTokenTypes()
-          .get().length != 1) {
-      throw new IllegalGameStateException(
-        "Expected to see only one token type selected, instead found: "
-          + move.getSelectedTokenTypes()
-              .get().length);
-    }
-
-    // all good, add the selected token to their inventory
-    // we know there is only 1 element in this array
-    inventory.addTokens(drawTokenByTokenType(move.getSelectedTokenTypes()
-                                               .get()[0]));
-  }
-
   /**
    * Performs a reserve development type action routine.
    *
    * @param move      the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
-  private void performReserveDev(Move move, UserInventory inventory) {
+  private Action performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
-    Card selectedCard = getSelectedCardOrThrow(move);
+    Card selectedCard = move.getCard();
     // if we're taking from the table, replenish table from the deck
-    if (move.getCard()
-            .isPresent()) {
+    if (move.getCard() != null) {
       // remove the selected card from the board and replenish from same deck type
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
       replenishTakenCardFromDeck(
           move.getCard()
-              .get()
               .getDeckType(),
           ix
       );
     }
     // add to inventory as reserved card now
     inventory.addReservedCard(selectedCard);
-  }
-
-  private Card getSelectedCardOrThrow(Move move) {
-    // throws an error if a card nor deck level to choose from weren't chosen
-    Card selectedCard = move.getCard()
-                            .orElse(getCardByDeckLevel(move.getDeckType()
-                                                           .orElseThrow(
-                                                               () -> new IllegalGameStateException(
-                                                                   "If move is to reserve dev "
-                                                                     + "card, a card "
-                                                                     + "or deck level to draw "
-                                                                     + "a card from "
-                                                                     + "must be chosen"))));
-    return selectedCard;
+    return null;
   }
 
   /**
@@ -416,10 +286,7 @@ public class GameBoard {
    */
   private Action performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
     // checking to see whether they're buying from reserved card in hand / table or from deck
-    Card selectedCard = move.getCard()
-                            .orElseThrow(() -> new IllegalGameStateException(
-                                "if selected move is to purchase a dev card, "
-                                  + "there needs to be a card selected"));
+    Card selectedCard = move.getCard();
     // check to make sure that the card they wish to purchase from their hand is valid
     if (inventory.hasCardReserved(selectedCard)) {
       // they have the card, and it has been reserved, so they can legally buy it
@@ -454,6 +321,24 @@ public class GameBoard {
         return actions.get(0);
       }
     }
+    for (Noble noble : inventory.getNobles()) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (Noble noble : nobles) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.canReceivePower(tradingPostSlot)) {
+        moveCache.add(move);
+        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
     
     return null;
 
@@ -467,11 +352,11 @@ public class GameBoard {
    * @return any bonus actions that need to be performed
    */
   private Action performPairSpiceCard(Move move, UserInventory inventory) {
-    if (move.getCard().isEmpty()) {
+    if (move.getCard() == null) {
       throw new IllegalGameStateException(
         "If move to pair a spice card, then card cannot be empty");
     }
-    if (!inventory.hasCard(move.getCard().get())) {
+    if (!inventory.hasCard(move.getCard())) {
       throw new IllegalGameStateException(
         "If move to pair a spice card, then card has to be in user inventory");
     }
@@ -480,7 +365,7 @@ public class GameBoard {
       throw new IllegalGameStateException(
         "If move to pair a spice card, then an unpaired spice card has to be in user inventory");
     }
-    ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+    ((OrientCard) spiceCard).pairWithCard(move.getCard());
     moveCache.add(move);
     for (Action bonusAction : spiceCard.getBonusActions()) {
       boolean doneAction = false;
@@ -499,7 +384,7 @@ public class GameBoard {
   /**
    * Performs a claim noble type action routine.
    *
-   * @param noble      the noble to be claimed
+   * @param move      the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
   private void performClaimNobleAction(Noble noble, UserInventory inventory) {
@@ -517,17 +402,17 @@ public class GameBoard {
    */
   private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked the power associated with this trading post slot
-    if (move.getTradingPostSlot().isEmpty()) {
+    if (move.getTradingPostSlot() == null) {
       throw new IllegalGameStateException("If move is to place coat of arms,"
                                             + "then trading post slot cannot be empty");
     }
-    if (move.getTradingPostSlot().get().isFull()) {
+    if (move.getTradingPostSlot().isFull()) {
       throw new IllegalGameStateException("If move is to place coat of arms,"
                                             + "then trading post slot cannot be full");
     }
-    if (inventory.canReceivePower(move.getTradingPostSlot().get())) {
-      inventory.addPower(move.getTradingPostSlot().get().getPower());
-      move.getTradingPostSlot().get()
+    if (inventory.canReceivePower(move.getTradingPostSlot())) {
+      inventory.addPower(move.getTradingPostSlot().getPower());
+      move.getTradingPostSlot()
         .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }
@@ -539,16 +424,16 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private void performReserveNoble(Move move, UserInventory inventory) {
-    if (move.getNoble().isEmpty()) {
+    if (move.getNoble() == null) {
       throw new IllegalGameStateException("If move to reserve noble, "
                                             + "then noble cannot be empty");
     }
-    if (move.getNoble().get().getStatus() != NobleStatus.ON_BOARD) {
+    if (move.getNoble().getStatus() != NobleStatus.ON_BOARD) {
       throw new IllegalGameStateException(
               "Noble cannot be reserved if it has already been "
                       + "reserved or is currently visiting a player");
     }
-    inventory.addReservedNoble(move.getNoble().get());
+    inventory.addReservedNoble(move.getNoble());
   }
 
   /**
@@ -558,21 +443,21 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private Action performCascadeLevelOne(Move move, UserInventory inventory) {
-    if (move.getCard().isEmpty()) {
+    if (move.getCard() == null) {
       throw new IllegalGameStateException("If move is to choose a cascade level one card,"
                                             + "then card cannot be empty");
     }
-    if (move.getCard().get().getDeckType() != DeckType.ORIENT1) {
+    if (move.getCard().getDeckType() != DeckType.ORIENT1) {
       throw new IllegalGameStateException("If move is to choose a cascade level one card,"
                                             + "then card must be from Orient 1 deck");
     }
-    if (move.getCard().get().getCardStatus() != CardStatus.NONE) {
+    if (move.getCard().getCardStatus() != CardStatus.NONE) {
       throw new IllegalGameStateException(
         "Card cannot be taken if it has already been "
           + "reserved or purchased by a player");
     }
 
-    OrientCard levelOneCard = (OrientCard) move.getCard().get();
+    OrientCard levelOneCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
 
     if (levelOneCard instanceof OrientCard) {
@@ -592,21 +477,21 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private Action performCascadeLevelTwo(Move move, UserInventory inventory) {
-    if (move.getCard().isEmpty()) {
+    if (move.getCard() == null) {
       throw new IllegalGameStateException("If move is to choose a cascade level two card,"
                                             + "then card cannot be empty");
     }
-    if (move.getCard().get().getDeckType() != DeckType.ORIENT2) {
+    if (move.getCard().getDeckType() != DeckType.ORIENT2) {
       throw new IllegalGameStateException("If move is to choose a cascade level two card,"
                                             + "then card must be from Orient 2 deck");
     }
-    if (move.getCard().get().getCardStatus() != CardStatus.NONE) {
+    if (move.getCard().getCardStatus() != CardStatus.NONE) {
       throw new IllegalGameStateException(
         "Card cannot be taken if it has already been "
           + "reserved or purchased by a player");
     }
 
-    OrientCard levelTwoCard = (OrientCard) move.getCard().get();
+    OrientCard levelTwoCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
 
     if (levelTwoCard instanceof OrientCard) {

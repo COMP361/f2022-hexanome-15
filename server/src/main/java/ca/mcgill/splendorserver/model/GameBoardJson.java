@@ -19,6 +19,7 @@ import java.util.Map;
  */
 public class GameBoardJson {
   
+  private String whoseTurn;
   private List<InventoryJson> inventories;
   private List<DeckJson> decks = new ArrayList<DeckJson>();
   private List<Noble> nobles;
@@ -34,8 +35,9 @@ public class GameBoardJson {
    * @param cardField cards on the card field
    * @param tokenField tokens on the playing field
    */
-  public GameBoardJson(List<InventoryJson> inventories, List<Deck> decks, 
+  public GameBoardJson(String whoseTurn, List<InventoryJson> inventories, List<Deck> decks, 
       List<Noble> nobles, List<Card> cardField, EnumMap<TokenType, TokenPile> tokenField) {
+    this.whoseTurn = whoseTurn;
     this.inventories = inventories;
     for (Deck deck : decks) {
       this.decks.add(new DeckJson(deck.getSize(), deck.getType()));
@@ -47,6 +49,10 @@ public class GameBoardJson {
     for (TokenType type : tokenField.keySet()) {
       this.tokenField.put(type, tokenField.get(type).getSize());
     }
+  }
+  
+  public String getWhoseTurn() {
+    return whoseTurn;
   }
 
 }

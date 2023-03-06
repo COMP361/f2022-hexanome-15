@@ -1,12 +1,20 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
 
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import ca.mcgill.splendorclient.control.ActionManager;
 import ca.mcgill.splendorclient.control.ColorManager;
+import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 
 /**
  * Represents the view of a token pile.
@@ -15,6 +23,7 @@ import javafx.scene.shape.Circle;
 public class TokenPileView extends Circle {
 
   private final Counter tokenCounter;
+  private TokenType type;
 
   /**
    * Creates a TokenPileView.
@@ -25,7 +34,31 @@ public class TokenPileView extends Circle {
   public TokenPileView(float radius, TokenType type) {
     super(radius);
     this.setFill(ColorManager.getColor(type));
+    this.type = type;
     tokenCounter = new Counter(0);
+    this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+      @Override
+      public void handle(MouseEvent event) {
+        HttpResponse<JsonNode> result = ActionManager.findAndSendAssociatedTokenMove(type);
+        if (result != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody().toString());
+          }
+          if (result.getStatus() == 200) {
+            //inform end of turn
+          }
+          else {
+            //error
+          }
+        }
+      }
+      
+    });
+  }
+  
+  public TokenType getType() {
+    return type;
   }
   
   /**
@@ -40,16 +73,6 @@ public class TokenPileView extends Circle {
     super(radius);
     this.setFill(ColorManager.getColor(type));
     tokenCounter = new Counter(0);
-    this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-      @Override
-      public void handle(MouseEvent event) {
-        // TODO: make this more user friendly,
-        // as is a user wouldn't know when a take token attempt starts and finishes.
-        ActionManager.getInstance().addToRequest(type);
-      }
-      
-    });
   }
 
   /**

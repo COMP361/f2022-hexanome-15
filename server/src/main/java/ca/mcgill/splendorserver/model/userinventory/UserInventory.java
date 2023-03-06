@@ -82,6 +82,32 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Returns the token types of all the non-empty token piles in the user inventory.
+   *
+   * @return the list of token types of all the non-empty token piles in the user inventory
+   */
+  public List<TokenType> getTokenTypes() {
+    return tokenPiles.values()
+                     .stream()
+                     .filter(tokens -> tokens.getSize() != 0)
+                     .map(TokenPile::getType)
+                     .toList();
+  }
+
+  /**
+   * Returns a boolean determining if the token pile of a given token pile
+   * is empty in this user inventory.
+   *
+   * @return the given boolean
+   */
+  public boolean hasTokenType(TokenType tokenType) {
+    assert tokenType != null;
+    return tokenPiles.values()
+                     .stream()
+                     .anyMatch(tokens -> tokens.getType() == tokenType);
+  }
+
+/**
    * Returns the list of cards in the user inventory.
    *
    * @return the list of cards in the user inventory
@@ -155,6 +181,14 @@ public class UserInventory implements Iterable<Card> {
     return tokenPiles.get(type)
                      .removeToken();
   }
+
+  /*public Optional<Token> removeTokenOpt(Token token) {
+    if (tokenPiles.containsKey(token.getType()) && tokenPiles.get(token.getType()) != null) {
+      return tokenPiles.get(token.getType())
+                       .removeTokenOpt();
+    }
+    return Optional.empty();
+  }*/
 
   /**
    * Gets the number of cards in inventory.
@@ -330,6 +364,9 @@ public class UserInventory implements Iterable<Card> {
     return  currentGoldTokenCount;
   }
 
+
+  //TODO: do we check if the card is already in the hand or are the cards all unique???
+
   /**
    * Adds card to user inventory.
    *
@@ -357,6 +394,12 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addReservedNoble(Noble noble) {
     assert noble != null;
+
+    if (noble.getStatus() != NobleStatus.ON_BOARD) {
+      throw new IllegalGameStateException(
+              "Noble cannot be reserved if it has already been "
+              + "reserved or is currently visiting a player");
+    }
 
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
@@ -386,12 +429,41 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null;
+
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());
     }
   }
+
+  /**
+   * Removes card from deck based on bonus colour, prioritizes spice bag cards.
+   *
+   * @param tokenType the token type of the element to remove
+   * @throws AssertionError if tokenType == null
+   */
+  public void discardByBonusType(TokenType tokenType) {
+    assert tokenType != null;
+    for (int i = 0; i < cards.size(); i++) {
+      Card current = cards.get(i);
+      if (current.getTokenBonusType() == tokenType
+            && current.getCardStatus() != CardStatus.RESERVED
+            && ((OrientCard) current).isSpiceBag()) {
+        cards.remove(i);
+        return;
+      }
+    }
+    for (int j = 0; j < cards.size(); j++) {
+      if (cards.get(j).getTokenBonusType() == tokenType
+            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
+        cards.remove(j);
+        return;
+      }
+    }
+  }
+
+
 
   /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
@@ -474,6 +546,7 @@ public class UserInventory implements Iterable<Card> {
     }
 
     // loop over the visit requirements and see if bonuses in this inventory are sufficient
+    // in addition to those gained by the potential purchase of a card
     for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
                                                     .entrySet()) {
       if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
@@ -555,6 +628,39 @@ public class UserInventory implements Iterable<Card> {
     return playerWrapper;
   }
 
+  /* @Override
+  public void onAction(CardView cardView) {
+    boolean affordable = true;
+    for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
+      for (TokenPile tokenPile : tokenPiles) {
+        if (tokenPile.getType().ordinal() == i) {
+          if (cardView.getCard().get().getCost()[i] > 0
+                && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
+            affordable = false;
+          }
+        }
+      }
+    }
+    if (affordable) {
+      notifyObservers(cardView.getCard().get());
+      cards.add(cardView.getCard().get());
+      for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
+        for (TokenPile tokenPile : tokenPiles) {
+          if (tokenPile.getType().ordinal() == i) {
+            if (cardView.getCard().get().getCost()[i] > 0
+                  && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
+              for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
+                tokenPile.removeToken();
+              }
+            }
+          }
+        }
+      }
+    } else {
+      cardView.revokePurchaseAttempt();
+    }
+  }*/
+
 
   /**
    * Adds a token pile to the user inventory.
@@ -588,7 +694,6 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Checks if the player can receive a power.
    *
-   * @param tradingPostSlot the trading post slot that the player wishes to unlock
    * @return a boolean determining if the player can receive a power
    */
   public boolean canReceivePower(TradingPostSlot tradingPostSlot) {
@@ -647,5 +752,6 @@ public class UserInventory implements Iterable<Card> {
 
     return cards.iterator();
   }
+
 
 }

@@ -7,6 +7,7 @@ import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
+import ca.mcgill.splendorserver.model.action.MoveInfo;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
@@ -19,6 +20,7 @@ import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,36 +108,6 @@ public class ActionManager {
 
     // need to handle potential compound actions
     if (pendingBonusAction != null) {
-      // can only be a few types: purchase dev receive noble, take 2 or 3 and return 1,2, or 3
-      // TODO: figure out how to get the appropriate options in body of response
-      /*List<?> responseBody = switch (selectedMove.getAction()) {
-        case PURCHASE_DEV -> null;
-        case PURCHASE_DEV_RECEIVE_NOBLE -> {
-          yield getPossibleNobleVisitors(inventory, splendorGame.getBoard(),
-            selectedMove.getCard().orElseThrow());
-        }
-        case RESERVE_DEV_TAKE_JOKER -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> null;
-        case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> null;
-        case RESERVE_DEV -> null;
-        case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> null;
-        case RESERVE_NOBLE -> null;
-        case CASCADE_LEVEL_1 -> null;
-        case CASCADE_LEVEL_2 -> null;
-        case PAIR_SPICE_CARD -> null;
-        case DISCARD_2_WHITE_CARDS -> null;
-        case DISCARD_2_BLUE_CARDS -> null;
-        case DISCARD_2_GREEN_CARDS -> null;
-        case DISCARD_2_RED_CARDS -> null;
-        case DISCARD_2_BLACK_CARDS -> null;
-        case TAKE_1_GEM_TOKEN -> null;
-        case TAKE_1_GEM_TOKEN_RET_1 -> null;
-        case PLACE_COAT_OF_ARMS -> null;
-      };*/
       return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingBonusAction.toString());
     } else {
       //TODO: check for end of turn pending actions.
@@ -193,8 +165,9 @@ public class ActionManager {
       SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
                                                   .orElseThrow();
       Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
-      String serializedMoves = new Gson().toJson(
-          findMoves(splendorGame, playerWrapper));
+      Map<String, Move> moveMap = findMoves(splendorGame, playerWrapper);
+      Map<String, MoveInfo> simplifiedMap = prepareMoveMapForTransmission(moveMap);
+      String serializedMoves = new Gson().toJson(simplifiedMap);
       return ResponseEntity.status(HttpStatus.OK)
                            .body(serializedMoves);
     } catch (IllegalArgumentException | IllegalStateException e) {
@@ -208,6 +181,19 @@ public class ActionManager {
                            .body(e.getMessage());
 
     }
+  }
+  
+  private Map<String, MoveInfo> prepareMoveMapForTransmission(Map<String, Move> moveMap) {
+    Map<String, MoveInfo> simplifiedMap = new HashMap<String, MoveInfo>();
+    for (String md5 : moveMap.keySet()) {
+      Move move = moveMap.get(md5);
+      String cardId = move.getCard() != null ? Integer.toString(move.getCard().getId()) : null;
+      String tokenType = move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
+      String noble = move.getNoble() != null ? move.getNoble().toString() : null;
+      simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(), 
+          move.getAction().toString(), cardId, tokenType, noble));
+    }
+    return simplifiedMap;
   }
 
   private List<TokenType[]> generateTokenCombinations(List<TokenType> tokenTypes, int r) {
@@ -315,14 +301,63 @@ public class ActionManager {
       case PLACE_COAT_OF_ARMS:
         getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
+      case TAKE_TOKEN:
+        //TODO: calculate available remaining token moves. 
+        getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
       default:
         getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
         getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        //getSelectTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        getAvailableTokenMoves(moveMap, gameBoard, playerWrapper);
         break;
     }
 
     return moveMap;
+  }
+  
+  private void getRemainingTokenMoves(Map<String, Move> moveMap, UserInventory inventory, GameBoard gameBoard, PlayerWrapper player) {
+    List<Move> moveCache = gameBoard.getMoveCache();
+    if (moveCache.size() == 1) {
+      Move pastMove = moveCache.get(0);
+      TokenType pastType = pastMove.getSelectedTokenTypes();
+      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+        if (type == TokenType.GOLD) {
+          continue;
+        }
+        TokenPile pile = gameBoard.getTokenPiles().get(type);
+        if (type == pastType) {
+          if (pile.getSize() >= 3) {
+            Move move = new Move(Action.TAKE_TOKEN, null, player, null, null, null, null, pile.getType());
+            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                .toUpperCase();
+            moveMap.put(moveMd5, move);
+          }
+        }
+        else {
+          if (pile.getSize() > 0) {
+            Move move = new Move(Action.TAKE_TOKEN, null, player, null, null, null, null, pile.getType());
+            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                .toUpperCase();
+            moveMap.put(moveMd5, move);
+          }
+        }
+      }
+    }
+    else if (moveCache.size() == 2) {
+      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+        if (moveCache.get(0).getSelectedTokenTypes() == type 
+            || moveCache.get(1).getSelectedTokenTypes() == type
+            || type == TokenType.GOLD) {
+          continue;
+        }
+        TokenPile pile = gameBoard.getTokenPiles().get(type);
+        if (pile.getSize() > 0) {
+          Move move = new Move(Action.TAKE_TOKEN, null, player, null, null, null, null, pile.getType());
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+              .toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
+      }
+    }
   }
 
   private void getBuyDevMoves(Map<String, Move> moveMap, UserInventory inventory,
@@ -334,7 +369,7 @@ public class ActionManager {
       // cannot offer a move involving a card already purchased
       if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
         Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-            null, null);
+            null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -347,7 +382,7 @@ public class ActionManager {
       for (Card card : inventory) {
         if (card.isReserved() && inventory.canAffordCard(card)) {
           Move move = new Move(Action.PURCHASE_DEV, card, player, null, null,
-              null, null);
+              null, null, null);
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                              .toUpperCase();
           moveMap.put(moveMd5, move);
@@ -361,7 +396,7 @@ public class ActionManager {
     for (Noble noble : gameBoard.getNobles()) {
       if (inventory.canBeVisitedByNoble(noble)) {
         Move move = new Move(Action.RECEIVE_NOBLE, null, player, null, null,
-            noble, null);
+            noble, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -370,7 +405,7 @@ public class ActionManager {
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.RESERVED) {
         Move move = new Move(Action.RECEIVE_NOBLE, null, player, null, null,
-            noble, null);
+            noble, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -400,7 +435,7 @@ public class ActionManager {
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
-      Move takeFaceUp = new Move(action, card, player, null, null, null, null);
+      Move takeFaceUp = new Move(action, card, player, null, null, null, null, null);
       String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
                                         .toUpperCase();
       moveMap.put(takeFaceUpMd5, takeFaceUp);
@@ -411,7 +446,7 @@ public class ActionManager {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
         Move takeFromDeck = new Move(action, null, player, deck.getType(),
-                                     null, null, null
+                                     null, null, null, null
         );
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
                                             .toUpperCase();
@@ -432,7 +467,7 @@ public class ActionManager {
     }
     for (Card card : inventory.getCards()) {
       if (card.getTokenBonusType() != null) {
-        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null, null, null, null);
+        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -450,13 +485,28 @@ public class ActionManager {
     for (TradingPostSlot tradingPostSlot : gameBoard.getTradingPostSlots()) {
       if (!tradingPostSlot.isFull() && inventory.canReceivePower(tradingPostSlot)) {
         Move move = new Move(Action.PLACE_COAT_OF_ARMS, null,
-            player, null, null, null, tradingPostSlot);
+            player, null, null, null, tradingPostSlot, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
       }
     }
   }
+
+  private void getAvailableTokenMoves(Map<String, Move> moveMap,
+                                   GameBoard gameBoard, PlayerWrapper player) {
+     List<TokenPile> piles = gameBoard.getTokenPilesNoGold();
+     for (TokenPile pile : piles) {
+       if (pile.getSize() > 0) {
+         Move takeTokenMove = new Move(Action.TAKE_TOKEN, null, player, 
+             null, null, null, null, pile.getType());
+         String takeTokenMoveMd5 = DigestUtils.md2Hex(new Gson().toJson(takeTokenMove))
+             .toUpperCase();
+         moveMap.put(takeTokenMoveMd5, takeTokenMove);
+       }
+     }
+  }
+
 
   /**
    * Calculates the moves of reserving nobles available to the player and adds them to move map.
@@ -471,7 +521,7 @@ public class ActionManager {
 
     for (Noble noble : gameBoard.getNobles()) {
       Move move = new Move(Action.RESERVE_NOBLE, null, player,
-              null, null, noble, null);
+              null, null, noble, null, null);
       String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
               .toUpperCase();
       moveMap.put(moveMd5, move);
@@ -493,7 +543,7 @@ public class ActionManager {
     for (Card card : gameBoard.getCards()) {
       if (card.getDeckType() == DeckType.ORIENT1) {
         Move move = new Move(Action.CASCADE_LEVEL_1, card, player,
-                DeckType.ORIENT1, null, null, null);
+                DeckType.ORIENT1, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -515,7 +565,7 @@ public class ActionManager {
     for (Card card : gameBoard.getCards()) {
       if (card.getDeckType() == DeckType.ORIENT2) {
         Move move = new Move(Action.CASCADE_LEVEL_2, card, player,
-                DeckType.ORIENT2, null, null, null);
+                DeckType.ORIENT2, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -523,140 +573,4 @@ public class ActionManager {
     }
   }
 
-
-  /*private void getSelectTokenMoves(Map<String, Move> moveMap, UserInventory inventory,
-                                   GameBoard gameBoard, PlayerWrapper player
-  ) {
-    // checking select token moves:
-
-    // list of token types which can be drawn from while selecting 3 tokens from different piles
-    List<TokenType> validTake3TokenTypes = new ArrayList<>();
-    for (TokenPile tokenPile : gameBoard.getTokenPilesNoGold()) {
-      // can take 3 tokens of different colors as long as pile isn't empty
-      if (tokenPile.getSize() > 0) {
-        validTake3TokenTypes.add(tokenPile.getType());
-      }
-      // can only pick 2 of same color if there are at least 4 of that color available
-      if (tokenPile.getSize() >= 4) {
-        Move move;
-        if (inventory.tokenCount() <= 8) {
-          move = new Move(
-              Action.TAKE_2_GEM_TOKENS_SAME_COL, null, player, null, null, null,
-            null, tokenPile.getType()
-          );
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                      .toUpperCase();
-          moveMap.put(moveMd5, move);
-        } else if (inventory.tokenCount() == 9) {
-          // must return 1 token after the 2 tokens are taken -> any token in inventory plus
-          // selected token if they don't have it already
-          List<TokenType> possibleReturnTokenTypes = inventory.getTokenTypes();
-          if (!inventory.hasTokenType(tokenPile.getType())) {
-            possibleReturnTokenTypes.add(tokenPile.getType());
-          }
-
-          move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1, null, player, null,
-                          null, null, null, tokenPile.getType()
-          );
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                      .toUpperCase();
-          moveMap.put(moveMd5, move);
-
-
-        } else if (inventory.tokenCount() == 10) {
-          // have to loop over all possible token return combinations
-          //List<TokenType> availableReturnTokens = inventory.getTokenTypes();
-          // add the token which is being taken in this move as possible return too
-          if (!availableReturnTokens.contains(tokenPile.getType())) {
-            availableReturnTokens.add(tokenPile.getType());
-          }
-          // get all combinations of token returns
-          List<TokenType[]> returnCombinations = generateTokenCombinations(
-              availableReturnTokens, 2);
-          // loop through all return combinations now
-          move = new Move(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2, null, player, null,
-                          null,
-                          null, null, tokenPile.getType()
-          );
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                      .toUpperCase();
-          moveMap.put(moveMd5, move);
-
-
-        } else {
-          throw new IllegalGameStateException(
-              "Inventory of " + player.getName() + " can never exceed 10 tokens");
-        }
-
-      }
-    }
-
-    // creating the take 3 diff gem tokens moves for all tokens that can be drawn from
-    if (!validTake3TokenTypes.isEmpty()) {
-      // determining the correct action
-      Action action;
-      if (inventory.tokenCount() <= 7) {
-        action = Action.TAKE_3_GEM_TOKENS_DIFF_COL;
-      } else if (inventory.tokenCount() == 8) {
-        action = Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1;
-      } else if (inventory.tokenCount() == 9) {
-        action = Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2;
-      } else if (inventory.tokenCount() == 10) {
-        action = Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3;
-      } else {
-        throw new IllegalGameStateException(
-            "Inventory of " + player.getName() + " can never exceed 10 tokens");
-      }
-
-      // looping through all the possible return token combinations
-      int numTokensTake = 3;
-      List<TokenType[]> possibleTokens = generateTokenCombinations(
-          validTake3TokenTypes, numTokensTake);
-      //List<TokenType> possibleReturnTokens;
-      for (TokenType[] tokenTypes : possibleTokens) {
-        // get all tokens in inventory and if the tokens taken for this move aren't there add them
-        // we know there are 3 token types in the array
-        possibleReturnTokens = inventory.getTokenTypes();
-        if (!possibleReturnTokens.contains(tokenTypes[0])) {
-          possibleReturnTokens.add(tokenTypes[0]);
-        } else if (!possibleReturnTokens.contains(tokenTypes[1])) {
-          possibleReturnTokens.add(tokenTypes[1]);
-        } else if (!possibleReturnTokens.contains(tokenTypes[2])) {
-         possibleReturnTokens.add(tokenTypes[2]);
-        }
-        //List<TokenType[]> possibleReturnCombinations;
-        //matching by action how many tokens need to be returned
-        switch (action) {
-          case TAKE_3_GEM_TOKENS_DIFF_COL -> {
-            Move move = new Move(action, null, player, null, null, null, tokenTypes);
-            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                        .toUpperCase();
-            moveMap.put(moveMd5, move);
-            possibleReturnCombinations = null; // this will never be reached bc of the check below
-          }
-          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
-            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 1);
-          }
-          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
-            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 2);
-          }
-          case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
-            possibleReturnCombinations = generateTokenCombinations(possibleReturnTokens, 3);
-          }
-          default -> throw new IllegalStateException(
-              "Unexpected Action found, expected one of the \"take 3 token\" moves");
-        }
-
-        // if we have a move requiring returning, loop through the combinations
-        Move move = new Move(action, null, player, null, null, null, null, tokenTypes);
-        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                    .toUpperCase();
-        moveMap.put(moveMd5, move);
-
-
-      }
-
-
-    }
-  }*/
 }
