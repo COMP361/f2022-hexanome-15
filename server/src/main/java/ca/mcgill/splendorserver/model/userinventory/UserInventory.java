@@ -249,11 +249,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public boolean canAffordCard(Card card) {
     assert card != null;
-    int currentGoldTokenCount = getGoldTokenCount() + purchasedCardCountByType(TokenType.GOLD) * 2;
-    if (acquiredPowers.contains(Power.GOLD_TOKENS_WORTH_2_GEMS_SAME_COL)) {
-      currentGoldTokenCount = getGoldTokenCount() * 2
-                                + purchasedCardCountByType(TokenType.GOLD) * 2;
-    }
+    int currentGoldTokenCount = getGoldTokenCount();
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
       currentGoldTokenCount = amountGoldTokensNeeded(entry.getKey(),
@@ -436,30 +432,6 @@ public class UserInventory implements Iterable<Card> {
                                .reduce(0, Integer::sum);
       int actualCost = entry.getValue() - bonusDiscount;
       costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
-
-      //Removing double gold cards
-      int goldTokensNeeded = actualCost - tokenPiles.get(entry.getKey()).getSize();
-      int goldCardAmount = purchasedCardCountByType(TokenType.GOLD);
-      int goldCardsNeeded = goldTokensNeeded / 2;
-      if (goldCardsNeeded == 0 || goldCardAmount == 0) {
-        costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
-      } else {
-        int goldCardsUsed = 0;
-        for (Card c : cards) {
-          if (c.getTokenBonusType() == TokenType.GOLD 
-              && goldCardsNeeded > 0 
-              && goldCardsUsed <= goldCardAmount) {
-            cards.remove(card);
-            goldCardsNeeded -= 1;
-            goldCardsUsed += 1;
-          }
-        }
-        goldTokensNeeded -= goldCardsUsed * 2;
-        if (acquiredPowers.contains(Power.GOLD_TOKENS_WORTH_2_GEMS_SAME_COL)) {
-          goldTokensNeeded /= 2;
-        }
-        costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
-      }
     }
     return costs;
   }
