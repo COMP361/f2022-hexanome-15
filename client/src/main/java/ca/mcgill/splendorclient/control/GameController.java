@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 
 /**
  * Game Controller.
@@ -26,37 +27,26 @@ public class GameController {
   
   private Long gameId;
   private String currentState;
+  private GameBoardView localView;
   
   private static GameController instance = new GameController();
+  
+  public void bindView(GameBoardView view) {
+	localView = view;
+  }
   
   private GameController() {
     
   }
-
-  /**
-   * Returns this instance of GameController.
-   *
-   * @return this instance of GameController
-   */
+  
   public static GameController getInstance() {
     return instance;
   }
-
-  /**
-   * Sets the game id to the given id.
-   *
-   * @param gameId the given game id
-   */
+  
   public void setGameId(Long gameId) {
-
     this.gameId = gameId;
   }
-
-  /**
-   * Returns the game id of the game.
-   *
-   * @return the game id of the game
-   */
+  
   public Long getGameId() {
     return gameId;
   }
@@ -68,7 +58,6 @@ public class GameController {
    * Starts the game.
    */
   public static void start() {
-
     new Thread(instance.new BoardUpdater()).start();
   }
   
@@ -91,6 +80,12 @@ public class GameController {
             @Override
             public void run() {
               //update gameboard view
+              JSONArray cardArray = response.getBody().getObject().optJSONArray("cardField");
+              int[] cardIDs = new int[cardArray.length()];
+              for (int i = 0; i < cardArray.length(); i++) {
+                cardIDs[i] = cardArray.getInt(i);
+              }
+              GameBoardView.updateCardViews(cardIDs);
             }
             
           });

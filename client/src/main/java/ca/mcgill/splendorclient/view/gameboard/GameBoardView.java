@@ -22,6 +22,7 @@ import kong.unirest.json.JSONArray;
  */
 public class GameBoardView {
   
+  private final static ArrayList<CardView> cardViews = new ArrayList<CardView>();
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
 
@@ -70,7 +71,9 @@ public class GameBoardView {
    * @param screenSize the size of the screen
    */
   private static CardView createCardView(Dimension screenSize, String location) {
-    return new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
+    CardView newView = new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
+    cardViews.add(newView);
+    return newView;
   }
 
   /**
@@ -189,7 +192,6 @@ public class GameBoardView {
   /**
    * Initializes the game board.
    *
-   * @param players the players in the game
    * @return the gameboard scene
    */
   public static Scene setupGameBoard(JSONArray players) {
@@ -200,6 +202,12 @@ public class GameBoardView {
     decksBox.setSpacing(3);
     decksBox.setLayoutX(screenSize.width / 6f);
     decksBox.setLayoutY(screenSize.height / 20f);
+    
+  //building the decks of cards
+    VBox orientDecksBox = new VBox();
+    orientDecksBox.setSpacing(3);
+    orientDecksBox.setLayoutX(screenSize.width / 1.8f);
+    orientDecksBox.setLayoutY(screenSize.height / 20f);
 
 
     //building the layout of the faceup cards
@@ -211,9 +219,11 @@ public class GameBoardView {
     VBox faceupCardsSecondColumn = new VBox();
     VBox faceupCardsThirdColumn = new VBox();
     VBox faceupCardsFourthColumn = new VBox();
+    VBox faceupCardsFifthColumn = new VBox();
+    VBox faceupCardsSixthColumn = new VBox();
     List<CardView> cardViewAggregator = new ArrayList<>();
     List<VBox> columns = Arrays.asList(faceupCardsFirstColumn, faceupCardsSecondColumn,
-        faceupCardsThirdColumn, faceupCardsFourthColumn);
+        faceupCardsThirdColumn, faceupCardsFourthColumn, faceupCardsFifthColumn, faceupCardsSixthColumn);
 
     int columnCount = 0;
     for (VBox column : columns) {
@@ -226,10 +236,16 @@ public class GameBoardView {
     DeckView redDeckView = createDeckView(CardType.BASE3, screenSize);
     DeckView yellowDeckView = createDeckView(CardType.BASE2, screenSize);
     DeckView greenDeckView = createDeckView(CardType.BASE1, screenSize);
+    //orientDecksBox
+    DeckView orient3DeckView = createDeckView(CardType.ORIENT3, screenSize);
+    DeckView orient2DeckView = createDeckView(CardType.ORIENT2, screenSize);
+    DeckView orient1DeckView = createDeckView(CardType.ORIENT1, screenSize);
 
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
         getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
+    orientDecksBox.getChildren().addAll(getDeckPane(orient3DeckView),
+            getDeckPane(orient2DeckView), getDeckPane(orient1DeckView));
 
     final int nPlayers = players.length();
     //building all user inventories
@@ -261,9 +277,33 @@ public class GameBoardView {
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, faceupCardsRow, nobleCards, tokenRow);
+    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
     root.getChildren().addAll(allUserInventoryViews);
     return new Scene(root, screenSize.width, screenSize.height);
   }
-
+  public static void updateCardViews(int[] field) {
+	/*int viewIndex = 0;
+	for (CardView view : cardViews) {
+	  view.updateView(field[viewIndex]);
+	  viewIndex++;
+	}*/
+		cardViews.get(0).updateView(field[8]);
+		cardViews.get(1).updateView(field[4]);
+		cardViews.get(2).updateView(field[0]);
+		cardViews.get(3).updateView(field[9]);
+		cardViews.get(4).updateView(field[5]);
+		cardViews.get(5).updateView(field[1]);
+		cardViews.get(6).updateView(field[10]);
+		cardViews.get(7).updateView(field[6]);
+		cardViews.get(8).updateView(field[2]);
+		cardViews.get(9).updateView(field[11]);
+		cardViews.get(10).updateView(field[7]);
+		cardViews.get(11).updateView(field[3]);
+		cardViews.get(12).updateView(field[16]);
+		cardViews.get(13).updateView(field[14]);
+		cardViews.get(14).updateView(field[12]);
+		cardViews.get(15).updateView(field[17]);
+		cardViews.get(16).updateView(field[15]);
+		cardViews.get(17).updateView(field[13]);
+  }
 }
