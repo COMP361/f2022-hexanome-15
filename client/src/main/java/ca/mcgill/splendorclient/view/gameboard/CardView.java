@@ -1,5 +1,7 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
+import java.io.File;
+
 import ca.mcgill.splendorclient.control.ActionManager;
 import ca.mcgill.splendorclient.control.ColorManager;
 import javafx.scene.image.Image;
@@ -21,6 +23,7 @@ public class CardView extends StackPane {
   private final Rectangle outer;
   private final Rectangle inner;
   private int localID;
+  private final static String rootPath = new File("").getAbsolutePath();
 
   /**
    * Creates a CardView. These represent CardViews in a user inventory. 
@@ -85,7 +88,8 @@ public class CardView extends StackPane {
 //  }
   public void updateView(int num) {
 	//yes hardcoded for testing
-	Image newImage = new Image("file:///L:/f2022-hexanome-15/client/resources/card_"+num+".jpg");
+	  System.out.println("file:///"+rootPath+"/resources/card_"+num+".jpg");
+	Image newImage = new Image("file:///"+rootPath+"/resources/card_"+num+".jpg");
 	outer.setFill(ColorManager.getColor(num));
 	inner.setFill(new ImagePattern(newImage));
 	localID = num;
