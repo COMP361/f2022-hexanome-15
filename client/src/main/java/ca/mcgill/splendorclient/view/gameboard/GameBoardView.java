@@ -271,10 +271,28 @@ public class GameBoardView {
     return new Scene(root, screenSize.width, screenSize.height);
   }
   public static void updateCardViews(int[] field) {
-	int viewIndex = 0;
+	/*int viewIndex = 0;
 	for (CardView view : cardViews) {
 	  view.updateView(field[viewIndex]);
 	  viewIndex++;
-	}
+	}*/
+		cardViews.get(0).updateView(field[8]);
+		cardViews.get(1).updateView(field[4]);
+		cardViews.get(2).updateView(field[0]);
+		cardViews.get(3).updateView(field[9]);
+		cardViews.get(4).updateView(field[5]);
+		cardViews.get(5).updateView(field[1]);
+		cardViews.get(6).updateView(field[10]);
+		cardViews.get(7).updateView(field[6]);
+		cardViews.get(8).updateView(field[2]);
+		cardViews.get(9).updateView(field[11]);
+		cardViews.get(10).updateView(field[7]);
+		cardViews.get(11).updateView(field[3]);
+		cardViews.get(12).updateView(field[16]);
+		cardViews.get(13).updateView(field[14]);
+		cardViews.get(14).updateView(field[12]);
+		cardViews.get(15).updateView(field[17]);
+		cardViews.get(16).updateView(field[15]);
+		cardViews.get(17).updateView(field[13]);
   }
 }
