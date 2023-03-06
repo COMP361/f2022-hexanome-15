@@ -132,33 +132,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns the token types of all the non-empty token piles in the user inventory.
-   *
-   * @return the list of token types of all the non-empty token piles in the user inventory
-   */
-  public List<TokenType> getTokenTypes() {
-    return tokenPiles.values()
-                     .stream()
-                     .filter(tokens -> tokens.getSize() != 0)
-                     .map(TokenPile::getType)
-                     .toList();
-  }
-
-  /**
-   * Returns a boolean determining if a given token pile
-   * is empty in this user inventory.
-   *
-   * @param tokenType the token type of the token pile
-   * @return the given boolean
-   */
-  public boolean hasTokenType(TokenType tokenType) {
-    assert tokenType != null;
-    return tokenPiles.values()
-                     .stream()
-                     .anyMatch(tokens -> tokens.getType() == tokenType);
-  }
-
-  /**
    * Adds tokens to the token pile in the user inventory with the same type.
    *
    * @param token the tokens to be added
@@ -182,14 +155,6 @@ public class UserInventory implements Iterable<Card> {
     return tokenPiles.get(type)
                      .removeToken();
   }
-
-  /*public Optional<Token> removeTokenOpt(Token token) {
-    if (tokenPiles.containsKey(token.getType()) && tokenPiles.get(token.getType()) != null) {
-      return tokenPiles.get(token.getType())
-                       .removeTokenOpt();
-    }
-    return Optional.empty();
-  }*/
 
   /**
    * Gets the number of cards in inventory.
@@ -285,6 +250,10 @@ public class UserInventory implements Iterable<Card> {
   public boolean canAffordCard(Card card) {
     assert card != null;
     int currentGoldTokenCount = getGoldTokenCount() + purchasedCardCountByType(TokenType.GOLD) * 2;
+    if (acquiredPowers.contains(Power.GOLD_TOKENS_WORTH_2_GEMS_SAME_COL)) {
+      currentGoldTokenCount = getGoldTokenCount() * 2
+                                + purchasedCardCountByType(TokenType.GOLD) * 2;
+    }
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
       currentGoldTokenCount = amountGoldTokensNeeded(entry.getKey(),
@@ -486,6 +455,9 @@ public class UserInventory implements Iterable<Card> {
           }
         }
         goldTokensNeeded -= goldCardsUsed * 2;
+        if (acquiredPowers.contains(Power.GOLD_TOKENS_WORTH_2_GEMS_SAME_COL)) {
+          goldTokensNeeded /= 2;
+        }
         costs.addAll(removeTokensByTokenType(TokenType.GOLD, goldTokensNeeded));
       }
     }
