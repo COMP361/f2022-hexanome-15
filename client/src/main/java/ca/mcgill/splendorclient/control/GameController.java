@@ -1,10 +1,19 @@
 package ca.mcgill.splendorclient.control;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.GameBoardJson;
+import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.users.User;
+import ca.mcgill.splendorclient.view.gameboard.GameBoardView;
+import ca.mcgill.splendorclient.view.gameboard.TokenPileView;
 import javafx.application.Platform;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -70,6 +79,13 @@ public class GameController {
                     LobbyServiceExecutor.SERVERLOCATION, gameId, currentTurn))
                 .asJson();
             System.out.println(moveMap.getBody().toPrettyString()); 
+            String moves = moveMap.getBody().toString();
+            Gson gson = new Gson();
+            Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
+            ActionManager.setCurrentMoveMap(availableMoves);
+          }
+          else {
+            ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
           }
         }
         try {

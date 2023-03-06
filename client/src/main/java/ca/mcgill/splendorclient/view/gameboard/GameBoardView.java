@@ -21,12 +21,23 @@ import kong.unirest.json.JSONArray;
  * Represents the view of the Splendor game board.
  */
 public class GameBoardView {
+  
+  private List<TokenPileView> tokenPileViews;
+  private static GameBoardView instance = new GameBoardView();
 
   /**
    * Creates a GameBoardView.
    */
   private GameBoardView() {
-
+    tokenPileViews = new ArrayList<>();
+  }
+  
+  public static GameBoardView getInstance() {
+    return instance;
+  }
+  
+  public List<TokenPileView> getTokenPileViews() {
+    return tokenPileViews;
   }
 
   /**
@@ -127,6 +138,7 @@ public class GameBoardView {
           new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
+      instance.tokenPileViews.add(pileView);
     }
   }
 

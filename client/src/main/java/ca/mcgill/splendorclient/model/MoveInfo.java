@@ -15,5 +15,13 @@ public class MoveInfo {
     this.tokenType = tokenType;
     this.nobleId = nobleId;
   }
+  
+  public String getAction() {
+    return action;
+  }
+  
+  public String getTokenType() {
+    return tokenType;
+  }
 
 }

@@ -15,6 +15,7 @@ import javafx.scene.shape.Circle;
 public class TokenPileView extends Circle {
 
   private final Counter tokenCounter;
+  private TokenType type;
 
   /**
    * Creates a TokenPileView.
@@ -25,7 +26,12 @@ public class TokenPileView extends Circle {
   public TokenPileView(float radius, TokenType type) {
     super(radius);
     this.setFill(ColorManager.getColor(type));
+    this.type = type;
     tokenCounter = new Counter(0);
+  }
+  
+  public TokenType getType() {
+    return type;
   }
   
   /**
@@ -46,7 +52,7 @@ public class TokenPileView extends Circle {
       public void handle(MouseEvent event) {
         // TODO: make this more user friendly,
         // as is a user wouldn't know when a take token attempt starts and finishes.
-        ActionManager.getInstance().addToRequest(type);
+        ActionManager.findAndSendAssociatedTokenMove(type);
       }
       
     });
