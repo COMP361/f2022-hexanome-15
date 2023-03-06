@@ -177,9 +177,11 @@ public class GameRestController {
    */
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
   public ResponseEntity<String> launchRequest(@PathVariable long gameId,
-                                              @RequestBody SessionInfo sessionInfo
+                                              @RequestBody String sessionInfoJson
   ) {
 
+    SessionInfo sessionInfo = new Gson().fromJson(sessionInfoJson, SessionInfo.class);
+    sessionInfo.populatePlayerWrappers();
     try {
       if (sessionInfo == null || sessionInfo.getGameServer() == null) {
         throw new Exception();

@@ -1,7 +1,9 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.gameio;
 
 import ca.mcgill.splendorclient.model.users.User;
-import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.control.AuthTokenAuthenticator;
+import ca.mcgill.splendorserver.control.LocalGameStorage;
+import ca.mcgill.splendorserver.control.TerminalGameStateManager;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.SplendorGame;
@@ -151,6 +153,7 @@ public class ActionManager {
                                             @PathVariable(name = "player") String playerName,
                                             @RequestParam(name = "access_token") String accessToken
   ) {
+    System.out.println("in here");    
     try {
       // if the given gameid doesn't exist or isn't active then throw an error
       if (!LocalGameStorage.exists(gameid)) {

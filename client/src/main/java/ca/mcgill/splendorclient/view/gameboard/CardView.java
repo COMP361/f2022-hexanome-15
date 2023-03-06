@@ -85,9 +85,9 @@ public class CardView extends StackPane {
 //  }
   public void updateView(int num) {
 	//yes hardcoded for testing
-	Image newImage = new Image("file:///L:/f2022-hexanome-15/client/resources/card_"+num+".jpg");
-	outer.setFill(ColorManager.getColor(num));
-	inner.setFill(new ImagePattern(newImage));
-	localID = num;
+  	Image newImage = new Image("file:///Users/lawrenceberardelli/Documents/courses/t4/COMP361/f2022-hexanome-15/client/src/main/resources/card_"+num+".jpg");
+  	outer.setFill(ColorManager.getColor(num));
+  	inner.setFill(new ImagePattern(newImage));
+  	localID = num;
   }
 }

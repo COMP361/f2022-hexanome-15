@@ -73,8 +73,8 @@ public class GameController {
         if (response.getBody().toPrettyString() != currentState) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
-          GameBoardJson gameboardJson = new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
-          String currentTurn = gameboardJson.getWhoseTurn();
+//          GameBoardJson gameboardJson = new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
+//          String currentTurn = gameboardJson.getWhoseTurn();
           Platform.runLater(new Runnable() {
 
             @Override
@@ -89,10 +89,12 @@ public class GameController {
             }
             
           });
+          String currentTurn = response.getBody().getObject().getString("whoseTurn");
           if (currentTurn.equals(User.THISUSER.getUsername())) {
             HttpResponse<JsonNode> moveMap = Unirest
-                .get(String.format("http://%s/api/games/%d/players/%s/action", 
+                .get(String.format("http://%s/api/games/%d/players/%s/actions", 
                     LobbyServiceExecutor.SERVERLOCATION, gameId, currentTurn))
+                .queryString("access_token", User.THISUSER.getAccessToken())
                 .asJson();
             System.out.println(moveMap.getBody().toPrettyString()); 
             String moves = moveMap.getBody().toString();
