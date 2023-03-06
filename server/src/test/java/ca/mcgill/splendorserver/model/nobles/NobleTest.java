@@ -36,17 +36,7 @@ class NobleTest {
   }
 
   @Test
-  void getNobles() {
-    nobles.add(new Noble(new CardCost(3, 3, 3, 0, 0)));
-    nobles.add(new Noble(new CardCost(0, 3, 3, 3, 0)));
-    nobles.add(new Noble(new CardCost(3, 0, 0, 3, 3)));
-    nobles.add(new Noble(new CardCost(3, 3, 0, 0, 3)));
-    nobles.add(new Noble(new CardCost(0, 0, 3, 3, 3)));
-    nobles.add(new Noble(new CardCost(0, 0, 0, 4, 4)));
-    nobles.add(new Noble(new CardCost(4, 0, 0, 0, 4)));
-    nobles.add(new Noble(new CardCost(0, 0, 4, 4, 0)));
-    nobles.add(new Noble(new CardCost(0, 4, 4, 0, 0)));
-    nobles.add(new Noble(new CardCost(4, 4, 0, 0, 0)));
-    assertEquals(3,nobles.get(0).getVisitRequirements().costByTokenType(DIAMOND),"");
+  void getNoblesTwoPlayers() {
+    assertEquals(3, Noble.getNobles(2).size());
   }
 }
