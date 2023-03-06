@@ -191,6 +191,12 @@ public class GameBoardView {
     decksBox.setSpacing(3);
     decksBox.setLayoutX(screenSize.width / 6f);
     decksBox.setLayoutY(screenSize.height / 20f);
+    
+  //building the decks of cards
+    VBox orientDecksBox = new VBox();
+    orientDecksBox.setSpacing(3);
+    orientDecksBox.setLayoutX(screenSize.width / 1.8f);
+    orientDecksBox.setLayoutY(screenSize.height / 20f);
 
 
     //building the layout of the faceup cards
@@ -219,10 +225,16 @@ public class GameBoardView {
     DeckView redDeckView = createDeckView(CardType.BASE3, screenSize);
     DeckView yellowDeckView = createDeckView(CardType.BASE2, screenSize);
     DeckView greenDeckView = createDeckView(CardType.BASE1, screenSize);
+    //orientDecksBox
+    DeckView orient3DeckView = createDeckView(CardType.ORIENT3, screenSize);
+    DeckView orient2DeckView = createDeckView(CardType.ORIENT2, screenSize);
+    DeckView orient1DeckView = createDeckView(CardType.ORIENT1, screenSize);
 
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
         getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
+    orientDecksBox.getChildren().addAll(getDeckPane(orient3DeckView),
+            getDeckPane(orient2DeckView), getDeckPane(orient1DeckView));
 
     final int nPlayers = players.length();
     //building all user inventories
@@ -254,7 +266,7 @@ public class GameBoardView {
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, faceupCardsRow, nobleCards, tokenRow);
+    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
     root.getChildren().addAll(allUserInventoryViews);
     return new Scene(root, screenSize.width, screenSize.height);
   }
