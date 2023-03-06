@@ -45,6 +45,7 @@ public class Card implements Comparable<Card> {
     this.deckType         = deckType;
     this.tokenBonusAmount = tokenBonusAmount;
     this.cardCost         = cardCost;
+    this.cardStatus       = CardStatus.NONE;
   }
 
   /**
@@ -481,22 +482,6 @@ public class Card implements Comparable<Card> {
   }
 
   @Override
-  public boolean equals(Object object) {
-    if (object == this) {
-      return true;
-    }
-    if (!(object instanceof Card card)) {
-      return false;
-    }
-    return id == card.getId();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
-  }
-
-  @Override
   public int compareTo(Card card) {
     assert card != null;
     return this.getTokenBonusType()
@@ -542,4 +527,19 @@ public class Card implements Comparable<Card> {
              + '}';
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Card card)) return false;
+    return id == card.id && prestige == card.prestige
+             && tokenBonusType == card.tokenBonusType
+             && tokenBonusAmount == card.tokenBonusAmount
+             && deckType == card.deckType && cardCost.equals(card.cardCost)
+             && cardStatus == card.cardStatus;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, prestige, tokenBonusType, tokenBonusAmount, deckType, cardCost, cardStatus);
+  }
 }

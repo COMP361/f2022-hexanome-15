@@ -3,6 +3,7 @@ package ca.mcgill.splendorserver.model.cards;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -44,11 +45,6 @@ public class CardCost {
     return costMap.get(tokenType);
   }
 
-  @Override
-  public String toString() {
-    return "CardCost{" + costMap + '}';
-  }
-
   /**
    * Returns the cost map.
    *
@@ -56,5 +52,17 @@ public class CardCost {
    */
   public Set<Map.Entry<TokenType, Integer>> entrySet() {
     return costMap.entrySet();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof CardCost cardCost)) return false;
+    return Objects.equals(costMap, cardCost.costMap);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(costMap);
   }
 }

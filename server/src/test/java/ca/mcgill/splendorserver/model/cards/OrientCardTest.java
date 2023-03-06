@@ -30,17 +30,17 @@ class OrientCardTest {
     actList.add(RECEIVE_NOBLE);
     actList.add(RESERVE_DEV);
     Ocard.pairWithCard(acard);
-    assertEquals(1,acard.getTokenBonusAmount(),"");
-    assertEquals(EMERALD,acard.getTokenBonusType(),"");
+    assertEquals(1,acard.getTokenBonusAmount());
+    assertEquals(EMERALD, acard.getTokenBonusType());
   }
 
   @Test
   void isSpiceBag() {
-    assertEquals(true,Ocard.isSpiceBag(),"");
+    assertTrue(Ocard.isSpiceBag());
   }
 
   @Test
   void getBonusActions() {
-    assertEquals(actList,Ocard.getBonusActions(),"");
+    assertEquals(actList, Ocard.getBonusActions());
   }
 }
