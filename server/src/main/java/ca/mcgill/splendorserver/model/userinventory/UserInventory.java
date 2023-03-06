@@ -14,6 +14,7 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -106,6 +107,56 @@ public class UserInventory implements Iterable<Card> {
                      .anyMatch(tokens -> tokens.getType() == tokenType);
   }
 
+/**
+   * Returns the list of cards in the user inventory.
+   *
+   * @return the list of cards in the user inventory
+   */
+  public List<Card> getCards() {
+
+    return cards;
+  }
+
+  /**
+   * Returns the token piles in the user inventory.
+   *
+   * @return the token piles in the user inventory
+   */
+  public EnumMap<TokenType, TokenPile> getTokenPiles() {
+
+    return tokenPiles;
+  }
+
+  /**
+   * Returns the list of nobles in the user inventory.
+   *
+   * @return the list of nobles in the user inventory
+   */
+  public List<Noble> getNobles() {
+
+    return visitingNobles;
+  }
+
+  /**
+   * Returns the list of powers in the user inventory.
+   *
+   * @return the list of powers in the user inventory
+   */
+  public List<Power> getPowers() {
+
+    return acquiredPowers;
+  }
+
+  /**
+   * Returns the coat of arms pile in the user inventory.
+   *
+   * @return the coat of arms pile in the user inventory
+   */
+  public CoatOfArmsPile getCoatOfArmsPile() {
+
+    return coatOfArmsPile;
+  }
+
   /**
    * Adds tokens to the token pile in the user inventory with the same type.
    *
@@ -151,7 +202,7 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Number of purchased cards in the user inventory.
+   * Returns the number of purchased cards in the user inventory.
    *
    * @return number of purchased cards in the user inventory
    */
@@ -160,6 +211,18 @@ public class UserInventory implements Iterable<Card> {
         .stream()
         .filter(Card::isPurchased)
         .count();
+  }
+
+  /**
+   * Returns the number of purchased cards of a certain token type in the user inventory.
+   *
+   * @return the number of purchased cards of a certain token type in the user inventory
+   */
+  public int purchasedCardCountByType(TokenType type) {
+    return (int) cards
+                   .stream()
+                   .filter(card -> card.isPurchased() && card.getTokenBonusType() == type)
+                   .count();
   }
 
   /**
@@ -229,13 +292,52 @@ public class UserInventory implements Iterable<Card> {
         return false;
       }
     }
+    if (card instanceof OrientCard) {
+      if (!((OrientCard) card).getBonusActions().isEmpty()) {
+        switch (((OrientCard) card).getBonusActions().get(0)) {
+          case DISCARD_2_WHITE_CARDS -> {
+            if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_BLUE_CARDS -> {
+            if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_GREEN_CARDS -> {
+            if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_RED_CARDS -> {
+            if (purchasedCardCountByType(TokenType.RUBY) < 2) {
+              return false;
+            }
+          }
+          case DISCARD_2_BLACK_CARDS -> {
+            if (purchasedCardCountByType(TokenType.ONYX) < 2) {
+              return false;
+            }
+          }
+          case PAIR_SPICE_CARD -> {
+            if (purchasedCardCount() < 1) {
+              return false;
+            }
+          }
+          default -> {
+            return true;
+          }
+        }
+      }
+    }
     return true;
   }
 
   /**
-   * Gets the number of gold tokens in the user inventory.
+   * Returns the amount of gold tokens in the user inventory.
    *
-   * @return the number of users in the user inventory
+   * @return the amount of gold tokens in the user inventory
    */
   private int getGoldTokenCount() {
     return tokenPiles.computeIfAbsent(TokenType.GOLD, TokenPile::new)
@@ -256,7 +358,9 @@ public class UserInventory implements Iterable<Card> {
                              .map(Card::getTokenBonusAmount)
                              .reduce(0, Integer::sum);
     int actualCost = cost - bonusDiscount;
-    currentGoldTokenCount += actualCost - tokenPiles.get(tokenType).getSize();
+    if (actualCost > tokenPiles.get(tokenType).getSize()) {
+      currentGoldTokenCount -= actualCost - tokenPiles.get(tokenType).getSize();
+    }
     return  currentGoldTokenCount;
   }
 
@@ -404,9 +508,24 @@ public class UserInventory implements Iterable<Card> {
     return costs;
   }
 
+  /**
+   * Adds prestige to the user inventory.
+   *
+   * @param prestige the amount of prestige to be added
+   */
   private void addPrestige(int prestige) {
     assert prestige >= 0;
     prestigeWon += prestige;
+  }
+
+  /**
+   * Removes prestige from the user inventory.
+   *
+   * @param prestige the amount of prestige to be removed
+   */
+  private void removePrestige(int prestige) {
+    assert prestige >= 0;
+    prestigeWon -= prestige;
   }
 
   /**
@@ -421,31 +540,8 @@ public class UserInventory implements Iterable<Card> {
     if (noble.getStatus() == NobleStatus.VISITING) {
       return false;
     }
-
-    // loop over the visit requirements and see if bonuses in this inventory are sufficient
-    for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
-                                                    .entrySet()) {
-      if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
-        return false;
-      }
-    }
-    // otherwise return true
-    return true;
-  }
-
-  /**
-   * Determines if purchasing the given card in addition to whatever bonuses
-   * are already in the inventory is sufficient to receive a visit from the given noble.
-   *
-   * @param noble noble to check if it will visit
-   * @param card  additional card to consider in checking if noble will visit
-   * @return if the card bonuses as well as
-   *     the currently owned bonuses yield a visit from given noble
-   */
-  public boolean canBeVisitedByNobleWithCardPurchase(Noble noble, Card card) {
-    assert noble != null && card != null;
-    // cannot be visited by noble that is already visiting someone else
-    if (noble.getStatus() == NobleStatus.VISITING) {
+    // cannot be visited by a noble that is reserved by another player
+    if (!visitingNobles.contains(noble) && noble.getStatus() == NobleStatus.RESERVED) {
       return false;
     }
 
@@ -453,13 +549,7 @@ public class UserInventory implements Iterable<Card> {
     // in addition to those gained by the potential purchase of a card
     for (Map.Entry<TokenType, Integer> entry : noble.getVisitRequirements()
                                                     .entrySet()) {
-      if (card.getTokenBonusType() == entry.getKey() && notEnoughBonusesFor(
-          entry.getKey(),
-          entry.getValue()
-              - card.getTokenBonusAmount()
-      )) {
-        return false;
-      } else if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
+      if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
         return false;
       }
     }
@@ -477,6 +567,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null;
     addPrestige(noble.getPrestige());
     visitingNobles.add(noble);
+    noble.setStatus(NobleStatus.VISITING);
   }
 
   private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {
@@ -489,6 +580,13 @@ public class UserInventory implements Iterable<Card> {
                 .reduce(0, Integer::sum) < amount;
   }
 
+  /**
+   * Removes tokens from the user inventory.
+   *
+   * @param tokenType the type of tokens to be removed
+   * @param n the number of tokens to be removed
+   * @return the list of removed tokens
+   */
   private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
     assert tokenType != null && n >= 0;
     List<Token> removed = new ArrayList<>(n);
@@ -584,6 +682,13 @@ public class UserInventory implements Iterable<Card> {
   public void addPower(Power power) {
     assert power != null;
     acquiredPowers.add(power);
+    if (power == Power.GAIN_5_PRESTIGE) {
+      addPrestige(5);
+    } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
+      addPrestige(acquiredPowers.size());
+    } else if (acquiredPowers.contains(Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS)) {
+      addPrestige(1);
+    }
   }
 
   /**
@@ -591,9 +696,54 @@ public class UserInventory implements Iterable<Card> {
    *
    * @return a boolean determining if the player can receive a power
    */
-  public boolean canReceivePower(Power power) {
-    assert power != null;
-    return !acquiredPowers.contains(power);
+  public boolean canReceivePower(TradingPostSlot tradingPostSlot) {
+    assert tradingPostSlot != null;
+    if (acquiredPowers.contains(tradingPostSlot.getPower())) {
+      return false;
+    }
+    // loop over the trading route unlock requirements
+    // and see if bonuses in this inventory are sufficient
+    for (Map.Entry<TokenType, Integer> entry : tradingPostSlot.getCardRequirements().entrySet()) {
+      if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
+        return false;
+      } else if (tradingPostSlot.isRequiresNoble() && visitingNobles.size() == 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Removes a power from the list of acquired powers in the user inventory.
+   * Must be done if discarding cards makes the player unable to reach the requirements.
+   *
+   * @param power the power to be discarded
+   * @return the discarded power
+   */
+  public Power removePower(Power power) {
+    assert power != null && acquiredPowers.contains(power);
+    int index = acquiredPowers.indexOf(power);
+    if (power == Power.GAIN_5_PRESTIGE) {
+      removePrestige(5);
+    } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
+      removePrestige(acquiredPowers.size());
+    }
+    return acquiredPowers.remove(index);
+  }
+
+  /**
+   * Removes a noble from the list of visiting nobles in the user inventory.
+   * Must be done if discarding cards make the player unable to reach the requirements.
+   *
+   * @param noble the noble to be discarded
+   * @return the discarded noble
+   */
+  public Noble removeNoble(Noble noble) {
+    assert noble != null && visitingNobles.contains(noble)
+             && noble.getStatus() == NobleStatus.VISITING;
+    int index = visitingNobles.indexOf(noble);
+    removePrestige(3);
+    return visitingNobles.remove(index);
   }
 
 

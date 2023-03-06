@@ -5,4 +5,9 @@ package ca.mcgill.splendorclient.control;
  */
 public class ServerIo {
 
+  /**
+   * Creates a ServerIo object.
+   */
+  public ServerIo() {
+  }
 }

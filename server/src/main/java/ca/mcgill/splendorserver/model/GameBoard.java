@@ -1,17 +1,21 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
@@ -61,6 +65,8 @@ public class GameBoard {
    * @param cardField   The cards dealt onto the game board
    * @param tokenPiles  The token piles that are on the game board
    * @param nobles      The nobles in the game
+   * @param tradingPostSlots The trading post slots in the game
+   * @param cities      The cities in the game
    */
   public GameBoard(List<UserInventory> inventories, List<Deck> decks, List<Card> cardField,
                    List<TokenPile> tokenPiles, List<Noble> nobles,
@@ -87,6 +93,7 @@ public class GameBoard {
    *
    * @param move   selected move, must be valid move, cannot be null
    * @param player player whose turn it is, cannot be null
+   * @return a possible bonus action
    */
   public Action applyMove(Move move, PlayerWrapper player) {
     assert move != null && player != null;
@@ -108,6 +115,24 @@ public class GameBoard {
       }
       case PAIR_SPICE_CARD -> {
         pendingAction = performPairSpiceCard(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          yield pendingAction;
+        } else {
+          yield null;
+        }
+      }
+      case CASCADE_LEVEL_1 -> {
+        pendingAction = performCascadeLevelOne(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          yield pendingAction;
+        } else {
+          yield null;
+        }
+      }
+      case CASCADE_LEVEL_2 -> {
+        pendingAction = performCascadeLevelTwo(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
           yield pendingAction;
@@ -148,6 +173,117 @@ public class GameBoard {
       default -> {
         yield null;
       }
+//      case PURCHASE_DEV_RECEIVE_NOBLE -> {
+//        // check if we're waiting for this or not
+//        if (waitingForAction(Action.PURCHASE_DEV_RECEIVE_NOBLE)) {
+//          performPurchaseDev(move, player, inventory);
+//          performClaimNobleAction(move, inventory);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          // this is compound action, request further actions
+//          cacheAction(Action.PURCHASE_DEV_RECEIVE_NOBLE);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case RESERVE_DEV -> {
+//        performReserveDev(move, inventory);
+//        yield null;
+//      }
+//      case RESERVE_DEV_TAKE_JOKER -> {
+//        // gold token added and card reserved
+//        performReserveDev(move, inventory);
+//        inventory.addTokens(drawGoldToken());
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_2_GEM_TOKENS_SAME_COL -> {
+//        performTake2GemsSameColor(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
+//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1)) {
+//          performTake2GemsSameColorReturn(move, inventory, 1);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> {
+//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2)) {
+//          performTake2GemsSameColorReturn(move, inventory, 2);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL -> {
+//        performTake3GemsDiffColor(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
+//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1)) {
+//          performTake3GemsDiffColorReturn(move, inventory, 1);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
+//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2)) {
+//          performTake3GemsDiffColorReturn(move, inventory, 2);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
+//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3)) {
+//          performTake3GemsDiffColorReturn(move, inventory, 3);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case RESERVE_NOBLE -> null;
+//      case CASCADE_LEVEL_1 -> null;
+//      case CASCADE_LEVEL_2 -> null;
+//      case PAIR_SPICE_CARD -> {
+//        performPairSpiceCard(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case DISCARD_2_WHITE_CARDS -> null;
+//      case DISCARD_2_BLUE_CARDS -> null;
+//      case DISCARD_2_GREEN_CARDS -> null;
+//      case DISCARD_2_RED_CARDS -> null;
+//      case DISCARD_2_BLACK_CARDS -> null;
+//      case TAKE_1_GEM_TOKEN -> {
+//        performTake1Gem(move, inventory);
+//        yield HttpStatus.OK;
+//      }
+//      case TAKE_1_GEM_TOKEN_RET_1 -> {
+//        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
+//          performTake1GemReturn(move, inventory);
+//          unCacheAction();
+//          yield HttpStatus.OK;
+//        } else {
+//          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
+//          yield HttpStatus.PARTIAL_CONTENT;
+//        }
+//      }
+//      case PLACE_COAT_OF_ARMS -> {
+//        performPlaceCoatOfArms(move, inventory);
+//        yield HttpStatus.OK;
+//      }
     };
   }
 
@@ -166,7 +302,12 @@ public class GameBoard {
   private void setPendingAction(boolean isPending) {
     pendingAction = isPending;
   }
-  
+
+  /**
+   * Returns a pending action.
+   *
+   * @return a pending action
+   */
   public Action getPendingAction() {
     return actionPending;
   }
@@ -198,6 +339,14 @@ public class GameBoard {
     inventory.addReservedCard(selectedCard);
   }
 
+  /**
+   * Performs a purchase development card action routine.
+   *
+   * @param move      the move to perform
+   * @param player    the player performing the move
+   * @param inventory the inventory to apply the move side effects to
+   * @return any bonus actions that need to be performed
+   */
   private Action performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
     // checking to see whether they're buying from reserved card in hand / table or from deck
     Card selectedCard = move.getCard();
@@ -240,22 +389,38 @@ public class GameBoard {
 
   }
 
+  /**
+   * Performs a purchase development card action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   * @return any bonus actions that need to be performed
+   */
   private Action performPairSpiceCard(Move move, UserInventory inventory) {
+    if (move.getCard().isEmpty()) {
+      throw new IllegalGameStateException(
+        "If move to pair a spice card, then card cannot be empty");
+    }
+    if (!inventory.hasCard(move.getCard().get())) {
+      throw new IllegalGameStateException(
+        "If move to pair a spice card, then card has to be in user inventory");
+    }
     OrientCard spiceCard = inventory.getUnpairedSpiceCard();
-    if (move.getCard() != null
-          && inventory.hasCard(move.getCard()) && spiceCard != null) {
-      ((OrientCard) spiceCard).pairWithCard(move.getCard());
-      moveCache.add(move);
-      for (Action bonusAction : spiceCard.getBonusActions()) {
-        boolean doneAction = false;
-        for (Move pastMove : moveCache) {
-          if (bonusAction == pastMove.getAction()) {
-            doneAction = true;
-          }
+    if (spiceCard == null) {
+      throw new IllegalGameStateException(
+        "If move to pair a spice card, then an unpaired spice card has to be in user inventory");
+    }
+    ((OrientCard) spiceCard).pairWithCard(move.getCard().get());
+    moveCache.add(move);
+    for (Action bonusAction : spiceCard.getBonusActions()) {
+      boolean doneAction = false;
+      for (Move pastMove : moveCache) {
+        if (bonusAction == pastMove.getAction()) {
+          doneAction = true;
         }
-        if (!doneAction) {
-          return bonusAction;
-        }
+      }
+      if (!doneAction) {
+        return bonusAction;
       }
     }
     moveCache.clear();
@@ -264,27 +429,143 @@ public class GameBoard {
     return null;
   }
 
+  /**
+   * Performs a claim noble type action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
   private void performClaimNobleAction(Move move, UserInventory inventory) {
     // see if player has been visited by a noble and if so that this is valid
-    if (move.getNoble()
-            != null && inventory.canBeVisitedByNoble(move.getNoble())) {
+    if (move.getNoble().isEmpty()) {
+      throw new IllegalGameStateException("If move to visit noble, "
+                                            + "then noble cannot be empty");
+    }
+    if (inventory.canBeVisitedByNoble(move.getNoble().get())) {
       // add prestige and tile to inventory
-      inventory.receiveVisitFrom(move.getNoble());
+      inventory.receiveVisitFrom(move.getNoble()
+                                     .get());
       // TODO: check and see about settlements
     }
   }
 
+  /**
+   * Performs a place coat of arms type action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
   private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
     // See if the player has unlocked the power associated with this trading post slot
-    if (move.getTradingPostSlot() != null
-          && !move.getTradingPostSlot().isFull()
-          && !inventory.canReceivePower(move.getTradingPostSlot().getPower())) {
-      inventory.addPower(move.getTradingPostSlot().getPower());
-      move.getTradingPostSlot()
+    if (move.getTradingPostSlot().isEmpty()) {
+      throw new IllegalGameStateException("If move is to place coat of arms,"
+                                            + "then trading post slot cannot be empty");
+    }
+    if (move.getTradingPostSlot().get().isFull()) {
+      throw new IllegalGameStateException("If move is to place coat of arms,"
+                                            + "then trading post slot cannot be full");
+    }
+    if (inventory.canReceivePower(move.getTradingPostSlot().get())) {
+      inventory.addPower(move.getTradingPostSlot().get().getPower());
+      move.getTradingPostSlot().get()
         .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }
 
+  /**
+   * Performs reserving of noble action from Orient expansion bonus actions.
+   *
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performReserveNoble(Move move, UserInventory inventory) {
+    if (move.getNoble().isEmpty()) {
+      throw new IllegalGameStateException("If move to reserve noble, "
+                                            + "then noble cannot be empty");
+    }
+    if (move.getNoble().get().getStatus() != NobleStatus.ON_BOARD) {
+      throw new IllegalGameStateException(
+              "Noble cannot be reserved if it has already been "
+                      + "reserved or is currently visiting a player");
+    }
+    inventory.addReservedNoble(move.getNoble().get());
+  }
+
+  /**
+   * Performs the cascade action with a level one Orient card for the bonus action.
+   *
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performCascadeLevelOne(Move move, UserInventory inventory) {
+    if (move.getCard().isEmpty()) {
+      throw new IllegalGameStateException("If move is to choose a cascade level one card,"
+                                            + "then card cannot be empty");
+    }
+    if (move.getCard().get().getDeckType() != DeckType.ORIENT1) {
+      throw new IllegalGameStateException("If move is to choose a cascade level one card,"
+                                            + "then card must be from Orient 1 deck");
+    }
+    if (move.getCard().get().getCardStatus() != CardStatus.NONE) {
+      throw new IllegalGameStateException(
+        "Card cannot be taken if it has already been "
+          + "reserved or purchased by a player");
+    }
+
+    OrientCard levelOneCard = (OrientCard) move.getCard().get();
+    inventory.addCascadeLevelOne(levelOneCard);
+
+    if (levelOneCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
+      if (actions.size() > 0) {
+        moveCache.add(move);
+        return actions.get(0);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Performs the cascade action with a level two Orient card for the bonus action.
+   *
+   * @param move the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performCascadeLevelTwo(Move move, UserInventory inventory) {
+    if (move.getCard().isEmpty()) {
+      throw new IllegalGameStateException("If move is to choose a cascade level two card,"
+                                            + "then card cannot be empty");
+    }
+    if (move.getCard().get().getDeckType() != DeckType.ORIENT2) {
+      throw new IllegalGameStateException("If move is to choose a cascade level two card,"
+                                            + "then card must be from Orient 2 deck");
+    }
+    if (move.getCard().get().getCardStatus() != CardStatus.NONE) {
+      throw new IllegalGameStateException(
+        "Card cannot be taken if it has already been "
+          + "reserved or purchased by a player");
+    }
+
+    OrientCard levelTwoCard = (OrientCard) move.getCard().get();
+    inventory.addCascadeLevelTwo(levelTwoCard);
+
+    if (levelTwoCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
+      if (actions.size() > 0) {
+        moveCache.add(move);
+        return actions.get(0);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Draws a card from the top of the deck and adds it to the game board.
+   * This is used after a card is purchased or reserved.
+   *
+   * @param deckType the type of deck to deal from
+   * @param replenishIndex the index of the card that was removed from the game board
+   */
   private void replenishTakenCardFromDeck(DeckType deckType, int replenishIndex) {
     // empty card field means we cant replenish because otherwise it would have been replenished alr
     for (Deck deck : decks) {
@@ -295,12 +576,24 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Draws tokens from the token bank and adds them to the user inventory.
+   *
+   * @param inventory the current player's inventory
+   * @param selected the types of tokens selected
+   */
   private void moveTokensToUserInventory(UserInventory inventory, TokenType[] selected) {
     for (TokenType tokenType : selected) {
       inventory.addTokens(drawTokenByTokenType(tokenType));
     }
   }
 
+  /**
+   * Returns tokens from the user inventory and adds them to the token bank.
+   *
+   * @param inventory the current player's inventory
+   * @param selected the types of tokens selected
+   */
   private void returnTokensToBoardFromInventory(UserInventory inventory, TokenType... selected) {
     for (TokenType tokenType : selected) {
       tokenPiles.get(tokenType)
@@ -308,6 +601,12 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Returns tokens from the user inventory and adds them to the token bank.
+   * Used when purchasing cards.
+   *
+   * @param tokens the returned tokens
+   */
   private void returnTokensToBoard(List<Token> tokens) {
     for (Token token : tokens) {
       tokenPiles.get(token.getType())
@@ -315,11 +614,19 @@ public class GameBoard {
     }
   }
 
+  /**
+   * Draws a card from the top of the deck with the specified deck level.
+   *
+   * @param deckLevel the level of the deck
+   * @return the card from the top of the deck
+   */
   private Card getCardByDeckLevel(DeckType deckLevel) {
     assert deckLevel != null;
     for (Deck deck : decks) {
       if (deck.getType() == deckLevel) {
-        return deck.draw();
+        if (!deck.isEmpty()) {
+          return deck.draw();
+        }
       }
     }
 
@@ -366,17 +673,51 @@ public class GameBoard {
     return Optional.empty();
   }
 
+  /**
+   * Returns the list of inventories in the game board.
+   *
+   * @return the list of inventories in the game board
+   */
   public List<UserInventory> getInventories() {
     return inventories;
   }
 
+  /**
+   * Returns the list of decks in the game board.
+   *
+   * @return the list of decks in the game board
+   */
   public List<Deck> getDecks() {
     return decks;
   }
 
+  /**
+   * Returns the list of cards dealt onto the game board.
+   *
+   * @return the list of cards dealt onto the game board
+   */
   public List<Card> getCards() {
     return cardField;
   }
+
+  /**
+   * Returns the list of trading posts in the game board.
+   *
+   * @return the list of trading posts in the game board
+   */
+  public List<TradingPostSlot> getTradingPostSlots() {
+    return tradingPostSlots;
+  }
+
+  /**
+   * Returns the list of cities in the game board.
+   *
+   * @return the list of cities in the game board
+   */
+  public List<City> getCities() {
+    return cities;
+  }
+
 
   /*public List<TokenPile> getTokenPiles() {
     return tokenPiles.values()
@@ -395,13 +736,14 @@ public class GameBoard {
                      .filter(tokens -> tokens.getType() != TokenType.GOLD)
                      .toList();
   }
-  
+
+  /**
+   * Returns the map of token piles in the game board.
+   *
+   * @return the map of token piles in the game board
+   */
   public EnumMap<TokenType, TokenPile> getTokenPiles() {
     return tokenPiles;
-  }
-  
-  public List<Move> getMoveCache() {
-    return moveCache;
   }
 
   /**
@@ -414,6 +756,11 @@ public class GameBoard {
                      .getSize() == 0;
   }
 
+  /**
+   * Returns the list of nobles in the game board.
+   *
+   * @return the list of nobles in the game board
+   */
   public List<Noble> getNobles() {
     return nobles;
   }

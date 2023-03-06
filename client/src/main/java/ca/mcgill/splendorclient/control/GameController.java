@@ -32,22 +32,43 @@ public class GameController {
   private GameController() {
     
   }
-  
+
+  /**
+   * Returns this instance of GameController.
+   *
+   * @return this instance of GameController
+   */
   public static GameController getInstance() {
     return instance;
   }
-  
+
+  /**
+   * Sets the game id to the given id.
+   *
+   * @param gameId the given game id
+   */
   public void setGameId(Long gameId) {
+
     this.gameId = gameId;
   }
-  
+
+  /**
+   * Returns the game id of the game.
+   *
+   * @return the game id of the game
+   */
   public Long getGameId() {
     return gameId;
   }
   
   
   //TODO: disable multiple calls to this method
+
+  /**
+   * Starts the game.
+   */
   public static void start() {
+
     new Thread(instance.new BoardUpdater()).start();
   }
   

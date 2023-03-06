@@ -25,19 +25,21 @@ public class Deck {
     this.type  = type;
   }
 
+  /**
+   * Removes the top card from the deck and returns it.
+   *
+   * @return the top card from the deck
+   */
   public Card draw() {
-    assert !isEmpty();
+  assert !cards.isEmpty();
     return cards.remove(0);
   }
 
-  /*public Optional<Card> drawOpt() {
-    if (cards.isEmpty()) {
-      return Optional.empty();
-    } else {
-      return Optional.of(cards.remove(0));
-    }
-  }*/
-
+  /**
+   * Checks if the deck is empty.
+   *
+   * @return a boolean determining if the deck is empty
+   */
   public boolean isEmpty() {
     return cards.isEmpty();
   }
@@ -73,6 +75,8 @@ public class Deck {
    * Deals cards in the deck to the board.
    * If the deck is a base game deck, 4 cards will be dealt.
    * If the deck is an orient expansion deck, 2 cards will be dealt.
+   *
+   * @return a list of cards that were dealt
    */
   public List<Card> deal() {
     List<Card> playingField = new ArrayList<Card>();

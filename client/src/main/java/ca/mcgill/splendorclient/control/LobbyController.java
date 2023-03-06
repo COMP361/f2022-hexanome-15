@@ -47,6 +47,12 @@ public class LobbyController implements Initializable {
   @FXML
   private ChoiceBox<String> gameserviceChoiceBox;
 
+  /**
+   * Creates a LobbyController object.
+   */
+  public LobbyController() {
+  }
+
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     ArrayList<String> cope = get_gameservices();

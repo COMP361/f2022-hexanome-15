@@ -66,7 +66,12 @@ public class User {
     }
     return USERS.get(refreshToken);
   }
-  
+
+  /**
+   * Logs out the user with the given username.
+   *
+   * @param userName the given username
+   */
   public static void logout(String userName) {
     USERS.get(userName).getTimer().cancel();
     USERS.remove(userName);

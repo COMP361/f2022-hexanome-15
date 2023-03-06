@@ -13,6 +13,8 @@ public class UserInventoryView implements Iterable<CardColumnView> {
 
   /**
    * Creates a UserInventoryView.
+   *
+   * @param playerName the name of the player with this user inventory
    */
   public UserInventoryView(String playerName) {
     player = playerName;
@@ -32,8 +34,14 @@ public class UserInventoryView implements Iterable<CardColumnView> {
   public void addCardColumn(CardColumnView handColumn) {
     cardColumns.add(handColumn);
   }
-  
+
+  /**
+   * Returns the username of the player with this user inventory.
+   *
+   * @return the username of the player with this user inventory
+   */
   public String getAssociatedPlayerName() {
+
     return player;
   }
 

@@ -57,10 +57,10 @@ public class GameRestController {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
         "SplendorOrient", "Splendor", true);
-    /*register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrient+TradingPosts", "Splendor", true);
-    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrient+Cities", "Splendor", true);*/
+    //register_gameservice(accessToken, gameServiceLocation, 4, 2,
+    //   "SplendorOrient+TradingPosts", "Splendor", true);
+    //register_gameservice(accessToken, gameServiceLocation, 4, 2,
+    //"SplendorOrient+Cities", "Splendor", true);
     System.out.println("in here");
     
     /*debugging

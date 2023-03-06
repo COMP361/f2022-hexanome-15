@@ -1,20 +1,12 @@
 package ca.mcgill.splendorclient.control;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorclient.model.users.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -51,6 +43,12 @@ public class ActionManager {
     return null;
   }
   
+
+  /**
+   * Returns this instance of ActionManager.
+   *
+   * @return this instance of ActionManager
+   */
   public static ActionManager getInstance() {
     return instance;
   }
@@ -94,5 +92,6 @@ public class ActionManager {
     // as a key to retrieve the move object and update the board model.
     sendAction(hash);
   }
+
 
 }

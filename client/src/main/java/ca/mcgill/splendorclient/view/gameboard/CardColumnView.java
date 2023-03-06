@@ -36,9 +36,15 @@ public class CardColumnView extends Pane {
    * @return the card counter label
    */
   public Counter getNumCardsDisplay() {
+
     return numCardsDisplay;
   }
-  
+
+  /**
+   * Returns the token type of the token pile.
+   *
+   * @return the token type of the token pile
+   */
   public TokenType getTokenType() {
     return typeOfColumn;
   }

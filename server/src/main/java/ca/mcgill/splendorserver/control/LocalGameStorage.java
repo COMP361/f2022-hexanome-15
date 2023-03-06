@@ -33,6 +33,11 @@ public class LocalGameStorage {
     }
   }
 
+  /**
+   * Removes an active game from the map of active games.
+   *
+   * @param manager the game to be removed
+   */
   public static void removeActiveGame(SplendorGame manager) {
     activeGames.remove(manager.getGameId());
   }
