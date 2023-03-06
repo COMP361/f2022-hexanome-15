@@ -102,7 +102,7 @@ class ActionManagerTest {
     SplendorGame splendorGame = new SplendorGame(si,1L);
     Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
 
-    TokenType[] tkps = {DIAMOND};
+    TokenType tkps = DIAMOND;
 
     Move amove = new Move(PURCHASE_DEV,acard,aPlayer,BASE2,tkps,anoble,aTPS,tkps);
     Map<String, Move> moves = new HashMap<>();

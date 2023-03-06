@@ -752,25 +752,6 @@ public class UserInventory implements Iterable<Card> {
 
     return cards.iterator();
   }
-  
-  public List<Card> getCards() {
-    return cards;
-  }
-  
-  public EnumMap<TokenType, TokenPile> getTokenPiles() {
-    return tokenPiles;
-  }
-  
-  public List<Noble> getNobles() {
-    return visitingNobles;
-  }
-  
-  public List<Power> getPowers() {
-    return acquiredPowers;
-  }
-  
-  public CoatOfArmsPile getCoatOfArmsPile() {
-    return coatOfArmsPile;
-  }
+
 
 }
