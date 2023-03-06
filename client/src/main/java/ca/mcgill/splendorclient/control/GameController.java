@@ -1,19 +1,14 @@
 package ca.mcgill.splendorclient.control;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.GameBoardJson;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorclient.view.gameboard.GameBoardView;
-import ca.mcgill.splendorclient.view.gameboard.TokenPileView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.application.Platform;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -30,23 +25,46 @@ public class GameController {
   private GameBoardView localView;
   
   private static GameController instance = new GameController();
-  
+
+  /**
+   * Sets the GameBoardView to the given view.
+   *
+   * @param view the given view
+   */
   public void bindView(GameBoardView view) {
-	localView = view;
+    localView = view;
   }
-  
+
+  /**
+   * Creates a GameController object.
+   */
   private GameController() {
     
   }
-  
+
+  /**
+   * Returns this instance of GameController.
+   *
+   * @return this instance of GameController
+   */
   public static GameController getInstance() {
     return instance;
   }
-  
+
+  /**
+   * Sets the game id of the game.
+   *
+   * @param gameId the game id
+   */
   public void setGameId(Long gameId) {
     this.gameId = gameId;
   }
-  
+
+  /**
+   * Returns the game id of the game.
+   *
+   * @return the game id of the game
+   */
   public Long getGameId() {
     return gameId;
   }
@@ -73,7 +91,8 @@ public class GameController {
         if (response.getBody().toPrettyString() != currentState) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
-          GameBoardJson gameboardJson = new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
+          GameBoardJson gameboardJson =
+              new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
           String currentTurn = gameboardJson.getWhoseTurn();
           Platform.runLater(new Runnable() {
 
@@ -81,11 +100,11 @@ public class GameController {
             public void run() {
               //update gameboard view
               JSONArray cardArray = response.getBody().getObject().optJSONArray("cardField");
-              int[] cardIDs = new int[cardArray.length()];
+              int[] cardids = new int[cardArray.length()];
               for (int i = 0; i < cardArray.length(); i++) {
-                cardIDs[i] = cardArray.getInt(i);
+                cardids[i] = cardArray.getInt(i);
               }
-              GameBoardView.updateCardViews(cardIDs);
+              GameBoardView.updateCardViews(cardids);
             }
             
           });
@@ -97,10 +116,10 @@ public class GameController {
             System.out.println(moveMap.getBody().toPrettyString()); 
             String moves = moveMap.getBody().toString();
             Gson gson = new Gson();
-            Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
+            Map<String, MoveInfo> availableMoves =
+                gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
             ActionManager.setCurrentMoveMap(availableMoves);
-          }
-          else {
+          } else {
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
           }
         }

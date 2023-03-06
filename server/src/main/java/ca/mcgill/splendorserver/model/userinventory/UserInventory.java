@@ -95,19 +95,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns a boolean determining if the token pile of a given token pile
-   * is empty in this user inventory.
-   *
-   * @return the given boolean
-   */
-  public boolean hasTokenType(TokenType tokenType) {
-    assert tokenType != null;
-    return tokenPiles.values()
-                     .stream()
-                     .anyMatch(tokens -> tokens.getType() == tokenType);
-  }
-
-/**
    * Returns the list of cards in the user inventory.
    *
    * @return the list of cards in the user inventory
@@ -216,6 +203,7 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Returns the number of purchased cards of a certain token type in the user inventory.
    *
+   * @param type the token bonus type of the purchased cards
    * @return the number of purchased cards of a certain token type in the user inventory
    */
   public int purchasedCardCountByType(TokenType type) {
@@ -694,6 +682,7 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Checks if the player can receive a power.
    *
+   * @param tradingPostSlot the tradingPostSlot being unlocked
    * @return a boolean determining if the player can receive a power
    */
   public boolean canReceivePower(TradingPostSlot tradingPostSlot) {

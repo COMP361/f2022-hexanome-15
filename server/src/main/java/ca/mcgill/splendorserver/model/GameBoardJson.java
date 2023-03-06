@@ -29,6 +29,7 @@ public class GameBoardJson {
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
    *
+   * @param whoseTurn the name of the player whose turn it is
    * @param inventories the player inventories
    * @param decks the decks on the field
    * @param nobles nobles on the field
@@ -50,7 +51,12 @@ public class GameBoardJson {
       this.tokenField.put(type, tokenField.get(type).getSize());
     }
   }
-  
+
+  /**
+   * Returns the player whose turn it is.
+   *
+   * @return the player whose turn it is
+   */
   public String getWhoseTurn() {
     return whoseTurn;
   }

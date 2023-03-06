@@ -1,14 +1,7 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
-
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import ca.mcgill.splendorclient.control.ActionManager;
 import ca.mcgill.splendorclient.control.ColorManager;
-import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -47,8 +40,7 @@ public class TokenPileView extends Circle {
           }
           if (result.getStatus() == 200) {
             //inform end of turn
-          }
-          else {
+          } else {
             //error
           }
         }
@@ -56,7 +48,12 @@ public class TokenPileView extends Circle {
       
     });
   }
-  
+
+  /**
+   * Returns the token type of the token pile view.
+   *
+   * @return the token type of the token pile view
+   */
   public TokenType getType() {
     return type;
   }

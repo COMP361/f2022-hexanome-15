@@ -118,7 +118,12 @@ public class Move {
 
     return action;
   }
-  
+
+  /**
+   * Returns the name of the player who performed this action.
+   *
+   * @return the name of the player who performed this action
+   */
   public String getPlayerName() {
     return player.getName();
   }

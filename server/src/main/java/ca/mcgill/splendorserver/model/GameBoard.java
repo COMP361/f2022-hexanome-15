@@ -85,7 +85,12 @@ public class GameBoard {
     this.tradingPostSlots = tradingPostSlots;
     this.cities = cities;
   }
-  
+
+  /**
+   * Returns the move cache for pending actions.
+   *
+   * @return the move cache for pending actions
+   */
   public List<Move> getMoveCache() {
     return moveCache;
   }

@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import kong.unirest.json.JSONException;
 
@@ -20,7 +19,7 @@ public class CardView extends StackPane {
 
   private final Rectangle outer;
   private final Rectangle inner;
-  private int localID;
+  private int localid;
 
   /**
    * Creates a CardView. These represent CardViews in a user inventory. 
@@ -72,22 +71,17 @@ public class CardView extends StackPane {
     });
   }
 
-  //TODO: figure out what kind of card model we need on this side for display purposes.
-//  /**
-//   * Fills the CardView with the appropriate colors.
-//   *
-//   * @param card The card that is represented by this CardView
-//   */
-//  public void forceCard(Card card) {
-//    this.card = Optional.of(card);
-//    inner.setFill(ColorManager.getColor(card.getTokenType()));
-//    outer.setFill(ColorManager.getColor(card.getCardType()));
-//  }
+  /**
+   * Updates the card view with the card image.
+   *
+   * @param num the card id
+   */
   public void updateView(int num) {
-	//yes hardcoded for testing
-	Image newImage = new Image("file:///L:/f2022-hexanome-15/client/resources/card_"+num+".jpg");
-	outer.setFill(ColorManager.getColor(num));
-	inner.setFill(new ImagePattern(newImage));
-	localID = num;
+    //yes hardcoded for testing
+    Image newImage =
+        new Image("file:///L:/f2022-hexanome-15/client/resources/card_" + num + ".jpg");
+    outer.setFill(ColorManager.getColor(num));
+    inner.setFill(new ImagePattern(newImage));
+    localid = num;
   }
 }
