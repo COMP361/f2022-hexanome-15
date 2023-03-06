@@ -303,6 +303,8 @@ public class ActionManager {
         getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
       case RECEIVE_NOBLE:
+        getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
       case PLACE_COAT_OF_ARMS:
         getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
@@ -347,25 +349,31 @@ public class ActionManager {
     }
   }
 
-  private List<Noble> getPossibleNobleVisitors(UserInventory inventory, GameBoard gameBoard) {
-    List<Noble> possibleNobleVisitors = new ArrayList<>();
+  private void getPossibleNobleVisitors(Map<String, Move> moveMap, UserInventory inventory,
+                                               GameBoard gameBoard, PlayerWrapper player) {
     for (Noble noble : gameBoard.getNobles()) {
       if (inventory.canBeVisitedByNoble(noble)) {
-        possibleNobleVisitors.add(noble);
+        Move move = new Move(Action.RECEIVE_NOBLE, null, player, null, null,
+            noble, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                           .toUpperCase();
+        moveMap.put(moveMd5, move);
       }
     }
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.RESERVED) {
-        possibleNobleVisitors.add(noble);
+        Move move = new Move(Action.RECEIVE_NOBLE, null, player, null, null,
+            noble, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                           .toUpperCase();
+        moveMap.put(moveMd5, move);
       }
     }
-    return possibleNobleVisitors;
   }
 
 
   private void getReserveDevMoves(Map<String, Move> moveMap, UserInventory inventory,
-                                  GameBoard gameBoard, PlayerWrapper player
-  ) {
+                                  GameBoard gameBoard, PlayerWrapper player) {
     // players may not have more than three reserved cards in hand
     final int maxNumReservedCards = 3;
     if (inventory.reservedCardCount() > maxNumReservedCards) {
@@ -377,7 +385,7 @@ public class ActionManager {
 
     // the player will receive a gold token (joker) if available
     Action action;
-    if (gameBoard.noGoldTokens()) {
+    if (gameBoard.noGoldTokens() || inventory.tokenCount() == 10) {
       action = Action.RESERVE_DEV;
     } else { // if there's at least 1 gold token (joker)
       action = Action.RESERVE_DEV_TAKE_JOKER;
