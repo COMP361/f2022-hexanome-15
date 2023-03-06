@@ -95,20 +95,33 @@ public class ActionManager {
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
     // apply the selected move to game board
-    Action pendingaction = splendorGame.getBoard()
+    Action pendingBonusAction = splendorGame.getBoard()
                                           .applyMove(selectedMove, playerWrapper.orElseThrow(
                                               () -> new IllegalGameStateException(
                                                   "If a valid move has been selected, "
                                                     + "there must be a corresponding player "
                                                     + "who selected it "
                                                     + "but player was found empty")));
+    UserInventory inventory = splendorGame.getBoard()
+                                .getInventoryByPlayerName(playerName)
+                                .orElseThrow();
 
     // need to handle potential compound actions
-    if (pendingaction != null) {
+    if (pendingBonusAction != null) {
+      UserInventory inventory = splendorGame.getBoard()
+                                            .getInventoryByPlayerName(playerName)
+                                            .orElseThrow();
       return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingaction.toString());
     } else {
       //TODO: check for end of turn pending actions.
-      
+      Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
+
+      if (endOfTurnAction != null) {
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(endOfTurnAction.toString());
+      }
+
+      splendorGame.getBoard().endTurn();
+
       // check for terminal game state after action has been performed
       if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
         logger.log(Level.INFO, "Terminal game state reached");
@@ -132,6 +145,7 @@ public class ActionManager {
    *
    * @param gameid     game ID of the game being played
    * @param playerName player whose turn it currently is
+   * @param accessToken the access token
    * @return the possible moves that can be made in a map (key, value) = (hash, raw move objec)
    */
   @GetMapping(value = "/api/games/{gameid}/players/{player}/actions",
@@ -252,6 +266,10 @@ public class ActionManager {
       return new LinkedHashMap<>();
     }
 
+    // now search through the gameboard
+    // and create a mapping of viable moves the player can make given their state
+    // TODO: find the players inventory from the game,
+    //  scan over their tokens and cards to ascertain what moves are possible
     GameBoard gameBoard = splendorGame.getBoard();
     // we know that the player is in the game if we make it to this point
     UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
@@ -261,6 +279,30 @@ public class ActionManager {
     switch (splendorGame.getBoard().getPendingAction()) {
       case PAIR_SPICE_CARD:
         getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
+      case RET_3_TOKENS:
+      case RET_2_TOKENS:
+      case RET_1_TOKEN:
+      case TAKE_1_GEM_TOKEN:
+      case CASCADE_LEVEL_2:
+        getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
+      case CASCADE_LEVEL_1:
+        getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
+      case DISCARD_2_WHITE_CARDS:
+      case DISCARD_2_BLUE_CARDS:
+      case DISCARD_2_GREEN_CARDS:
+      case DISCARD_2_RED_CARDS:
+      case DISCARD_2_BLACK_CARDS:
+      case RESERVE_NOBLE:
+        getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
+      case RECEIVE_NOBLE:
+        getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
+        break;
+      case PLACE_COAT_OF_ARMS:
+        getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
         break;
       case TAKE_TOKEN:
         //TODO: calculate available remaining token moves. 
@@ -350,7 +392,6 @@ public class ActionManager {
         }
       }
     }
-
   }
 
   private void getPossibleNobleVisitors(Map<String, Move> moveMap, UserInventory inventory,

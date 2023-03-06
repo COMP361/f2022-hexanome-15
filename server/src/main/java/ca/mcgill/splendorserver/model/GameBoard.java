@@ -107,41 +107,41 @@ public class GameBoard {
             "player (" + player.getName() + ") wasn't found in this current game board"));
 
     Action pendingAction;
-    return switch (move.getAction()) {
+    switch (move.getAction()) {
       case PURCHASE_DEV -> {
         pendingAction = performPurchaseDev(move, player, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
-          yield pendingAction;
+          return pendingAction;
         } else {
-          yield null;
+          return null;
         }
       }
       case PAIR_SPICE_CARD -> {
         pendingAction = performPairSpiceCard(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
-          yield pendingAction;
+          return pendingAction;
         } else {
-          yield null;
+          return null;
         }
       }
       case CASCADE_LEVEL_1 -> {
         pendingAction = performCascadeLevelOne(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
-          yield pendingAction;
+          return pendingAction;
         } else {
-          yield null;
+          return null;
         }
       }
       case CASCADE_LEVEL_2 -> {
         pendingAction = performCascadeLevelTwo(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
-          yield pendingAction;
+          return pendingAction;
         } else {
-          yield null;
+          return null;
         }
       }
       case TAKE_TOKEN -> {
@@ -175,120 +175,15 @@ public class GameBoard {
         }
       }
       default -> {
-        yield null;
+        return null;
       }
-//      case PURCHASE_DEV_RECEIVE_NOBLE -> {
-//        // check if we're waiting for this or not
-//        if (waitingForAction(Action.PURCHASE_DEV_RECEIVE_NOBLE)) {
-//          performPurchaseDev(move, player, inventory);
-//          performClaimNobleAction(move, inventory);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          // this is compound action, request further actions
-//          cacheAction(Action.PURCHASE_DEV_RECEIVE_NOBLE);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case RESERVE_DEV -> {
-//        performReserveDev(move, inventory);
-//        yield null;
-//      }
-//      case RESERVE_DEV_TAKE_JOKER -> {
-//        // gold token added and card reserved
-//        performReserveDev(move, inventory);
-//        inventory.addTokens(drawGoldToken());
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_2_GEM_TOKENS_SAME_COL -> {
-//        performTake2GemsSameColor(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_1 -> {
-//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1)) {
-//          performTake2GemsSameColorReturn(move, inventory, 1);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_1);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_2_GEM_TOKENS_SAME_COL_RET_2 -> {
-//        if (waitingForAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2)) {
-//          performTake2GemsSameColorReturn(move, inventory, 2);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_2_GEM_TOKENS_SAME_COL_RET_2);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL -> {
-//        performTake3GemsDiffColor(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_1 -> {
-//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1)) {
-//          performTake3GemsDiffColorReturn(move, inventory, 1);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_1);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_2 -> {
-//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2)) {
-//          performTake3GemsDiffColorReturn(move, inventory, 2);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_2);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case TAKE_3_GEM_TOKENS_DIFF_COL_RET_3 -> {
-//        if (waitingForAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3)) {
-//          performTake3GemsDiffColorReturn(move, inventory, 3);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_3_GEM_TOKENS_DIFF_COL_RET_3);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case RESERVE_NOBLE -> null;
-//      case CASCADE_LEVEL_1 -> null;
-//      case CASCADE_LEVEL_2 -> null;
-//      case PAIR_SPICE_CARD -> {
-//        performPairSpiceCard(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case DISCARD_2_WHITE_CARDS -> null;
-//      case DISCARD_2_BLUE_CARDS -> null;
-//      case DISCARD_2_GREEN_CARDS -> null;
-//      case DISCARD_2_RED_CARDS -> null;
-//      case DISCARD_2_BLACK_CARDS -> null;
-//      case TAKE_1_GEM_TOKEN -> {
-//        performTake1Gem(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-//      case TAKE_1_GEM_TOKEN_RET_1 -> {
-//        if (waitingForAction(Action.TAKE_1_GEM_TOKEN_RET_1)) {
-//          performTake1GemReturn(move, inventory);
-//          unCacheAction();
-//          yield HttpStatus.OK;
-//        } else {
-//          cacheAction(Action.TAKE_1_GEM_TOKEN_RET_1);
-//          yield HttpStatus.PARTIAL_CONTENT;
-//        }
-//      }
-//      case PLACE_COAT_OF_ARMS -> {
-//        performPlaceCoatOfArms(move, inventory);
-//        yield HttpStatus.OK;
-//      }
-    };
+    }
+    if (pendingAction != null) {
+      actionPending = pendingAction;
+      return pendingAction;
+    } else {
+      return null;
+    }
   }
 
   private boolean waitingForAction(Action action) {
@@ -315,21 +210,58 @@ public class GameBoard {
   public Action getPendingAction() {
     return actionPending;
   }
-  
-  private void performTakeToken(Move move, UserInventory inventory) {
-    TokenType type = move.getSelectedTokenTypes();
-    TokenPile pile = this.tokenPiles.get(type);
-    Token token = pile.removeToken();
-    inventory.addTokens(token);
+
+  /**
+   * Returns possible end of turn actions.
+   *
+   * @param move the move that was just performed
+   * @param inventory the current player's inventory
+   * @return possible end of turn actions
+   */
+  public Action getEndOfTurnActions(Move move, UserInventory inventory) {
+    List<Noble> nobles = new ArrayList<>();
+    //TODO: add visiting reserved nobles
+    for (Noble noble : nobles) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        nobles.add(noble);
+      }
+    }
+    if (nobles.size() == 1) {
+      performClaimNobleAction(nobles.get(0), inventory);
+      return Action.RECEIVE_NOBLE;
+    }
+
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.canReceivePower(tradingPostSlot)) {
+        moveCache.add(move);
+        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
+    return null;
   }
 
+  /**
+   * Ends the current player's turn.
+   */
+  public void endTurn() {
+    moveCache.clear();
+    actionPending = null;
+    pendingAction = false;
+  }
 
-
-  private void performReserveDev(Move move, UserInventory inventory) {
+  /**
+   * Performs a reserve development type action routine.
+   *
+   * @param move      the move to perform
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
-    Card selectedCard = move.getCard();
+    Card selectedCard = getSelectedCardOrThrow(move);
     // if we're taking from the table, replenish table from the deck
-    if (move.getCard() != null) {
+    if (move.getCard()
+            .isPresent()) {
       // remove the selected card from the board and replenish from same deck type
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
@@ -388,6 +320,24 @@ public class GameBoard {
         return actions.get(0);
       }
     }
+    for (Noble noble : inventory.getNobles()) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (Noble noble : nobles) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        return Action.RECEIVE_NOBLE;
+      }
+    }
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.canReceivePower(tradingPostSlot)) {
+        moveCache.add(move);
+        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
     
     return null;
 
@@ -427,9 +377,6 @@ public class GameBoard {
         return bonusAction;
       }
     }
-    moveCache.clear();
-    actionPending = null;
-    pendingAction = false;
     return null;
   }
 
@@ -439,16 +386,10 @@ public class GameBoard {
    * @param move      the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
-  private void performClaimNobleAction(Move move, UserInventory inventory) {
-    // see if player has been visited by a noble and if so that this is valid
-    if (move.getNoble() == null) {
-      throw new IllegalGameStateException("If move to visit noble, "
-                                            + "then noble cannot be empty");
-    }
-    if (inventory.canBeVisitedByNoble(move.getNoble())) {
+  private void performClaimNobleAction(Noble noble, UserInventory inventory) {
+    if (inventory.canBeVisitedByNoble(noble)) {
       // add prestige and tile to inventory
-      inventory.receiveVisitFrom(move.getNoble());
-      // TODO: check and see about settlements
+      inventory.receiveVisitFrom(noble);
     }
   }
 
@@ -721,12 +662,6 @@ public class GameBoard {
     return cities;
   }
 
-
-  /*public List<TokenPile> getTokenPiles() {
-    return tokenPiles.values()
-                     .stream()
-                     .toList();
-  }*/
 
   /**
    * Retrieves the token piles on the game board except for the gold token pile.
