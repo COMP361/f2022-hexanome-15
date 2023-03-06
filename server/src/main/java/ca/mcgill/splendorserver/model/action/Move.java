@@ -65,15 +65,6 @@ public class Move {
   }
 
   /**
-   * Returns the current player's username.
-   *
-   * @return the current player's username
-   */
-  public PlayerWrapper getName() {
-    return player;
-  }
-
-  /**
    * Returns the deck type of the deck the player is taking a card from.
    *
    * @return the deck type of the deck the player is taking a card from

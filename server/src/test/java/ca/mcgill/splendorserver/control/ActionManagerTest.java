@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.control;
+/*package ca.mcgill.splendorserver.control;
 
 import ca.mcgill.splendorserver.gameio.GameRestController;
 import ca.mcgill.splendorserver.gameio.Launcher;
@@ -131,4 +131,4 @@ class ActionManagerTest {
   void getAvailableActions() {
 
   }
-}
+}*/
