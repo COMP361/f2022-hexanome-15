@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -52,7 +55,18 @@ public class ActionManager {
     return instance;
   }
   
-  private static HttpResponse<JsonNode> getActions() {
+  public static void handleCompoundMoves(String action) {
+    HttpResponse<JsonNode> moveMap = ActionManager.getActions();
+    String moves = moveMap.getBody().toString();
+    Gson gson = new Gson();
+    Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
+    ActionManager.setCurrentMoveMap(availableMoves);
+    if (action.equals("TAKE_TOKEN")) {
+      //inform user to take next token
+    }
+  }
+  
+  public static HttpResponse<JsonNode> getActions() {
     return Unirest.get(String.format("http://%s/api/games/%d/players/%s/actions", 
         LobbyServiceExecutor.SERVERLOCATION, 
         GameController.getInstance().getGameId(), 
