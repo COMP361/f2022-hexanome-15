@@ -1,8 +1,12 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
 import ca.mcgill.splendorclient.control.ActionManager;
+import ca.mcgill.splendorclient.control.ColorManager;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import kong.unirest.json.JSONException;
 
@@ -16,6 +20,7 @@ public class CardView extends StackPane {
 
   private final Rectangle outer;
   private final Rectangle inner;
+  private int localID;
 
   /**
    * Creates a CardView. These represent CardViews in a user inventory. 
@@ -28,9 +33,9 @@ public class CardView extends StackPane {
     this.outer = new Rectangle(height, width);
     outer.setArcHeight(height / 5);
     outer.setArcWidth(height / 5);
-    this.inner = new Rectangle(height - 20, width - 20);
-    inner.setArcHeight((height - 20) / 5);
-    inner.setArcWidth((height - 20) / 5);
+    this.inner = new Rectangle(height - 10, width - 10);
+    inner.setArcHeight((height - 10) / 5);
+    inner.setArcWidth((height - 10) / 5);
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {});
   }
@@ -46,9 +51,9 @@ public class CardView extends StackPane {
     this.outer = new Rectangle(height, width);
     outer.setArcHeight(height / 5);
     outer.setArcWidth(height / 5);
-    this.inner = new Rectangle(height - 20, width - 20);
-    inner.setArcHeight((height - 20) / 5);
-    inner.setArcWidth((height - 20) / 5);
+    this.inner = new Rectangle(height - 10, width - 10);
+    inner.setArcHeight((height - 10) / 5);
+    inner.setArcWidth((height - 10) / 5);
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {
       if (arg0.getButton() == MouseButton.SECONDARY) {
@@ -78,5 +83,11 @@ public class CardView extends StackPane {
 //    inner.setFill(ColorManager.getColor(card.getTokenType()));
 //    outer.setFill(ColorManager.getColor(card.getCardType()));
 //  }
-
+  public void updateView(int num) {
+	//yes hardcoded for testing
+	Image newImage = new Image("file:///L:/f2022-hexanome-15/client/resources/card_"+num+".jpg");
+	outer.setFill(ColorManager.getColor(num));
+	inner.setFill(new ImagePattern(newImage));
+	localID = num;
+  }
 }
