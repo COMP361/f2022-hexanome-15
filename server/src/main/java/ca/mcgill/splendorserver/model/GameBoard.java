@@ -150,7 +150,7 @@ public class GameBoard {
           moveCache.add(move);
           actionPending = Action.TAKE_TOKEN;
           this.pendingAction = true;
-          yield actionPending;
+          return actionPending;
         }
         else if (moveCache.size() == 1) {
           //selected two of the same token
@@ -158,31 +158,25 @@ public class GameBoard {
             moveCache.clear();
             actionPending = null;
             this.pendingAction = false;
-            yield null;
+            return null;
           }
           else {
             moveCache.add(move);
             actionPending = Action.TAKE_TOKEN;
             this.pendingAction = true;
-            yield actionPending;
+            return actionPending;
           }
         }
         else {
           moveCache.clear();
           actionPending = null;
           this.pendingAction = false;
-          yield null;
+          return null;
         }
       }
       default -> {
         return null;
       }
-    }
-    if (pendingAction != null) {
-      actionPending = pendingAction;
-      return pendingAction;
-    } else {
-      return null;
     }
   }
 
@@ -209,6 +203,13 @@ public class GameBoard {
    */
   public Action getPendingAction() {
     return actionPending;
+  }
+  
+  private void performTakeToken(Move move, UserInventory inventory) {
+    TokenType type = move.getSelectedTokenTypes();
+    TokenPile pile = this.tokenPiles.get(type);
+    Token token = pile.removeToken();
+    inventory.addTokens(token);
   }
 
   /**
@@ -258,10 +259,9 @@ public class GameBoard {
    */
   private Action performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
-    Card selectedCard = getSelectedCardOrThrow(move);
+    Card selectedCard = move.getCard();
     // if we're taking from the table, replenish table from the deck
-    if (move.getCard()
-            .isPresent()) {
+    if (move.getCard() != null) {
       // remove the selected card from the board and replenish from same deck type
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
@@ -273,6 +273,7 @@ public class GameBoard {
     }
     // add to inventory as reserved card now
     inventory.addReservedCard(selectedCard);
+    return null;
   }
 
   /**

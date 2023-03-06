@@ -108,10 +108,7 @@ public class ActionManager {
 
     // need to handle potential compound actions
     if (pendingBonusAction != null) {
-      UserInventory inventory = splendorGame.getBoard()
-                                            .getInventoryByPlayerName(playerName)
-                                            .orElseThrow();
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingaction.toString());
+      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingBonusAction.toString());
     } else {
       //TODO: check for end of turn pending actions.
       Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
