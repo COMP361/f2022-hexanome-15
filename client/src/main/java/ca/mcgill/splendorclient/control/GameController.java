@@ -123,7 +123,7 @@ public class GameController {
               JSONArray nobleArray = response.getBody().getObject().optJSONArray("nobles");
               int[] nobleids = new int[nobleArray.length()];
               for (int i = 0; i < nobleArray.length(); i++) {
-                nobleids[i] = (int) ((JSONObject) nobleArray.get(i)).get("id");
+                nobleids[i] = (int) (nobleArray.get(i));
               }
               GameBoardView.updateNobleViews(nobleids);
               
@@ -131,23 +131,35 @@ public class GameController {
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
               for (int player = 0; player < inventories.length(); player++) {
             	JSONObject inventory = (JSONObject) inventories.get(player);
+            	
             	JSONArray playerCardArray = inventory.getJSONArray("purchasedcards");
             	int[] playerCardids = new int[playerCardArray.length()];
                 for (int i = 0; i < playerCardArray.length(); i++) {
                 	playerCardids[i] = playerCardArray.getInt(i);
                 }
+                
+                JSONArray reservedCardArray = inventory.getJSONArray("reservedcards");
+                int[] reservedCardids = new int[reservedCardArray.length()];
+                  for (int i = 0; i < reservedCardArray.length(); i++) {
+                    reservedCardids[i] = reservedCardArray.getInt(i);
+                  }
+                  
                 int[] placeholder = null;
+                
+                
+                
             	GameBoardView.updateInventories(player,
             	  playerCardids,
-                  inventory.getJSONObject("tokens").getInt("DIAMOND"),
-                  inventory.getJSONObject("tokens").getInt("SAPPHIRE"),
-                  inventory.getJSONObject("tokens").getInt("EMERALD"),
-                  inventory.getJSONObject("tokens").getInt("RUBY"),
-                  inventory.getJSONObject("tokens").getInt("ONYX"),
-                  inventory.getJSONObject("tokens").getInt("GOLD"),
-                  inventory.getInt("prestige"),
-                  placeholder,
-                  placeholder);
+            	  reservedCardids,
+                inventory.getJSONObject("tokens").getInt("DIAMOND"),
+                inventory.getJSONObject("tokens").getInt("SAPPHIRE"),
+                inventory.getJSONObject("tokens").getInt("EMERALD"),
+                inventory.getJSONObject("tokens").getInt("RUBY"),
+                inventory.getJSONObject("tokens").getInt("ONYX"),
+                inventory.getJSONObject("tokens").getInt("GOLD"),
+                inventory.getInt("prestige"),
+                placeholder,
+                placeholder);
               }
               
               //update tokens

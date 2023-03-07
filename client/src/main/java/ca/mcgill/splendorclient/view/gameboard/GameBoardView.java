@@ -193,7 +193,7 @@ public class GameBoardView {
       CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
       newView.setBackground(new Background(new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
       //newView.getChildren().add(new HBox(4));
-      newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
+      //newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
       inventoryView.addCardColumn(newView);
     }
   }
@@ -414,6 +414,7 @@ public class GameBoardView {
    */
   public static void updateInventories(int playerIndex,
 		  int[] cards,
+		  int[] reservedcards,
 		  int numOfDiamonds,
 		  int numOfSapphires,
 		  int numOfEmeralds,
@@ -423,7 +424,7 @@ public class GameBoardView {
 		  int prestige,
 		  int[] visitingNobleIDs,
 		  int[] powers) {
-    userViews.get(playerIndex).updateCards(cards);
+    userViews.get(playerIndex).updateCards(cards, reservedcards);
     userViews.get(playerIndex).updateTokens(numOfDiamonds,
     		numOfSapphires,
     		numOfEmeralds,
