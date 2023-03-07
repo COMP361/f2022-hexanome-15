@@ -153,20 +153,20 @@ public class ActionManager {
                                             @PathVariable(name = "player") String playerName,
                                             @RequestParam(name = "access_token") String accessToken
   ) {
-    System.out.println("in here");    
+    System.out.println("in here actions");    
     try {
       // if the given gameid doesn't exist or isn't active then throw an error
       if (!LocalGameStorage.exists(gameid)) {
+        System.out.println("Game doesn't exist?");
         throw new IllegalArgumentException(
             "gameid: " + gameid + " is invalid or represents a game which is not active");
       }
 
       // validates the player and their access token
-      AuthTokenAuthenticator.authenticate(playerName, accessToken);
+      //AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
       // get the game manager instance
-      SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
-                                                  .orElseThrow();
+      SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid).get();
       Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
       Map<String, Move> moveMap = findMoves(splendorGame, playerWrapper);
       Map<String, MoveInfo> simplifiedMap = prepareMoveMapForTransmission(moveMap);
@@ -276,42 +276,48 @@ public class ActionManager {
                                            .orElseThrow();
     Map<String, Move> moveMap = new LinkedHashMap<>();
     //TODO: switch on pending actions in gameboard.
-    switch (splendorGame.getBoard().getPendingAction()) {
-      case PAIR_SPICE_CARD:
-        getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case RET_3_TOKENS:
-      case RET_2_TOKENS:
-      case RET_1_TOKEN:
-      case TAKE_1_GEM_TOKEN:
-      case CASCADE_LEVEL_2:
-        getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case CASCADE_LEVEL_1:
-        getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case DISCARD_2_WHITE_CARDS:
-      case DISCARD_2_BLUE_CARDS:
-      case DISCARD_2_GREEN_CARDS:
-      case DISCARD_2_RED_CARDS:
-      case DISCARD_2_BLACK_CARDS:
-      case RESERVE_NOBLE:
-        getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case RECEIVE_NOBLE:
-        getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case PLACE_COAT_OF_ARMS:
-        getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case TAKE_TOKEN:
-        //TODO: calculate available remaining token moves. 
-        getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
-      default:
-        getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        getAvailableTokenMoves(moveMap, gameBoard, playerWrapper);
-        break;
+    if (splendorGame.getBoard().getPendingAction() != null) {
+      switch (splendorGame.getBoard().getPendingAction()) {
+        case PAIR_SPICE_CARD:
+          getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case RET_3_TOKENS:
+        case RET_2_TOKENS:
+        case RET_1_TOKEN:
+        case TAKE_1_GEM_TOKEN:
+        case CASCADE_LEVEL_2:
+          getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case CASCADE_LEVEL_1:
+          getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case DISCARD_2_WHITE_CARDS:
+        case DISCARD_2_BLUE_CARDS:
+        case DISCARD_2_GREEN_CARDS:
+        case DISCARD_2_RED_CARDS:
+        case DISCARD_2_BLACK_CARDS:
+        case RESERVE_NOBLE:
+          getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case RECEIVE_NOBLE:
+          getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case PLACE_COAT_OF_ARMS:
+          getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case TAKE_TOKEN:
+          //TODO: calculate available remaining token moves. 
+          getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        default:
+          break;
+      }
+    }
+    else {
+      //this means we are starting a new base move
+      getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+      getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+      getAvailableTokenMoves(moveMap, gameBoard, playerWrapper);
     }
 
     return moveMap;

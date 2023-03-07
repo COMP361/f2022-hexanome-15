@@ -60,9 +60,7 @@ public class GameRestController {
     //register_gameservice(accessToken, gameServiceLocation, 4, 2,
     //   "SplendorOrient+TradingPosts", "Splendor", true);
     //register_gameservice(accessToken, gameServiceLocation, 4, 2,
-    //"SplendorOrient+Cities", "Splendor", true);
-    System.out.println("in here");
-    
+    //"SplendorOrient+Cities", "Splendor", true);    
     /*debugging
     List<PlayerWrapper> wrappers =
         Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
