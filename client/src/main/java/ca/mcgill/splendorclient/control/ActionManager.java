@@ -39,6 +39,9 @@ public class ActionManager {
    */
   public static void setCurrentMoveMap(Map<String, MoveInfo> currentMap) {
     currentMoveMap = currentMap;
+    for (Entry<String, MoveInfo> entry : currentMap.entrySet()) {
+      System.out.println(entry.getKey() + " : " + entry.getValue().getAction());
+    }
   }
 
   /**
@@ -89,6 +92,42 @@ public class ActionManager {
     System.out.println("Search for purchase card move with id: " + cardid); 
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("PURCHASE_DEV")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds cascade card moves in the move map and forwards to server.
+   *
+   * @param cardid requested to take for free
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendCascadeLevel1Move(int cardid) {
+    System.out.println("Search for cascade card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("CASCADE_LEVEL_1")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds cascade card moves in the move map and forwards to server.
+   *
+   * @param cardid requested to take for free
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendCascadeLevel2Move(int cardid) {
+    System.out.println("Search for cascade card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("CASCADE_LEVEL_2")) {
         if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
           return sendAction(entry.getKey());
         }
@@ -215,6 +254,7 @@ public class ActionManager {
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("You've unlocked a power as a result of placing a coat of arms.");
       alert.show();
+
     }
   }
 

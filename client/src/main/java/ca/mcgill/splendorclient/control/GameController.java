@@ -192,21 +192,35 @@ public class GameController {
             Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
             ActionManager.setCurrentMoveMap(availableMoves);
 
-            // alert to indicate it's their turn
-            Alert yourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
-            yourTurnAlert.setTitle("Turn Information");
-            yourTurnAlert.setHeaderText("It's your turn, please make your move.");
-            yourTurnAlert.showAndWait();
+            // alert to indicate its their turn
+            Platform.runLater(new Runnable() {
+
+              @Override
+              public void run() {
+                // TODO Auto-generated method stub
+                Alert yourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
+                yourTurnAlert.setTitle("Turn Information");
+                yourTurnAlert.setHeaderText("It's your turn, please make your move.");
+                yourTurnAlert.show();
+              }
+              
+            });
           }
           else if (!currentTurn.equals(User.THISUSER.getUsername())) {
             // alert to tell user it's not their turn
-            Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
-            notYourTurnAlert.setTitle("Turn Information");
-            notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername() + " turn, please wait for them to go.");
-            notYourTurnAlert.showAndWait();
-
             requestedActions = false;
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
+            Platform.runLater(new Runnable() {
+
+              @Override
+              public void run() {
+                // TODO Auto-generated method stub
+                Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
+                notYourTurnAlert.setTitle("Turn Information");
+                notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername() + " turn, please wait for them to go.");
+                notYourTurnAlert.show();
+              }
+            });
           }
         }
         try {

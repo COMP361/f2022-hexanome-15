@@ -91,9 +91,7 @@ public class ActionManager {
     System.out.println("PlayerWrapper name: " + playerWrapper.get().getName());
     // throw error if the action MD5 isn't valid
     if (!moves.containsKey(actionMd5)) {
-      System.out.println("Could not find move");
-      throw new IllegalArgumentException(
-          "Received move MD5 (" + actionMd5 + ") doesn't match any moves offered");
+      System.out.println("Could not find move: " + actionMd5);
     }
 
     // pass the move along so that the game states are appropriately updated
@@ -398,8 +396,7 @@ public class ActionManager {
     // players may not have more than three reserved cards in hand
     final int maxNumReservedCards = 3;
     if (inventory.reservedCardCount() > maxNumReservedCards) {
-      throw new IllegalGameStateException(
-          "Illegal for " + player + " to have more than 3 reserved cards in hand");
+      return;
     }
 
     // to reserve, player can take any face-up dev card or draw 1 from one of the three decks
@@ -421,6 +418,7 @@ public class ActionManager {
     }
     // or can take from one of the decks, but they won't be able to see the card, so it'll be null
     // ,but they will see the different deck levels (1, 2, 3)
+    /*
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
@@ -432,6 +430,7 @@ public class ActionManager {
         moveMap.put(takeFromDeckMd5, takeFromDeck);
       }
     }
+    */
   }
 
   private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,
