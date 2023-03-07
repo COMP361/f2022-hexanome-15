@@ -192,7 +192,7 @@ public class GameController {
             Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
             ActionManager.setCurrentMoveMap(availableMoves);
 
-            // alert to indicate its their turn
+            // alert to indicate it's their turn
             Alert yourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
             yourTurnAlert.setTitle("Turn Information");
             yourTurnAlert.setHeaderText("It's your turn, please make your move.");

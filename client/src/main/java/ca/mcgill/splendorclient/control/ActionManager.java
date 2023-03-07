@@ -123,35 +123,98 @@ public class ActionManager {
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select additional token to take.");
-      takeTokenAlert.showAndWait();
+      takeTokenAlert.show();
     }
     if (action.equals("PAIR_SPICE_CARD")) {
       // inform user to pair card
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select card in your inventory to pair with.");
-      takeTokenAlert.showAndWait();
+      takeTokenAlert.show();
     }
     if (action.equals("RECEIVE_NOBLE")) {
       // inform user to select noble to be visited by if more than one
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to be visited by.");
-      alert.showAndWait();
+      alert.show();
     }
     if (action.equals("RESERVE_NOBLE")) {
       // inform user to select noble to reserve
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to reserve.");
-      alert.showAndWait();
+      alert.show();
     }
     if (action.equals("RET_1_TOKEN")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid token to return.");
-      alert.showAndWait();
+      alert.show();
+    }
+    if (action.equals("CASCADE_LEVEL_1")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid level 1 orient card.");
+      alert.show();
+    }
+    if (action.equals("CASCADE_LEVEL_2")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid level 2 orient card.");
+      alert.show();
+    }
+    if (action.equals("DISCARD_2_WHITE_CARDS")){
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid white card to discard.");
+      alert.show();
+    }
+    if (action.equals("DISCARD_2_BLUE_CARDS")){
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid blue card to discard.");
+      alert.show();
+    }
+    if (action.equals("DISCARD_2_GREEN_CARDS")){
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid green card to discard.");
+      alert.show();
+    }
+    if (action.equals("DISCARD_2_RED_CARDS")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid red card to discard.");
+      alert.show();
+    }
+    if (action.equals("DISCARD_2_BLACK_CARDS")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid black card to discard.");
+      alert.show();
+    }
+    if (action.equals("TAKE_1_GEM_TOKEN")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select token to take as a result of your trading post power.");
+      alert.show();
+    }
+    if (action.equals("PLACE_COAT_OF_ARMS")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("You've unlocked a power as a result of placing a coat of arms.");
+      alert.show();
     }
   }
 
