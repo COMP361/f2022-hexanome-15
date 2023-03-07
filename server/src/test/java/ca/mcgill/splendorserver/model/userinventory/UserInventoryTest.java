@@ -127,11 +127,6 @@ class UserInventoryTest {
   }
 
   @Test
-  void discardByBonusType() {
-
-  }
-
-  @Test
   void canBeVisitedByNoble() {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
@@ -158,7 +153,10 @@ class UserInventoryTest {
 
   @Test
   void addPower() {
-    uinv.addPower(GAIN_5_PRESTIGE);
+    TradingPostSlot tradingSlot = new TradingPostSlot(false, GAIN_5_PRESTIGE, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addPower(tradingSlot.getPower());
     assertEquals(GAIN_5_PRESTIGE, uinv.getPowers().get(0));
   }
 
@@ -197,5 +195,24 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     assertEquals(1, uinv.purchasedCardCountByType(DIAMOND));
+  }
+
+  @Test
+  void removePower() {
+    TradingPostSlot tradingSlot = new TradingPostSlot(false, GAIN_5_PRESTIGE, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addPower(tradingSlot.getPower());
+    uinv.removePower(GAIN_5_PRESTIGE);
+    assertEquals(0, uinv.getPowers().size());
+  }
+
+  @Test
+  void removeNoble() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.receiveVisitFrom(anoble);
+    uinv.removeNoble(anoble);
+    assertEquals(0, uinv.getNobles().size());
   }
 }

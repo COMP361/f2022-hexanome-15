@@ -88,19 +88,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns the token types of all the non-empty token piles in the user inventory.
-   *
-   * @return the list of token types of all the non-empty token piles in the user inventory
-   */
-  public List<TokenType> getTokenTypes() {
-    return tokenPiles.values()
-                     .stream()
-                     .filter(tokens -> tokens.getSize() != 0)
-                     .map(TokenPile::getType)
-                     .toList();
-  }
-
-  /**
    * Returns the list of cards in the user inventory.
    *
    * @return the list of cards in the user inventory
@@ -422,34 +409,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Removes card from deck based on bonus colour, prioritizes spice bag cards.
-   *
-   * @param tokenType the token type of the element to remove
-   * @throws AssertionError if tokenType == null
-   */
-  public void discardByBonusType(TokenType tokenType) {
-    assert tokenType != null;
-    for (int i = 0; i < cards.size(); i++) {
-      Card current = cards.get(i);
-      if (current.getTokenBonusType() == tokenType
-            && current.getCardStatus() != CardStatus.RESERVED
-            && ((OrientCard) current).isSpiceBag()) {
-        cards.remove(i);
-        return;
-      }
-    }
-    for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType() == tokenType
-            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
-        cards.remove(j);
-        return;
-      }
-    }
-  }
-
-
-
-  /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
    * purchased and deducts the appropriate amount of tokens from their inventory also taking
    * into consideration any token type bonuses they may have from owned cards.
@@ -609,13 +568,6 @@ public class UserInventory implements Iterable<Card> {
     return playerWrapper;
   }
 
-  private void addPile(TokenPile pile) {
-    assert pile != null;
-    if (!tokenPiles.containsKey(pile.getType())) {
-      tokenPiles.put(pile.getType(), pile);
-    }
-  }
-
   /**
    * Adds a power to the user inventory.
    *
@@ -661,9 +613,8 @@ public class UserInventory implements Iterable<Card> {
    * Must be done if discarding cards makes the player unable to reach the requirements.
    *
    * @param power the power to be discarded
-   * @return the discarded power
    */
-  public Power removePower(Power power) {
+  public void removePower(Power power) {
     assert power != null && acquiredPowers.contains(power);
     int index = acquiredPowers.indexOf(power);
     if (power == Power.GAIN_5_PRESTIGE) {
@@ -671,7 +622,7 @@ public class UserInventory implements Iterable<Card> {
     } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
       removePrestige(acquiredPowers.size());
     }
-    return acquiredPowers.remove(index);
+    acquiredPowers.remove(index);
   }
 
   /**
