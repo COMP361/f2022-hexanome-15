@@ -74,6 +74,11 @@ public class CardView extends StackPane {
     });
   }
 
+  /**
+   * Updates the card view with the card image.
+   *
+   * @param num the card id
+   */
   public void updateView(int num) {
     Image newImage = new Image("file:///"+rootPath+"/resources/card_"+num+".jpg");
    	outer.setFill(ColorManager.getColor(num));

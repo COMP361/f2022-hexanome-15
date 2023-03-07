@@ -85,7 +85,12 @@ public class GameBoard {
     this.tradingPostSlots = tradingPostSlots;
     this.cities = cities;
   }
-  
+
+  /**
+   * Returns the move cache for pending actions.
+   *
+   * @return the move cache for pending actions
+   */
   public List<Move> getMoveCache() {
     return moveCache;
   }
@@ -151,23 +156,20 @@ public class GameBoard {
           actionPending = Action.TAKE_TOKEN;
           this.pendingAction = true;
           return actionPending;
-        }
-        else if (moveCache.size() == 1) {
+        } else if (moveCache.size() == 1) {
           //selected two of the same token
           if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
             moveCache.clear();
             actionPending = null;
             this.pendingAction = false;
             return null;
-          }
-          else {
+          } else {
             moveCache.add(move);
             actionPending = Action.TAKE_TOKEN;
             this.pendingAction = true;
             return actionPending;
           }
-        }
-        else {
+        } else {
           moveCache.clear();
           actionPending = null;
           this.pendingAction = false;
@@ -209,7 +211,7 @@ public class GameBoard {
     TokenType type = move.getSelectedTokenTypes();
     TokenPile pile = this.tokenPiles.get(type);
     Token token = pile.removeToken();
-    inventory.addTokens(token);
+    inventory.addToken(token);
   }
 
   /**
@@ -384,7 +386,7 @@ public class GameBoard {
   /**
    * Performs a claim noble type action routine.
    *
-   * @param move      the move to perform
+   * @param noble     the noble to claim
    * @param inventory the inventory to apply the move side effects to
    */
   private void performClaimNobleAction(Noble noble, UserInventory inventory) {
@@ -413,7 +415,7 @@ public class GameBoard {
     if (inventory.canReceivePower(move.getTradingPostSlot())) {
       inventory.addPower(move.getTradingPostSlot().getPower());
       move.getTradingPostSlot()
-        .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
+          .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }
 
@@ -518,31 +520,6 @@ public class GameBoard {
         // we know draw is ok cause of the check for emptiness above
         cardField.add(replenishIndex, deck.draw());
       }
-    }
-  }
-
-  /**
-   * Draws tokens from the token bank and adds them to the user inventory.
-   *
-   * @param inventory the current player's inventory
-   * @param selected the types of tokens selected
-   */
-  private void moveTokensToUserInventory(UserInventory inventory, TokenType[] selected) {
-    for (TokenType tokenType : selected) {
-      inventory.addTokens(drawTokenByTokenType(tokenType));
-    }
-  }
-
-  /**
-   * Returns tokens from the user inventory and adds them to the token bank.
-   *
-   * @param inventory the current player's inventory
-   * @param selected the types of tokens selected
-   */
-  private void returnTokensToBoardFromInventory(UserInventory inventory, TokenType... selected) {
-    for (TokenType tokenType : selected) {
-      tokenPiles.get(tokenType)
-                .addToken(inventory.removeTokenByTokenType(tokenType));
     }
   }
 

@@ -71,6 +71,13 @@ public class Splendor extends Application {
     SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players")));
     stage.setScene(SceneManager.getGameScreen());  
   }
+  
+  /**
+   * Creates a who's turn notification
+   */
+  public void createTurnPopup() {
+    
+  }
 
 
   /**

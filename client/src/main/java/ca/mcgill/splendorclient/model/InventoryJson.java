@@ -21,4 +21,9 @@ public class InventoryJson {
   private List<Integer> visitingNobles;
   private List<Power> powers;
 
+  /**
+   * Creates an InventoryJson object.
+   */
+  public InventoryJson() {
+  }
 }

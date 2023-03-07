@@ -16,26 +16,27 @@ public class ColorManager {
   public ColorManager() {
 
   }
-  
-  public static Color getColor(int cardID) {
-	if (cardID < 40) {
-	  return Color.GREENYELLOW;
-	}
-	if (cardID < 70) {
-	  return Color.GOLD;
-	}
-	if (cardID < 90) {
-	  return Color.DEEPSKYBLUE;
-	}
-	if (cardID < 100) {
-	  return Color.DARKRED;
-	}
-	if (cardID < 110) {
-	  return Color.FIREBRICK;
-	}
-	else {
-	  return Color.CRIMSON;
-	}
+
+  /**
+   * Returns the deck color of a card.
+   *
+   * @param cardid the id of the card
+   * @return the deck color of the card
+   */
+  public static Color getColor(int cardid) {
+    if (cardid < 40) {
+      return Color.GREENYELLOW;
+    } else if (cardid < 70) {
+      return Color.GOLD;
+    } else if (cardid < 90) {
+      return Color.DEEPSKYBLUE;
+    } else if (cardid < 100) {
+      return Color.DARKRED;
+    } else if (cardid < 110) {
+      return Color.FIREBRICK;
+    } else {
+      return Color.CRIMSON;
+    }
   }
 
   /**

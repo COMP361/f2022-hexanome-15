@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
  */
 public class TotalTokenCountView extends Text {
 
-  private static int totalTokenCount = 15;
+  private static int totalTokenCount = 0;
 
   /**
    * Creates a TotalTokenCountView.
@@ -35,5 +35,15 @@ public class TotalTokenCountView extends Text {
     totalTokenCount--;
     String text = String.format("Total Token Count: %d", totalTokenCount);
     setText(text);
+  }
+  /**
+   * Sets the token count and updates the label.
+   *
+   * @param amount the amount of tokens to set
+   */
+  public void set(int amount) {
+	  totalTokenCount = amount;
+	  String text = String.format("Total Token Count: %d", totalTokenCount);
+	  setText(text);
   }
 }

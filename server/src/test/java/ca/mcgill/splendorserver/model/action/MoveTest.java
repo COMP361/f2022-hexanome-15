@@ -20,54 +20,54 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest
 {
-  CardCost cardc = new CardCost(1,2,3,4,5);
-  Noble anoble = new Noble(cardc);
-  TradingPostSlot aTPS = new TradingPostSlot(false,PURCHASE_CARD_TAKE_TOKEN,cardc);
+  CardCost cardc = new CardCost(1, 0, 0, 3, 0);
+  Noble anoble = new Noble(0, cardc);
+  TradingPostSlot aTPS = new TradingPostSlot(0,false, PURCHASE_CARD_TAKE_TOKEN, cardc);
   TokenType tkps = DIAMOND;
   TokenType rtkps = EMERALD;
   PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
   Card acard = new Card(1,2,DIAMOND,BASE2,ONE,cardc);
   Action mAction = PURCHASE_DEV;
-  Move amove = new Move(PURCHASE_DEV,acard,aPlayer,BASE2,rtkps,anoble,aTPS,tkps);
+  Move amove = new Move(PURCHASE_DEV, acard, aPlayer, BASE2, rtkps, anoble, aTPS, tkps);
 
   @Test
   void getCard() {
-    assertEquals(Optional.ofNullable(acard),amove.getCard(),"");
+    assertEquals(acard, amove.getCard());
   }
 
   @Test
   void getName() {
-    assertEquals(aPlayer,amove.getName(),"");
+    assertEquals(aPlayer.getName(),amove.getPlayerName());
   }
 
   @Test
   void getDeckType() {
-    assertEquals(Optional.ofNullable(BASE2),amove.getDeckType(),"");
+    assertEquals(BASE2, amove.getDeckType());
   }
 
   @Test
   void getSelectedTokenTypes() {
-    assertEquals(Optional.ofNullable(tkps),amove.getSelectedTokenTypes(),"");
+    assertEquals(tkps, amove.getSelectedTokenTypes());
   }
 
   @Test
   void getReturnedTokenTypes() {
-    assertEquals(Optional.ofNullable(rtkps),amove.getReturnedTokenTypes(),"");
+    assertEquals(rtkps, amove.getReturnedTokenTypes());
   }
 
   @Test
   void getNoble() {
-    assertEquals(Optional.ofNullable(anoble),amove.getNoble(),"");
+    assertEquals(anoble, amove.getNoble());
   }
 
   @Test
   void getTradingPostSlot() {
-    assertEquals(Optional.ofNullable(aTPS),amove.getTradingPostSlot(),"");
+    assertEquals(aTPS, amove.getTradingPostSlot());
   }
 
   @Test
   void getAction() {
-    assertEquals(mAction,amove.getAction(),"");
+    assertEquals(mAction, amove.getAction());
   }
 
   @Test
@@ -76,11 +76,11 @@ class MoveTest
       "Move{"
         + "player=" + aPlayer
         + ", action=" + mAction
-        + ", card=" + Optional.ofNullable(acard)
-        + ", tokenTypes=" + Optional.ofNullable(tkps)
-        + ", deckLevel=" + Optional.ofNullable(BASE2)
-        + ", tradingPostSlot=" + Optional.ofNullable(aTPS)
+        + ", card=" + acard
+        + ", tokenTypes=" + tkps
+        + ", deckLevel=" + BASE2
+        + ", tradingPostSlot=" + aTPS
         + '}',
-      amove.toString(),"");
+      amove.toString());
   }
 }

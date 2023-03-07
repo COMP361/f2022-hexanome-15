@@ -1,6 +1,7 @@
 package ca.mcgill.splendorserver.model.nobles;
 
 import ca.mcgill.splendorserver.model.cards.CardCost;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,43 +11,48 @@ import static ca.mcgill.splendorserver.model.tokens.TokenType.DIAMOND;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NobleTest {
-  CardCost cardc = new CardCost(1,2,3,4,5);
-  Noble anoble = new Noble(cardc);
-  List<Noble> nobles = new ArrayList<>();
+
+  CardCost cardc;
+  Noble anoble;
+
+  @BeforeEach
+  void setUp() {
+    cardc = new CardCost(4, 4, 0, 0, 0);
+    anoble = new Noble(0, cardc);
+  }
 
   @Test
   void getPrestige() {
-    assertEquals(3,anoble.getPrestige(),"");
+
+    assertEquals(3,anoble.getPrestige());
   }
 
   @Test
   void getVisitRequirements() {
-    assertEquals(cardc,anoble.getVisitRequirements(),"");
+
+    assertEquals(cardc, anoble.getVisitRequirements());
   }
 
   @Test
   void getStatus() {
-    assertEquals(NobleStatus.ON_BOARD,anoble.getStatus(),"");
+
+    assertEquals(NobleStatus.ON_BOARD,anoble.getStatus());
+  }
+
+  @Test
+  void getId() {
+    assertEquals(0, anoble.getId());
   }
 
   @Test
   void setStatus() {
     anoble.setStatus(NobleStatus.VISITING);
-    assertEquals(NobleStatus.VISITING,anoble.getStatus(),"");
+    assertEquals(NobleStatus.VISITING, anoble.getStatus());
   }
 
   @Test
-  void getNobles() {
-    nobles.add(new Noble(new CardCost(3, 3, 3, 0, 0)));
-    nobles.add(new Noble(new CardCost(0, 3, 3, 3, 0)));
-    nobles.add(new Noble(new CardCost(3, 0, 0, 3, 3)));
-    nobles.add(new Noble(new CardCost(3, 3, 0, 0, 3)));
-    nobles.add(new Noble(new CardCost(0, 0, 3, 3, 3)));
-    nobles.add(new Noble(new CardCost(0, 0, 0, 4, 4)));
-    nobles.add(new Noble(new CardCost(4, 0, 0, 0, 4)));
-    nobles.add(new Noble(new CardCost(0, 0, 4, 4, 0)));
-    nobles.add(new Noble(new CardCost(0, 4, 4, 0, 0)));
-    nobles.add(new Noble(new CardCost(4, 4, 0, 0, 0)));
-    assertEquals(3,nobles.get(0).getVisitRequirements().costByTokenType(DIAMOND),"");
+  void getNoblesThreePlayers() {
+    assertEquals(4, Noble.getNobles(3).size());
   }
+
 }

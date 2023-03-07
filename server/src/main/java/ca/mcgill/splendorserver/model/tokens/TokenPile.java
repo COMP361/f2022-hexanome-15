@@ -29,9 +29,7 @@ public class TokenPile implements Iterable<Token> {
    * @param n the amount of tokens to be removed
    */
   public void removeTokens(int n) {
-    if (n > tokens.size()) {
-      n = tokens.size();
-    }
+    assert n <= tokens.size();
     for (int i = 0; i < n; i++) {
       tokens.remove(0);
     }
@@ -43,26 +41,23 @@ public class TokenPile implements Iterable<Token> {
    * @param numPlayers the number of players in the game
    */
   public void setUp(int numPlayers) {
-    int numTokens = 0;
-    switch (numPlayers) {
-      case 2:
-        numTokens = 4;
-        break;
-      case 3:
-        numTokens = 5;
-        break;
-      case 4:
-        numTokens = 7;
-        break;
-      default:
-        numTokens = 4;
-    }
-    if (getType().equals(TokenType.GOLD)) {
+    if (type == TokenType.GOLD) {
       for (int i = 0; i < 5; i++) {
-        Token token = new Token(getType());
+        Token token = new Token(type);
         addToken(token);
       }
     } else {
+      int numTokens = 0;
+      switch (numPlayers) {
+        case 3:
+          numTokens = 5;
+          break;
+        case 4:
+          numTokens = 7;
+          break;
+        default:
+          numTokens = 4;
+      }
       for (int i = 0; i < numTokens; i++) {
         Token token = new Token(getType());
         addToken(token);

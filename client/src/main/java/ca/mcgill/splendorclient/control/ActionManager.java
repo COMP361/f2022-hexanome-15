@@ -35,16 +35,40 @@ public class ActionManager {
     instance = new ActionManager();
     currentMoveMap = new HashMap<>();
   }
-  
+
+  /**
+   * Sets the current move map to the given map.
+   *
+   * @param currentMap the given map
+   */
   public static void setCurrentMoveMap(Map<String, MoveInfo> currentMap) {
     currentMoveMap = currentMap;
   }
-  
+
+  /**
+   * Finds token moves in the move map and send token moves to the server.
+   *
+   * @param type the type of token
+   * @return a HttpResponse
+   */
   public static HttpResponse<String> findAndSendAssociatedTokenMove(TokenType type) {
     System.out.println("Searching for token move with type " + type);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("TAKE_TOKEN")) {
         if (entry.getValue().getTokenType().equals(type.toString())) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+  
+  
+  public static HttpResponse<String> findAndSendReserveCardMove(int cardid) {
+    System.out.println("Searching for reserve card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RESERVE_DEV_TAKE_JOKER")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
           return sendAction(entry.getKey());
         }
       }
@@ -61,18 +85,29 @@ public class ActionManager {
   public static ActionManager getInstance() {
     return instance;
   }
-  
+
+  /**
+   * Allows players to execute compound moves.
+   *
+   * @param action the action to be executed
+   */
   public static void handleCompoundMoves(String action) {
     HttpResponse<JsonNode> moveMap = ActionManager.getActions();
     String moves = moveMap.getBody().toString();
     Gson gson = new Gson();
-    Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
+    Map<String, MoveInfo> availableMoves = gson.fromJson(moves,
+        new TypeToken<Map<String, MoveInfo>>() {}.getType());
     ActionManager.setCurrentMoveMap(availableMoves);
     if (action.equals("TAKE_TOKEN")) {
       //inform user to take next token
     }
   }
-  
+
+  /**
+   * Gets the list of actions from the server.
+   *
+   * @return the list of actions in the server
+   */
   public static HttpResponse<JsonNode> getActions() {
     return Unirest.get(String.format("http://%s/api/games/%d/players/%s/actions", 
         LobbyServiceExecutor.SERVERLOCATION, 

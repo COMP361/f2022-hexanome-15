@@ -187,44 +187,13 @@ public class ActionManager {
     for (String md5 : moveMap.keySet()) {
       Move move = moveMap.get(md5);
       String cardId = move.getCard() != null ? Integer.toString(move.getCard().getId()) : null;
-      String tokenType = move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
+      String tokenType =
+          move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
       String noble = move.getNoble() != null ? move.getNoble().toString() : null;
       simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(), 
           move.getAction().toString(), cardId, tokenType, noble));
     }
     return simplifiedMap;
-  }
-
-  private List<TokenType[]> generateTokenCombinations(List<TokenType> tokenTypes, int r) {
-    List<TokenType[]> combinations = new ArrayList<>();
-    int[]             ixs          = new int[r]; // keep indexes
-
-    if (r <= tokenTypes.size()) {
-      for (int i = 0; (ixs[i] = i) < r - 1; i++) {
-        combinations.add(getSubset(tokenTypes, ixs));
-      }
-      for (; ; ) {
-        int i;
-        for (i = r - 1; i >= 0 && ixs[i] == tokenTypes.size() - r + i; i--) {
-          if (i < 0) {
-            break;
-          }
-          ixs[i]++;
-          for (i++; i < r; i++) {
-            ixs[i] = ixs[i - 1] + 1;
-          }
-        }
-      }
-    }
-    return combinations;
-  }
-
-  private TokenType[] getSubset(List<TokenType> input, int[] s) {
-    TokenType[] result = new TokenType[s.length];
-    for (int i = 0; i < s.length; i++) {
-      result[i] = input.get(s[i]);
-    }
-    return result;
   }
 
 
@@ -319,7 +288,9 @@ public class ActionManager {
     return moveMap;
   }
   
-  private void getRemainingTokenMoves(Map<String, Move> moveMap, UserInventory inventory, GameBoard gameBoard, PlayerWrapper player) {
+  private void getRemainingTokenMoves(Map<String, Move> moveMap,
+                                      UserInventory inventory,
+                                      GameBoard gameBoard, PlayerWrapper player) {
     List<Move> moveCache = gameBoard.getMoveCache();
     if (moveCache.size() == 1) {
       Move pastMove = moveCache.get(0);
@@ -331,23 +302,24 @@ public class ActionManager {
         TokenPile pile = gameBoard.getTokenPiles().get(type);
         if (type == pastType) {
           if (pile.getSize() >= 3) {
-            Move move = new Move(Action.TAKE_TOKEN, null, player, null, null, null, null, pile.getType());
+            Move move = new Move(Action.TAKE_TOKEN, null, player,
+                null, null, null, null, pile.getType());
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
             moveMap.put(moveMd5, move);
           }
-        }
-        else {
+        } else {
           if (pile.getSize() > 0) {
-            Move move = new Move(Action.TAKE_TOKEN, null, player, null, null, null, null, pile.getType());
+            Move move = new Move(Action.TAKE_TOKEN,
+                null, player, null, null,
+                null, null, pile.getType());
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
             moveMap.put(moveMd5, move);
           }
         }
       }
-    }
-    else if (moveCache.size() == 2) {
+    } else if (moveCache.size() == 2) {
       for (TokenType type : gameBoard.getTokenPiles().keySet()) {
         if (moveCache.get(0).getSelectedTokenTypes() == type 
             || moveCache.get(1).getSelectedTokenTypes() == type
@@ -356,7 +328,9 @@ public class ActionManager {
         }
         TokenPile pile = gameBoard.getTokenPiles().get(type);
         if (pile.getSize() > 0) {
-          Move move = new Move(Action.TAKE_TOKEN, null, player, null, null, null, null, pile.getType());
+          Move move = new Move(Action.TAKE_TOKEN,
+              null, player, null, null,
+              null, null, pile.getType());
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
               .toUpperCase();
           moveMap.put(moveMd5, move);
@@ -500,16 +474,16 @@ public class ActionManager {
 
   private void getAvailableTokenMoves(Map<String, Move> moveMap,
                                    GameBoard gameBoard, PlayerWrapper player) {
-     List<TokenPile> piles = gameBoard.getTokenPilesNoGold();
-     for (TokenPile pile : piles) {
-       if (pile.getSize() > 0) {
-         Move takeTokenMove = new Move(Action.TAKE_TOKEN, null, player, 
-             null, null, null, null, pile.getType());
-         String takeTokenMoveMd5 = DigestUtils.md2Hex(new Gson().toJson(takeTokenMove))
-             .toUpperCase();
-         moveMap.put(takeTokenMoveMd5, takeTokenMove);
-       }
-     }
+    List<TokenPile> piles = gameBoard.getTokenPilesNoGold();
+    for (TokenPile pile : piles) {
+      if (pile.getSize() > 0) {
+        Move takeTokenMove = new Move(Action.TAKE_TOKEN, null, player,
+            null, null, null, null, pile.getType());
+        String takeTokenMoveMd5 = DigestUtils.md2Hex(new Gson().toJson(takeTokenMove))
+                                    .toUpperCase();
+        moveMap.put(takeTokenMoveMd5, takeTokenMove);
+      }
+    }
   }
 
 

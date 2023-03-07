@@ -20,7 +20,18 @@ public class GameBoardJson {
   private List<Integer> nobles;
   private List<Integer> cardField = new ArrayList<Integer>(); //implicit flattened 2d array
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
-  
+
+  /**
+   * Creates a GameBoardJson object.
+   */
+  public GameBoardJson() {
+  }
+
+  /**
+   * Returns the player whose turn it is.
+   *
+   * @return the player whose turn it is
+   */
   public String getWhoseTurn() {
     return whoseTurn;
   }

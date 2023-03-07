@@ -1,37 +1,44 @@
 package ca.mcgill.splendorserver.model.cards;
 
+import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static ca.mcgill.splendorserver.model.cards.CardStatus.NONE;
 import static ca.mcgill.splendorserver.model.cards.CardStatus.PURCHASED;
-import static ca.mcgill.splendorserver.model.cards.DeckType.BASE2;
-import static ca.mcgill.splendorserver.model.cards.DeckType.BASE3;
+import static ca.mcgill.splendorserver.model.cards.DeckType.*;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ONE;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.TWO;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CardTest {
-  CardCost acost = new CardCost(3,4,5,2,1);
-  Card acard = new Card(2,3,EMERALD,BASE3,ONE,acost);
-  Card bcard = new Card(5,3,DIAMOND,BASE2,TWO,acost);
-  List<Card> cards = new ArrayList<>();
+  CardCost acost;
+  Card acard;
+
+  @BeforeEach
+  void setUp() {
+    acost = new CardCost(1, 1, 1, 1, 0);
+    acard = new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, acost);
+  }
+
+  @Test
+  void testIsOnBoard() {
+    assertEquals(NONE, acard.getCardStatus());
+  }
 
   @Test
   void isReserved() {
-    acard.setCardStatus(CardStatus.NONE);
-    assertTrue(!acard.isReserved());
     acard.setCardStatus(CardStatus.RESERVED);
     assertTrue(acard.isReserved());
   }
 
   @Test
   void isPurchased() {
-    acard.setCardStatus(CardStatus.NONE);
-    assertTrue(!acard.isPurchased());
     acard.setCardStatus(PURCHASED);
     assertTrue(acard.isPurchased());
 
@@ -39,95 +46,110 @@ class CardTest {
 
   @Test
   void getCard() {
-    acard.makeDeck(BASE3);
-    assertEquals(acard,acard.getCard(2),"");
+    Card.makeDeck(BASE1);
+    assertEquals(acard, acard.getCard(0));
   }
 
   @Test
-  void makeDeck() {
+  void makeDeckBase1() {
+    List<Card> deck = Card.makeDeck(BASE1);
+    assertEquals(40, deck.size());
+  }
+
+  @Test
+  void makeDeckBase2() {
+    List<Card> deck = Card.makeDeck(BASE2);
+    assertEquals(30, deck.size());
+  }
+  @Test
+  void makeDeckBase3() {
+    List<Card> deck = Card.makeDeck(BASE3);
+    assertEquals(20, deck.size());
+  }
+
+  @Test
+  void makeDeckOrient1() {
+    List<Card> deck = Card.makeDeck(ORIENT1);
+    assertEquals(10, deck.size());
+  }
+
+  @Test
+  void makeDeckOrient2() {
+    List<Card> deck = Card.makeDeck(ORIENT2);
+    assertEquals(10, deck.size());
+  }
+
+  @Test
+  void makeDeckOrient3() {
+    List<Card> deck = Card.makeDeck(ORIENT3);
+    assertEquals(10, deck.size());
   }
 
   @Test
   void getId() {
-    assertEquals(2,acard.getId(),"");
+    assertEquals(0,acard.getId());
   }
 
   @Test
   void getPrestige() {
-    assertEquals(3,acard.getPrestige(),"");
+    assertEquals(0,acard.getPrestige());
   }
 
   @Test
   void getTokenBonusAmount() {
-    assertEquals(1,acard.getTokenBonusAmount(),"");
+    assertEquals(1,acard.getTokenBonusAmount());
   }
 
   @Test
   void setBonusAmount() {
     acard.setBonusAmount(TWO);
-    assertEquals(2,acard.getTokenBonusAmount(),"");
+    assertEquals(2,acard.getTokenBonusAmount());
   }
 
   @Test
   void setBonusType() {
     acard.setBonusType(SAPPHIRE);
-    assertEquals(SAPPHIRE,acard.getTokenBonusType(),"");
+    assertEquals(SAPPHIRE,acard.getTokenBonusType());
 
   }
 
   @Test
   void getDeckType() {
-    assertEquals(BASE3,acard.getDeckType(),"");
+    assertEquals(BASE1,acard.getDeckType());
   }
 
   @Test
   void getTokenBonusType() {
-    assertEquals(EMERALD,acard.getTokenBonusType(),"");
-  }
-
-  @Test
-  void testEquals() {
-    assertTrue(acard.equals(acard),"");
-    assertFalse(acard.equals(BASE2),"");
-  }
-
-  @Test
-  void testHashCode() {
-    assertEquals(33,acard.hashCode(),"");
+    assertEquals(ONYX,acard.getTokenBonusType());
   }
 
   @Test
   void compareTo() {
-    assertEquals(2,acard.compareTo(bcard),"");
+    Card bcard = new Card(5,3,ONYX,BASE2,TWO,acost);
+    assertEquals(0,acard.compareTo(bcard));
   }
 
   @Test
   void getCardCost() {
-    assertEquals(acost,acard.getCardCost(),"");
-  }
-
-  @Test
-  void getCardStatus() {
-    acard.setCardStatus(CardStatus.NONE);
-    assertEquals(CardStatus.NONE,acard.getCardStatus(),"");
-  }
-
-  @Test
-  void setCardStatus() {
-    acard.setCardStatus(PURCHASED);
-    assertEquals(PURCHASED,acard.getCardStatus(),"");
+    assertEquals(acost, acard.getCardCost());
   }
 
   @Test
   void testToString() {
     assertEquals("Card{"
-      + "prestige=" + 3
-      + ", tokenBonus=" + EMERALD
-      + ", deckType=" + BASE3
+      + "prestige=" + 0
+      + ", tokenBonus=" + ONYX
+      + ", deckType=" + BASE1
       + ", discount=" + ONE
       + ", cardCost=" + acost
       + '}',
       acard.toString(),
       "");
+  }
+  @Test
+  void testHashCode() {
+    CardCost cost = new CardCost(1, 1, 1, 1, 0);
+    Card newCard = new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, cost);
+    assertEquals(acard.hashCode(), newCard.hashCode());
   }
 }
