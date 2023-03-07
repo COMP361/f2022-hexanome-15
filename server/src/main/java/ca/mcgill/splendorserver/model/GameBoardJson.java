@@ -22,9 +22,9 @@ public class GameBoardJson {
   
   private String whoseTurn;
   private List<InventoryJson> inventories;
-  private List<DeckJson> decks = new ArrayList<DeckJson>();
-  private List<Noble> nobles;
-  private List<Integer> cardField = new ArrayList<Integer>(); //implicit flattened 2d array
+  private List<DeckJson> decks = new ArrayList<>();
+  private List<NobleJson> nobles = new ArrayList<>();
+  private List<Integer> cardField = new ArrayList<>(); //implicit flattened 2d array
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostJson> tradingPosts = new ArrayList<>();
 
@@ -48,7 +48,9 @@ public class GameBoardJson {
     for (Deck deck : decks) {
       this.decks.add(new DeckJson(deck.getSize(), deck.getType()));
     }
-    this.nobles = nobles;
+    for (Noble noble : nobles) {
+      this.nobles.add(new NobleJson(noble.getId()));
+    }
     for (Card card : cardField) {
       this.cardField.add(card.getId());
     }
