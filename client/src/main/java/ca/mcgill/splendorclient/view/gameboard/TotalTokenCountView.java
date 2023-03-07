@@ -36,14 +36,15 @@ public class TotalTokenCountView extends Text {
     String text = String.format("Total Token Count: %d", totalTokenCount);
     setText(text);
   }
+
   /**
    * Sets the token count and updates the label.
    *
    * @param amount the amount of tokens to set
    */
   public void set(int amount) {
-	  totalTokenCount = amount;
-	  String text = String.format("Total Token Count: %d", totalTokenCount);
-	  setText(text);
+    totalTokenCount = amount;
+    String text = String.format("Total Token Count: %d", totalTokenCount);
+    setText(text);
   }
 }

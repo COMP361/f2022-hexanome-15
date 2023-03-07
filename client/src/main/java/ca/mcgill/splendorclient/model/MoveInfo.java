@@ -50,7 +50,7 @@ public class MoveInfo {
   /**
    * Returns card id associated with this move.
    *
-   * @return
+   * @return the card id
    */
   public String getCardId() {
     return cardId;

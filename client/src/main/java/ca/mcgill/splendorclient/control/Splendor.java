@@ -73,7 +73,7 @@ public class Splendor extends Application {
   }
   
   /**
-   * Creates a who's turn notification
+   * Creates a who's turn notification.
    */
   public void createTurnPopup() {
     

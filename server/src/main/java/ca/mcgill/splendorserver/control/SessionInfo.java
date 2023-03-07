@@ -2,7 +2,6 @@ package ca.mcgill.splendorserver.control;
 
 import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +50,10 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     this.creatorWrapper = gameCreator;
     this.savegame  = saveGameId;
   }
-  
+
+  /**
+   * Populates the player wrappers.
+   */
   public void populatePlayerWrappers() {
     playerWrappers = new ArrayList<PlayerWrapper>();
     for (Player player : players) {

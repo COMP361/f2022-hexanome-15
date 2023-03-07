@@ -172,7 +172,6 @@ public class GameRestController {
    * Sends a launch request to the server and launches the session.
    *
    * @param gameId The game id of the session to be launched
-   * @param sessionInfo The session info of the game to be launched
    * @return a response entity determining if the request was successful
    */
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")

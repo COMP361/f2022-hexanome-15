@@ -275,8 +275,7 @@ public class ActionManager {
         default:
           break;
       }
-    }
-    else {
+    } else {
       //this means we are starting a new base move
       getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
       getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
