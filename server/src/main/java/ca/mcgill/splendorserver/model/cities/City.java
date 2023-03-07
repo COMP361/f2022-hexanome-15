@@ -12,6 +12,8 @@ import java.util.Random;
  * with required prestige and gem amount to obtain the city.
  */
 public class City {
+
+  private final int id;
   private final int requiredPrestige;
   private final CardCost requiredCardBonuses;
   private static final List<City> cities = new ArrayList<City>();
@@ -20,13 +22,15 @@ public class City {
   /**
    * Creates a city.
    *
+   * @param id the city id
    * @param requiredPrestige the prestige required to obtain this city
    * @param requiredCardBonuses the card bonuses required to obtain this city
    */
-  public City(int requiredPrestige, CardCost requiredCardBonuses) {
-    assert requiredPrestige >= 0 && requiredCardBonuses != null;
+  public City(int id, int requiredPrestige, CardCost requiredCardBonuses) {
+    assert id >= 0 && requiredPrestige >= 0 && requiredCardBonuses != null;
     this.requiredPrestige = requiredPrestige;
     this.requiredCardBonuses = requiredCardBonuses;
+    this.id = id;
   }
 
   /**
@@ -35,6 +39,7 @@ public class City {
    * @return the gem amount required to obtain this city
    */
   public int getRequiredPrestige() {
+
     return requiredPrestige;
   }
 
@@ -44,7 +49,17 @@ public class City {
    * @return the card bonuses required to obtain this city
    */
   public CardCost getRequiredCardBonuses() {
+
     return requiredCardBonuses;
+  }
+
+  /**
+   * Returns the id of this city.
+   *
+   * @return the id of this city
+   */
+  public int getId() {
+    return id;
   }
 
   /**
@@ -73,17 +88,17 @@ public class City {
    * Then 2-4 random cities will be added to the game.
    */
   private static void generateCities() {
-    cities.add(new City(13, new CardCost(0, 0, 0, 4, 3)));
-    cities.add(new City(13, new CardCost(3, 4, 0, 0, 0)));
-    cities.add(new City(17, new CardCost(0, 0, 0, 0, 0)));
-    cities.add(new City(13, new CardCost(0, 0, 3, 0, 4)));
-    cities.add(new City(13, new CardCost(4, 0, 0, 3, 0)));
-    cities.add(new City(16, new CardCost(1, 1, 1, 1, 1)));
-    cities.add(new City(14, new CardCost(2, 1, 1, 2, 2)));
-    cities.add(new City(11, new CardCost(3, 3, 0, 3, 3)));
-    cities.add(new City(11, new CardCost(3, 0, 3, 3, 3)));
-    cities.add(new City(13, new CardCost(0, 3, 4, 0, 0)));
-    cities.add(new City(13, new CardCost(2, 2, 2, 2, 2)));
+    cities.add(new City(0, 13, new CardCost(0, 0, 0, 4, 3)));
+    cities.add(new City(1, 13, new CardCost(3, 4, 0, 0, 0)));
+    cities.add(new City(2, 17, new CardCost(0, 0, 0, 0, 0)));
+    cities.add(new City(3, 13, new CardCost(0, 0, 3, 0, 4)));
+    cities.add(new City(4, 13, new CardCost(4, 0, 0, 3, 0)));
+    cities.add(new City(5, 16, new CardCost(1, 1, 1, 1, 1)));
+    cities.add(new City(6, 14, new CardCost(2, 1, 1, 2, 2)));
+    cities.add(new City(7, 11, new CardCost(3, 3, 0, 3, 3)));
+    cities.add(new City(8, 11, new CardCost(3, 0, 3, 3, 3)));
+    cities.add(new City(9, 13, new CardCost(0, 3, 4, 0, 0)));
+    cities.add(new City(10, 13, new CardCost(2, 2, 2, 2, 2)));
 
     //TODO: Make it possible to have a card cost of n cards of the same type
     /*cities.add(new City(12, new CardCost(6,0,0,0,0)));

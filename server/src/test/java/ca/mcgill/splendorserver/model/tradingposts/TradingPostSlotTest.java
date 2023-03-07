@@ -10,14 +10,14 @@ import static ca.mcgill.splendorserver.model.tradingposts.Power.GOLD_TOKENS_WORT
 import static org.junit.jupiter.api.Assertions.*;
 
 class TradingPostSlotTest {
-  CardCost cost = new CardCost(1,2,3,2,1);
+  CardCost cost;
   TradingPostSlot tradingSlot;
 
   @BeforeEach
   void setUp() {
-    tradingSlot = new TradingPostSlot(true,GOLD_TOKENS_WORTH_2_GEMS_SAME_COL,cost);
+    cost = new CardCost(1, 0, 0, 3, 0);
+    tradingSlot = new TradingPostSlot(0, true, GOLD_TOKENS_WORTH_2_GEMS_SAME_COL, cost);
   }
-
 
   @Test
   void isRequiresNoble() {
@@ -32,6 +32,11 @@ class TradingPostSlotTest {
   @Test
   void getCardRequirements() {
     assertEquals(cost,tradingSlot.getCardRequirements());
+  }
+
+  @Test
+  void getId() {
+    assertEquals(0, tradingSlot.getId());
   }
 
   @Test

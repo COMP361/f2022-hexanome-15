@@ -153,7 +153,7 @@ class UserInventoryTest {
 
   @Test
   void addPower() {
-    TradingPostSlot tradingSlot = new TradingPostSlot(false, GAIN_5_PRESTIGE, cost);
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());
@@ -162,7 +162,7 @@ class UserInventoryTest {
 
   @Test
   void canReceivePower() {
-    TradingPostSlot tradingSlot = new TradingPostSlot(false, GAIN_5_PRESTIGE, cost);
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     assertTrue(uinv.canReceivePower(tradingSlot));
@@ -199,7 +199,7 @@ class UserInventoryTest {
 
   @Test
   void removePower() {
-    TradingPostSlot tradingSlot = new TradingPostSlot(false, GAIN_5_PRESTIGE, cost);
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());

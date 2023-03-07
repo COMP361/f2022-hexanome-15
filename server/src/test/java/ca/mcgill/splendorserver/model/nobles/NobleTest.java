@@ -39,6 +39,7 @@ class NobleTest {
     assertEquals(NobleStatus.ON_BOARD,anoble.getStatus());
   }
 
+  @Test
   void getId() {
     assertEquals(0, anoble.getId());
   }

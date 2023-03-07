@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest
 {
-  CardCost cardc = new CardCost(4, 4, 0, 0, 0);
+  CardCost cardc = new CardCost(1, 0, 0, 3, 0);
   Noble anoble = new Noble(0, cardc);
-  TradingPostSlot aTPS = new TradingPostSlot(false,PURCHASE_CARD_TAKE_TOKEN,cardc);
+  TradingPostSlot aTPS = new TradingPostSlot(0,false, PURCHASE_CARD_TAKE_TOKEN, cardc);
   TokenType tkps = DIAMOND;
   TokenType rtkps = EMERALD;
   PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
   Card acard = new Card(1,2,DIAMOND,BASE2,ONE,cardc);
   Action mAction = PURCHASE_DEV;
-  Move amove = new Move(PURCHASE_DEV,acard,aPlayer,BASE2,rtkps,anoble,aTPS,tkps);
+  Move amove = new Move(PURCHASE_DEV, acard, aPlayer, BASE2, rtkps, anoble, aTPS, tkps);
 
   @Test
   void getCard() {

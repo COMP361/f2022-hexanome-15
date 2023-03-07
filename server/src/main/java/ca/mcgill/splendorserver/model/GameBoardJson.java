@@ -6,7 +6,6 @@ import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ public class GameBoardJson {
   private List<Integer> cardField = new ArrayList<Integer>(); //implicit flattened 2d array
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostSlot> tradingPostSlots;
+
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
    *
@@ -40,7 +40,8 @@ public class GameBoardJson {
    * @param tradingPostSlots trading post slots on the field
    */
   public GameBoardJson(String whoseTurn, List<InventoryJson> inventories, List<Deck> decks,
-                       List<Noble> nobles, List<Card> cardField, EnumMap<TokenType, TokenPile> tokenField,
+                       List<Noble> nobles, List<Card> cardField,
+                       EnumMap<TokenType, TokenPile> tokenField,
                        List<TradingPostSlot> tradingPostSlots) {
     this.whoseTurn = whoseTurn;
     this.inventories = inventories;

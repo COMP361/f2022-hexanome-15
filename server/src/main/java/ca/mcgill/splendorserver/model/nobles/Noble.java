@@ -25,7 +25,7 @@ public class Noble {
    * @param visitRequirements the token type bonus requirements for visiting this noble
    */
   public Noble(int id, CardCost visitRequirements) {
-    assert visitRequirements != null;
+    assert id >= 0 && visitRequirements != null;
     this.visitRequirements = visitRequirements;
     this.status            = NobleStatus.ON_BOARD;
     this.prestige          = 3;
