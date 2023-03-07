@@ -135,6 +135,7 @@ public class GameBoardView {
       Counter cardCounter = cardColumn.getNumCardsDisplay();
       HBox tokenRow = new HBox();
       tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
+      userInventoryView.addCounter(pileView.getCounter());
       tokenColumn.getChildren().add(tokenRow);
       ++i;
     }
@@ -146,6 +147,7 @@ public class GameBoardView {
     Counter cardCounter = new Counter(0);
     miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
     tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
+    userInventoryView.addCounter(pileView.getCounter());
     tokenColumn.getChildren().add(tokenRow);
   }
 
@@ -162,6 +164,7 @@ public class GameBoardView {
       TokenPileView pileView =
           new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
+      
       tokenRow.getChildren().add(tokenColumn);
       instance.tokenPileViews.add(pileView);
     }
@@ -177,7 +180,7 @@ public class GameBoardView {
                                                 Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
       CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
-      newView.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+      newView.setBackground(new Background(new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
       //newView.getChildren().add(new HBox(4));
       newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
       inventoryView.addCardColumn(newView);
@@ -205,7 +208,13 @@ public class GameBoardView {
     TotalPrestigeCountView prestigeCountView =
         new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
-    UserInventoryView inventoryView = new UserInventoryView(playerName, screenSize.height / 15f, screenSize.width / 15f);
+    UserInventoryView inventoryView = new UserInventoryView(playerName,
+    		screenSize.height / 15f,
+    		screenSize.width / 15f,
+    		tokenCountView,
+    		cardCountView,
+    		prestigeCountView);
+    userViews.add(inventoryView);
     populateUserInventoryView(inventoryView, screenSize);
     populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
     for (CardColumnView cardColumn : inventoryView) {
@@ -369,6 +378,12 @@ public class GameBoardView {
 		  int[] visitingNobleIDs,
 		  int[] powers) {
     userViews.get(playerIndex).updateCards(cards);
-    
+    userViews.get(playerIndex).updateTokens(numOfDiamonds,
+    		numOfSapphires,
+    		numOfEmeralds,
+    		numOfRubies,
+    		numOfOnyx,
+    		numOfGolds);
+    userViews.get(playerIndex).updatePrestige(prestige);
   }
 }

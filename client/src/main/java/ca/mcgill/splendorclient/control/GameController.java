@@ -131,10 +131,16 @@ public class GameController {
                   placeholder,
                   placeholder);
               }
+              
+              //update tokens
+              
+              
+              //update nobles
+              
             }
             
           });
-          if (currentTurn.equals(User.THISUSER.getUsername())) {
+          /*if (currentTurn.equals(User.THISUSER.getUsername())) {
             HttpResponse<JsonNode> moveMap = Unirest
                 .get(String.format("http://%s/api/games/%d/players/%s/action", 
                     LobbyServiceExecutor.SERVERLOCATION, gameId, currentTurn))
