@@ -5,6 +5,8 @@ import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -58,8 +60,11 @@ public class GameBoardJson {
       this.tokenField.put(type, tokenField.get(type).getSize());
     }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
-      this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(),
-          tradingPostSlot.getAcquiredCoatOfArmsList()));
+      List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()){
+        coatOfArmsTypes.add(coatOfArms.getType());
+      }
+      this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
     }
   }
 

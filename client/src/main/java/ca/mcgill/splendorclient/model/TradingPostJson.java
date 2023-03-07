@@ -9,7 +9,7 @@ import java.util.List;
 public class TradingPostJson {
 
   private final int id;
-  private final List<CoatOfArms> acquiredCoatOfArmsList;
+  private final List<CoatOfArmsType> acquiredCoatOfArmsList;
 
   /**
    * Creates a TradingPostJson object.
@@ -17,7 +17,7 @@ public class TradingPostJson {
    * @param id the id of the trading post
    * @param acquiredCoatOfArmsList the acquired coat of arms in the trading post
    */
-  public TradingPostJson(int id, List<CoatOfArms> acquiredCoatOfArmsList) {
+  public TradingPostJson(int id, List<CoatOfArmsType> acquiredCoatOfArmsList) {
     this.id = id;
     this.acquiredCoatOfArmsList = acquiredCoatOfArmsList;
   }
