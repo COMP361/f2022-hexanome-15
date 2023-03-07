@@ -101,6 +101,42 @@ public class ActionManager {
   }
 
   /**
+   * Finds cascade card moves in the move map and forwards to server.
+   *
+   * @param cardid requested to take for free
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendCascadeLevel1Move(int cardid) {
+    System.out.println("Search for cascade card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("CASCADE_LEVEL_1")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds cascade card moves in the move map and forwards to server.
+   *
+   * @param cardid requested to take for free
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendCascadeLevel2Move(int cardid) {
+    System.out.println("Search for cascade card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("CASCADE_LEVEL_2")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Returns this instance of ActionManager.
    *
    * @return this instance of ActionManager
