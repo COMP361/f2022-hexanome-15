@@ -91,9 +91,7 @@ public class ActionManager {
     System.out.println("PlayerWrapper name: " + playerWrapper.get().getName());
     // throw error if the action MD5 isn't valid
     if (!moves.containsKey(actionMd5)) {
-      System.out.println("Could not find move");
-      throw new IllegalArgumentException(
-          "Received move MD5 (" + actionMd5 + ") doesn't match any moves offered");
+      System.out.println("Could not find move: " + actionMd5);
     }
 
     // pass the move along so that the game states are appropriately updated

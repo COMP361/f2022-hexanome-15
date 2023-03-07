@@ -126,35 +126,35 @@ public class ActionManager {
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select additional token to take.");
-      takeTokenAlert.showAndWait();
+      takeTokenAlert.show();
     }
     if (action.equals("PAIR_SPICE_CARD")) {
       // inform user to pair card
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select card in your inventory to pair with.");
-      takeTokenAlert.showAndWait();
+      takeTokenAlert.show();
     }
     if (action.equals("RECEIVE_NOBLE")) {
       // inform user to select noble to be visited by if more than one
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to be visited by.");
-      alert.showAndWait();
+      alert.show();
     }
     if (action.equals("RESERVE_NOBLE")) {
       // inform user to select noble to reserve
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to reserve.");
-      alert.showAndWait();
+      alert.show();
     }
     if (action.equals("RET_1_TOKEN")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid token to return.");
-      alert.showAndWait();
+      alert.show();
     }
   }
 
