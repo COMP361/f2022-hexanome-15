@@ -38,6 +38,9 @@ public class ActionManager {
    */
   public static void setCurrentMoveMap(Map<String, MoveInfo> currentMap) {
     currentMoveMap = currentMap;
+    for (Entry<String, MoveInfo> entry : currentMap.entrySet()) {
+      System.out.println(entry.getKey() + " : " + entry.getValue().getAction());
+    }
   }
 
   /**
