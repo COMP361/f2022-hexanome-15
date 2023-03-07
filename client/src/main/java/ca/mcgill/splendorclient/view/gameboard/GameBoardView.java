@@ -36,6 +36,7 @@ public class GameBoardView {
   private static final ArrayList<DeckView> deckViews = new ArrayList<>();
   private static final ArrayList<NobleView> nobleViews = new ArrayList<>();
   private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
+  private static TradingView tradingView;
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
   //private static final float baseUnit_X = screenSize.height / 15f;
@@ -344,10 +345,15 @@ public class GameBoardView {
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
     tokenRow.setLayoutX(screenSize.width / 6f);
     populateGameBoardTokenPiles(tokenRow, screenSize, nPlayers);
+    
+    //creating Trade Routes expansion
+    tradingView = new TradingView(screenSize);
+    tradingView.setLayoutY(screenSize.height / 2.4f);
+    tradingView.setLayoutX(screenSize.width / 4f);
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
+    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow, tradingView);
     root.getChildren().addAll(allUserInventoryViews);
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///"+rootPath+"/resources/background_tile.jpg");
