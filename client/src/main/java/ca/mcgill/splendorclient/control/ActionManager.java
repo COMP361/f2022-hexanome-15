@@ -4,11 +4,13 @@ import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorclient.model.users.User;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -39,12 +41,13 @@ public class ActionManager {
   }
 
   /**
-   * Finds token moves in the token map and send token moves to the server.
+   * Finds token moves in the move map and send token moves to the server.
    *
    * @param type the type of token
    * @return a HttpResponse
    */
-  public static HttpResponse<JsonNode> findAndSendAssociatedTokenMove(TokenType type) {
+  public static HttpResponse<String> findAndSendAssociatedTokenMove(TokenType type) {
+    System.out.println("Searching for token move with type " + type);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("TAKE_TOKEN")) {
         if (entry.getValue().getTokenType().equals(type.toString())) {
@@ -55,6 +58,43 @@ public class ActionManager {
     return null;
   }
   
+  
+  /**
+   * Finds reserve dev moves in the move map and forwards them to server.
+   *
+   * @param cardid requested to reserve
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReserveCardMove(int cardid) {
+    System.out.println("Searching for reserve card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RESERVE_DEV_TAKE_JOKER") 
+          || entry.getValue().getAction().equals("RESERVE_DEV")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Finds purchase dev moves in the move map and forwards to server.
+   *
+   * @param cardid requested to purchase
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendPurchaseCardMove(int cardid) {
+    System.out.println("Search for purchase card move with id: " + cardid); 
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("PURCHASE_DEV")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
 
   /**
    * Returns this instance of ActionManager.
@@ -80,6 +120,9 @@ public class ActionManager {
     if (action.equals("TAKE_TOKEN")) {
       //inform user to take next token
     }
+    if (action.equals("PAIR_SPICE_CARD")) {
+      
+    }
   }
 
   /**
@@ -91,14 +134,16 @@ public class ActionManager {
     return Unirest.get(String.format("http://%s/api/games/%d/players/%s/actions", 
         LobbyServiceExecutor.SERVERLOCATION, 
         GameController.getInstance().getGameId(), 
-        User.THISUSER.getUsername())).asJson();
+        User.THISUSER.getUsername()))
+        .queryString("access_token", User.THISUSER.getAccessToken()).asJson();
   }
   
-  private static HttpResponse<JsonNode> sendAction(String action) {
+  private static HttpResponse<String> sendAction(String action) {
     return Unirest.put(String.format("http://%s/api/games/%d/players/%s/actions/%s", 
         LobbyServiceExecutor.SERVERLOCATION, 
         GameController.getInstance().getGameId(), 
-        User.THISUSER.getUsername(), action)).asJson();
+        User.THISUSER.getUsername(), action))
+        .queryString("access_token", User.THISUSER.getAccessToken()).asString();
   }
 
   /**

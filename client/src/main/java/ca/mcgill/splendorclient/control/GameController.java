@@ -1,14 +1,19 @@
 package ca.mcgill.splendorclient.control;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.GameBoardJson;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorclient.view.gameboard.GameBoardView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.util.HashMap;
-import java.util.Map;
+import ca.mcgill.splendorclient.view.gameboard.TokenPileView;
 import javafx.application.Platform;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -85,23 +90,28 @@ public class GameController {
 
     @Override
     public void run() {
+      boolean requestedActions = false;
       while (true) {
         HttpResponse<JsonNode> response = Unirest
             .get(String.format("http://%s/api/games/%d/board", LobbyServiceExecutor.SERVERLOCATION, gameId))
             .asJson();
-        if (response.getBody().toPrettyString() != currentState) {
+        if (response.getStatus() == 404) {
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          continue;
+        }
+        if (!response.getBody().toPrettyString().equals(currentState)) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
-          //GameBoardJson gameboardJson =
-          //    new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
-          //String currentTurn = gameboardJson.getWhoseTurn();
           Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
               //update gameboard view
-            	
-              //update card field
               JSONArray cardArray = response.getBody().getObject().optJSONArray("cardField");
               int[] cardids = new int[cardArray.length()];
               for (int i = 0; i < cardArray.length(); i++) {
@@ -113,7 +123,7 @@ public class GameController {
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
               for (int player = 0; player < inventories.length(); player++) {
             	JSONObject inventory = (JSONObject) inventories.get(player);
-            	JSONArray playerCardArray = inventory.getJSONArray("cards");
+            	JSONArray playerCardArray = inventory.getJSONArray("purchasedcards");
             	int[] playerCardids = new int[playerCardArray.length()];
                 for (int i = 0; i < playerCardArray.length(); i++) {
                 	playerCardids[i] = playerCardArray.getInt(i);
@@ -160,20 +170,24 @@ public class GameController {
             }
             
           });
-          /*if (currentTurn.equals(User.THISUSER.getUsername())) {
+          String currentTurn = response.getBody().getObject().getString("whoseTurn");
+          if (currentTurn.equals(User.THISUSER.getUsername()) && !requestedActions) {
+            requestedActions = true;
             HttpResponse<JsonNode> moveMap = Unirest
-                .get(String.format("http://%s/api/games/%d/players/%s/action", 
+                .get(String.format("http://%s/api/games/%d/players/%s/actions", 
                     LobbyServiceExecutor.SERVERLOCATION, gameId, currentTurn))
+                .queryString("access_token", User.THISUSER.getAccessToken())
                 .asJson();
             System.out.println(moveMap.getBody().toPrettyString()); 
             String moves = moveMap.getBody().toString();
             Gson gson = new Gson();
-            Map<String, MoveInfo> availableMoves =
-                gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
+            Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
             ActionManager.setCurrentMoveMap(availableMoves);
-          } else {
+          }
+          else if (!currentTurn.equals(User.THISUSER.getUsername())) {
+            requestedActions = false;
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
-          }*/
+          }
         }
         try {
           Thread.sleep(2000);

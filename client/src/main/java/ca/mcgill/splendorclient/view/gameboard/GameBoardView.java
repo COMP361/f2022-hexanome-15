@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Popup;
 import kong.unirest.json.JSONArray;
 
 /**
@@ -167,7 +168,6 @@ public class GameBoardView {
       TokenPileView pileView =
           new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
-      
       tokenRow.getChildren().add(tokenColumn);
       instance.tokenPileViews.add(pileView);
     }
@@ -331,7 +331,7 @@ public class GameBoardView {
     root.getChildren().addAll(allUserInventoryViews);
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///"+rootPath+"/resources/background_tile.jpg");
-	root.setBackground(new Background(new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+    root.setBackground(new Background(new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     return toReturn;
   }
 

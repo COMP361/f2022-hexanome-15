@@ -1,5 +1,6 @@
 /*package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorserver.gameio.ActionManager;
 import ca.mcgill.splendorserver.gameio.GameRestController;
 import ca.mcgill.splendorserver.gameio.Launcher;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
@@ -58,7 +59,7 @@ class ActionManagerTest {
     String playerName = "Slava";
 
     GameRestController gRC = new GameRestController();
-    gRC.launchRequest(1L,si);
+    gRC.launchRequest(1L,si.toString());
 
     CardCost cardc = new CardCost(1,2,3,4,5);
     Card acard = new Card(1,2,DIAMOND,BASE2,ONE,cardc);
