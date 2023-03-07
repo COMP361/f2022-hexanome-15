@@ -117,20 +117,31 @@ public class GameController {
               JSONArray nobleArray = response.getBody().getObject().optJSONArray("nobles");
               int[] nobleids = new int[nobleArray.length()];
               for (int i = 0; i < nobleArray.length(); i++) {
-                nobleids[i] = (int) ((JSONObject) nobleArray.get(i)).get("id");
+                nobleids[i] = (int) (nobleArray.get(i));
               }
               GameBoardView.updateNobleViews(nobleids);
               
               //update inventories
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
               for (int player = 0; player < inventories.length(); player++) {
-                JSONObject inventory = (JSONObject) inventories.get(player);
-                JSONArray playerCardArray = inventory.getJSONArray("purchasedcards");
-                int[] playerCardids = new int[playerCardArray.length()];
+
+            	JSONObject inventory = (JSONObject) inventories.get(player);
+            	
+            	JSONArray playerCardArray = inventory.getJSONArray("purchasedcards");
+            	int[] playerCardids = new int[playerCardArray.length()];
+
                 for (int i = 0; i < playerCardArray.length(); i++) {
                   playerCardids[i] = playerCardArray.getInt(i);
                 }
+                
+                JSONArray reservedCardArray = inventory.getJSONArray("reservedcards");
+                int[] reservedCardids = new int[reservedCardArray.length()];
+                  for (int i = 0; i < reservedCardArray.length(); i++) {
+                    reservedCardids[i] = reservedCardArray.getInt(i);
+                  }
+                  
                 int[] placeholder = null;
+
                 GameBoardView.updateInventories(player,
                     playerCardids,
                     inventory.getJSONObject("tokens").getInt("DIAMOND"),

@@ -66,12 +66,26 @@ public class UserInventoryView implements Iterable<CardColumnView> {
    *
    * @param cardids IDs of the cards in the player's possession
    */
-  public void updateCards(int[] cardids) {
+  public void updateCards(int[] cardIDs, int[] reservedcards) {
     cardColumns.get(0).getChildren().clear();
-    for (int card : cardids) {
+    cardColumns.get(1).getChildren().clear();
+    cardColumns.get(2).getChildren().clear();
+    cardColumns.get(3).getChildren().clear();
+    float counter = 0.0f;
+	  for (int card : cardIDs) {
+		  CardView toAdd = new CardView(sizeX, sizeY);
+		  toAdd.updateView(card);
+		  cardColumns.get((int) (counter/4)).getChildren().add(toAdd);
+		  toAdd.setTranslateY(20f* (counter%4));
+		  counter++;
+	  }
+	  counter = 0;
+	  for (int card : reservedcards) {
       CardView toAdd = new CardView(sizeX, sizeY);
-      toAdd.updateView(card);
-      cardColumns.get(0).getChildren().add(toAdd);
+      toAdd.updateViewReserved(card);
+      cardColumns.get(3).getChildren().add(toAdd);
+      toAdd.setTranslateY(40f* (counter%4));
+      counter++;
     }
   }
 

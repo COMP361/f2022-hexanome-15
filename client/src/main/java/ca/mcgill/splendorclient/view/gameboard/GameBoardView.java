@@ -192,7 +192,7 @@ public class GameBoardView {
       newView.setBackground(new Background(
           new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
       //newView.getChildren().add(new HBox(4));
-      newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
+      //newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
       inventoryView.addCardColumn(newView);
     }
   }
