@@ -32,6 +32,7 @@ import kong.unirest.json.JSONArray;
 public class GameBoardView {
   
   private static final ArrayList<CardView> cardViews = new ArrayList<CardView>();
+  private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
   //private static final float baseUnit_X = screenSize.height / 15f;
@@ -175,7 +176,11 @@ public class GameBoardView {
   private static void populateUserInventoryView(UserInventoryView inventoryView,
                                                 Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
-      inventoryView.addCardColumn(new CardColumnView(TokenType.values()[i], screenSize));
+      CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
+      newView.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+      //newView.getChildren().add(new HBox(4));
+      newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
+      inventoryView.addCardColumn(newView);
     }
   }
 
@@ -200,7 +205,7 @@ public class GameBoardView {
     TotalPrestigeCountView prestigeCountView =
         new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
-    UserInventoryView inventoryView = new UserInventoryView(playerName);
+    UserInventoryView inventoryView = new UserInventoryView(playerName, screenSize.height / 15f, screenSize.width / 15f);
     populateUserInventoryView(inventoryView, screenSize);
     populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
     for (CardColumnView cardColumn : inventoryView) {
@@ -259,7 +264,7 @@ public class GameBoardView {
     DeckView redDeckView = createDeckView(CardType.BASE3, screenSize);
     DeckView yellowDeckView = createDeckView(CardType.BASE2, screenSize);
     DeckView greenDeckView = createDeckView(CardType.BASE1, screenSize);
-    //orientDecksBox
+    
     DeckView orient3DeckView = createDeckView(CardType.ORIENT3, screenSize);
     DeckView orient2DeckView = createDeckView(CardType.ORIENT2, screenSize);
     DeckView orient1DeckView = createDeckView(CardType.ORIENT1, screenSize);
@@ -271,6 +276,7 @@ public class GameBoardView {
             getDeckPane(orient2DeckView), getDeckPane(orient1DeckView));
 
     final int nPlayers = players.length();
+    
     //building all user inventories
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
@@ -309,7 +315,7 @@ public class GameBoardView {
   }
 
   /**
-   * Updates the card views.
+   * Updates the card views based on data received from server.
    *
    * @param field the card field
    */
@@ -332,5 +338,37 @@ public class GameBoardView {
     cardViews.get(15).updateView(field[17]);
     cardViews.get(16).updateView(field[15]);
     cardViews.get(17).updateView(field[13]);
+  }
+  
+  /**
+   * Updates the given player's displayed inventory,
+   * including their hand, token amounts, prestige,
+   * nobles, and powers.
+   *
+   * @param field the card field
+   * @param cards an int[] array representing cards in player's possession
+   * @param numOfDiamonds number of diamond tokens in player's possession
+   * @param numOfSapphires number of sapphire tokens in player's possession
+   * @param numOfEmeralds number of emerald tokens in player's possession
+   * @param numOfRubies number of ruby tokens in player's possession
+   * @param numOfOnyx number of onyx tokens in player's possession
+   * @param numOfGolds number of gold tokens in player's possession
+   * @param prestige player's current prestige score
+   * @param visitingNobleIDs IDs of nobles currently visiting player
+   * @param powers int[] array representing unlocked Trading Posts powers
+   */
+  public static void updateInventories(int playerIndex,
+		  int[] cards,
+		  int numOfDiamonds,
+		  int numOfSapphires,
+		  int numOfEmeralds,
+		  int numOfRubies,
+		  int numOfOnyx,
+		  int numOfGolds,
+		  int prestige,
+		  int[] visitingNobleIDs,
+		  int[] powers) {
+    userViews.get(playerIndex).updateCards(cards);
+    
   }
 }
