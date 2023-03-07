@@ -33,6 +33,7 @@ public class GameBoardView {
 
   private static final ArrayList<CardView> cardViews = new ArrayList<CardView>();
   private static final ArrayList<DeckView> deckViews = new ArrayList<>();
+  private static final ArrayList<NobleView> nobleViews = new ArrayList<>();
   private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
@@ -98,6 +99,12 @@ public class GameBoardView {
   private static CardView createCardView(Dimension screenSize, String location) {
     CardView newView = new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
     cardViews.add(newView);
+    return newView;
+  }
+
+  private static NobleView createNobleView(Dimension screenSize) {
+    NobleView newView = new NobleView(screenSize.width / 13f, screenSize.width / 13f);
+    nobleViews.add(newView);
     return newView;
   }
 
@@ -309,14 +316,27 @@ public class GameBoardView {
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards
+//    VBox nobleCards = new VBox();
+//    nobleCards.setLayoutY(screenSize.height / 20f);
+//    nobleCards.setLayoutX(screenSize.width / 12f);
+//    for (int i = 0; i < 5; i++) {
+//      Rectangle rectangle = new Rectangle(screenSize.height / 15f, screenSize.width / 15f);
+//      nobleCards.getChildren().add(rectangle);
+//    }
+//    nobleCards.setSpacing(3);
+
     VBox nobleCards = new VBox();
-    nobleCards.setLayoutY(screenSize.height / 20f);
-    nobleCards.setLayoutX(screenSize.width / 12f);
-    for (int i = 0; i < 5; i++) {
-      Rectangle rectangle = new Rectangle(screenSize.height / 15f, screenSize.width / 15f);
-      nobleCards.getChildren().add(rectangle);
+    nobleCards.setLayoutX(screenSize.width / 20f);
+    nobleCards.setLayoutY(screenSize.height / 12f);
+    int playerCount = players.length();
+    if (playerCount <= 2) {
+      for (int i = 0; i < 3; i++) {
+        NobleView nobleView = createNobleView(screenSize);
+        nobleCards.getChildren().add(nobleView);
+      }
+      nobleCards.setSpacing(3);
     }
-    nobleCards.setSpacing(3);
+
 
     //Creating token piles
     HBox tokenRow = new HBox();
@@ -359,6 +379,14 @@ public class GameBoardView {
     cardViews.get(15).updateView(field[17]);
     cardViews.get(16).updateView(field[15]);
     cardViews.get(17).updateView(field[13]);
+  }
+
+  public static void updateNobleViews(int[] field) {
+    int num = 0;
+    for (int i = 0; i < nobleViews.size(); i++) {
+      nobleViews.get(i).updateView(field[num]);
+      num++;
+    }
   }
   
   /**
