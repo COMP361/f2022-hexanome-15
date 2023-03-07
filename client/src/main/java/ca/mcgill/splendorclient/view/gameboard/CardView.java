@@ -80,8 +80,6 @@ public class CardView extends StackPane {
    * @param num the card id
    */
   public void updateView(int num) {
-	//yes hardcoded for testing
-	  System.out.println("file:///"+rootPath+"/resources/card_"+num+".jpg");
 	Image newImage = new Image("file:///"+rootPath+"/resources/card_"+num+".jpg");
 	outer.setFill(ColorManager.getColor(num));
 	inner.setFill(new ImagePattern(newImage));
