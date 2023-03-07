@@ -30,8 +30,9 @@ import kong.unirest.json.JSONArray;
  * Represents the view of the Splendor game board.
  */
 public class GameBoardView {
-  
+
   private static final ArrayList<CardView> cardViews = new ArrayList<CardView>();
+  private static final ArrayList<DeckView> deckViews = new ArrayList<>();
   private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
@@ -83,8 +84,10 @@ public class GameBoardView {
    * @param screenSize the size of the screen
    */
   private static DeckView createDeckView(CardType type, Dimension screenSize) {
-    return new DeckView(screenSize.height / 15f, screenSize.width / 15f,
-      0, ColorManager.getColor(type));
+	DeckView newView = new DeckView(screenSize.height / 15f, screenSize.width / 15f,
+		      0, ColorManager.getColor(type));
+	//deckViews.add(newView);
+    return newView;
   }
 
   /**
@@ -277,7 +280,16 @@ public class GameBoardView {
     DeckView orient3DeckView = createDeckView(CardType.ORIENT3, screenSize);
     DeckView orient2DeckView = createDeckView(CardType.ORIENT2, screenSize);
     DeckView orient1DeckView = createDeckView(CardType.ORIENT1, screenSize);
-
+    
+    //adding deckviews to list field for modification by GameController
+    //these follow order b123,o123 as in state json
+    deckViews.add(greenDeckView);
+    deckViews.add(yellowDeckView);
+    deckViews.add(redDeckView);
+    deckViews.add(orient1DeckView);
+    deckViews.add(orient2DeckView);
+    deckViews.add(orient3DeckView);
+    
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
         getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
@@ -385,5 +397,11 @@ public class GameBoardView {
     		numOfOnyx,
     		numOfGolds);
     userViews.get(playerIndex).updatePrestige(prestige);
+  }
+  
+  public static void updateTokens(int[] a) {
+	  for (int i = 0; i < a.length; i++) {
+		  deckViews.get(i).setNumCardsDisplay(a[i]);
+	  }
   }
 }

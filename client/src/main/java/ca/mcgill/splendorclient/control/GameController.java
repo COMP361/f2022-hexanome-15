@@ -149,6 +149,14 @@ public class GameController {
               
               //update nobles
               
+              
+              //update decks
+              JSONArray decks = response.getBody().getObject().getJSONArray("decks");
+              int[] decksArray = new int[decks.length()];
+              for (int i = 0; i < decks.length(); i++) {
+            	  decksArray[i] = ((JSONObject) decks.get(i)).getInt("ncards");
+              }
+              GameBoardView.updateTokens(decksArray);
             }
             
           });
