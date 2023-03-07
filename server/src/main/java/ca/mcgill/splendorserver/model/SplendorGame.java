@@ -226,10 +226,10 @@ public class SplendorGame {
     setUpPlayingField(playingField, decks);
     setUpTokenPiles(piles, true);
 
-    if (sessionInfo.getGameServer().equals("SplendorOrient+TradingPosts")) {
+    if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
       setUpUserInventoriesTradingPosts(inventories);
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
-    } else if (sessionInfo.getGameServer().equals("SplendorOrient+Cities")) {
+    } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
       setUpUserInventories(inventories);
       cities = City.getCities(sessionInfo.getNumPlayers());
     } else {
