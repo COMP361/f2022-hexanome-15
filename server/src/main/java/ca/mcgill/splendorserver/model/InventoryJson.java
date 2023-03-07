@@ -25,7 +25,7 @@ public class InventoryJson {
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
-  private List<Noble> visitingNobles;
+  private List<Integer> visitingNobles;
   private List<Power> powers;
   private CoatOfArmsPile coatOfArmsPile;
 
@@ -55,7 +55,9 @@ public class InventoryJson {
     }
     this.userName = userName;
     this.prestige = prestige;
-    this.visitingNobles = visitingNobles;
+    for (Noble noble : visitingNobles) {
+      this.visitingNobles.add(noble.getId());
+    }
     this.powers = powers;
     coatOfArmsPile = pile;
   }

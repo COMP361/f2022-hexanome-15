@@ -1,4 +1,4 @@
-/*package ca.mcgill.splendorserver.gameio;
+package ca.mcgill.splendorserver.gameio;
 
 
 import ca.mcgill.splendorserver.control.LocalGameStorage;
@@ -51,6 +51,7 @@ class GameRestControllerTest {
     assertTrue(LocalGameStorage.getActiveGame(0L).isEmpty());
   }
 
+  /*
   @Test
   void getGameBoard() {
     assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build(),
@@ -60,18 +61,22 @@ class GameRestControllerTest {
     grc.launchRequest(0L,si);
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0L);
 
+
     //ResponseEntity<String> aRep = ResponseEntity.status(HttpStatus.OK).body();
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     assertEquals(ResponseEntity.status(HttpStatus.OK),
       grc.getGameBoard(0L),
       "GameId 0L registered on SplendorGame");
-  }
 
+  }*/
+
+  @Test
   void knockTest() {
     assertEquals("SOMEONE'S KNOCKING", grc.knock(), "");
   }
 }
 
+/*
 import org.junit.jupiter.api.BeforeEach;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -84,7 +89,7 @@ class GameRestControllerTest {
     System.setOut(new PrintStream(outputStreamCaptor));
   }
 
-  /*@Test
+  @Test
   @PutMapping
   public void testlaunchRequest() {
     String sg = "";
@@ -124,6 +129,6 @@ class GameRestControllerTest {
   @Test
   void knock() {
   }
-}
-*/
+}*/
+
 
