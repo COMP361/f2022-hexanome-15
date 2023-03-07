@@ -172,14 +172,15 @@ public class GameRestController {
    * Sends a launch request to the server and launches the session.
    *
    * @param gameId The game id of the session to be launched
-   * @param sessionInfo The session info of the game to be launched
    * @return a response entity determining if the request was successful
    */
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
   public ResponseEntity<String> launchRequest(@PathVariable long gameId,
-                                              @RequestBody SessionInfo sessionInfo
+                                              @RequestBody String sessionInfoJson
   ) {
 
+    SessionInfo sessionInfo = new Gson().fromJson(sessionInfoJson, SessionInfo.class);
+    sessionInfo.populatePlayerWrappers();
     try {
       if (sessionInfo == null || sessionInfo.getGameServer() == null) {
         throw new Exception();
@@ -229,8 +230,8 @@ public class GameRestController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
     } else {
-      String json = buildGameBoardJson(manager.get()
-                                           .whoseTurn().getName(), manager.get().getBoard());
+      String json = buildGameBoardJson(manager.get().whoseTurn().getName(), 
+          manager.get().getBoard());
       return ResponseEntity.status(HttpStatus.OK)
       .body(json);
     }

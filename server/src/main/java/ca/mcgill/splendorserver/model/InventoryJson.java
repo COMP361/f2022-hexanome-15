@@ -20,7 +20,8 @@ import java.util.Map;
  */
 public class InventoryJson {
   
-  private List<Integer> cards = new ArrayList<Integer>();
+  private List<Integer> purchasedcards = new ArrayList<Integer>();
+  private List<Integer> reservedcards = new ArrayList<Integer>();
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
@@ -43,7 +44,11 @@ public class InventoryJson {
       String userName, int prestige, List<Noble> visitingNobles, 
       List<Power> powers, CoatOfArmsPile pile) {
     for (Card card : cards) {
-      this.cards.add(card.getId());
+      if (card.isPurchased()) {
+        this.purchasedcards.add(card.getId());
+      } else if (card.isReserved()) {
+        this.reservedcards.add(card.getId());
+      }
     }
     for (TokenType type : tokens.keySet()) {
       this.tokens.put(type, tokens.get(type).getSize());

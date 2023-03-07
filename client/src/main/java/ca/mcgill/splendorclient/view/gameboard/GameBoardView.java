@@ -5,26 +5,41 @@ import ca.mcgill.splendorclient.model.CardType;
 import ca.mcgill.splendorclient.model.TokenType;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Popup;
 import kong.unirest.json.JSONArray;
 
 /**
  * Represents the view of the Splendor game board.
  */
 public class GameBoardView {
-  
+
   private static final ArrayList<CardView> cardViews = new ArrayList<CardView>();
+  private static final ArrayList<DeckView> deckViews = new ArrayList<>();
+  private static final ArrayList<NobleView> nobleViews = new ArrayList<>();
+  private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
+  private static TradingView tradingView;
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
+  //private static final float baseUnit_X = screenSize.height / 15f;
+  private static final String rootPath = new File("").getAbsolutePath();
 
   /**
    * Creates a GameBoardView.
@@ -71,8 +86,9 @@ public class GameBoardView {
    * @param screenSize the size of the screen
    */
   private static DeckView createDeckView(CardType type, Dimension screenSize) {
-    return new DeckView(screenSize.height / 15f, screenSize.width / 15f,
-      0, ColorManager.getColor(type));
+    DeckView newView = new DeckView(screenSize.height / 15f, screenSize.width / 15f,
+        0, ColorManager.getColor(type));
+    return newView;
   }
 
   /**
@@ -83,6 +99,12 @@ public class GameBoardView {
   private static CardView createCardView(Dimension screenSize, String location) {
     CardView newView = new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
     cardViews.add(newView);
+    return newView;
+  }
+
+  private static NobleView createNobleView(Dimension screenSize) {
+    NobleView newView = new NobleView(screenSize.width / 13f, screenSize.width / 13f);
+    nobleViews.add(newView);
     return newView;
   }
 
@@ -123,6 +145,7 @@ public class GameBoardView {
       Counter cardCounter = cardColumn.getNumCardsDisplay();
       HBox tokenRow = new HBox();
       tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
+      userInventoryView.addCounter(pileView.getCounter());
       tokenColumn.getChildren().add(tokenRow);
       ++i;
     }
@@ -134,6 +157,7 @@ public class GameBoardView {
     Counter cardCounter = new Counter(0);
     miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
     tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
+    userInventoryView.addCounter(pileView.getCounter());
     tokenColumn.getChildren().add(tokenRow);
   }
 
@@ -164,7 +188,12 @@ public class GameBoardView {
   private static void populateUserInventoryView(UserInventoryView inventoryView,
                                                 Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
-      inventoryView.addCardColumn(new CardColumnView(TokenType.values()[i], screenSize));
+      CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
+      newView.setBackground(new Background(
+          new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+      //newView.getChildren().add(new HBox(4));
+      //newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
+      inventoryView.addCardColumn(newView);
     }
   }
 
@@ -189,7 +218,13 @@ public class GameBoardView {
     TotalPrestigeCountView prestigeCountView =
         new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
-    UserInventoryView inventoryView = new UserInventoryView(playerName);
+    UserInventoryView inventoryView = new UserInventoryView(playerName,
+        screenSize.height / 15f,
+        screenSize.width / 15f,
+        tokenCountView,
+        cardCountView,
+        prestigeCountView);
+    userViews.add(inventoryView);
     populateUserInventoryView(inventoryView, screenSize);
     populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
     for (CardColumnView cardColumn : inventoryView) {
@@ -248,11 +283,20 @@ public class GameBoardView {
     DeckView redDeckView = createDeckView(CardType.BASE3, screenSize);
     DeckView yellowDeckView = createDeckView(CardType.BASE2, screenSize);
     DeckView greenDeckView = createDeckView(CardType.BASE1, screenSize);
-    //orientDecksBox
+    
     DeckView orient3DeckView = createDeckView(CardType.ORIENT3, screenSize);
     DeckView orient2DeckView = createDeckView(CardType.ORIENT2, screenSize);
     DeckView orient1DeckView = createDeckView(CardType.ORIENT1, screenSize);
-
+    
+    //adding deckviews to list field for modification by GameController
+    //these follow order b123,o123 as in state json
+    deckViews.add(greenDeckView);
+    deckViews.add(yellowDeckView);
+    deckViews.add(redDeckView);
+    deckViews.add(orient1DeckView);
+    deckViews.add(orient2DeckView);
+    deckViews.add(orient3DeckView);
+    
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
         getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
@@ -260,6 +304,7 @@ public class GameBoardView {
             getDeckPane(orient2DeckView), getDeckPane(orient1DeckView));
 
     final int nPlayers = players.length();
+    
     //building all user inventories
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
@@ -271,14 +316,27 @@ public class GameBoardView {
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards
+    //VBox nobleCards = new VBox();
+    //nobleCards.setLayoutY(screenSize.height / 20f);
+    //nobleCards.setLayoutX(screenSize.width / 12f);
+    //for (int i = 0; i < 5; i++) {
+    //Rectangle rectangle = new Rectangle(screenSize.height / 15f, screenSize.width / 15f);
+    //nobleCards.getChildren().add(rectangle);
+    //}
+    //nobleCards.setSpacing(3);
+
     VBox nobleCards = new VBox();
-    nobleCards.setLayoutY(screenSize.height / 20f);
-    nobleCards.setLayoutX(screenSize.width / 12f);
-    for (int i = 0; i < 5; i++) {
-      Rectangle rectangle = new Rectangle(screenSize.height / 15f, screenSize.width / 15f);
-      nobleCards.getChildren().add(rectangle);
+    nobleCards.setLayoutX(screenSize.width / 20f);
+    nobleCards.setLayoutY(screenSize.height / 12f);
+    int playerCount = players.length();
+    if (playerCount <= 2) {
+      for (int i = 0; i < 3; i++) {
+        NobleView nobleView = createNobleView(screenSize);
+        nobleCards.getChildren().add(nobleView);
+      }
+      nobleCards.setSpacing(3);
     }
-    nobleCards.setSpacing(3);
+
 
     //Creating token piles
     HBox tokenRow = new HBox();
@@ -286,16 +344,27 @@ public class GameBoardView {
     tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
     tokenRow.setLayoutX(screenSize.width / 6f);
     populateGameBoardTokenPiles(tokenRow, screenSize, nPlayers);
+    
+    //creating Trade Routes expansion
+    tradingView = new TradingView(screenSize);
+    tradingView.setLayoutY(screenSize.height / 2.4f);
+    tradingView.setLayoutX(screenSize.width / 4f);
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
+    root.getChildren().addAll(decksBox, orientDecksBox,
+        faceupCardsRow, nobleCards, tokenRow, tradingView);
     root.getChildren().addAll(allUserInventoryViews);
-    return new Scene(root, screenSize.width, screenSize.height);
+    Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
+    Image newImage = new Image("file:///"
+                                   + rootPath + "/resources/background_tile.jpg");
+    root.setBackground(new Background(new BackgroundFill(
+        new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+    return toReturn;
   }
 
   /**
-   * Updates the card views.
+   * Updates the card views based on data received from server.
    *
    * @param field the card field
    */
@@ -318,5 +387,86 @@ public class GameBoardView {
     cardViews.get(15).updateView(field[17]);
     cardViews.get(16).updateView(field[15]);
     cardViews.get(17).updateView(field[13]);
+  }
+
+  /**
+   * Updates the noble views.
+   *
+   * @param field the noble  field
+   */
+  public static void updateNobleViews(int[] field) {
+    int num = 0;
+    for (int i = 0; i < nobleViews.size(); i++) {
+      nobleViews.get(i).updateView(field[num]);
+      num++;
+    }
+  }
+  
+  /**
+   * Updates the given player's displayed inventory,
+   * including their hand, token amounts, prestige,
+   * nobles, and powers.
+   *
+   * @param playerIndex the index of the player
+   * @param cards an int[] array representing cards in player's possession
+   * @param numOfDiamonds number of diamond tokens in player's possession
+   * @param numOfSapphires number of sapphire tokens in player's possession
+   * @param numOfEmeralds number of emerald tokens in player's possession
+   * @param numOfRubies number of ruby tokens in player's possession
+   * @param numOfOnyx number of onyx tokens in player's possession
+   * @param numOfGolds number of gold tokens in player's possession
+   * @param prestige player's current prestige score
+   * @param visitingNobleids IDs of nobles currently visiting player
+   * @param powers int[] array representing unlocked Trading Posts powers
+   */
+  public static void updateInventories(int playerIndex,
+                                       int[] cards,
+                                       int numOfDiamonds,
+                                       int numOfSapphires,
+                                       int numOfEmeralds,
+                                       int numOfRubies,
+                                       int numOfOnyx,
+                                       int numOfGolds,
+                                       int prestige,
+                                       int[] visitingNobleids,
+                                       int[] powers) {
+    userViews.get(playerIndex).updateCards(cards);
+    userViews.get(playerIndex).updateTokens(numOfDiamonds,
+        numOfSapphires,
+        numOfEmeralds,
+        numOfRubies,
+        numOfOnyx,
+        numOfGolds);
+    userViews.get(playerIndex).updatePrestige(prestige);
+  }
+
+  /**
+   * Updates the deck views.
+   *
+   * @param a the list of decks
+   */
+  public static void updateDecks(int[] a) {
+    for (int i = 0; i < a.length; i++) {
+      deckViews.get(i).setNumCardsDisplay(a[i]);
+    }
+  }
+  
+  /**
+   * Draws the correct coats of arms under the powers
+   * as owned by the players.
+   *
+   * @param firstShields shields
+   * @param secondShields shields
+   * @param thirdShields shields
+   * @param fourthShields shields
+   * @param fifthShields shields
+   */
+  public static void updatePowers(String[] firstShields, 
+      String[] secondShields, 
+      String[] thirdShields, 
+      String[] fourthShields, 
+      String[] fifthShields) {
+    tradingView.updatePowers(firstShields, secondShields,
+        thirdShields, fourthShields, fifthShields);
   }
 }

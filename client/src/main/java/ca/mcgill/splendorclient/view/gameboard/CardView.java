@@ -6,9 +6,10 @@ import java.io.File;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-import kong.unirest.json.JSONException;
+import kong.unirest.HttpResponse;
 
 /**
  * Represents the view of a Splendor Card.
@@ -58,16 +59,41 @@ public class CardView extends StackPane {
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {
       if (arg0.getButton() == MouseButton.SECONDARY) {
-        try {
-          ActionManager.forwardCardRequest(locationCode + "R");
-        } catch (JSONException e) {
-          //TODO: add a turn field to the response from the .../board call. 
+        HttpResponse<String> result = ActionManager.findAndSendReserveCardMove(localid);
+        if (result != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody());
+          } else if (result.getStatus() == 200) {
+            //inform end of turn
+          }
         }
       } else {
-        try {
-          ActionManager.forwardCardRequest(locationCode + "P");
-        } catch (JSONException e) {
-          //TODO: add something in catch block
+        HttpResponse<String> result = ActionManager.findAndSendPurchaseCardMove(localid);
+        if (result != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody());
+          } else if (result.getStatus() == 200) {
+            //inform end of turn
+          }
+        } else {
+          HttpResponse<String> cascadeLevel2 = ActionManager.findAndSendCascadeLevel1Move(localid);
+          if (cascadeLevel2 != null) {
+            if (result.getStatus() == 206) {
+              ActionManager.handleCompoundMoves(result.getBody());
+            } else if (result.getStatus() == 200) {
+              //inform end of turn
+            }
+          } else {
+            HttpResponse<String> cascadeLevel1 =
+                ActionManager.findAndSendCascadeLevel1Move(localid);
+            if (cascadeLevel1 != null) {
+              if (result.getStatus() == 206) {
+                ActionManager.handleCompoundMoves(result.getBody());
+              } else if (result.getStatus() == 200) {
+                //inform end of turn
+              }
+            }
+          }
         }
       }
     });
@@ -79,11 +105,20 @@ public class CardView extends StackPane {
    * @param num the card id
    */
   public void updateView(int num) {
-    //yes hardcoded for testing
-    System.out.println("file:///" + rootPath + "/resources/card_" + num + ".jpg");
     Image newImage = new Image("file:///" + rootPath + "/resources/card_" + num + ".jpg");
     outer.setFill(ColorManager.getColor(num));
     inner.setFill(new ImagePattern(newImage));
     localid = num;
+  }
+  /**
+   * Updates the card view with the card image and marks it as reserved.
+   *
+   * @param num the card id
+   */
+  public void updateViewReserved(int num) {
+    Image newImage = new Image("file:///"+rootPath+"/resources/card_"+num+".jpg");
+    outer.setFill(Color.BLACK);
+    inner.setFill(new ImagePattern(newImage));
+    localID = num;
   }
 }

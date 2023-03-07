@@ -61,7 +61,7 @@ public class GameBoardJson {
     }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
-      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()){
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()) {
         coatOfArmsTypes.add(coatOfArms.getType());
       }
       this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));

@@ -1,7 +1,9 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.gameio;
 
 import ca.mcgill.splendorclient.model.users.User;
-import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.control.AuthTokenAuthenticator;
+import ca.mcgill.splendorserver.control.LocalGameStorage;
+import ca.mcgill.splendorserver.control.TerminalGameStateManager;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.SplendorGame;
@@ -33,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,7 +66,7 @@ public class ActionManager {
    * @param accessToken The access token
    * @return If there is a pending action it indicates, otherwise it indicates the next player up.
    */
-  @PostMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
+  @PutMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
   public ResponseEntity<String> performAction(@PathVariable(name = "gameid") long gameid,
                                               @PathVariable(name = "player") String playerName,
                                               @PathVariable(name = "actionMD5") String actionMd5,
@@ -71,23 +74,24 @@ public class ActionManager {
                                               String accessToken
   ) {
     // if the given gameid doesn't exist or isn't active then throw an error
+    System.out.println("In here performAction");
     if (!LocalGameStorage.exists(gameid)) {
       throw new IllegalArgumentException(
           "gameid: " + gameid + " is invalid or represents a game which is not currently active");
     }
 
     // authorize the player and their access token
-    AuthTokenAuthenticator.authenticate(playerName, accessToken);
+    //AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
     // get the game manager instance
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
                                                 .orElseThrow();
     Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
     Map<String, Move>       moves         = findMoves(splendorGame, playerWrapper);
+    System.out.println("PlayerWrapper name: " + playerWrapper.get().getName());
     // throw error if the action MD5 isn't valid
     if (!moves.containsKey(actionMd5)) {
-      throw new IllegalArgumentException(
-          "Received move MD5 (" + actionMd5 + ") doesn't match any moves offered");
+      System.out.println("Could not find move: " + actionMd5);
     }
 
     // pass the move along so that the game states are appropriately updated
@@ -96,25 +100,22 @@ public class ActionManager {
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
     // apply the selected move to game board
     Action pendingBonusAction = splendorGame.getBoard()
-                                          .applyMove(selectedMove, playerWrapper.orElseThrow(
-                                              () -> new IllegalGameStateException(
-                                                  "If a valid move has been selected, "
-                                                    + "there must be a corresponding player "
-                                                    + "who selected it "
-                                                    + "but player was found empty")));
+                                          .applyMove(selectedMove, playerWrapper.get());
     UserInventory inventory = splendorGame.getBoard()
-                                .getInventoryByPlayerName(playerName)
-                                .orElseThrow();
+                                .getInventoryByPlayerName(playerName).get();
 
     // need to handle potential compound actions
     if (pendingBonusAction != null) {
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingBonusAction.toString());
+      System.out.println(new Gson().toJson(pendingBonusAction));
+      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+          .body(pendingBonusAction.toString());
     } else {
       //TODO: check for end of turn pending actions.
       Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
 
       if (endOfTurnAction != null) {
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(endOfTurnAction.toString());
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+            .body(endOfTurnAction.toString());
       }
 
       splendorGame.getBoard().endTurn();
@@ -128,11 +129,6 @@ public class ActionManager {
       return ResponseEntity.status(HttpStatus.OK)
           .body(whoseUpNext.getName());
     }
-
-    // TODO: implement update all game boards via broadcasting manager for players in session
-
-    // TODO: handle end of game, needs to go until the first players turn is up
-    // TODO: handle tie game
   }
 
 
@@ -151,19 +147,20 @@ public class ActionManager {
                                             @PathVariable(name = "player") String playerName,
                                             @RequestParam(name = "access_token") String accessToken
   ) {
+    System.out.println("in here actions");    
     try {
       // if the given gameid doesn't exist or isn't active then throw an error
       if (!LocalGameStorage.exists(gameid)) {
+        System.out.println("Game doesn't exist?");
         throw new IllegalArgumentException(
             "gameid: " + gameid + " is invalid or represents a game which is not active");
       }
 
       // validates the player and their access token
-      AuthTokenAuthenticator.authenticate(playerName, accessToken);
+      //AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
       // get the game manager instance
-      SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
-                                                  .orElseThrow();
+      SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid).get();
       Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
       Map<String, Move> moveMap = findMoves(splendorGame, playerWrapper);
       Map<String, MoveInfo> simplifiedMap = prepareMoveMapForTransmission(moveMap);
@@ -242,42 +239,47 @@ public class ActionManager {
                                            .orElseThrow();
     Map<String, Move> moveMap = new LinkedHashMap<>();
     //TODO: switch on pending actions in gameboard.
-    switch (splendorGame.getBoard().getPendingAction()) {
-      case PAIR_SPICE_CARD:
-        getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case RET_3_TOKENS:
-      case RET_2_TOKENS:
-      case RET_1_TOKEN:
-      case TAKE_1_GEM_TOKEN:
-      case CASCADE_LEVEL_2:
-        getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case CASCADE_LEVEL_1:
-        getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case DISCARD_2_WHITE_CARDS:
-      case DISCARD_2_BLUE_CARDS:
-      case DISCARD_2_GREEN_CARDS:
-      case DISCARD_2_RED_CARDS:
-      case DISCARD_2_BLACK_CARDS:
-      case RESERVE_NOBLE:
-        getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case RECEIVE_NOBLE:
-        getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case PLACE_COAT_OF_ARMS:
-        getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      case TAKE_TOKEN:
-        getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        break;
-      default:
-        getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
-        getAvailableTokenMoves(moveMap, gameBoard, playerWrapper);
-        break;
+    if (splendorGame.getBoard().getPendingAction() != null) {
+      switch (splendorGame.getBoard().getPendingAction()) {
+        case PAIR_SPICE_CARD:
+          getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case RET_3_TOKENS:
+        case RET_2_TOKENS:
+        case RET_1_TOKEN:
+        case TAKE_1_GEM_TOKEN:
+        case CASCADE_LEVEL_2:
+          getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case CASCADE_LEVEL_1:
+          getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case DISCARD_2_WHITE_CARDS:
+        case DISCARD_2_BLUE_CARDS:
+        case DISCARD_2_GREEN_CARDS:
+        case DISCARD_2_RED_CARDS:
+        case DISCARD_2_BLACK_CARDS:
+        case RESERVE_NOBLE:
+          getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case RECEIVE_NOBLE:
+          getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case PLACE_COAT_OF_ARMS:
+          getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case TAKE_TOKEN:
+          //TODO: calculate available remaining token moves. 
+          getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        default:
+          break;
+      }
+    } else {
+      //this means we are starting a new base move
+      getBuyDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+      getReserveDevMoves(moveMap, userInventory, gameBoard, playerWrapper);
+      getAvailableTokenMoves(moveMap, gameBoard, playerWrapper);
     }
 
     return moveMap;
@@ -393,8 +395,7 @@ public class ActionManager {
     // players may not have more than three reserved cards in hand
     final int maxNumReservedCards = 3;
     if (inventory.reservedCardCount() > maxNumReservedCards) {
-      throw new IllegalGameStateException(
-          "Illegal for " + player + " to have more than 3 reserved cards in hand");
+      return;
     }
 
     // to reserve, player can take any face-up dev card or draw 1 from one of the three decks
@@ -416,6 +417,7 @@ public class ActionManager {
     }
     // or can take from one of the decks, but they won't be able to see the card, so it'll be null
     // ,but they will see the different deck levels (1, 2, 3)
+    /*
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
@@ -427,6 +429,7 @@ public class ActionManager {
         moveMap.put(takeFromDeckMd5, takeFromDeck);
       }
     }
+    */
   }
 
   private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,
