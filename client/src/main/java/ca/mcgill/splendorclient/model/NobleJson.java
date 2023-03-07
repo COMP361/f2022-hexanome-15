@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.model;
+package ca.mcgill.splendorclient.model;
 
 /**
  * Facilitates the creation of a stripped down noble.

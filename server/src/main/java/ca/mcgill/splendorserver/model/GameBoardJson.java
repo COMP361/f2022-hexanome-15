@@ -5,6 +5,8 @@ import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -23,7 +25,7 @@ public class GameBoardJson {
   private String whoseTurn;
   private List<InventoryJson> inventories;
   private List<DeckJson> decks = new ArrayList<>();
-  private List<NobleJson> nobles = new ArrayList<>();
+  private List<Integer> nobles = new ArrayList<>();
   private List<Integer> cardField = new ArrayList<>(); //implicit flattened 2d array
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostJson> tradingPosts = new ArrayList<>();
@@ -49,7 +51,7 @@ public class GameBoardJson {
       this.decks.add(new DeckJson(deck.getSize(), deck.getType()));
     }
     for (Noble noble : nobles) {
-      this.nobles.add(new NobleJson(noble.getId()));
+      this.nobles.add(noble.getId());
     }
     for (Card card : cardField) {
       this.cardField.add(card.getId());
@@ -58,8 +60,11 @@ public class GameBoardJson {
       this.tokenField.put(type, tokenField.get(type).getSize());
     }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
-      this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(),
-          tradingPostSlot.getAcquiredCoatOfArmsList()));
+      List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()){
+        coatOfArmsTypes.add(coatOfArms.getType());
+      }
+      this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
     }
   }
 

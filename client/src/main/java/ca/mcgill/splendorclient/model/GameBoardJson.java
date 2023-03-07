@@ -20,6 +20,7 @@ public class GameBoardJson {
   private List<Integer> nobles;
   private List<Integer> cardField = new ArrayList<Integer>(); //implicit flattened 2d array
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
+  private List<TradingPostJson> tradingPosts = new ArrayList<>();
 
   /**
    * Creates a GameBoardJson object.

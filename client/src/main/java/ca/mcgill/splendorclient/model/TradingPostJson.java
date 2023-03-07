@@ -1,6 +1,5 @@
-package ca.mcgill.splendorserver.model;
+package ca.mcgill.splendorclient.model;
 
-import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import java.util.List;
 
 /**
