@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,7 +66,7 @@ public class ActionManager {
    * @param accessToken The access token
    * @return If there is a pending action it indicates, otherwise it indicates the next player up.
    */
-  @PostMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
+  @PutMapping(value = "/api/games/{gameid}/players/{player}/actions/{actionMD5}")
   public ResponseEntity<String> performAction(@PathVariable(name = "gameid") long gameid,
                                               @PathVariable(name = "player") String playerName,
                                               @PathVariable(name = "actionMD5") String actionMd5,
@@ -73,21 +74,24 @@ public class ActionManager {
                                               String accessToken
   ) {
     // if the given gameid doesn't exist or isn't active then throw an error
+    System.out.println("In here performAction");
     if (!LocalGameStorage.exists(gameid)) {
       throw new IllegalArgumentException(
           "gameid: " + gameid + " is invalid or represents a game which is not currently active");
     }
 
     // authorize the player and their access token
-    AuthTokenAuthenticator.authenticate(playerName, accessToken);
+    //AuthTokenAuthenticator.authenticate(playerName, accessToken);
 
     // get the game manager instance
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameid)
                                                 .orElseThrow();
     Optional<PlayerWrapper> playerWrapper = splendorGame.getPlayerByName(playerName);
     Map<String, Move>       moves         = findMoves(splendorGame, playerWrapper);
+    System.out.println("PlayerWrapper name: " + playerWrapper.get().getName());
     // throw error if the action MD5 isn't valid
     if (!moves.containsKey(actionMd5)) {
+      System.out.println("Could not find move");
       throw new IllegalArgumentException(
           "Received move MD5 (" + actionMd5 + ") doesn't match any moves offered");
     }
@@ -98,25 +102,22 @@ public class ActionManager {
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
     // apply the selected move to game board
     Action pendingBonusAction = splendorGame.getBoard()
-                                          .applyMove(selectedMove, playerWrapper.orElseThrow(
-                                              () -> new IllegalGameStateException(
-                                                  "If a valid move has been selected, "
-                                                    + "there must be a corresponding player "
-                                                    + "who selected it "
-                                                    + "but player was found empty")));
+                                          .applyMove(selectedMove, playerWrapper.get());
     UserInventory inventory = splendorGame.getBoard()
-                                .getInventoryByPlayerName(playerName)
-                                .orElseThrow();
+                                .getInventoryByPlayerName(playerName).get();
 
     // need to handle potential compound actions
     if (pendingBonusAction != null) {
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(pendingBonusAction.toString());
+      System.out.println(new Gson().toJson(pendingBonusAction));
+      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+          .body(pendingBonusAction.toString());
     } else {
       //TODO: check for end of turn pending actions.
       Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
 
       if (endOfTurnAction != null) {
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(endOfTurnAction.toString());
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+            .body(endOfTurnAction.toString());
       }
 
       splendorGame.getBoard().endTurn();
@@ -130,11 +131,6 @@ public class ActionManager {
       return ResponseEntity.status(HttpStatus.OK)
           .body(whoseUpNext.getName());
     }
-
-    // TODO: implement update all game boards via broadcasting manager for players in session
-
-    // TODO: handle end of game, needs to go until the first players turn is up
-    // TODO: handle tie game
   }
 
 

@@ -40,9 +40,10 @@ public class TokenPileView extends Circle {
 
       @Override
       public void handle(MouseEvent event) {
-        HttpResponse<JsonNode> result = ActionManager.findAndSendAssociatedTokenMove(type);
+        HttpResponse<String> result = ActionManager.findAndSendAssociatedTokenMove(type);
         if (result != null) {
           if (result.getStatus() == 206) {
+            System.out.println(result.getBody().toString());
             ActionManager.handleCompoundMoves(result.getBody().toString());
           }
           if (result.getStatus() == 200) {

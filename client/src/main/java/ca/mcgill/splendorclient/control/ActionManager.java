@@ -40,7 +40,8 @@ public class ActionManager {
     currentMoveMap = currentMap;
   }
   
-  public static HttpResponse<JsonNode> findAndSendAssociatedTokenMove(TokenType type) {
+  public static HttpResponse<String> findAndSendAssociatedTokenMove(TokenType type) {
+    System.out.println("Searching for token move with type " + type);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("TAKE_TOKEN")) {
         if (entry.getValue().getTokenType().equals(type.toString())) {
@@ -76,14 +77,16 @@ public class ActionManager {
     return Unirest.get(String.format("http://%s/api/games/%d/players/%s/actions", 
         LobbyServiceExecutor.SERVERLOCATION, 
         GameController.getInstance().getGameId(), 
-        User.THISUSER.getUsername())).asJson();
+        User.THISUSER.getUsername()))
+        .queryString("access_token", User.THISUSER.getAccessToken()).asJson();
   }
   
-  private static HttpResponse<JsonNode> sendAction(String action) {
+  private static HttpResponse<String> sendAction(String action) {
     return Unirest.put(String.format("http://%s/api/games/%d/players/%s/actions/%s", 
         LobbyServiceExecutor.SERVERLOCATION, 
         GameController.getInstance().getGameId(), 
-        User.THISUSER.getUsername(), action)).asJson();
+        User.THISUSER.getUsername(), action))
+        .queryString("access_token", User.THISUSER.getAccessToken()).asString();
   }
 
   /**

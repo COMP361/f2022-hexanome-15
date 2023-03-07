@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -25,6 +26,7 @@ public class GameBoardView {
   private final static ArrayList<CardView> cardViews = new ArrayList<CardView>();
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
+  private static TextField whoseTurnField = new TextField();
 
   /**
    * Creates a GameBoardView.
@@ -39,6 +41,10 @@ public class GameBoardView {
   
   public List<TokenPileView> getTokenPileViews() {
     return tokenPileViews;
+  }
+  
+  public static void setWhoseTurnField(String whoseTurn) {
+    whoseTurnField.setText(whoseTurn);
   }
 
   /**
@@ -256,6 +262,10 @@ public class GameBoardView {
       allUserInventoryViews.add(userInventoryView);
     }
 
+    //who's turn display
+    whoseTurnField.setLayoutX(screenSize.getWidth()/2);
+    whoseTurnField.setLayoutY(screenSize.getHeight()-10);
+    whoseTurnField.setText("It's Here");
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards
@@ -279,14 +289,11 @@ public class GameBoardView {
     Pane root = new Pane();
     root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
     root.getChildren().addAll(allUserInventoryViews);
+    root.getChildren().add(whoseTurnField);
     return new Scene(root, screenSize.width, screenSize.height);
   }
+  
   public static void updateCardViews(int[] field) {
-	/*int viewIndex = 0;
-	for (CardView view : cardViews) {
-	  view.updateView(field[viewIndex]);
-	  viewIndex++;
-	}*/
 		cardViews.get(0).updateView(field[8]);
 		cardViews.get(1).updateView(field[4]);
 		cardViews.get(2).updateView(field[0]);

@@ -1,5 +1,6 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
+import java.io.File;
 import ca.mcgill.splendorclient.control.ActionManager;
 import ca.mcgill.splendorclient.control.ColorManager;
 import javafx.scene.image.Image;
@@ -21,6 +22,7 @@ public class CardView extends StackPane {
   private final Rectangle outer;
   private final Rectangle inner;
   private int localID;
+  private final static String rootPath = new File("").getAbsolutePath();
 
   /**
    * Creates a CardView. These represent CardViews in a user inventory. 
@@ -72,21 +74,9 @@ public class CardView extends StackPane {
     });
   }
 
-  //TODO: figure out what kind of card model we need on this side for display purposes.
-//  /**
-//   * Fills the CardView with the appropriate colors.
-//   *
-//   * @param card The card that is represented by this CardView
-//   */
-//  public void forceCard(Card card) {
-//    this.card = Optional.of(card);
-//    inner.setFill(ColorManager.getColor(card.getTokenType()));
-//    outer.setFill(ColorManager.getColor(card.getCardType()));
-//  }
   public void updateView(int num) {
-	//yes hardcoded for testing
-  	Image newImage = new Image("file:///Users/lawrenceberardelli/Documents/courses/t4/COMP361/f2022-hexanome-15/client/src/main/resources/card_"+num+".jpg");
-  	outer.setFill(ColorManager.getColor(num));
+    Image newImage = new Image("file:///"+rootPath+"/resources/card_"+num+".jpg");
+   	outer.setFill(ColorManager.getColor(num));
   	inner.setFill(new ImagePattern(newImage));
   	localID = num;
   }

@@ -66,11 +66,21 @@ public class GameController {
 
     @Override
     public void run() {
+      boolean requestedActions = false;
       while (true) {
         HttpResponse<JsonNode> response = Unirest
             .get(String.format("http://%s/api/games/%d/board", LobbyServiceExecutor.SERVERLOCATION, gameId))
             .asJson();
-        if (response.getBody().toPrettyString() != currentState) {
+        if (response.getStatus() == 404) {
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          continue;
+        }
+        if (!response.getBody().toPrettyString().equals(currentState)) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
 //          GameBoardJson gameboardJson = new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
@@ -90,7 +100,9 @@ public class GameController {
             
           });
           String currentTurn = response.getBody().getObject().getString("whoseTurn");
-          if (currentTurn.equals(User.THISUSER.getUsername())) {
+          if (currentTurn.equals(User.THISUSER.getUsername()) && !requestedActions) {
+            requestedActions = true;
+            GameBoardView.setWhoseTurnField("Your Turn");
             HttpResponse<JsonNode> moveMap = Unirest
                 .get(String.format("http://%s/api/games/%d/players/%s/actions", 
                     LobbyServiceExecutor.SERVERLOCATION, gameId, currentTurn))
@@ -103,6 +115,8 @@ public class GameController {
             ActionManager.setCurrentMoveMap(availableMoves);
           }
           else {
+            requestedActions = false;
+            GameBoardView.setWhoseTurnField(currentTurn + "'s Turn");
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
           }
         }
