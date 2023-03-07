@@ -79,6 +79,28 @@ public class CardView extends StackPane {
             //inform end of turn
           }
         }
+        else {
+          HttpResponse<String> cascadeLevel2 = ActionManager.findAndSendCascadeLevel1Move(localID);
+          if (cascadeLevel2 != null) {
+            if (result.getStatus() == 206) {
+              ActionManager.handleCompoundMoves(result.getBody());
+            }
+            else if (result.getStatus() == 200) {
+              //inform end of turn
+            }
+          }
+          else {
+            HttpResponse<String> cascadeLevel1 = ActionManager.findAndSendCascadeLevel1Move(localID);
+            if (cascadeLevel1 != null) {
+              if (result.getStatus() == 206) {
+                ActionManager.handleCompoundMoves(result.getBody());
+              }
+              else if (result.getStatus() == 200) {
+                //inform end of turn
+              }
+            }
+          }
+        }
       }
     });
   }
