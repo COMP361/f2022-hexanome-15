@@ -1,6 +1,9 @@
 package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -12,27 +15,21 @@ import java.util.Optional;
  */
 public class SessionInfo implements Iterable<PlayerWrapper> {
 
-  private final List<PlayerWrapper> players;
+  private final List<Player>        players;
   private       String              gameServer;
-  private       PlayerWrapper       gameCreator;
-  private       String              saveGameId;
-
-  /**
-   * Creates a SessionInfo object.
-   *
-   * @param players the players in the session
-   */
-  public SessionInfo(List<PlayerWrapper> players) {
-    this.players = players;
-  }
+  private       String              creator;
+  private       String              savegame;
+  
+  private List<PlayerWrapper> playerWrappers = new ArrayList<PlayerWrapper>();
+  private PlayerWrapper creatorWrapper;
 
   @Override
   public String toString() {
     return "SessionInfo{"
              + "players=" + players
              + ", gameServer='" + gameServer + '\''
-             + ", gameCreator=" + gameCreator
-             + ", saveGameId='" + saveGameId + '\''
+             + ", gameCreator=" + creator
+             + ", saveGameId='" + savegame + '\''
              + '}';
   }
 
@@ -47,11 +44,23 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
   public SessionInfo(String gameServer, List<PlayerWrapper> players, PlayerWrapper gameCreator,
                      String saveGameId
   ) {
+    this.players = null;
     assert gameServer != null && players != null && gameCreator != null;
     this.gameServer  = gameServer;
-    this.players     = players;
-    this.gameCreator = gameCreator;
-    this.saveGameId  = saveGameId;
+    this.playerWrappers     = players;
+    this.creatorWrapper = gameCreator;
+    this.savegame  = saveGameId;
+  }
+  
+  public void populatePlayerWrappers() {
+    playerWrappers = new ArrayList<PlayerWrapper>();
+    for (Player player : players) {
+      playerWrappers.add(PlayerWrapper.newPlayerWrapper(player.getName()));
+    }
+  }
+  
+  public void populateGameCreator() {
+    creatorWrapper = PlayerWrapper.newPlayerWrapper(creator);
   }
 
   /**
@@ -60,7 +69,7 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
    * @return the players in the session
    */
   public List<PlayerWrapper> getPlayers() {
-    return players;
+    return playerWrappers;
   }
 
   /**
@@ -78,7 +87,7 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
    * @return the game creator of the session
    */
   public PlayerWrapper getGameCreator() {
-    return gameCreator;
+    return creatorWrapper;
   }
 
   /**
@@ -109,7 +118,7 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
 
   @Override
   public Iterator<PlayerWrapper> iterator() {
-    return players.iterator();
+    return playerWrappers.iterator();
   }
 
   @Override
@@ -123,11 +132,11 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     return Objects.equals(getGameServer(), strings.getGameServer())
         && Objects.equals(players, strings.players)
         && Objects.equals(getGameCreator(), strings.getGameCreator())
-        && Objects.equals(saveGameId, strings.saveGameId);
+        && Objects.equals(savegame, strings.savegame);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getGameServer(), players, getGameCreator(), saveGameId);
+    return Objects.hash(getGameServer(), players, getGameCreator(), savegame);
   }
 }

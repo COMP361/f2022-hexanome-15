@@ -18,6 +18,15 @@ public class TradingPostSlot {
   private static final List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
 
   /**
+   * Returns the acquired coat of arms in the trading post slot.
+   *
+   * @return the acquired coat of arms in the trading post slot
+   */
+  public List<CoatOfArms> getAcquiredCoatOfArmsList() {
+    return acquiredCoatOfArmsList;
+  }
+
+  /**
    * Creates a Trading Post slot.
    *
    * @param id the trading post slot id

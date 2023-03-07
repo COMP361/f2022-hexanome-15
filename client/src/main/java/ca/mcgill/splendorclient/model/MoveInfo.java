@@ -46,5 +46,14 @@ public class MoveInfo {
   public String getTokenType() {
     return tokenType;
   }
+  
+  /**
+   * Returns card id associated with this move.
+   *
+   * @return
+   */
+  public String getCardId() {
+    return cardId;
+  }
 
 }

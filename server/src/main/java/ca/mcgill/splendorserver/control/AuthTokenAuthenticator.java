@@ -97,6 +97,7 @@ public final class AuthTokenAuthenticator {
    */
   public static void authenticate(String userName, String accessToken) {
     if (isSameName(userName, accessToken) && isPlayer(accessToken)) {
+      System.out.println("couldn't auth?");
       return;
     }
     throw new TokenAuthenticationException(
