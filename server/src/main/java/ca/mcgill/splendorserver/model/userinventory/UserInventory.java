@@ -558,10 +558,7 @@ public class UserInventory implements Iterable<Card> {
     assert tokenType != null && amount >= 0;
     // gets all cards that are purchased and have matching bonus token type
     // accumulate the result and see if enough for the given amount
-    return cards.stream()
-                .filter(card -> card.getTokenBonusType() == tokenType && card.isPurchased())
-                .map(Card::getTokenBonusAmount)
-                .reduce(0, Integer::sum) < amount;
+    return purchasedCardCountByType(tokenType) < amount;
   }
 
   /**
