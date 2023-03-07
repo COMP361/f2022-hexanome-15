@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import javafx.scene.control.Alert;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -119,9 +120,38 @@ public class ActionManager {
     ActionManager.setCurrentMoveMap(availableMoves);
     if (action.equals("TAKE_TOKEN")) {
       //inform user to take next token
+      Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
+      takeTokenAlert.setTitle("Compound Move Info");
+      takeTokenAlert.setHeaderText("Please select additional token to take.");
+      takeTokenAlert.showAndWait();
     }
     if (action.equals("PAIR_SPICE_CARD")) {
-      
+      // inform user to pair card
+      Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
+      takeTokenAlert.setTitle("Compound Move Info");
+      takeTokenAlert.setHeaderText("Please select card in your inventory to pair with.");
+      takeTokenAlert.showAndWait();
+    }
+    if (action.equals("RECEIVE_NOBLE")) {
+      // inform user to select noble to be visited by if more than one
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid noble to be visited by.");
+      alert.showAndWait();
+    }
+    if (action.equals("RESERVE_NOBLE")) {
+      // inform user to select noble to reserve
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid noble to reserve.");
+      alert.showAndWait();
+    }
+    if (action.equals("RET_1_TOKEN")) {
+      // inform user to select token to return
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select valid token to return.");
+      alert.showAndWait();
     }
   }
 
