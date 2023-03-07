@@ -9,6 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import kong.unirest.HttpResponse;
 import kong.unirest.json.JSONException;
 
 /**
@@ -59,16 +60,24 @@ public class CardView extends StackPane {
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {
       if (arg0.getButton() == MouseButton.SECONDARY) {
-        try {
-          ActionManager.forwardCardRequest(locationCode + "R");
-        } catch (JSONException e) {
-          //TODO: add a turn field to the response from the .../board call. 
+        HttpResponse<String> result = ActionManager.findAndSendReserveCardMove(localID);
+        if (result != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody());
+          }
+          else if (result.getStatus() == 200) {
+            //inform end of turn
+          }
         }
       } else {
-        try {
-          ActionManager.forwardCardRequest(locationCode + "P");
-        } catch (JSONException e) {
-          //TODO: add something in catch block
+        HttpResponse<String> result = ActionManager.findAndSendPurchaseCardMove(localID);
+        if (result != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody());
+          }
+          else if (result.getStatus() == 200) {
+            //inform end of turn
+          }
         }
       }
     });

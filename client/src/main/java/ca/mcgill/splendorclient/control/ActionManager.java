@@ -4,11 +4,7 @@ import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorclient.model.users.User;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -18,7 +14,6 @@ import com.google.gson.reflect.TypeToken;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
-import kong.unirest.json.JSONException;
 
 /**
  * Manages actions that are sent to the server.
@@ -64,10 +59,17 @@ public class ActionManager {
   }
   
   
+  /**
+   * Finds reserve dev moves in the move map and forwards them to server.
+   *
+   * @param cardid requested to reserve
+   * @return response from server
+   */
   public static HttpResponse<String> findAndSendReserveCardMove(int cardid) {
     System.out.println("Searching for reserve card move with id: " + cardid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
-      if (entry.getValue().getAction().equals("RESERVE_DEV_TAKE_JOKER")) {
+      if (entry.getValue().getAction().equals("RESERVE_DEV_TAKE_JOKER") 
+          || entry.getValue().getAction().equals("RESERVE_DEV")) {
         if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
           return sendAction(entry.getKey());
         }
@@ -76,6 +78,23 @@ public class ActionManager {
     return null;
   }
   
+  /**
+   * Finds purchase dev moves in the move map and forwards to server.
+   *
+   * @param cardid requested to purchase
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendPurchaseCardMove(int cardid) {
+    System.out.println("Search for purchase card move with id: " + cardid); 
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("PURCHASE_DEV")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
 
   /**
    * Returns this instance of ActionManager.
@@ -100,6 +119,9 @@ public class ActionManager {
     ActionManager.setCurrentMoveMap(availableMoves);
     if (action.equals("TAKE_TOKEN")) {
       //inform user to take next token
+    }
+    if (action.equals("PAIR_SPICE_CARD")) {
+      
     }
   }
 
