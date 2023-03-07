@@ -56,4 +56,9 @@ class TradingPostSlotTest {
   void getTradingPostSlots() {
     assertEquals(5, TradingPostSlot.getTradingPostSlots().size());
   }
+
+  @Test
+  void getAcquiredCoatOfArms() {
+    assertEquals(0, tradingSlot.getAcquiredCoatOfArmsList().size());
+  }
 }
