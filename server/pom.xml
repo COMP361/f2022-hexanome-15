@@ -108,7 +108,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <failOnWarnings>false</failOnWarnings>
+                            <failOnWarnings>true</failOnWarnings>
                         </configuration>
                     </execution>
                 </executions>
