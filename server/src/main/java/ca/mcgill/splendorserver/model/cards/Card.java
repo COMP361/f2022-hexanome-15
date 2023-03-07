@@ -529,8 +529,12 @@ public class Card implements Comparable<Card> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof Card card)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Card card)) {
+      return false;
+    }
     return id == card.id && prestige == card.prestige
              && tokenBonusType == card.tokenBonusType
              && tokenBonusAmount == card.tokenBonusAmount
@@ -540,6 +544,7 @@ public class Card implements Comparable<Card> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, prestige, tokenBonusType, tokenBonusAmount, deckType, cardCost, cardStatus);
+    return Objects.hash(id, prestige, tokenBonusType,
+        tokenBonusAmount, deckType, cardCost, cardStatus);
   }
 }

@@ -156,23 +156,20 @@ public class GameBoard {
           actionPending = Action.TAKE_TOKEN;
           this.pendingAction = true;
           return actionPending;
-        }
-        else if (moveCache.size() == 1) {
+        } else if (moveCache.size() == 1) {
           //selected two of the same token
           if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
             moveCache.clear();
             actionPending = null;
             this.pendingAction = false;
             return null;
-          }
-          else {
+          } else {
             moveCache.add(move);
             actionPending = Action.TAKE_TOKEN;
             this.pendingAction = true;
             return actionPending;
           }
-        }
-        else {
+        } else {
           moveCache.clear();
           actionPending = null;
           this.pendingAction = false;
@@ -418,7 +415,7 @@ public class GameBoard {
     if (inventory.canReceivePower(move.getTradingPostSlot())) {
       inventory.addPower(move.getTradingPostSlot().getPower());
       move.getTradingPostSlot()
-        .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
+          .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }
 

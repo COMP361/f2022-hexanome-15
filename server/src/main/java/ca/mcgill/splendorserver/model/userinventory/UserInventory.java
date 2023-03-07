@@ -56,18 +56,18 @@ public class UserInventory implements Iterable<Card> {
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
 
-    TokenPile white = new TokenPile(TokenType.DIAMOND);
-    TokenPile blue = new TokenPile(TokenType.SAPPHIRE);
-    TokenPile green = new TokenPile(TokenType.EMERALD);
-    TokenPile red = new TokenPile(TokenType.RUBY);
-    TokenPile black = new TokenPile(TokenType.ONYX);
-    TokenPile gold = new TokenPile(TokenType.GOLD);
     tokenPiles = new EnumMap<TokenType, TokenPile>(TokenType.class);
+    TokenPile white = new TokenPile(TokenType.DIAMOND);
     tokenPiles.put(TokenType.DIAMOND, white);
+    TokenPile blue = new TokenPile(TokenType.SAPPHIRE);
     tokenPiles.put(TokenType.SAPPHIRE, blue);
+    TokenPile green = new TokenPile(TokenType.EMERALD);
     tokenPiles.put(TokenType.EMERALD, green);
+    TokenPile red = new TokenPile(TokenType.RUBY);
     tokenPiles.put(TokenType.RUBY, red);
+    TokenPile black = new TokenPile(TokenType.ONYX);
     tokenPiles.put(TokenType.ONYX, black);
+    TokenPile gold = new TokenPile(TokenType.GOLD);
     tokenPiles.put(TokenType.GOLD, gold);
 
     if (coatOfArmsType.isPresent()) {

@@ -229,7 +229,8 @@ public class GameRestController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
     } else {
-      String json = buildGameBoardJson(manager.get().whoseTurn().getName(), manager.get().getBoard());
+      String json = buildGameBoardJson(manager.get()
+                                           .whoseTurn().getName(), manager.get().getBoard());
       return ResponseEntity.status(HttpStatus.OK)
       .body(json);
     }
