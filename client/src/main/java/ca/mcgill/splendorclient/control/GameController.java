@@ -174,6 +174,10 @@ public class GameController {
             	  decksArray[i] = ((JSONObject) decks.get(i)).getInt("ncards");
               }
               GameBoardView.updateDecks(decksArray);
+              
+              //update Trading
+              String[] testarray = {"RED", "RED", "BLUE", "YELLOW"};
+              GameBoardView.updatePowers(testarray, testarray, testarray, testarray, testarray);
             }
             
           });

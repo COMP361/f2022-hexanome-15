@@ -438,4 +438,18 @@ public class GameBoardView {
 		  deckViews.get(i).setNumCardsDisplay(a[i]);
 	  }
   }
+  
+  /**
+   * Draws the correct coats of arms under the powers
+   * as owned by the players.
+   * 
+   * @param 
+   */
+  public static void updatePowers(String[] firstShields, 
+      String[] secondShields, 
+      String[] thirdShields, 
+      String[] fourthShields, 
+      String[] fifthShields) {
+    tradingView.updatePowers(firstShields, secondShields, thirdShields, fourthShields, fifthShields);
+  }
 }
