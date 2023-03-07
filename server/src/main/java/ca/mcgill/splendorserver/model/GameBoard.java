@@ -122,6 +122,10 @@ public class GameBoard {
           return null;
         }
       }
+      case RESERVE_DEV_TAKE_JOKER -> {
+        pendingAction = performReserveDev(move, inventory);
+        return null;
+      }
       case PAIR_SPICE_CARD -> {
         pendingAction = performPairSpiceCard(move, inventory);
         if (pendingAction != null) {
@@ -274,7 +278,11 @@ public class GameBoard {
       );
     }
     // add to inventory as reserved card now
+    TokenType type = TokenType.GOLD;
+    TokenPile pile = this.tokenPiles.get(type);
+    Token token = pile.removeToken();
     inventory.addReservedCard(selectedCard);
+    inventory.addToken(token);
     return null;
   }
 
