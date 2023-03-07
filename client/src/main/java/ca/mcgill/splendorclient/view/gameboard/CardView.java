@@ -20,7 +20,7 @@ public class CardView extends StackPane {
 
   private final Rectangle outer;
   private final Rectangle inner;
-  private int localid;
+  private int localID;
   private static final String rootPath = new File("").getAbsolutePath();
 
   /**
