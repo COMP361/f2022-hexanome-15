@@ -26,7 +26,7 @@ public class GameBoardJson {
   private List<Noble> nobles;
   private List<Integer> cardField = new ArrayList<Integer>(); //implicit flattened 2d array
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
-  private List<TradingPostSlot> tradingPostSlots;
+  private List<TradingPostJson> tradingPosts = new ArrayList<>();
 
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
@@ -55,7 +55,10 @@ public class GameBoardJson {
     for (TokenType type : tokenField.keySet()) {
       this.tokenField.put(type, tokenField.get(type).getSize());
     }
-    this.tradingPostSlots = tradingPostSlots;
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(),
+          tradingPostSlot.getAcquiredCoatOfArmsList()));
+    }
   }
 
   /**
