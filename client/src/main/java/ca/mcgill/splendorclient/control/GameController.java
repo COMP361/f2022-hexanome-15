@@ -83,8 +83,6 @@ public class GameController {
         if (!response.getBody().toPrettyString().equals(currentState)) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
-//          GameBoardJson gameboardJson = new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
-//          String currentTurn = gameboardJson.getWhoseTurn();
           Platform.runLater(new Runnable() {
 
             @Override
@@ -114,7 +112,7 @@ public class GameController {
             Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
             ActionManager.setCurrentMoveMap(availableMoves);
           }
-          else {
+          else if (!currentTurn.equals(User.THISUSER.getUsername())) {
             requestedActions = false;
             GameBoardView.setWhoseTurnField(currentTurn + "'s Turn");
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());

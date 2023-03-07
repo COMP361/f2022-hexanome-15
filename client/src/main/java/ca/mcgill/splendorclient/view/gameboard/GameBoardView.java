@@ -263,9 +263,11 @@ public class GameBoardView {
     }
 
     //who's turn display
-    whoseTurnField.setLayoutX(screenSize.getWidth()/2);
-    whoseTurnField.setLayoutY(screenSize.getHeight()-10);
+    HBox box = new HBox();
+    box.setLayoutX(screenSize.getWidth()/2);
+    box.setLayoutY(screenSize.getHeight()-10);
     whoseTurnField.setText("It's Here");
+    box.getChildren().add(whoseTurnField);
 
     //Temporary display for noble cards
     //Will replace rectangles with actual noble cards
@@ -289,7 +291,7 @@ public class GameBoardView {
     Pane root = new Pane();
     root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
     root.getChildren().addAll(allUserInventoryViews);
-    root.getChildren().add(whoseTurnField);
+    root.getChildren().add(box);
     return new Scene(root, screenSize.width, screenSize.height);
   }
   
