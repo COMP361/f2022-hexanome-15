@@ -214,7 +214,7 @@ public class GameBoard {
     TokenType type = move.getSelectedTokenTypes();
     TokenPile pile = this.tokenPiles.get(type);
     Token token = pile.removeToken();
-    inventory.addTokens(token);
+    inventory.addToken(token);
   }
 
   /**
@@ -389,7 +389,7 @@ public class GameBoard {
   /**
    * Performs a claim noble type action routine.
    *
-   * @param move      the move to perform
+   * @param noble     the noble to claim
    * @param inventory the inventory to apply the move side effects to
    */
   private void performClaimNobleAction(Noble noble, UserInventory inventory) {
@@ -523,31 +523,6 @@ public class GameBoard {
         // we know draw is ok cause of the check for emptiness above
         cardField.add(replenishIndex, deck.draw());
       }
-    }
-  }
-
-  /**
-   * Draws tokens from the token bank and adds them to the user inventory.
-   *
-   * @param inventory the current player's inventory
-   * @param selected the types of tokens selected
-   */
-  private void moveTokensToUserInventory(UserInventory inventory, TokenType[] selected) {
-    for (TokenType tokenType : selected) {
-      inventory.addTokens(drawTokenByTokenType(tokenType));
-    }
-  }
-
-  /**
-   * Returns tokens from the user inventory and adds them to the token bank.
-   *
-   * @param inventory the current player's inventory
-   * @param selected the types of tokens selected
-   */
-  private void returnTokensToBoardFromInventory(UserInventory inventory, TokenType... selected) {
-    for (TokenType tokenType : selected) {
-      tokenPiles.get(tokenType)
-                .addToken(inventory.removeTokenByTokenType(tokenType));
     }
   }
 

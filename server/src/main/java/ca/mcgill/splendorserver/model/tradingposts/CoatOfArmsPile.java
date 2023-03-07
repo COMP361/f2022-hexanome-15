@@ -2,6 +2,7 @@ package ca.mcgill.splendorserver.model.tradingposts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a Splendor Trading Posts expansion Coat of Arms pile with Coat of Arms and type.
@@ -32,18 +33,6 @@ public class CoatOfArmsPile {
   }
 
   /**
-   * Adds a Coat of Arms to the pile.
-   *
-   * @param coatOfArms The Coat of Arms to be added
-   */
-  public void addCoatOfArms(CoatOfArms coatOfArms) {
-    assert coatOfArms != null;
-    if (coatOfArms.getType() == type) {
-      coatOfArmsList.add(coatOfArms);
-    }
-  }
-
-  /**
    * Removes a Coat of Arms from the pile.
    * Assumes that the coat of arms list is not empty.
    *
@@ -71,6 +60,18 @@ public class CoatOfArmsPile {
       CoatOfArms c = new CoatOfArms(this.type);
       this.coatOfArmsList.add(c);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof CoatOfArmsPile that)) return false;
+    return type == that.type;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type);
   }
 }
 

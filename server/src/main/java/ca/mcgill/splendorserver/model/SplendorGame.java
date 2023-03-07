@@ -194,9 +194,7 @@ public class SplendorGame {
    */
   private void setUpUserInventories(List<UserInventory> inventories) {
     for (PlayerWrapper playerName : sessionInfo) {
-      List<TokenPile> piles = new ArrayList<>();
-      setUpTokenPiles(piles, false);
-      inventories.add(new UserInventory(piles, playerName, Optional.empty()));
+      inventories.add(new UserInventory(playerName, Optional.empty()));
     }
   }
 
@@ -209,9 +207,7 @@ public class SplendorGame {
   private void setUpUserInventoriesTradingPosts(List<UserInventory> inventories) {
     int i = 0;
     for (PlayerWrapper playerName : sessionInfo) {
-      List<TokenPile> piles = new ArrayList<>();
-      setUpTokenPiles(piles, false);
-      inventories.add(new UserInventory(piles, playerName,
+      inventories.add(new UserInventory(playerName,
           Optional.ofNullable(CoatOfArmsType.values()[i])));
       i++;
     }
