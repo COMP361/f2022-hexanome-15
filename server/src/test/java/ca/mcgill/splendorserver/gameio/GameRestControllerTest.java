@@ -39,14 +39,14 @@ class GameRestControllerTest {
     pws.add(pw2);
     pws.add(pw3);
     assertEquals(ResponseEntity.status(HttpStatus.OK).build(),
-      grc.launchRequest(0L,si),"");
+      grc.launchRequest(0L,si.toString()),"");
     assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage()),
       grc.launchRequest(0L,null),"");
   }
 
   @Test
   void quitRequest() {
-    grc.launchRequest(0L,si);
+    grc.launchRequest(0L,si.toString());
     grc.quitRequest(0L);
     assertTrue(LocalGameStorage.getActiveGame(0L).isEmpty());
   }
