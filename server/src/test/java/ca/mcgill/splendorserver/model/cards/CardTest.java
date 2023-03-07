@@ -22,8 +22,8 @@ class CardTest {
 
   @BeforeEach
   void setUp() {
-    acost = new CardCost(1, 1, 1, 1, 0);
-    acard = new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, acost);
+    acost = new CardCost(0, 0, 4, 0, 0);
+    acard = new Card(0, 1, DIAMOND, BASE1, ONE, acost);
   }
 
   @Test
@@ -87,17 +87,17 @@ class CardTest {
 
   @Test
   void getId() {
-    assertEquals(0,acard.getId());
+    assertEquals(0, acard.getId());
   }
 
   @Test
   void getPrestige() {
-    assertEquals(0,acard.getPrestige());
+    assertEquals(1, acard.getPrestige());
   }
 
   @Test
   void getTokenBonusAmount() {
-    assertEquals(1,acard.getTokenBonusAmount());
+    assertEquals(1, acard.getTokenBonusAmount());
   }
 
   @Test
@@ -120,13 +120,13 @@ class CardTest {
 
   @Test
   void getTokenBonusType() {
-    assertEquals(ONYX,acard.getTokenBonusType());
+    assertEquals(DIAMOND, acard.getTokenBonusType());
   }
 
   @Test
   void compareTo() {
-    Card bcard = new Card(5,3,ONYX,BASE2,TWO,acost);
-    assertEquals(0,acard.compareTo(bcard));
+    Card bcard = new Card(0, 1, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE, acost);
+    assertEquals(0, acard.compareTo(bcard));
   }
 
   @Test
@@ -137,8 +137,8 @@ class CardTest {
   @Test
   void testToString() {
     assertEquals("Card{"
-      + "prestige=" + 0
-      + ", tokenBonus=" + ONYX
+      + "prestige=" + 1
+      + ", tokenBonus=" + DIAMOND
       + ", deckType=" + BASE1
       + ", discount=" + ONE
       + ", cardCost=" + acost
@@ -148,8 +148,8 @@ class CardTest {
   }
   @Test
   void testHashCode() {
-    CardCost cost = new CardCost(1, 1, 1, 1, 0);
-    Card newCard = new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, cost);
+    CardCost cost = new CardCost(0, 0, 4, 0, 0);
+    Card newCard = new Card(0, 1, DIAMOND, BASE1, ONE, acost);
     assertEquals(acard.hashCode(), newCard.hashCode());
   }
 }
