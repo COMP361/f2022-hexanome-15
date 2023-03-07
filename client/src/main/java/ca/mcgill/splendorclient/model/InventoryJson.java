@@ -20,6 +20,7 @@ public class InventoryJson {
   private int prestige;
   private List<Integer> visitingNobles;
   private List<Power> powers;
+  private CoatOfArmsPile coatOfArmsPile;
 
   /**
    * Creates an InventoryJson object.
