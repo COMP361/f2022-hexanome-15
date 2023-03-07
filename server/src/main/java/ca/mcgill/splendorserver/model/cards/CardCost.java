@@ -56,8 +56,12 @@ public class CardCost {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof CardCost cardCost)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof CardCost cardCost)) {
+      return false;
+    }
     return Objects.equals(costMap, cardCost.costMap);
   }
 

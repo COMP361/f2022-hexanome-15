@@ -146,4 +146,10 @@ class CardTest {
       acard.toString(),
       "");
   }
+  @Test
+  void testHashCode() {
+    CardCost cost = new CardCost(1, 1, 1, 1, 0);
+    Card newCard = new Card(0, 0, TokenType.ONYX, DeckType.BASE1, TokenBonusAmount.ONE, cost);
+    assertEquals(acard.hashCode(), newCard.hashCode());
+  }
 }

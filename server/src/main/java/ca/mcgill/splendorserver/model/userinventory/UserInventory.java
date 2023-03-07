@@ -45,25 +45,31 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Initialize User Inventory Model.
    *
-   * @param pile The token piles in a user's inventory
    * @param name This player's username
    * @param coatOfArmsType The color of coat of arms this player is using
    */
-  public UserInventory(List<TokenPile> pile, PlayerWrapper name,
-                       Optional<CoatOfArmsType> coatOfArmsType) {
-    assert pile != null && name != null;
+  public UserInventory(PlayerWrapper name, Optional<CoatOfArmsType> coatOfArmsType) {
+    assert name != null;
     cards          = new ArrayList<>();
-    tokenPiles     = new EnumMap<>(List.copyOf(pile)
-                                       .stream()
-                                       .collect(
-                                           Collectors.toMap(
-                                               TokenPile::getType,
-                                               tokens -> tokens
-                                           )));
     playerWrapper  = name;
     prestigeWon    = 0;
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
+
+    tokenPiles = new EnumMap<TokenType, TokenPile>(TokenType.class);
+    TokenPile white = new TokenPile(TokenType.DIAMOND);
+    tokenPiles.put(TokenType.DIAMOND, white);
+    TokenPile blue = new TokenPile(TokenType.SAPPHIRE);
+    tokenPiles.put(TokenType.SAPPHIRE, blue);
+    TokenPile green = new TokenPile(TokenType.EMERALD);
+    tokenPiles.put(TokenType.EMERALD, green);
+    TokenPile red = new TokenPile(TokenType.RUBY);
+    tokenPiles.put(TokenType.RUBY, red);
+    TokenPile black = new TokenPile(TokenType.ONYX);
+    tokenPiles.put(TokenType.ONYX, black);
+    TokenPile gold = new TokenPile(TokenType.GOLD);
+    tokenPiles.put(TokenType.GOLD, gold);
+
     if (coatOfArmsType.isPresent()) {
       coatOfArmsPile = new CoatOfArmsPile(coatOfArmsType.get());
     } else {
@@ -79,19 +85,6 @@ public class UserInventory implements Iterable<Card> {
   public int getPrestigeWon() {
 
     return prestigeWon;
-  }
-
-  /**
-   * Returns the token types of all the non-empty token piles in the user inventory.
-   *
-   * @return the list of token types of all the non-empty token piles in the user inventory
-   */
-  public List<TokenType> getTokenTypes() {
-    return tokenPiles.values()
-                     .stream()
-                     .filter(tokens -> tokens.getSize() != 0)
-                     .map(TokenPile::getType)
-                     .toList();
   }
 
   /**
@@ -145,15 +138,13 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Adds tokens to the token pile in the user inventory with the same type.
+   * Adds a token to the user inventory.
    *
-   * @param token the tokens to be added
+   * @param token the token to be added
    */
-  public void addTokens(Token... token) {
-    for (Token t : token) {
-      tokenPiles.get(t.getType())
-                .addToken(t);
-    }
+  public void addToken(Token token) {
+    assert token != null;
+    tokenPiles.get(token.getType()).addToken(token);
   }
 
   /**
@@ -168,14 +159,6 @@ public class UserInventory implements Iterable<Card> {
     return tokenPiles.get(type)
                      .removeToken();
   }
-
-  /*public Optional<Token> removeTokenOpt(Token token) {
-    if (tokenPiles.containsKey(token.getType()) && tokenPiles.get(token.getType()) != null) {
-      return tokenPiles.get(token.getType())
-                       .removeTokenOpt();
-    }
-    return Optional.empty();
-  }*/
 
   /**
    * Gets the number of cards in inventory.
@@ -222,7 +205,7 @@ public class UserInventory implements Iterable<Card> {
     for (Card card : cards) {
       if (card instanceof OrientCard
             && ((OrientCard) card).isSpiceBag()
-            && card.getTokenBonusType() != null
+            && card.getTokenBonusType() == null
             && card.getTokenBonusAmount() == 0) {
         return (OrientCard) card;
       }
@@ -426,34 +409,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Removes card from deck based on bonus colour, prioritizes spice bag cards.
-   *
-   * @param tokenType the token type of the element to remove
-   * @throws AssertionError if tokenType == null
-   */
-  public void discardByBonusType(TokenType tokenType) {
-    assert tokenType != null;
-    for (int i = 0; i < cards.size(); i++) {
-      Card current = cards.get(i);
-      if (current.getTokenBonusType() == tokenType
-            && current.getCardStatus() != CardStatus.RESERVED
-            && ((OrientCard) current).isSpiceBag()) {
-        cards.remove(i);
-        return;
-      }
-    }
-    for (int j = 0; j < cards.size(); j++) {
-      if (cards.get(j).getTokenBonusType() == tokenType
-            && cards.get(j).getCardStatus() != CardStatus.RESERVED) {
-        cards.remove(j);
-        return;
-      }
-    }
-  }
-
-
-
-  /**
    * Assumes that it is legal to buy the given card. Adds the card to the users inventory as
    * purchased and deducts the appropriate amount of tokens from their inventory also taking
    * into consideration any token type bonuses they may have from owned cards.
@@ -562,10 +517,7 @@ public class UserInventory implements Iterable<Card> {
     assert tokenType != null && amount >= 0;
     // gets all cards that are purchased and have matching bonus token type
     // accumulate the result and see if enough for the given amount
-    return cards.stream()
-                .filter(card -> card.getTokenBonusType() == tokenType && card.isPurchased())
-                .map(Card::getTokenBonusAmount)
-                .reduce(0, Integer::sum) < amount;
+    return purchasedCardCountByType(tokenType) < amount;
   }
 
   /**
@@ -616,52 +568,6 @@ public class UserInventory implements Iterable<Card> {
     return playerWrapper;
   }
 
-  /* @Override
-  public void onAction(CardView cardView) {
-    boolean affordable = true;
-    for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
-      for (TokenPile tokenPile : tokenPiles) {
-        if (tokenPile.getType().ordinal() == i) {
-          if (cardView.getCard().get().getCost()[i] > 0
-                && tokenPile.getSize() < cardView.getCard().get().getCost()[i]) {
-            affordable = false;
-          }
-        }
-      }
-    }
-    if (affordable) {
-      notifyObservers(cardView.getCard().get());
-      cards.add(cardView.getCard().get());
-      for (int i = 0; i < cardView.getCard().get().getCost().length; i++) {
-        for (TokenPile tokenPile : tokenPiles) {
-          if (tokenPile.getType().ordinal() == i) {
-            if (cardView.getCard().get().getCost()[i] > 0
-                  && tokenPile.getSize() >= cardView.getCard().get().getCost()[i]) {
-              for (int j = 0; j < cardView.getCard().get().getCost()[i]; j++) {
-                tokenPile.removeToken();
-              }
-            }
-          }
-        }
-      }
-    } else {
-      cardView.revokePurchaseAttempt();
-    }
-  }*/
-
-
-  /**
-   * Adds a token pile to the user inventory.
-   *
-   * @param pile the pile to be added
-   */
-  public void addPile(TokenPile pile) {
-    assert pile != null;
-    if (!tokenPiles.containsKey(pile.getType())) {
-      tokenPiles.put(pile.getType(), pile);
-    }
-  }
-
   /**
    * Adds a power to the user inventory.
    *
@@ -707,9 +613,8 @@ public class UserInventory implements Iterable<Card> {
    * Must be done if discarding cards makes the player unable to reach the requirements.
    *
    * @param power the power to be discarded
-   * @return the discarded power
    */
-  public Power removePower(Power power) {
+  public void removePower(Power power) {
     assert power != null && acquiredPowers.contains(power);
     int index = acquiredPowers.indexOf(power);
     if (power == Power.GAIN_5_PRESTIGE) {
@@ -717,7 +622,7 @@ public class UserInventory implements Iterable<Card> {
     } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
       removePrestige(acquiredPowers.size());
     }
-    return acquiredPowers.remove(index);
+    acquiredPowers.remove(index);
   }
 
   /**

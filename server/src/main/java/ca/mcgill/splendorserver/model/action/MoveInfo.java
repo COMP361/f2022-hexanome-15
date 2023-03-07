@@ -20,7 +20,8 @@ public class MoveInfo {
    * @param tokenType the tokenType of the token that was taken
    * @param nobleId the nobleId of the noble that was reserved/visited
    */
-  public MoveInfo(String playerName, String action, String cardId, String tokenType, String nobleId) {
+  public MoveInfo(String playerName, String action,
+                    String cardId, String tokenType, String nobleId) {
     this.playerName = playerName;
     this.action = action;
     this.cardId = cardId;

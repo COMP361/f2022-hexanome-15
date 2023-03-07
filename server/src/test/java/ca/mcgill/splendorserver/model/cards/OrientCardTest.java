@@ -1,6 +1,7 @@
 package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorserver.model.action.Action;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,31 +17,35 @@ import static ca.mcgill.splendorserver.model.tokens.TokenType.EMERALD;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrientCardTest {
-  CardCost acost = new CardCost(3,4,5,2,1);
-  Card acard = new Card(2,3,EMERALD,BASE3,ONE,acost);
-
 
   List<Action> actList = new ArrayList<>();
+  OrientCard oCard;
 
-  OrientCard Ocard = new OrientCard(5,3,DIAMOND,BASE2,TWO,acost,true,actList);
+  @BeforeEach
+    void setUp() {
+    actList.add(PAIR_SPICE_CARD);
+    CardCost cost = new CardCost(2,3,0,2,1);
+    oCard = new OrientCard(5,3,DIAMOND,BASE2,TWO, cost,true,actList);
+
+  }
 
   @Test
   void pairWithCard() {
-    actList.add(PURCHASE_DEV);
-    actList.add(RECEIVE_NOBLE);
-    actList.add(RESERVE_DEV);
-    Ocard.pairWithCard(acard);
-    assertEquals(1,acard.getTokenBonusAmount());
-    assertEquals(EMERALD, acard.getTokenBonusType());
+    CardCost cost = new CardCost(3,4,5,2,1);
+    Card newCard = new Card(2,3, EMERALD, BASE3, ONE, cost);
+    oCard.pairWithCard(newCard);
+    assertEquals(1, oCard.getTokenBonusAmount());
+    assertEquals(EMERALD, oCard.getTokenBonusType());
   }
 
   @Test
   void isSpiceBag() {
-    assertTrue(Ocard.isSpiceBag());
+    assertTrue(oCard.isSpiceBag());
   }
 
   @Test
   void getBonusActions() {
-    assertEquals(actList, Ocard.getBonusActions());
+
+    assertEquals(actList, oCard.getBonusActions());
   }
 }

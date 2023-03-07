@@ -1,44 +1,45 @@
 package ca.mcgill.splendorserver.model.tradingposts;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CoatOfArmsPileTest {
-  CoatOfArms cta = new CoatOfArms(BLUE);
-  CoatOfArms cta2 = new CoatOfArms(BLUE);
-  CoatOfArmsPile ctaP = new CoatOfArmsPile(BLUE);
+  CoatOfArms cta;
+  CoatOfArmsPile ctaP;
 
+  @BeforeEach
+  void setUp() {
+    ctaP = new CoatOfArmsPile(BLUE);
+    cta = new CoatOfArms(BLUE);
+  }
   @Test
   void getType() {
-    assertEquals(BLUE,ctaP.getType(),"");
+    assertEquals(BLUE, ctaP.getType());
   }
 
   @Test
-  void addCoatOfArms() {
-
-    ctaP.removeCoatOfArms();
-    ctaP.removeCoatOfArms();
-    ctaP.removeCoatOfArms();
-    ctaP.removeCoatOfArms();
-    ctaP.removeCoatOfArms();
-    ctaP.addCoatOfArms(cta);
+  void removeCoatOfArmsTest() {
     CoatOfArms elem = ctaP.removeCoatOfArms();
-    assertEquals(elem,cta,"");
-  }
-
-  @Test
-  void removeCoatOfArms() {
-    ctaP.addCoatOfArms(cta);
-    CoatOfArms elem = ctaP.removeCoatOfArms();
-    assertEquals(elem,cta);
+    assertEquals(elem, cta);
   }
 
   @Test
   void getSize() {
-    ctaP.addCoatOfArms(cta);
-    ctaP.addCoatOfArms(cta2);
-    assertEquals(7,ctaP.getSize(),"");
+    assertEquals(5, ctaP.getSize());
+  }
+
+  @Test
+  void testEquals() {
+    CoatOfArmsPile ctaP2 = new CoatOfArmsPile(BLUE);
+    assertEquals(ctaP, ctaP2);
+  }
+
+  @Test
+  void testHashCode() {
+    CoatOfArmsPile ctaP2 = new CoatOfArmsPile(BLUE);
+    assertEquals(ctaP.hashCode(), ctaP2.hashCode());
   }
 }
