@@ -37,7 +37,7 @@ class UserInventoryTest {
     cost = new CardCost(1,0,0,0,0);
     oCard1 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,true, new ArrayList<>());
     card1 = new Card(1,1, DIAMOND, BASE1, ZERO, cost);
-    anoble = new Noble(new CardCost(1,0,0,0,0));
+    anoble = new Noble(0, new CardCost(1,0,0,0,0));
     aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
     uinv = new UserInventory(aPlayer, Optional.ofNullable(RED));
   }

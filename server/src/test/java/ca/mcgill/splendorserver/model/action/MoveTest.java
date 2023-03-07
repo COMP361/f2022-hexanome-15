@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest
 {
-  CardCost cardc = new CardCost(1,2,3,4,5);
-  Noble anoble = new Noble(cardc);
+  CardCost cardc = new CardCost(4, 4, 0, 0, 0);
+  Noble anoble = new Noble(0, cardc);
   TradingPostSlot aTPS = new TradingPostSlot(false,PURCHASE_CARD_TAKE_TOKEN,cardc);
   TokenType tkps = DIAMOND;
   TokenType rtkps = EMERALD;
@@ -32,7 +32,7 @@ class MoveTest
 
   @Test
   void getCard() {
-    assertEquals(acard,amove.getCard());
+    assertEquals(acard, amove.getCard());
   }
 
   @Test
@@ -42,32 +42,32 @@ class MoveTest
 
   @Test
   void getDeckType() {
-    assertEquals(BASE2,amove.getDeckType());
+    assertEquals(BASE2, amove.getDeckType());
   }
 
   @Test
   void getSelectedTokenTypes() {
-    assertEquals(tkps,amove.getSelectedTokenTypes());
+    assertEquals(tkps, amove.getSelectedTokenTypes());
   }
 
   @Test
   void getReturnedTokenTypes() {
-    assertEquals(rtkps,amove.getReturnedTokenTypes());
+    assertEquals(rtkps, amove.getReturnedTokenTypes());
   }
 
   @Test
   void getNoble() {
-    assertEquals(anoble,amove.getNoble());
+    assertEquals(anoble, amove.getNoble());
   }
 
   @Test
   void getTradingPostSlot() {
-    assertEquals(aTPS,amove.getTradingPostSlot());
+    assertEquals(aTPS, amove.getTradingPostSlot());
   }
 
   @Test
   void getAction() {
-    assertEquals(mAction,amove.getAction());
+    assertEquals(mAction, amove.getAction());
   }
 
   @Test

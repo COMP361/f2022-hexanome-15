@@ -11,6 +11,7 @@ import java.util.Random;
  * Represents a Splendor Noble with reserved status and prestige.
  */
 public class Noble {
+  private final int id;
   private final CardCost visitRequirements;
   private NobleStatus status;
   private final int         prestige;
@@ -20,13 +21,15 @@ public class Noble {
   /**
    * Creates a noble.
    *
+   * @param id the noble id
    * @param visitRequirements the token type bonus requirements for visiting this noble
    */
-  public Noble(CardCost visitRequirements) {
+  public Noble(int id, CardCost visitRequirements) {
     assert visitRequirements != null;
     this.visitRequirements = visitRequirements;
     this.status            = NobleStatus.ON_BOARD;
     this.prestige          = 3;
+    this.id = id;
   }
 
   /**
@@ -54,6 +57,15 @@ public class Noble {
    */
   public NobleStatus getStatus() {
     return status;
+  }
+
+  /**
+   * Returns the id of this noble.
+   *
+   * @return the id of this noble
+   */
+  public int getId() {
+    return id;
   }
 
   /**
@@ -92,15 +104,15 @@ public class Noble {
    * Then 3-5 random nobles will be added to the game.
    */
   private static void generateNobles() {
-    nobles.add(new Noble(new CardCost(3, 3, 3, 0, 0)));
-    nobles.add(new Noble(new CardCost(0, 3, 3, 3, 0)));
-    nobles.add(new Noble(new CardCost(3, 0, 0, 3, 3)));
-    nobles.add(new Noble(new CardCost(3, 3, 0, 0, 3)));
-    nobles.add(new Noble(new CardCost(0, 0, 3, 3, 3)));
-    nobles.add(new Noble(new CardCost(0, 0, 0, 4, 4)));
-    nobles.add(new Noble(new CardCost(4, 0, 0, 0, 4)));
-    nobles.add(new Noble(new CardCost(0, 0, 4, 4, 0)));
-    nobles.add(new Noble(new CardCost(0, 4, 4, 0, 0)));
-    nobles.add(new Noble(new CardCost(4, 4, 0, 0, 0)));
+    nobles.add(new Noble(0, new CardCost(4, 4, 0, 0, 0)));
+    nobles.add(new Noble(1, new CardCost(0, 4, 4, 0, 0)));
+    nobles.add(new Noble(2, new CardCost(0, 0, 4, 4, 0)));
+    nobles.add(new Noble(3, new CardCost(0, 0, 0, 4, 4)));
+    nobles.add(new Noble(4, new CardCost(4, 0, 0, 0, 4)));
+    nobles.add(new Noble(5, new CardCost(3, 3, 0, 0, 3)));
+    nobles.add(new Noble(6, new CardCost(3, 3, 3, 0, 0)));
+    nobles.add(new Noble(7, new CardCost(0, 3, 3, 3, 0)));
+    nobles.add(new Noble(8, new CardCost(0, 0, 3, 3, 3)));
+    nobles.add(new Noble(9, new CardCost(3, 0, 0, 3, 3)));
   }
 }
