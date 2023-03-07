@@ -118,6 +118,13 @@ public class GameController {
                 cardids[i] = cardArray.getInt(i);
               }
               GameBoardView.updateCardViews(cardids);
+
+              JSONArray nobleArray = response.getBody().getObject().optJSONArray("nobles");
+              int[] nobleids = new int[nobleArray.length()];
+              for (int i = 0; i < nobleArray.length(); i++) {
+                nobleids[i] = (int) ((JSONObject) nobleArray.get(i)).get("id");
+              }
+              GameBoardView.updateNobleViews(nobleids);
               
               //update inventories
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
