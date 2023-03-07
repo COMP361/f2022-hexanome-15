@@ -366,7 +366,7 @@ public class GameBoardView {
    * including their hand, token amounts, prestige,
    * nobles, and powers.
    *
-   * @param field the card field
+   * @param playerIndex the index of the player
    * @param cards an int[] array representing cards in player's possession
    * @param numOfDiamonds number of diamond tokens in player's possession
    * @param numOfSapphires number of sapphire tokens in player's possession
@@ -399,7 +399,7 @@ public class GameBoardView {
     userViews.get(playerIndex).updatePrestige(prestige);
   }
   
-  public static void updateTokens(int[] a) {
+  public static void updateDecks(int[] a) {
 	  for (int i = 0; i < a.length; i++) {
 		  deckViews.get(i).setNumCardsDisplay(a[i]);
 	  }

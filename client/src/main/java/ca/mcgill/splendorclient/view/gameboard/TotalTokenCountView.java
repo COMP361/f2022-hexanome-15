@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
  */
 public class TotalTokenCountView extends Text {
 
-  private static int totalTokenCount = 15;
+  private static int totalTokenCount = 0;
 
   /**
    * Creates a TotalTokenCountView.
