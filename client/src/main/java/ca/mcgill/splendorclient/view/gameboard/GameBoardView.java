@@ -5,15 +5,24 @@ import ca.mcgill.splendorclient.model.CardType;
 import ca.mcgill.splendorclient.model.TokenType;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import kong.unirest.json.JSONArray;
 
@@ -25,6 +34,8 @@ public class GameBoardView {
   private static final ArrayList<CardView> cardViews = new ArrayList<CardView>();
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
+  //private static final float baseUnit_X = screenSize.height / 15f;
+  private final static String rootPath = new File("").getAbsolutePath();
 
   /**
    * Creates a GameBoardView.
@@ -291,7 +302,10 @@ public class GameBoardView {
     Pane root = new Pane();
     root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
     root.getChildren().addAll(allUserInventoryViews);
-    return new Scene(root, screenSize.width, screenSize.height);
+    Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
+    Image newImage = new Image("file:///"+rootPath+"/resources/background_tile.jpg");
+	root.setBackground(new Background(new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+    return toReturn;
   }
 
   /**
