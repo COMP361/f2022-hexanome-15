@@ -1,19 +1,13 @@
 package ca.mcgill.splendorclient.control;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.model.GameBoardJson;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorclient.view.gameboard.GameBoardView;
-import ca.mcgill.splendorclient.view.gameboard.TokenPileView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.util.HashMap;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import kong.unirest.HttpResponse;
@@ -130,40 +124,40 @@ public class GameController {
               //update inventories
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
               for (int player = 0; player < inventories.length(); player++) {
-            	JSONObject inventory = (JSONObject) inventories.get(player);
-            	JSONArray playerCardArray = inventory.getJSONArray("purchasedcards");
-            	int[] playerCardids = new int[playerCardArray.length()];
+                JSONObject inventory = (JSONObject) inventories.get(player);
+                JSONArray playerCardArray = inventory.getJSONArray("purchasedcards");
+                int[] playerCardids = new int[playerCardArray.length()];
                 for (int i = 0; i < playerCardArray.length(); i++) {
-                	playerCardids[i] = playerCardArray.getInt(i);
+                  playerCardids[i] = playerCardArray.getInt(i);
                 }
                 int[] placeholder = null;
-            	GameBoardView.updateInventories(player,
-            	  playerCardids,
-                  inventory.getJSONObject("tokens").getInt("DIAMOND"),
-                  inventory.getJSONObject("tokens").getInt("SAPPHIRE"),
-                  inventory.getJSONObject("tokens").getInt("EMERALD"),
-                  inventory.getJSONObject("tokens").getInt("RUBY"),
-                  inventory.getJSONObject("tokens").getInt("ONYX"),
-                  inventory.getJSONObject("tokens").getInt("GOLD"),
-                  inventory.getInt("prestige"),
-                  placeholder,
-                  placeholder);
+                GameBoardView.updateInventories(player,
+                    playerCardids,
+                    inventory.getJSONObject("tokens").getInt("DIAMOND"),
+                    inventory.getJSONObject("tokens").getInt("SAPPHIRE"),
+                    inventory.getJSONObject("tokens").getInt("EMERALD"),
+                    inventory.getJSONObject("tokens").getInt("RUBY"),
+                    inventory.getJSONObject("tokens").getInt("ONYX"),
+                    inventory.getJSONObject("tokens").getInt("GOLD"),
+                    inventory.getInt("prestige"),
+                    placeholder,
+                    placeholder);
               }
               
               //update tokens
               JSONObject tokens = response.getBody().getObject().getJSONObject("tokenField");
               GameBoardView.getInstance().getTokenPileViews().get(0).getCounter().setCount(
-            		  tokens.getInt("DIAMOND"));
+                  tokens.getInt("DIAMOND"));
               GameBoardView.getInstance().getTokenPileViews().get(1).getCounter().setCount(
-            		  tokens.getInt("SAPPHIRE"));
+                  tokens.getInt("SAPPHIRE"));
               GameBoardView.getInstance().getTokenPileViews().get(2).getCounter().setCount(
-            		  tokens.getInt("EMERALD"));
+                  tokens.getInt("EMERALD"));
               GameBoardView.getInstance().getTokenPileViews().get(3).getCounter().setCount(
-            		  tokens.getInt("RUBY"));
+                  tokens.getInt("RUBY"));
               GameBoardView.getInstance().getTokenPileViews().get(4).getCounter().setCount(
-            		  tokens.getInt("ONYX"));
+                  tokens.getInt("ONYX"));
               GameBoardView.getInstance().getTokenPileViews().get(5).getCounter().setCount(
-            		  tokens.getInt("GOLD"));
+                  tokens.getInt("GOLD"));
               
               //update nobles
               
@@ -172,24 +166,30 @@ public class GameController {
               JSONArray decks = response.getBody().getObject().getJSONArray("decks");
               int[] decksArray = new int[decks.length()];
               for (int i = 0; i < decks.length(); i++) {
-            	  decksArray[i] = ((JSONObject) decks.get(i)).getInt("ncards");
+                decksArray[i] = ((JSONObject) decks.get(i)).getInt("ncards");
               }
               GameBoardView.updateDecks(decksArray);
               
               //update Trading
-              JSONArray tradingPostArray = response.getBody().getObject().getJSONArray("tradingPosts");
+              JSONArray tradingPostArray = response.getBody().getObject()
+                                               .getJSONArray("tradingPosts");
               
-              JSONArray firstShieldArray = tradingPostArray.getJSONObject(0).getJSONArray("acquiredCoatOfArmsList");
-              JSONArray secondShieldArray = tradingPostArray.getJSONObject(1).getJSONArray("acquiredCoatOfArmsList");
-              JSONArray thirdShieldArray = tradingPostArray.getJSONObject(2).getJSONArray("acquiredCoatOfArmsList");
-              JSONArray fourthShieldArray = tradingPostArray.getJSONObject(3).getJSONArray("acquiredCoatOfArmsList");
-              JSONArray fifthShieldArray = tradingPostArray.getJSONObject(4).getJSONArray("acquiredCoatOfArmsList");
+              JSONArray firstShieldArray = tradingPostArray.getJSONObject(0)
+                                               .getJSONArray("acquiredCoatOfArmsList");
+              JSONArray secondShieldArray = tradingPostArray.getJSONObject(1)
+                                                .getJSONArray("acquiredCoatOfArmsList");
+              JSONArray thirdShieldArray = tradingPostArray.getJSONObject(2)
+                                               .getJSONArray("acquiredCoatOfArmsList");
+              JSONArray fourthShieldArray = tradingPostArray.getJSONObject(3)
+                                                .getJSONArray("acquiredCoatOfArmsList");
+              JSONArray fifthShieldArray = tradingPostArray.getJSONObject(4)
+                                               .getJSONArray("acquiredCoatOfArmsList");
 
-              String[] shields1 = new String[firstShieldArray.length()];
-              String[] shields2 = new String[secondShieldArray.length()];
-              String[] shields3 = new String[thirdShieldArray.length()];
-              String[] shields4 = new String[fourthShieldArray.length()];
-              String[] shields5 = new String[fifthShieldArray.length()];
+              final String[] shields1 = new String[firstShieldArray.length()];
+              final String[] shields2 = new String[secondShieldArray.length()];
+              final String[] shields3 = new String[thirdShieldArray.length()];
+              final String[] shields4 = new String[fourthShieldArray.length()];
+              final String[] shields5 = new String[fifthShieldArray.length()];
 
               for (int i = 0; i < shields1.length; i++) {
                 shields1[i] = firstShieldArray.getString(i);
@@ -228,7 +228,8 @@ public class GameController {
             System.out.println(moveMap.getBody().toPrettyString()); 
             String moves = moveMap.getBody().toString();
             Gson gson = new Gson();
-            Map<String, MoveInfo> availableMoves = gson.fromJson(moves, new TypeToken<Map<String, MoveInfo>>() {}.getType());
+            Map<String, MoveInfo> availableMoves = gson.fromJson(moves,
+                new TypeToken<Map<String, MoveInfo>>() {}.getType());
             ActionManager.setCurrentMoveMap(availableMoves);
 
             // alert to indicate its their turn
@@ -244,8 +245,7 @@ public class GameController {
               }
               
             });
-          }
-          else if (!currentTurn.equals(User.THISUSER.getUsername())) {
+          } else if (!currentTurn.equals(User.THISUSER.getUsername())) {
             // alert to tell user it's not their turn
             requestedActions = false;
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
@@ -256,7 +256,9 @@ public class GameController {
                 // TODO Auto-generated method stub
                 Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 notYourTurnAlert.setTitle("Turn Information");
-                notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername() + " turn, please wait for them to go.");
+                notYourTurnAlert.setHeaderText("It's "
+                                                   + User.THISUSER.getUsername()
+                                                   + " turn, please wait for them to go.");
                 notYourTurnAlert.show();
               }
             });

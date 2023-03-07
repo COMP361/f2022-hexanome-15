@@ -28,14 +28,15 @@ public class TotalPrestigeCountView extends Text {
     String text = String.format("Total Prestige Count: %d", totalPrestigeCount);
     setText(text);
   }
+
   /**
    * Sets the prestige count and updates the label.
    *
    * @param amount the amount of prestige to set
    */
   public void set(int amount) {
-	  totalPrestigeCount = amount;
-	  String text = String.format("Total Prestige Count: %d", totalPrestigeCount);
-	  setText(text);
+    totalPrestigeCount = amount;
+    String text = String.format("Total Prestige Count: %d", totalPrestigeCount);
+    setText(text);
   }
 }

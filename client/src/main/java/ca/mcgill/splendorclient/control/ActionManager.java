@@ -4,13 +4,11 @@ import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorclient.model.users.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import javafx.scene.control.Alert;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -206,21 +204,21 @@ public class ActionManager {
       alert.setHeaderText("Please select valid level 2 orient card.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_WHITE_CARDS")){
+    if (action.equals("DISCARD_2_WHITE_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid white card to discard.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_BLUE_CARDS")){
+    if (action.equals("DISCARD_2_BLUE_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid blue card to discard.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_GREEN_CARDS")){
+    if (action.equals("DISCARD_2_GREEN_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");

@@ -44,9 +44,9 @@ public class InventoryJson {
       String userName, int prestige, List<Noble> visitingNobles, 
       List<Power> powers, CoatOfArmsPile pile) {
     for (Card card : cards) {
-      if (card.isPurchased())
+      if (card.isPurchased()) {
         this.purchasedcards.add(card.getId());
-      else if (card.isReserved()) {
+      } else if (card.isReserved()) {
         this.reservedcards.add(card.getId());
       }
     }
