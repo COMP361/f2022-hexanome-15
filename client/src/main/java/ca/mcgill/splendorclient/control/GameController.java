@@ -92,9 +92,9 @@ public class GameController {
         if (response.getBody().toPrettyString() != currentState) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
-          GameBoardJson gameboardJson =
-              new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
-          String currentTurn = gameboardJson.getWhoseTurn();
+          //GameBoardJson gameboardJson =
+          //    new Gson().fromJson(response.getBody().toString(), GameBoardJson.class);
+          //String currentTurn = gameboardJson.getWhoseTurn();
           Platform.runLater(new Runnable() {
 
             @Override
@@ -133,7 +133,19 @@ public class GameController {
               }
               
               //update tokens
-              
+              JSONObject tokens = response.getBody().getObject().getJSONObject("tokenField");
+              GameBoardView.getInstance().getTokenPileViews().get(0).getCounter().setCount(
+            		  tokens.getInt("DIAMOND"));
+              GameBoardView.getInstance().getTokenPileViews().get(1).getCounter().setCount(
+            		  tokens.getInt("SAPPHIRE"));
+              GameBoardView.getInstance().getTokenPileViews().get(2).getCounter().setCount(
+            		  tokens.getInt("EMERALD"));
+              GameBoardView.getInstance().getTokenPileViews().get(3).getCounter().setCount(
+            		  tokens.getInt("RUBY"));
+              GameBoardView.getInstance().getTokenPileViews().get(4).getCounter().setCount(
+            		  tokens.getInt("ONYX"));
+              GameBoardView.getInstance().getTokenPileViews().get(5).getCounter().setCount(
+            		  tokens.getInt("GOLD"));
               
               //update nobles
               
@@ -153,7 +165,7 @@ public class GameController {
             ActionManager.setCurrentMoveMap(availableMoves);
           } else {
             ActionManager.setCurrentMoveMap(new HashMap<String, MoveInfo>());
-          }
+          }*/
         }
         try {
           Thread.sleep(2000);
