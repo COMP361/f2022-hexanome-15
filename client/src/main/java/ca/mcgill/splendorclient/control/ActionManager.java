@@ -183,7 +183,7 @@ public class ActionManager {
       alert.setHeaderText("Please select valid noble to reserve.");
       alert.show();
     }
-    if (action.equals("RET_1_TOKEN")) {
+    if (action.equals("RET_TOKEN")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
@@ -239,7 +239,7 @@ public class ActionManager {
       alert.setHeaderText("Please select valid black card to discard.");
       alert.show();
     }
-    if (action.equals("TAKE_1_GEM_TOKEN")) {
+    if (action.equals("TAKE_EXTRA_TOKEN")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");

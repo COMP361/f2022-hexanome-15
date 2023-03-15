@@ -244,21 +244,12 @@ public class ActionManager {
         case PAIR_SPICE_CARD:
           getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
-        case RET_3_TOKENS:
-        case RET_2_TOKENS:
-        case RET_1_TOKEN:
-        case TAKE_1_GEM_TOKEN:
         case CASCADE_LEVEL_2:
           getCascadeLevelTwoMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
         case CASCADE_LEVEL_1:
           getCascadeLevelOneMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
-        case DISCARD_2_WHITE_CARDS:
-        case DISCARD_2_BLUE_CARDS:
-        case DISCARD_2_GREEN_CARDS:
-        case DISCARD_2_RED_CARDS:
-        case DISCARD_2_BLACK_CARDS:
         case RESERVE_NOBLE:
           getReserveNobleMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;

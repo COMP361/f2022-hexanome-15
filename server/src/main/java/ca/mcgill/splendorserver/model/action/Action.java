@@ -11,7 +11,6 @@ public enum Action {
    * Purchase type Action. Card must be face up in middle of table or a previously reserved one.
    */
   PURCHASE_DEV,
-  
   /**
    * Taking one token at a time. 
    */
@@ -27,21 +26,7 @@ public enum Action {
   /**
    * This action allows players to return 1 token to the bank.
    */
-  RET_1_TOKEN,
-  /**
-   * This action allows players to return 2 tokens to the bank.
-   */
-  RET_2_TOKENS,
-  /**
-   * This action allows players to return 3 tokens to the bank.
-   */
-  RET_3_TOKENS,
-  /**
-   * This action allows players to take 2 same-coloured gem tokens.
-   * This action is only possible if there are at least 4 tokens of the chosen color left
-   * when the player takes them.
-   */
-  TAKE_2_GEM_TOKENS_SAME_COL,
+  RET_TOKEN,
   /**
    * Reserve type action.
    * A gold token is not received upon reserving a card because there are no gold tokens left.
@@ -113,20 +98,16 @@ public enum Action {
    */
   DISCARD_2_BLACK_CARDS,
   /**
-   * Take 1 gem token type action.
-   * This is used for two Trading post expansion powers.
-   * One where a player is allowed to take 1 token after purchasing a card.
-   * The other where a player is allowed to take 1 token
-   * of a different colour after taking 2 same-coloured gems.
-   */
-  TAKE_1_GEM_TOKEN,
-  /**
    * Place coat of arms type action.
    * This occurs automatically after noble visitation.
    * If a player qualifies for a trading post slot the coat of arms
    * of their colour is placed on the trading post slot.
    */
-  PLACE_COAT_OF_ARMS
+  PLACE_COAT_OF_ARMS,
+  /**
+   * Taking an extra token as a result of a trading post power.
+   */
+  TAKE_EXTRA_TOKEN
 
 
 }
