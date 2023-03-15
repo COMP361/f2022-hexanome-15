@@ -60,7 +60,10 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
       playerWrappers.add(PlayerWrapper.newPlayerWrapper(player.getName()));
     }
   }
-  
+
+  /**
+   * Adds the game creator.
+   */
   public void populateGameCreator() {
     creatorWrapper = PlayerWrapper.newPlayerWrapper(creator);
   }

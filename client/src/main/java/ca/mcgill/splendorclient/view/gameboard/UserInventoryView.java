@@ -60,11 +60,10 @@ public class UserInventoryView implements Iterable<CardColumnView> {
 
     return player;
   }
-  
+
   /**
    * Makes the inventory display the given cards.
-   *
-   * @param cardids IDs of the cards in the player's possession
+   * @param cardIDs IDs of the cards in the player's possession
    */
   public void updateCards(int[] cardIDs, int[] reservedcards) {
     cardColumns.get(0).getChildren().clear();
@@ -72,15 +71,15 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     cardColumns.get(2).getChildren().clear();
     cardColumns.get(3).getChildren().clear();
     float counter = 0.0f;
-	  for (int card : cardIDs) {
-		  CardView toAdd = new CardView(sizeX, sizeY);
-		  toAdd.updateView(card);
-		  cardColumns.get((int) (counter/4)).getChildren().add(toAdd);
-		  toAdd.setTranslateY(20f* (counter%4));
-		  counter++;
-	  }
-	  counter = 0;
-	  for (int card : reservedcards) {
+    for (int card : cardIDs) {
+      CardView toAdd = new CardView(sizeX, sizeY);
+      toAdd.updateView(card);
+      cardColumns.get((int) (counter/4)).getChildren().add(toAdd);
+      toAdd.setTranslateY(20f* (counter%4));
+      counter++;
+    }
+    counter = 0;
+    for (int card : reservedcards) {
       CardView toAdd = new CardView(sizeX, sizeY);
       toAdd.updateViewReserved(card);
       cardColumns.get(3).getChildren().add(toAdd);
@@ -89,21 +88,18 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     }
   }
 
-  /**
-   * Makes the inventory display the given cards.
-   */
   public void updateTokens(int numOfDiamonds,
                            int numOfSapphires,
                            int numOfEmeralds,
                            int numOfRubies,
                            int numOfOnyx,
                            int numOfGolds) {
-    tokenCountView.set(numOfDiamonds
-                         + numOfSapphires
-                         + numOfEmeralds
-                         + numOfRubies
-                         + numOfOnyx
-                         + numOfGolds);
+    tokenCountView.set(numOfDiamonds +
+                         numOfSapphires +
+                         numOfEmeralds +
+                         numOfRubies +
+                         numOfOnyx +
+                         numOfGolds);
     listOfTokenCounters.get(0).setCount(numOfDiamonds);
     listOfTokenCounters.get(1).setCount(numOfSapphires);
     listOfTokenCounters.get(2).setCount(numOfEmeralds);
@@ -115,7 +111,6 @@ public class UserInventoryView implements Iterable<CardColumnView> {
   public void updatePrestige(int prestige) {
     prestigeCountView.set(prestige);
   }
-
   public void addCounter(Counter c) {
     listOfTokenCounters.add(c);
   }
