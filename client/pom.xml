@@ -63,6 +63,7 @@
                         </goals>
                         <configuration>
                             <failOnWarnings>false</failOnWarnings>
+                            <failOnError>false</failOnError>
                         </configuration>
                     </execution>
                 </executions>

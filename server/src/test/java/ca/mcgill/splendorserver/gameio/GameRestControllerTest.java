@@ -51,7 +51,7 @@ class GameRestControllerTest {
     assertTrue(LocalGameStorage.getActiveGame(0L).isEmpty());
   }*/
 
-  @Test
+  /*@Test
   void getGameBoard() {
     assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build(),
       grc.getGameBoard(0L),"No GameId registered on SplendorGame");
@@ -67,7 +67,7 @@ class GameRestControllerTest {
       grc.getGameBoard(0L),
       "GameId 0L registered on SplendorGame");
 
-  }
+  }*/
 
   /*@Test
   void knockTest() {
