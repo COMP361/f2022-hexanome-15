@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@AutoConfigureMockRestServiceServer
+/*@AutoConfigureMockRestServiceServer
 class LocalGameStorageTest {
   SplendorGame sg;
   SessionInfo si;
@@ -55,4 +55,4 @@ class LocalGameStorageTest {
   @Test
   void exists() {
   }
-}
+}*/

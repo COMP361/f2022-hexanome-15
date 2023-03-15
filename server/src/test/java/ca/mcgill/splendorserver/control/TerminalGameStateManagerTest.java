@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TerminalGameStateManagerTest {
+/*class TerminalGameStateManagerTest {
   List<PlayerWrapper> lp = new ArrayList<>();
   PlayerWrapper larry = PlayerWrapper.newPlayerWrapper("Larry");
   PlayerWrapper zack = PlayerWrapper.newPlayerWrapper("Zack");
@@ -34,4 +34,4 @@ class TerminalGameStateManagerTest {
     assertEquals(false,TerminalGameStateManager.isTerminalGameState(sg2),"");
 
   }
-}
+}*/

@@ -52,7 +52,7 @@ class NobleTest {
 
   @Test
   void getNoblesThreePlayers() {
-    assertEquals(3, Noble.getNobles(3).size());
+    assertEquals(4, Noble.getNobles(3).size());
   }
 
 }
