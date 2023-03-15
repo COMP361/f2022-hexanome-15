@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -40,7 +39,7 @@ public class GameBoardView {
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
   //private static final float baseUnit_X = screenSize.height / 15f;
-  private final static String rootPath = new File("").getAbsolutePath();
+  private static final String rootPath = new File("").getAbsolutePath();
 
   /**
    * Creates a GameBoardView.
@@ -88,7 +87,7 @@ public class GameBoardView {
    */
   private static DeckView createDeckView(CardType type, Dimension screenSize) {
     DeckView newView = new DeckView(screenSize.height / 15f, screenSize.width / 15f,
-      0, ColorManager.getColor(type));
+        0, ColorManager.getColor(type));
     //deckViews.add(newView);
     return newView;
   }
@@ -135,13 +134,12 @@ public class GameBoardView {
    * @param tokenColumn the column of tokens
    * @param screenSize  the size of the screen
    */
-  private static void
-  populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize,
+  private static void populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize,
                                final UserInventoryView userInventoryView) {
     int i = 0;
     for (CardColumnView cardColumn : userInventoryView) {
       TokenPileView pileView =
-        new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
+          new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
       miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
       Counter cardCounter = cardColumn.getNumCardsDisplay();
@@ -154,7 +152,7 @@ public class GameBoardView {
     //  Token Display for gold tokens
     final HBox tokenRow = new HBox();
     TokenPileView pileView =
-      new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
+        new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
     Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
     Counter cardCounter = new Counter(0);
     miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
@@ -174,7 +172,7 @@ public class GameBoardView {
     for (int i = 0; i < TokenType.values().length; ++i) {
       final VBox tokenColumn = new VBox();
       TokenPileView pileView =
-        new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
+          new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
       tokenRow.getChildren().add(tokenColumn);
       instance.tokenPileViews.add(pileView);
@@ -191,7 +189,8 @@ public class GameBoardView {
                                                 Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
       CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
-      newView.setBackground(new Background(new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+      newView.setBackground(new Background(
+          new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
       //newView.getChildren().add(new HBox(4));
       //newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
       inventoryView.addCardColumn(newView);
@@ -217,14 +216,14 @@ public class GameBoardView {
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
     TotalPrestigeCountView prestigeCountView =
-      new TotalPrestigeCountView("Total Prestige Count: 0");
+        new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView(playerName,
-      screenSize.height / 15f,
-      screenSize.width / 15f,
-      tokenCountView,
-      cardCountView,
-      prestigeCountView);
+        screenSize.height / 15f,
+        screenSize.width / 15f,
+        tokenCountView,
+        cardCountView,
+        prestigeCountView);
     userViews.add(inventoryView);
     populateUserInventoryView(inventoryView, screenSize);
     populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
@@ -270,8 +269,8 @@ public class GameBoardView {
     VBox faceupCardsSixthColumn = new VBox();
     List<CardView> cardViewAggregator = new ArrayList<>();
     List<VBox> columns = Arrays.asList(faceupCardsFirstColumn, faceupCardsSecondColumn,
-      faceupCardsThirdColumn, faceupCardsFourthColumn,
-      faceupCardsFifthColumn, faceupCardsSixthColumn);
+        faceupCardsThirdColumn, faceupCardsFourthColumn,
+        faceupCardsFifthColumn, faceupCardsSixthColumn);
 
     int columnCount = 0;
     for (VBox column : columns) {
@@ -299,10 +298,10 @@ public class GameBoardView {
     deckViews.add(orient3DeckView);
 
     decksBox.getChildren().addAll(getDeckPane(redDeckView),
-      getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
+        getDeckPane(yellowDeckView), getDeckPane(greenDeckView));
 
     orientDecksBox.getChildren().addAll(getDeckPane(orient3DeckView),
-      getDeckPane(orient2DeckView), getDeckPane(orient1DeckView));
+        getDeckPane(orient2DeckView), getDeckPane(orient1DeckView));
 
     final int nPlayers = players.length();
 
@@ -310,21 +309,9 @@ public class GameBoardView {
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
       HBox userInventoryView =
-        buildUserInventoryView(i, screenSize, (String) players.get(i));
+          buildUserInventoryView(i, screenSize, (String) players.get(i));
       allUserInventoryViews.add(userInventoryView);
     }
-
-
-    //Temporary display for noble cards
-    //Will replace rectangles with actual noble cards
-//    VBox nobleCards = new VBox();
-//    nobleCards.setLayoutY(screenSize.height / 20f);
-//    nobleCards.setLayoutX(screenSize.width / 12f);
-//    for (int i = 0; i < 5; i++) {
-//      Rectangle rectangle = new Rectangle(screenSize.height / 15f, screenSize.width / 15f);
-//      nobleCards.getChildren().add(rectangle);
-//    }
-//    nobleCards.setSpacing(3);
 
     VBox nobleCards = new VBox();
     nobleCards.setLayoutX(screenSize.width / 20f);
@@ -353,11 +340,13 @@ public class GameBoardView {
 
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow, tradingView);
+    root.getChildren()
+        .addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow, tradingView);
     root.getChildren().addAll(allUserInventoryViews);
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
-    Image newImage = new Image("file:///"+rootPath+"/resources/background_tile.jpg");
-    root.setBackground(new Background(new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+    Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
+    root.setBackground(new Background(
+        new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     return toReturn;
   }
 
@@ -387,6 +376,12 @@ public class GameBoardView {
     cardViews.get(17).updateView(field[13]);
   }
 
+  //TODO: Fix this. There was a index out of bounds error when this was there
+  /**
+   * Updates the noble views.
+   *
+   * @param field the game board field
+   */
   public static void updateNobleViews(int[] field) {
     int num = 0;
     for (int i = 0; i < nobleViews.size(); i++) {
@@ -402,6 +397,7 @@ public class GameBoardView {
    *
    * @param playerIndex the index of the player
    * @param cards an int[] array representing cards in player's possession
+   * @param reservedcards an int[] array representing reserved cards in player's possession
    * @param numOfDiamonds number of diamond tokens in player's possession
    * @param numOfSapphires number of sapphire tokens in player's possession
    * @param numOfEmeralds number of emerald tokens in player's possession
@@ -409,7 +405,7 @@ public class GameBoardView {
    * @param numOfOnyx number of onyx tokens in player's possession
    * @param numOfGolds number of gold tokens in player's possession
    * @param prestige player's current prestige score
-   * @param visitingNobleIDs IDs of nobles currently visiting player
+   * @param visitingNobles IDs of nobles currently visiting player
    * @param powers int[] array representing unlocked Trading Posts powers
    */
   public static void updateInventories(int playerIndex,
@@ -422,18 +418,23 @@ public class GameBoardView {
                                        int numOfOnyx,
                                        int numOfGolds,
                                        int prestige,
-                                       int[] visitingNobleIDs,
+                                       int[] visitingNobles,
                                        int[] powers) {
     userViews.get(playerIndex).updateCards(cards, reservedcards);
     userViews.get(playerIndex).updateTokens(numOfDiamonds,
-      numOfSapphires,
-      numOfEmeralds,
-      numOfRubies,
-      numOfOnyx,
-      numOfGolds);
+        numOfSapphires,
+        numOfEmeralds,
+        numOfRubies,
+        numOfOnyx,
+        numOfGolds);
     userViews.get(playerIndex).updatePrestige(prestige);
   }
 
+  /**
+   * Updates the deck views.
+   *
+   * @param a the deck field
+   */
   public static void updateDecks(int[] a) {
     for (int i = 0; i < a.length; i++) {
       deckViews.get(i).setNumCardsDisplay(a[i]);
@@ -444,13 +445,18 @@ public class GameBoardView {
    * Draws the correct coats of arms under the powers
    * as owned by the players.
    *
-   * @param
+   * @param firstShields coat of arms for trading post slot 1
+   * @param secondShields coat of arms for trading post slot 2
+   * @param thirdShields coat of arms for trading post slot 3
+   * @param fourthShields coat of arms for trading post slot 4
+   * @param fifthShields coat of arms for trading post slot 5
    */
   public static void updatePowers(String[] firstShields,
                                   String[] secondShields,
                                   String[] thirdShields,
                                   String[] fourthShields,
                                   String[] fifthShields) {
-    tradingView.updatePowers(firstShields, secondShields, thirdShields, fourthShields, fifthShields);
+    tradingView.updatePowers(firstShields, secondShields,
+        thirdShields, fourthShields, fifthShields);
   }
 }
