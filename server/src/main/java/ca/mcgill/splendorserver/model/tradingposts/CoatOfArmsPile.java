@@ -33,6 +33,16 @@ public class CoatOfArmsPile {
   }
 
   /**
+   * Adds a Coat of Arms to the pile.
+   *
+   * @param coatOfArms the coat of arms to be added
+   */
+  public void addCoatOfArms(CoatOfArms coatOfArms) {
+    assert coatOfArms != null;
+    coatOfArmsList.add(coatOfArms);
+  }
+
+  /**
    * Removes a Coat of Arms from the pile.
    * Assumes that the coat of arms list is not empty.
    *

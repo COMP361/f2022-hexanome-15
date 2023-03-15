@@ -101,6 +101,18 @@ public class TradingPostSlot {
   }
 
   /**
+   * Removes a Coat of Arms from the trading post slot.
+   *
+   * @param coatOfArms The Coat of Arms to be removed
+   * @return the removed coat of arms
+   */
+  public CoatOfArms removeCoatOfArms(CoatOfArms coatOfArms) {
+    assert coatOfArms != null && acquiredCoatOfArmsList.contains(coatOfArms);
+    int index = acquiredCoatOfArmsList.indexOf(coatOfArms);
+    return acquiredCoatOfArmsList.remove(index);
+  }
+
+  /**
    * Returns the trading post slots that are currently in the game.
    *
    * @return a list of trading post slots that are currently in the game

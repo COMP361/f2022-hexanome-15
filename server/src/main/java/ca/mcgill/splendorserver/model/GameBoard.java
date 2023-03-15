@@ -186,22 +186,6 @@ public class GameBoard {
     }
   }
 
-  private boolean waitingForAction(Action action) {
-    return pendingAction;
-  }
-
-  private void cacheAction(Action action) {
-    this.pendingAction = true;
-  }
-
-  private void unCacheAction() {
-    this.pendingAction = false;
-  }
-
-  private void setPendingAction(boolean isPending) {
-    pendingAction = isPending;
-  }
-
   /**
    * Returns a pending action.
    *
@@ -469,6 +453,9 @@ public class GameBoard {
 
     OrientCard levelOneCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
+    int ix = cardField.indexOf(levelOneCard);
+    returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
+    replenishTakenCardFromDeck(levelOneCard.getDeckType(), ix);
 
     if (levelOneCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
@@ -503,6 +490,9 @@ public class GameBoard {
 
     OrientCard levelTwoCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
+    int ix = cardField.indexOf(levelTwoCard);
+    returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
+    replenishTakenCardFromDeck(levelTwoCard.getDeckType(), ix);
 
     if (levelTwoCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
@@ -562,28 +552,6 @@ public class GameBoard {
 
     throw new IllegalGameStateException(
         "DeckLevel: " + deckLevel + " wasn't found in decks on game board");
-  }
-
-  /**
-   * Assumes that drawing from token pile won't be a concern.
-   *
-   * @param tokenType token type to draw
-   * @return a token from selected token type
-   */
-  private Token drawTokenByTokenType(TokenType tokenType) {
-    assert tokenType != null;
-    return tokenPiles.get(tokenType)
-                     .removeToken();
-  }
-
-  /**
-   * Assumes that there are gold tokens to take.
-   *
-   * @return gold token selected from the game board.
-   */
-  private Token drawGoldToken() {
-    return tokenPiles.get(TokenType.GOLD)
-                     .removeToken();
   }
 
   /**
