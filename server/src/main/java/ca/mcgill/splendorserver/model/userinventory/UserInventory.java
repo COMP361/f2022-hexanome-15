@@ -426,7 +426,6 @@ public class UserInventory implements Iterable<Card> {
     }
 
     card.setCardStatus(CardStatus.PURCHASED);
-    cards.add(card);
 
     // accredit the prestige points won by purchasing this card
     addPrestige(card.getPrestige());
@@ -437,6 +436,9 @@ public class UserInventory implements Iterable<Card> {
     // taking into consideration the discounts
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
+      if (entry.getValue() == 0) {
+        continue;
+      }
       // bonusDiscount = sum(tokenBonusAmount)
       // for owned cards that match the current cost token in iteration
       int bonusDiscount = cards.stream()
@@ -448,6 +450,7 @@ public class UserInventory implements Iterable<Card> {
       int actualCost = entry.getValue() - bonusDiscount;
       costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
     }
+    cards.add(card);
     return costs;
   }
 

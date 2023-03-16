@@ -119,7 +119,7 @@ public class GameController {
               for (int i = 0; i < nobleArray.length(); i++) {
                 nobleids[i] = (int) (nobleArray.get(i));
               }
-              //GameBoardView.updateNobleViews(nobleids);
+              GameBoardView.updateNobleViews(nobleids);
 
               //update inventories
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
