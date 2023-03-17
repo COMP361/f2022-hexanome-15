@@ -319,6 +319,7 @@ public class UserInventory implements Iterable<Card> {
     for (Card card : cards) {
       if (card.getTokenBonusType() == TokenType.GOLD) {
         cards.remove(card);
+        return;
       }
     }
   }
