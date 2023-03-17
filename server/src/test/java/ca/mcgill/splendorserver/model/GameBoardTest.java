@@ -93,7 +93,7 @@ class GameBoardTest {
     cost1 = new CardCost(1,0,0,0,0);
     cost2 = new CardCost(0,0,0,0,1);
     List<Action> actions = new ArrayList<>();
-    actions.add(Action.TAKE_3_GEM_TOKENS_DIFF_COL);
+    actions.add(Action.TAKE_TOKEN);
     oCard1 = new OrientCard(1,3, ONYX, ORIENT1, ZERO, cost1,true, new ArrayList<>());
     oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost2,true, new ArrayList<>());
     oCard3 = new OrientCard(1,3, ONYX, ORIENT1, ZERO, cost2,false, actions);
@@ -106,9 +106,9 @@ class GameBoardTest {
     uinv = new UserInventory(player, Optional.ofNullable(RED));
     uinv2 = new UserInventory(player2, Optional.ofNullable(BLUE));
     tpS1 = new TradingPostSlot(1,true,GAIN_5_PRESTIGE,cost1);
-    amove = new Move(Action.PURCHASE_DEV,card1,player,BASE1,DIAMOND,noble1,tpS1,DIAMOND);
-    move2 = new Move(Action.PAIR_SPICE_CARD,oCard1,player,BASE1,DIAMOND,noble1,tpS1,DIAMOND);
-    move3 = new Move(Action.PAIR_SPICE_CARD,oCard3,player,BASE1,ONYX,noble1,tpS1,ONYX);
+    amove = new Move(Action.PURCHASE_DEV,card1,player,BASE1,noble1,tpS1,DIAMOND);
+    move2 = new Move(Action.PAIR_SPICE_CARD,oCard1,player,BASE1,noble1,tpS1,DIAMOND);
+    move3 = new Move(Action.PAIR_SPICE_CARD,oCard3,player,BASE1,noble1,tpS1,ONYX);
     tokD1 = new Token(DIAMOND);
     tokD2 = new Token(DIAMOND);
     tokD3 = new Token(DIAMOND);
@@ -220,7 +220,7 @@ class GameBoardTest {
 
     uinv.purchaseCard(oCard3);
     uinv.purchaseCard(oCard4);
-    Action action2 = (Action.TAKE_3_GEM_TOKENS_DIFF_COL);
+    Action action2 = (Action.TAKE_TOKEN);
     assertEquals(action2, gb.applyMove(move3, player),"");
 
 

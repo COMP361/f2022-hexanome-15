@@ -15,6 +15,7 @@ import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
@@ -109,11 +110,11 @@ public class GameBoard {
     // getting players inventory or throws exception if not there
     UserInventory inventory = getInventoryByPlayerName(player.getName()).orElseThrow(
         () -> new IllegalArgumentException(
-            "player (" + player.getName() + ") wasn't found in this current game board"));
+        "player (" + player.getName() + ") wasn't found in this current game board"));
 
     Action pendingAction;
     switch (move.getAction()) {
-      case PURCHASE_DEV -> {
+      case PURCHASE_DEV:
         pendingAction = performPurchaseDev(move, player, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
@@ -121,12 +122,10 @@ public class GameBoard {
         } else {
           return null;
         }
-      }
-      case RESERVE_DEV -> {
+      case RESERVE_DEV:
         pendingAction = performReserveDev(move, inventory);
         return null;
-      }
-      case PAIR_SPICE_CARD -> {
+      case PAIR_SPICE_CARD:
         pendingAction = performPairSpiceCard(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
@@ -134,8 +133,7 @@ public class GameBoard {
         } else {
           return null;
         }
-      }
-      case CASCADE_LEVEL_1 -> {
+      case CASCADE_LEVEL_1:
         pendingAction = performCascadeLevelOne(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
@@ -143,8 +141,7 @@ public class GameBoard {
         } else {
           return null;
         }
-      }
-      case CASCADE_LEVEL_2 -> {
+      case CASCADE_LEVEL_2:
         pendingAction = performCascadeLevelTwo(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
@@ -152,8 +149,15 @@ public class GameBoard {
         } else {
           return null;
         }
-      }
-      case TAKE_TOKEN -> {
+      case RESERVE_NOBLE:
+        pendingAction = performReserveNoble(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      case TAKE_TOKEN:
         performTakeToken(move, inventory);
         if (moveCache.isEmpty()) {
           moveCache.add(move);
@@ -179,10 +183,26 @@ public class GameBoard {
           this.pendingAction = false;
           return null;
         }
-      }
-      default -> {
+      case DISCARD_FIRST_WHITE_CARD: case DISCARD_FIRST_BLUE_CARD: case DISCARD_FIRST_GREEN_CARD:
+      case DISCARD_FIRST_RED_CARD: case DISCARD_FIRST_BLACK_CARD:
+        pendingAction = performDiscardFirstCard(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      case DISCARD_SECOND_WHITE_CARD: case DISCARD_SECOND_BLUE_CARD: case DISCARD_SECOND_GREEN_CARD:
+      case DISCARD_SECOND_RED_CARD: case DISCARD_SECOND_BLACK_CARD:
+        pendingAction = performDiscardSecondCard(move, inventory);
+        if (pendingAction != null) {
+          actionPending = pendingAction;
+          return pendingAction;
+        } else {
+          return null;
+        }
+      default:
         return null;
-      }
     }
   }
 
@@ -226,6 +246,7 @@ public class GameBoard {
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.canReceivePower(tradingPostSlot)) {
         moveCache.add(move);
+        performPlaceCoatOfArms(tradingPostSlot, inventory);
         return Action.PLACE_COAT_OF_ARMS;
       }
     }
@@ -391,23 +412,18 @@ public class GameBoard {
   /**
    * Performs a place coat of arms type action routine.
    *
-   * @param move      the move to perform
+   * @param tradingPostSlot the trading post slot to unlock
    * @param inventory the inventory to apply the move side effects to
    */
-  private void performPlaceCoatOfArms(Move move, UserInventory inventory) {
-    // See if the player has unlocked the power associated with this trading post slot
-    if (move.getTradingPostSlot() == null) {
-      throw new IllegalGameStateException("If move is to place coat of arms,"
-                                            + "then trading post slot cannot be empty");
-    }
-    if (move.getTradingPostSlot().isFull()) {
+  private void performPlaceCoatOfArms(TradingPostSlot tradingPostSlot, UserInventory inventory) {
+    assert tradingPostSlot != null;
+    if (tradingPostSlot.isFull()) {
       throw new IllegalGameStateException("If move is to place coat of arms,"
                                             + "then trading post slot cannot be full");
     }
-    if (inventory.canReceivePower(move.getTradingPostSlot())) {
-      inventory.addPower(move.getTradingPostSlot().getPower());
-      move.getTradingPostSlot()
-          .addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
+    if (inventory.canReceivePower(tradingPostSlot)) {
+      inventory.addPower(tradingPostSlot.getPower());
+      tradingPostSlot.addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
     }
   }
 
@@ -417,9 +433,9 @@ public class GameBoard {
    * @param move the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
-  private void performReserveNoble(Move move, UserInventory inventory) {
+  private Action performReserveNoble(Move move, UserInventory inventory) {
     if (move.getNoble() == null) {
-      throw new IllegalGameStateException("If move to reserve noble, "
+      throw new IllegalGameStateException("If move is to reserve noble, "
                                             + "then noble cannot be empty");
     }
     if (move.getNoble().getStatus() != NobleStatus.ON_BOARD) {
@@ -428,6 +444,100 @@ public class GameBoard {
                       + "reserved or is currently visiting a player");
     }
     inventory.addReservedNoble(move.getNoble());
+
+    return null;
+  }
+
+  /**
+   * Performs a discard card type action routine.
+   *
+   * @param move the move to be performed
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performDiscardSecondCard(Move move, UserInventory inventory) {
+    if (move.getCard() == null) {
+      throw new IllegalGameStateException("If move is to discard card, "
+                                            + "then card cannot be empty");
+    }
+
+    inventory.discardCard(move.getCard());
+    for (Noble noble : inventory.getNobles()) {
+      if (noble.getStatus() == NobleStatus.VISITING && !inventory.canBeVisitedByNoble(noble)) {
+        nobles.add(inventory.removeNoble(noble));
+      }
+    }
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.hasPower(tradingPostSlot.getPower())
+            && !inventory.canReceivePower(tradingPostSlot)) {
+        inventory.removePower(tradingPostSlot.getPower());
+        CoatOfArms coatOfArms =
+            tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
+        inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Performs a discard card type action routine.
+   *
+   * @param move the move to be performed
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private Action performDiscardFirstCard(Move move, UserInventory inventory) {
+    if (move.getCard() == null) {
+      throw new IllegalGameStateException("If move is to discard card, "
+                                            + "then card cannot be empty");
+    }
+
+    int spiceCount = inventory.getNumSpiceCardsByType(move.getCard().getTokenBonusType());
+    if (spiceCount >= 2) {
+      inventory.discardSpiceCard(move.getCard().getTokenBonusType());
+      inventory.discardSpiceCard(move.getCard().getTokenBonusType());
+      return null;
+    }
+
+    inventory.discardCard(move.getCard());
+    for (Noble noble : inventory.getNobles()) {
+      if (noble.getStatus() == NobleStatus.VISITING && !inventory.canBeVisitedByNoble(noble)) {
+        nobles.add(inventory.removeNoble(noble));
+      }
+    }
+    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
+      if (inventory.hasPower(tradingPostSlot.getPower())
+              && !inventory.canReceivePower(tradingPostSlot)) {
+        inventory.removePower(tradingPostSlot.getPower());
+        CoatOfArms coatOfArms =
+            tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
+        inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
+      }
+    }
+
+    if (spiceCount == 1) {
+      inventory.discardSpiceCard(move.getCard().getTokenBonusType());
+      return null;
+    }
+
+    switch (move.getAction()) {
+      case DISCARD_FIRST_WHITE_CARD -> {
+        return Action.DISCARD_SECOND_WHITE_CARD;
+      }
+      case DISCARD_FIRST_BLUE_CARD -> {
+        return Action.DISCARD_SECOND_BLUE_CARD;
+      }
+      case DISCARD_FIRST_GREEN_CARD -> {
+        return Action.DISCARD_SECOND_GREEN_CARD;
+      }
+      case DISCARD_FIRST_RED_CARD -> {
+        return Action.DISCARD_SECOND_RED_CARD;
+      }
+      case DISCARD_FIRST_BLACK_CARD -> {
+        return Action.DISCARD_SECOND_BLACK_CARD;
+      }
+      default -> {
+        return null;
+      }
+    }
   }
 
   /**
