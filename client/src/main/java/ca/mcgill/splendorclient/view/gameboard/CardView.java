@@ -41,7 +41,17 @@ public class CardView extends StackPane {
     inner.setArcHeight((height - 10) / 5);
     inner.setArcWidth((height - 10) / 5);
     this.getChildren().addAll(outer, inner);
-    this.setOnMouseClicked(arg0 -> {});
+    this.setOnMouseClicked(arg0 -> {
+      HttpResponse<String> result =
+          ActionManager.findAndSendPairSpiceCardMove(localid);
+      if (result != null) {
+        if (result.getStatus() == 206) {
+          ActionManager.handleCompoundMoves(result.getBody());
+        } else if (result.getStatus() == 200) {
+          //inform end of turn
+        }
+      }
+    });
   }
 
   /**
@@ -78,21 +88,31 @@ public class CardView extends StackPane {
             //inform end of turn
           }
         } else {
-          HttpResponse<String> cascadeLevel2 = ActionManager.findAndSendCascadeLevel1Move(localid);
-          if (cascadeLevel2 != null) {
+          result = ActionManager.findAndSendCascadeLevel2Move(localid);
+          if (result != null) {
             if (result.getStatus() == 206) {
               ActionManager.handleCompoundMoves(result.getBody());
             } else if (result.getStatus() == 200) {
               //inform end of turn
             }
           } else {
-            HttpResponse<String> cascadeLevel1 =
+            result =
                 ActionManager.findAndSendCascadeLevel1Move(localid);
-            if (cascadeLevel1 != null) {
+            if (result != null) {
               if (result.getStatus() == 206) {
                 ActionManager.handleCompoundMoves(result.getBody());
               } else if (result.getStatus() == 200) {
                 //inform end of turn
+              }
+            } else {
+              result = 
+                  ActionManager.findAndSendPairSpiceCardMove(localid);
+              if (result != null) {
+                if (result.getStatus() == 206) {
+                  ActionManager.handleCompoundMoves(result.getBody());
+                } else if (result.getStatus() == 200) {
+                  //inform end of turn
+                }
               }
             }
           }

@@ -133,6 +133,25 @@ public class ActionManager {
     }
     return null;
   }
+  
+  /**
+   * Finds and sends pair spice bag move in the move map
+   * and forwards to server. 
+   *
+   * @param cardid requested to pair
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendPairSpiceCardMove(int cardid) {
+    System.out.println("Searching for pair spice card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("PAIR_SPICE_CARD")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
 
   /**
    * Returns this instance of ActionManager.
@@ -162,91 +181,91 @@ public class ActionManager {
       takeTokenAlert.setHeaderText("Please select additional token to take.");
       takeTokenAlert.show();
     }
-    if (action.equals("PAIR_SPICE_CARD")) {
+    else if (action.equals("PAIR_SPICE_CARD")) {
       // inform user to pair card
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select card in your inventory to pair with.");
       takeTokenAlert.show();
     }
-    if (action.equals("RECEIVE_NOBLE")) {
+    else if (action.equals("RECEIVE_NOBLE")) {
       // inform user to select noble to be visited by if more than one
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to be visited by.");
       alert.show();
     }
-    if (action.equals("RESERVE_NOBLE")) {
+    else if (action.equals("RESERVE_NOBLE")) {
       // inform user to select noble to reserve
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to reserve.");
       alert.show();
     }
-    if (action.equals("RET_TOKEN")) {
+    else if (action.equals("RET_TOKEN")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid token to return.");
       alert.show();
     }
-    if (action.equals("CASCADE_LEVEL_1")) {
+    else if (action.equals("CASCADE_LEVEL_1")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid level 1 orient card.");
       alert.show();
     }
-    if (action.equals("CASCADE_LEVEL_2")) {
+    else if (action.equals("CASCADE_LEVEL_2")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid level 2 orient card.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_WHITE_CARDS")) {
+    else if (action.equals("DISCARD_2_WHITE_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid white card to discard.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_BLUE_CARDS")) {
+    else if (action.equals("DISCARD_2_BLUE_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid blue card to discard.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_GREEN_CARDS")) {
+    else if (action.equals("DISCARD_2_GREEN_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid green card to discard.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_RED_CARDS")) {
+    else if (action.equals("DISCARD_2_RED_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid red card to discard.");
       alert.show();
     }
-    if (action.equals("DISCARD_2_BLACK_CARDS")) {
+    else if (action.equals("DISCARD_2_BLACK_CARDS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid black card to discard.");
       alert.show();
     }
-    if (action.equals("TAKE_EXTRA_TOKEN")) {
+    else if (action.equals("TAKE_EXTRA_TOKEN")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select token to take as a result of your trading post power.");
       alert.show();
     }
-    if (action.equals("PLACE_COAT_OF_ARMS")) {
+    else if (action.equals("PLACE_COAT_OF_ARMS")) {
       // inform user to select token to return
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
