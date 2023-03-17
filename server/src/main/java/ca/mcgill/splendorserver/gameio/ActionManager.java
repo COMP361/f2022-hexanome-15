@@ -335,33 +335,11 @@ public class ActionManager {
     for (Card faceUp : gameBoard.getCards()) {
       // cannot offer a move involving a card already purchased
       if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
-        if (faceUp instanceof OrientCard) {
-          if (((OrientCard)faceUp).isSpiceBag()) {
-            if (inventory.purchasedCardCount() > 0) {
-              Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-                  null, null, null);
-              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                  .toUpperCase();
-              moveMap.put(moveMd5, move);
-              continue;
-            }
-          }
-          else {
-            Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-                null, null, null);
-            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                .toUpperCase();
-            moveMap.put(moveMd5, move);
-            continue;
-          }
-        }
-        else {
-          Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-              null, null, null);
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                             .toUpperCase();
-          moveMap.put(moveMd5, move);
-        }
+        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
+            null, null, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                           .toUpperCase();
+        moveMap.put(moveMd5, move);
       }
     }
 
