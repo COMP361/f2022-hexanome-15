@@ -246,6 +246,18 @@ public class UserInventory implements Iterable<Card> {
                 .anyMatch(card -> card.getCardStatus() == CardStatus.RESERVED);
   }
 
+  private int getNumSpiceCards() {
+    int sum = 0;
+    for (Card card : cards) {
+      if (card instanceof OrientCard) {
+        if (((OrientCard) card).isSpiceBag()) {
+          sum++;
+        }
+      }
+    }
+    return sum;
+  }
+
   /**
    * Checks if the current player can afford a card with their current card bonuses and tokens.
    *
@@ -265,28 +277,28 @@ public class UserInventory implements Iterable<Card> {
     if (card instanceof OrientCard) {
       if (!((OrientCard) card).getBonusActions().isEmpty()) {
         switch (((OrientCard) card).getBonusActions().get(0)) {
-          case DISCARD_2_WHITE_CARDS -> {
-            if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
+          case DISCARD_WHITE_CARD -> {
+            if (purchasedCardCountByType(TokenType.DIAMOND) + getNumSpiceCards() < 2) {
               return false;
             }
           }
-          case DISCARD_2_BLUE_CARDS -> {
-            if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
+          case DISCARD_BLUE_CARD -> {
+            if (purchasedCardCountByType(TokenType.SAPPHIRE) +  getNumSpiceCards() < 2) {
               return false;
             }
           }
-          case DISCARD_2_GREEN_CARDS -> {
-            if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
+          case DISCARD_GREEN_CARD -> {
+            if (purchasedCardCountByType(TokenType.EMERALD) + getNumSpiceCards() < 2) {
               return false;
             }
           }
-          case DISCARD_2_RED_CARDS -> {
-            if (purchasedCardCountByType(TokenType.RUBY) < 2) {
+          case DISCARD_RED_CARD -> {
+            if (purchasedCardCountByType(TokenType.RUBY) + getNumSpiceCards() < 2) {
               return false;
             }
           }
-          case DISCARD_2_BLACK_CARDS -> {
-            if (purchasedCardCountByType(TokenType.ONYX) < 2) {
+          case DISCARD_BLACK_CARD -> {
+            if (purchasedCardCountByType(TokenType.ONYX) + getNumSpiceCards() < 2) {
               return false;
             }
           }
@@ -469,8 +481,12 @@ public class UserInventory implements Iterable<Card> {
       }
       numGoldTokensNeeded -= 2 * numGoldCardsUsed;
 
-      costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
-      costs.addAll(removeTokensByTokenType(TokenType.GOLD, numGoldTokensNeeded));
+      if (actualCost > 0) {
+        costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
+      }
+      if (numGoldTokensNeeded > 0) {
+        costs.addAll(removeTokensByTokenType(TokenType.GOLD, numGoldTokensNeeded));
+      }
     }
     cards.add(card);
     return costs;

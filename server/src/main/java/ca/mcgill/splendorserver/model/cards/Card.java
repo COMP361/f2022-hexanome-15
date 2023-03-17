@@ -453,19 +453,19 @@ public class Card implements Comparable<Card> {
         new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
     cards.add(new OrientCard(115, 3, TokenType.DIAMOND, DeckType.ORIENT3, TokenBonusAmount.ONE,
         new CardCost(0, 0, 0, 0, 0), false,
-        new ArrayList<>(List.of(Action.DISCARD_2_BLACK_CARDS))));
+        new ArrayList<>(List.of(Action.DISCARD_BLACK_CARD, Action.DISCARD_BLACK_CARD))));
     cards.add(new OrientCard(116, 3, TokenType.SAPPHIRE, DeckType.ORIENT3, TokenBonusAmount.ONE,
         new CardCost(0, 0, 0, 0, 0), false,
-        new ArrayList<>(List.of(Action.DISCARD_2_WHITE_CARDS))));
+        new ArrayList<>(List.of(Action.DISCARD_WHITE_CARD, Action.DISCARD_WHITE_CARD))));
     cards.add(new OrientCard(117, 3, TokenType.EMERALD, DeckType.ORIENT3, TokenBonusAmount.ONE,
         new CardCost(0, 0, 0, 0, 0), false,
-        new ArrayList<>(List.of(Action.DISCARD_2_BLUE_CARDS))));
+        new ArrayList<>(List.of(Action.DISCARD_BLUE_CARD, Action.DISCARD_BLUE_CARD))));
     cards.add(new OrientCard(118, 3, TokenType.RUBY, DeckType.ORIENT3, TokenBonusAmount.ONE,
         new CardCost(0, 0, 0, 0, 0), false,
-        new ArrayList<>(List.of(Action.DISCARD_2_GREEN_CARDS))));
+        new ArrayList<>(List.of(Action.DISCARD_GREEN_CARD, Action.DISCARD_GREEN_CARD))));
     cards.add(new OrientCard(119, 3, TokenType.ONYX, DeckType.ORIENT3, TokenBonusAmount.ONE,
         new CardCost(0, 0, 0, 0, 0), false,
-        new ArrayList<>(List.of(Action.DISCARD_2_RED_CARDS))));
+        new ArrayList<>(List.of(Action.DISCARD_RED_CARD, Action.DISCARD_RED_CARD))));
 
   }
 

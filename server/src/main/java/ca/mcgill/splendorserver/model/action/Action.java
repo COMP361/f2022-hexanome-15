@@ -33,10 +33,6 @@ public enum Action {
    */
   RESERVE_DEV,
   /**
-   * Reserve type Action. A gold token is received upon reserving a card.
-   */
-  RESERVE_DEV_TAKE_JOKER,
-  /**
    * Reserve noble type action.
    * Some Orient expansion cards allow a player to reserve a noble upon purchasing the card.
    */
@@ -63,40 +59,40 @@ public enum Action {
    */
   PAIR_SPICE_CARD,
   /**
-   * Discard 2 white cards type action.
+   * Discard a white card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_2_WHITE_CARDS,
+  DISCARD_WHITE_CARD,
   /**
-   * Discard 2 blue cards type action.
+   * Discard a blue card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_2_BLUE_CARDS,
+  DISCARD_BLUE_CARD,
   /**
-   * Discard 2 green cards type action.
+   * Discard a green card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_2_GREEN_CARDS,
+  DISCARD_GREEN_CARD,
   /**
-   * Discard 2 red cards type action.
+   * Discard a red card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_2_RED_CARDS,
+  DISCARD_RED_CARD,
   /**
-   * Discard 2 black cards type action.
+   * Discard a black card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_2_BLACK_CARDS,
+  DISCARD_BLACK_CARD,
   /**
    * Place coat of arms type action.
    * This occurs automatically after noble visitation.
