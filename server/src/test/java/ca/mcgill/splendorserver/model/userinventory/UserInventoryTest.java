@@ -217,11 +217,6 @@ class UserInventoryTest {
   }
 
   @Test
-  void getNumSpiceCards() {
-    assertEquals(0, uinv.getNumSpiceCards());
-  }
-
-  @Test
   void getNumSpiceCardsByType() {
     assertEquals(0, uinv.getNumSpiceCardsByType(ONYX));
   }

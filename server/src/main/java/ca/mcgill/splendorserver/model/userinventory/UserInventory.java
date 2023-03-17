@@ -247,23 +247,6 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns the number of spice bag cards in the user inventory.
-   *
-   * @return the number of spice bag cards in the user inventory
-   */
-  public int getNumSpiceCards() {
-    int sum = 0;
-    for (Card card : cards) {
-      if (card instanceof OrientCard) {
-        if (((OrientCard) card).isSpiceBag()) {
-          sum++;
-        }
-      }
-    }
-    return sum;
-  }
-
-  /**
    * Returns the number of spice bag cards of a certain token type in the user inventory.
    *
    * @param type the token type of the spice bag carda
@@ -301,27 +284,27 @@ public class UserInventory implements Iterable<Card> {
       if (!((OrientCard) card).getBonusActions().isEmpty()) {
         switch (((OrientCard) card).getBonusActions().get(0)) {
           case DISCARD_FIRST_WHITE_CARD -> {
-            if (purchasedCardCountByType(TokenType.DIAMOND) + getNumSpiceCards() < 2) {
+            if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_BLUE_CARD -> {
-            if (purchasedCardCountByType(TokenType.SAPPHIRE) +  getNumSpiceCards() < 2) {
+            if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_GREEN_CARD -> {
-            if (purchasedCardCountByType(TokenType.EMERALD) + getNumSpiceCards() < 2) {
+            if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_RED_CARD -> {
-            if (purchasedCardCountByType(TokenType.RUBY) + getNumSpiceCards() < 2) {
+            if (purchasedCardCountByType(TokenType.RUBY) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_BLACK_CARD -> {
-            if (purchasedCardCountByType(TokenType.ONYX) + getNumSpiceCards() < 2) {
+            if (purchasedCardCountByType(TokenType.ONYX) < 2) {
               return false;
             }
           }
