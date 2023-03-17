@@ -122,7 +122,7 @@ public class GameBoard {
           return null;
         }
       }
-      case RESERVE_DEV_TAKE_JOKER -> {
+      case RESERVE_DEV -> {
         pendingAction = performReserveDev(move, inventory);
         return null;
       }
@@ -261,12 +261,12 @@ public class GameBoard {
           ix
       );
     }
+    if (inventory.tokenCount() < 10 && !noGoldTokens()) {
+      Token gold = this.tokenPiles.get(TokenType.GOLD).removeToken();
+      inventory.addToken(gold);
+    }
     // add to inventory as reserved card now
-    TokenType type = TokenType.GOLD;
-    TokenPile pile = this.tokenPiles.get(type);
-    Token token = pile.removeToken();
     inventory.addReservedCard(selectedCard);
-    inventory.addToken(token);
     return null;
   }
 

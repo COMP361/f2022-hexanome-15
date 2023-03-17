@@ -335,33 +335,10 @@ public class ActionManager {
     for (Card faceUp : gameBoard.getCards()) {
       // cannot offer a move involving a card already purchased
       if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
-        if (faceUp instanceof OrientCard) {
-          if (((OrientCard)faceUp).isSpiceBag()) {
-            if (inventory.purchasedCardCount() > 0) {
-              Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-                  null, null, null);
-              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                  .toUpperCase();
-              moveMap.put(moveMd5, move);
-              continue;
-            }
-          }
-          else {
-            Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-                null, null, null);
-            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                .toUpperCase();
-            moveMap.put(moveMd5, move);
-            continue;
-          }
-        }
-        else {
-          Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
-              null, null, null);
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                             .toUpperCase();
-          moveMap.put(moveMd5, move);
-        }
+        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
+            null, null, null);
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
+        moveMap.put(moveMd5, move);
       }
     }
 
@@ -411,15 +388,8 @@ public class ActionManager {
       return;
     }
 
-    // to reserve, player can take any face-up dev card or draw 1 from one of the three decks
 
-    // the player will receive a gold token (joker) if available
-    Action action;
-    if (gameBoard.noGoldTokens() || inventory.tokenCount() == 10) {
-      action = Action.RESERVE_DEV;
-    } else { // if there's at least 1 gold token (joker)
-      action = Action.RESERVE_DEV_TAKE_JOKER;
-    }
+    Action action = Action.RESERVE_DEV;
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
