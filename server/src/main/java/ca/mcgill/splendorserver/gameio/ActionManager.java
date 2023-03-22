@@ -1,7 +1,5 @@
 package ca.mcgill.splendorserver.gameio;
 
-import ca.mcgill.splendorclient.model.users.User;
-import ca.mcgill.splendorserver.control.AuthTokenAuthenticator;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.TerminalGameStateManager;
 import ca.mcgill.splendorserver.model.GameBoard;
@@ -11,9 +9,7 @@ import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.action.MoveInfo;
 import ca.mcgill.splendorserver.model.cards.Card;
-import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
-import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
@@ -21,11 +17,11 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -143,7 +138,7 @@ public class ActionManager {
    */
   @GetMapping(value = "/api/games/{gameid}/players/{player}/actions",
               produces = "application/json; charset=utf-8")
-  public ResponseEntity getAvailableActions(@PathVariable(name = "gameid") long gameid,
+  public ResponseEntity<String> getAvailableActions(@PathVariable(name = "gameid") long gameid,
                                             @PathVariable(name = "player") String playerName,
                                             @RequestParam(name = "access_token") String accessToken
   ) {
@@ -176,7 +171,6 @@ public class ActionManager {
        */
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                            .body(e.getMessage());
-
     }
   }
   
@@ -231,7 +225,6 @@ public class ActionManager {
 
     // now search through the gameboard
     // and create a mapping of viable moves the player can make given their state
-    // TODO: find the players inventory from the game,
     //  scan over their tokens and cards to ascertain what moves are possible
     GameBoard gameBoard = splendorGame.getBoard();
     // we know that the player is in the game if we make it to this point
@@ -263,6 +256,9 @@ public class ActionManager {
           //TODO: calculate available remaining token moves. 
           getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
+        case RET_TOKEN:
+          getReturnTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
         default:
           break;
       }
@@ -274,6 +270,19 @@ public class ActionManager {
     }
 
     return moveMap;
+  }
+  
+  private void getReturnTokenMoves(Map<String, Move> moveMap,
+                                      UserInventory inventory,
+                                      GameBoard gameBoard, PlayerWrapper player) {
+    for (Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+      if (entry.getValue().getSize() > 0) {
+        Move move = new Move(Action.RET_TOKEN, null, player, null, null, null, entry.getKey());
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+            .toUpperCase();
+        moveMap.put(moveMd5, move);
+      }
+    }
   }
   
   private void getRemainingTokenMoves(Map<String, Move> moveMap,
@@ -291,7 +300,7 @@ public class ActionManager {
         if (type == pastType) {
           if (pile.getSize() >= 3) {
             Move move = new Move(Action.TAKE_TOKEN, null, player,
-                null, null, null, null, pile.getType());
+                null, null, null, pile.getType());
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
             moveMap.put(moveMd5, move);
@@ -299,7 +308,7 @@ public class ActionManager {
         } else {
           if (pile.getSize() > 0) {
             Move move = new Move(Action.TAKE_TOKEN,
-                null, player, null, null,
+                null, player, null,
                 null, null, pile.getType());
             String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
@@ -317,7 +326,7 @@ public class ActionManager {
         TokenPile pile = gameBoard.getTokenPiles().get(type);
         if (pile.getSize() > 0) {
           Move move = new Move(Action.TAKE_TOKEN,
-              null, player, null, null,
+              null, player, null,
               null, null, pile.getType());
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
               .toUpperCase();
@@ -335,7 +344,7 @@ public class ActionManager {
     for (Card faceUp : gameBoard.getCards()) {
       // cannot offer a move involving a card already purchased
       if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
-        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null, null,
+        Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null,
             null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
         moveMap.put(moveMd5, move);
@@ -347,7 +356,7 @@ public class ActionManager {
       // now check if they can afford them
       for (Card card : inventory) {
         if (card.isReserved() && inventory.canAffordCard(card)) {
-          Move move = new Move(Action.PURCHASE_DEV, card, player, null, null,
+          Move move = new Move(Action.PURCHASE_DEV, card, player, null,
               null, null, null);
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                              .toUpperCase();
@@ -361,7 +370,7 @@ public class ActionManager {
                                                GameBoard gameBoard, PlayerWrapper player) {
     for (Noble noble : gameBoard.getNobles()) {
       if (inventory.canBeVisitedByNoble(noble)) {
-        Move move = new Move(Action.RECEIVE_NOBLE, null, player, null, null,
+        Move move = new Move(Action.RECEIVE_NOBLE, null, player, null,
             noble, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
@@ -370,7 +379,7 @@ public class ActionManager {
     }
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.RESERVED) {
-        Move move = new Move(Action.RECEIVE_NOBLE, null, player, null, null,
+        Move move = new Move(Action.RECEIVE_NOBLE, null, player, null,
             noble, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
@@ -393,7 +402,7 @@ public class ActionManager {
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
-      Move takeFaceUp = new Move(action, card, player, null, null, null, null, null);
+      Move takeFaceUp = new Move(action, card, player, null, null, null, null);
       String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
                                         .toUpperCase();
       moveMap.put(takeFaceUpMd5, takeFaceUp);
@@ -427,7 +436,7 @@ public class ActionManager {
     }
     for (Card card : inventory.getCards()) {
       if (card.getTokenBonusType() != null) {
-        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null, null, null, null, null);
+        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -445,7 +454,7 @@ public class ActionManager {
     for (TradingPostSlot tradingPostSlot : gameBoard.getTradingPostSlots()) {
       if (!tradingPostSlot.isFull() && inventory.canReceivePower(tradingPostSlot)) {
         Move move = new Move(Action.PLACE_COAT_OF_ARMS, null,
-            player, null, null, null, tradingPostSlot, null);
+            player, null, null, tradingPostSlot, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                            .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -459,7 +468,7 @@ public class ActionManager {
     for (TokenPile pile : piles) {
       if (pile.getSize() > 0) {
         Move takeTokenMove = new Move(Action.TAKE_TOKEN, null, player,
-            null, null, null, null, pile.getType());
+            null, null, null, pile.getType());
         String takeTokenMoveMd5 = DigestUtils.md2Hex(new Gson().toJson(takeTokenMove))
                                     .toUpperCase();
         moveMap.put(takeTokenMoveMd5, takeTokenMove);
@@ -481,7 +490,7 @@ public class ActionManager {
 
     for (Noble noble : gameBoard.getNobles()) {
       Move move = new Move(Action.RESERVE_NOBLE, null, player,
-              null, null, noble, null, null);
+            null, noble, null, null);
       String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
               .toUpperCase();
       moveMap.put(moveMd5, move);
@@ -503,7 +512,7 @@ public class ActionManager {
     for (Card card : gameBoard.getCards()) {
       if (card.getDeckType() == DeckType.ORIENT1) {
         Move move = new Move(Action.CASCADE_LEVEL_1, card, player,
-                DeckType.ORIENT1, null, null, null, null);
+                DeckType.ORIENT1, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
         moveMap.put(moveMd5, move);
@@ -525,7 +534,7 @@ public class ActionManager {
     for (Card card : gameBoard.getCards()) {
       if (card.getDeckType() == DeckType.ORIENT2) {
         Move move = new Move(Action.CASCADE_LEVEL_2, card, player,
-                DeckType.ORIENT2, null, null, null, null);
+                DeckType.ORIENT2, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                 .toUpperCase();
         moveMap.put(moveMd5, move);

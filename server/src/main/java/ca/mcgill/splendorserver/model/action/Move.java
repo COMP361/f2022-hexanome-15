@@ -18,7 +18,6 @@ public class Move {
   private final Action                action;
   private final Card        card;
   private final TokenType selectedTokenTypes; // which token type if move involves token
-  private final TokenType returnedTokenTypes; // token types selected to be returned
   private final DeckType    deckType;
   private final TradingPostSlot  tradingPostSlot;
   private final Noble     noble;
@@ -41,7 +40,7 @@ public class Move {
    * @param selectedTokenTypes The type(s) of token if any, can be null.
    */
   public Move(Action action, Card card, PlayerWrapper player,
-              DeckType deckType, TokenType returnedTokenTypes, Noble noble,
+              DeckType deckType, Noble noble,
               TradingPostSlot tradingPostSlot,
               TokenType selectedTokenTypes
   ) {
@@ -49,7 +48,6 @@ public class Move {
     this.card               = card;
     this.player             = player;
     this.selectedTokenTypes = selectedTokenTypes;
-    this.returnedTokenTypes = returnedTokenTypes;
     this.deckType           = deckType;
     this.tradingPostSlot    = tradingPostSlot;
     this.noble              = noble;
@@ -81,16 +79,7 @@ public class Move {
   public TokenType getSelectedTokenTypes() {
     return selectedTokenTypes;
   }
-
-  /**
-   * Returns the token types of tokens the player is returning to the board.
-   *
-   * @return the token types of tokens the player is returning to the board
-   */
-  public TokenType getReturnedTokenTypes() {
-    return returnedTokenTypes;
-  }
-
+  
   /**
    * Returns the noble that is visiting the player.
    *

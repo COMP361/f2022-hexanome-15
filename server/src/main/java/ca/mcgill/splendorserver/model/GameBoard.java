@@ -21,6 +21,7 @@ import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,7 +53,6 @@ public class GameBoard {
   pendingAction := if the game is waiting for an action to be made
    */
   private List<Move> moveCache = new ArrayList<>();
-  private boolean pendingAction;
   private Action actionPending;
   private List<TradingPostSlot> tradingPostSlots;
   private final List<City> cities;
@@ -81,7 +81,6 @@ public class GameBoard {
                                                      tokens -> tokens
                                                  )));
     this.nobles        = nobles;
-    this.pendingAction = false;
     this.tradingPostSlots = tradingPostSlots;
     this.cities = cities;
   }
@@ -158,26 +157,31 @@ public class GameBoard {
         if (moveCache.isEmpty()) {
           moveCache.add(move);
           actionPending = Action.TAKE_TOKEN;
-          this.pendingAction = true;
           return actionPending;
         } else if (moveCache.size() == 1) {
           //selected two of the same token
           if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
             moveCache.clear();
             actionPending = null;
-            this.pendingAction = false;
             return null;
           } else {
             moveCache.add(move);
             actionPending = Action.TAKE_TOKEN;
-            this.pendingAction = true;
             return actionPending;
           }
         } else {
           moveCache.clear();
           actionPending = null;
-          this.pendingAction = false;
           return null;
+        }
+      }
+      case RET_TOKEN -> {
+        performReturnToken(move, inventory);
+        if (requiresReturnTokens(inventory, move)) {
+          //i think this would get swooped up in endOfTurnActions, so maybe this is redundant.
+          moveCache.add(move);
+          actionPending = Action.RET_TOKEN;
+          return actionPending;
         }
       }
       default -> {
@@ -193,6 +197,12 @@ public class GameBoard {
    */
   public Action getPendingAction() {
     return actionPending;
+  }
+  
+  private void performReturnToken(Move move, UserInventory inventory) {
+    TokenType type = move.getSelectedTokenTypes();
+    Token token = inventory.removeTokenByTokenType(type);
+    this.tokenPiles.get(type).addToken(token);
   }
   
   private void performTakeToken(Move move, UserInventory inventory) {
@@ -220,16 +230,32 @@ public class GameBoard {
     }
     if (nobles.size() == 1) {
       performClaimNobleAction(nobles.get(0), inventory);
+      actionPending = Action.RECEIVE_NOBLE;
       return Action.RECEIVE_NOBLE;
     }
 
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.canReceivePower(tradingPostSlot)) {
         moveCache.add(move);
+        actionPending = Action.PLACE_COAT_OF_ARMS;
         return Action.PLACE_COAT_OF_ARMS;
       }
     }
-    return null;
+    
+    return requiresReturnTokens(inventory, move) ? Action.RET_TOKEN : null;
+  }
+  
+  private boolean requiresReturnTokens(UserInventory inventory, Move move) {
+    int nTokens = 0;
+    for (Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+      nTokens += entry.getValue().getSize();
+    }
+    if (nTokens >= 10) {
+      moveCache.add(move);
+      actionPending = Action.RET_TOKEN;
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -238,7 +264,6 @@ public class GameBoard {
   public void endTurn() {
     moveCache.clear();
     actionPending = null;
-    pendingAction = false;
   }
 
   /**
