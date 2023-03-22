@@ -44,11 +44,21 @@ public class CardView extends StackPane {
     this.setOnMouseClicked(arg0 -> {
       HttpResponse<String> result =
           ActionManager.findAndSendPairSpiceCardMove(localid);
-      if (result != null) {
+      if (result  != null) {
         if (result.getStatus() == 206) {
           ActionManager.handleCompoundMoves(result.getBody());
         } else if (result.getStatus() == 200) {
-          //inform end of turn
+          //board updater informs end of turn
+        }
+      }
+      else {
+        result = ActionManager.findAndSendPurchaseCardMove(localid);
+        if (result  != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody());
+          } else if (result.getStatus() == 200) {
+            //board updater informs end of turn
+          }
         }
       }
     });
@@ -76,7 +86,7 @@ public class CardView extends StackPane {
           if (result.getStatus() == 206) {
             ActionManager.handleCompoundMoves(result.getBody());
           } else if (result.getStatus() == 200) {
-            //inform end of turn
+            //board updater informs end of turn
           }
         }
       } else {

@@ -48,10 +48,22 @@ public class ActionManager {
    * @param type the type of token
    * @return a HttpResponse
    */
-  public static HttpResponse<String> findAndSendAssociatedTokenMove(TokenType type) {
-    System.out.println("Searching for token move with type " + type);
+  public static HttpResponse<String> findAndSendAssociatedTakeTokenMove(TokenType type) {
+    System.out.println("Searching for take token move with type " + type);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("TAKE_TOKEN")) {
+        if (entry.getValue().getTokenType().equals(type.toString())) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+  
+  public static HttpResponse<String> findAndSendAssociatedReturnTokenMove(TokenType type) {
+    System.out.println("Searching for return token move with type " + type);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RET_TOKEN")) {
         if (entry.getValue().getTokenType().equals(type.toString())) {
           return sendAction(entry.getKey());
         }

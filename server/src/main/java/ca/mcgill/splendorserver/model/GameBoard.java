@@ -183,6 +183,7 @@ public class GameBoard {
           actionPending = Action.RET_TOKEN;
           return actionPending;
         }
+        return null;
       }
       default -> {
         return null;
