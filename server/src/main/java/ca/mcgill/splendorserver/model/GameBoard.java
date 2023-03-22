@@ -247,11 +247,11 @@ public class GameBoard {
   }
   
   private boolean requiresReturnTokens(UserInventory inventory, Move move) {
-    int nTokens = 0;
+    int ntokens = 0;
     for (Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
-      nTokens += entry.getValue().getSize();
+      ntokens += entry.getValue().getSize();
     }
-    if (nTokens >= 10) {
+    if (ntokens >= 10) {
       moveCache.add(move);
       actionPending = Action.RET_TOKEN;
       return true;
