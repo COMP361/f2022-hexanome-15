@@ -262,7 +262,7 @@ public class UserInventory implements Iterable<Card> {
       }
     }
     return sum;
- }
+  }
  
   /**
    * Checks if the current player can afford a card with their current card bonuses and tokens.

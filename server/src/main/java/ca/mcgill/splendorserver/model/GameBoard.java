@@ -178,8 +178,11 @@ public class GameBoard {
           actionPending = null;
           return null;
         }
-      case DISCARD_FIRST_WHITE_CARD: case DISCARD_FIRST_BLUE_CARD: case DISCARD_FIRST_GREEN_CARD:
-      case DISCARD_FIRST_RED_CARD: case DISCARD_FIRST_BLACK_CARD:
+      case DISCARD_FIRST_WHITE_CARD:
+      case DISCARD_FIRST_BLUE_CARD:
+      case DISCARD_FIRST_GREEN_CARD:
+      case DISCARD_FIRST_RED_CARD:
+      case DISCARD_FIRST_BLACK_CARD:
         pendingAction = performDiscardFirstCard(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
@@ -187,8 +190,11 @@ public class GameBoard {
         } else {
           return null;
         }
-      case DISCARD_SECOND_WHITE_CARD: case DISCARD_SECOND_BLUE_CARD: case DISCARD_SECOND_GREEN_CARD:
-      case DISCARD_SECOND_RED_CARD: case DISCARD_SECOND_BLACK_CARD:
+      case DISCARD_SECOND_WHITE_CARD:
+      case DISCARD_SECOND_BLUE_CARD:
+      case DISCARD_SECOND_GREEN_CARD:
+      case DISCARD_SECOND_RED_CARD:
+      case DISCARD_SECOND_BLACK_CARD:
         pendingAction = performDiscardSecondCard(move, inventory);
         if (pendingAction != null) {
           actionPending = pendingAction;
@@ -207,6 +213,7 @@ public class GameBoard {
         return null;
       default:
         return null;
+    }
   }
 
   /**
