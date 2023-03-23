@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 
@@ -25,6 +26,10 @@ public final class TerminalGameStateManager {
     for (UserInventory inventory : game.getBoard()
                                        .getInventories()) {
       if (inventory.getPrestigeWon() >= prestigePointsToWin) {
+        game.setFinished();
+        return true;
+      }
+      if (!inventory.getCities().isEmpty()) {
         game.setFinished();
         return true;
       }
