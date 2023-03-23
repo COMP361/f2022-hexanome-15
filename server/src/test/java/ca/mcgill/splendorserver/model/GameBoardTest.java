@@ -52,7 +52,6 @@ class GameBoardTest {
   TokenPile t2;
   TokenPile t3;
   TokenPile t4;
-  TokenPile t5;
   TokenPile t6;
 
   Token tokD1;
@@ -69,11 +68,6 @@ class GameBoardTest {
   Token tokS2;
   Token tokS3;
   Token tokS4;
-
-  Token tokR1;
-  Token tokR2;
-  Token tokR3;
-  Token tokR4;
 
   Token tokE1;
   Token tokE2;
@@ -124,11 +118,6 @@ class GameBoardTest {
     tokS3 = new Token(SAPPHIRE);
     tokS4 = new Token(SAPPHIRE);
 
-    tokR1 = new Token(RUBY);
-    tokR2 = new Token(RUBY);
-    tokR3 = new Token(RUBY);
-    tokR4 = new Token(RUBY);
-
     tokE1 = new Token(EMERALD);
 
 
@@ -152,12 +141,6 @@ class GameBoardTest {
     t4 = new TokenPile(EMERALD);
     t4.addToken(tokE1);
 
-    t5 = new TokenPile(RUBY);
-    t5.addToken(tokR1);
-    t5.addToken(tokR2);
-    t5.addToken(tokR3);
-    t5.addToken(tokR4);
-
     t6 = new TokenPile(GOLD);
 
     Luinv = new ArrayList<>();
@@ -173,7 +156,6 @@ class GameBoardTest {
     tokenPiles.add(t2);
     tokenPiles.add(t3);
     tokenPiles.add(t4);
-    tokenPiles.add(t5);
     tokenPiles.add(t6);
 
     uinv.addToken(tokD1);
@@ -190,11 +172,6 @@ class GameBoardTest {
     uinv.addToken(tokS2);
     uinv.addToken(tokS3);
     uinv.addToken(tokS4);
-
-    uinv.addToken(tokR1);
-    uinv.addToken(tokR2);
-    uinv.addToken(tokR3);
-    uinv.addToken(tokR4);
 
     Luinv.add(uinv);
     Luinv.add(uinv2);
@@ -333,7 +310,7 @@ class GameBoardTest {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     uinv.addReservedNoble(noble1);
     Action endAction = gb.applyMove(amove,player);
-    assertEquals(null,gb.getEndOfTurnActions(amove,uinv),"");
+    assertEquals(Action.RET_TOKEN,gb.getEndOfTurnActions(amove,uinv),"");
 
     /*
     noble1.setStatus(NobleStatus.ON_BOARD);

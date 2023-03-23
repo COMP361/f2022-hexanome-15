@@ -77,7 +77,7 @@ public class Move {
   public TokenType getSelectedTokenTypes() {
     return selectedTokenTypes;
   }
-
+  
   /**
    * Returns the noble that is visiting the player.
    *

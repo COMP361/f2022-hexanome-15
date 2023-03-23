@@ -8,13 +8,10 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static ca.mcgill.splendorserver.model.action.Action.PURCHASE_DEV;
 import static ca.mcgill.splendorserver.model.cards.DeckType.BASE2;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ONE;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.DIAMOND;
-import static ca.mcgill.splendorserver.model.tokens.TokenType.EMERALD;
 import static ca.mcgill.splendorserver.model.tradingposts.Power.PURCHASE_CARD_TAKE_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
 
