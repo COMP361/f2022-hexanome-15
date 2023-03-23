@@ -249,7 +249,7 @@ public class UserInventory implements Iterable<Card> {
   /**
    * Returns the number of spice bag cards of a certain token type in the user inventory.
    *
-   * @param type the token type of the spice bag carda
+   * @param type the token type of the spice bag cards
    * @return the number of spice bag cards of a certain token type in the user inventory
    */
   public int getNumSpiceCardsByType(TokenType type) {
@@ -411,14 +411,7 @@ public class UserInventory implements Iterable<Card> {
    * @throws AssertionError if card == null
    */
   public void addReservedCard(Card card) {
-    assert card != null;
-
-    // checking that card is not already reserved or purchased
-    if (card.getCardStatus() != CardStatus.NONE) {
-      throw new IllegalGameStateException(
-          "card cannot be reserved if it has already been reserved or purchased");
-    }
-
+    assert card != null && card.getCardStatus() == CardStatus.NONE;
     card.setCardStatus(CardStatus.RESERVED);
     cards.add(card);
   }
@@ -430,13 +423,7 @@ public class UserInventory implements Iterable<Card> {
    * @throws AssertionError if noble == null
    */
   public void addReservedNoble(Noble noble) {
-    assert noble != null;
-
-    if (noble.getStatus() != NobleStatus.ON_BOARD) {
-      throw new IllegalGameStateException(
-              "Noble cannot be reserved if it has already been "
-              + "reserved or is currently visiting a player");
-    }
+    assert noble != null && noble.getStatus() == NobleStatus.ON_BOARD;
 
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
@@ -449,7 +436,7 @@ public class UserInventory implements Iterable<Card> {
    * @throws AssertionError if card == null
    */
   public void addCascadeLevelOne(OrientCard card) {
-    assert card != null;
+    assert card != null && card.getCardStatus() == CardStatus.NONE;
 
     if (card.getDeckType() == DeckType.ORIENT1) {
       card.setCardStatus(CardStatus.PURCHASED);
@@ -465,7 +452,7 @@ public class UserInventory implements Iterable<Card> {
    * @throws AssertionError if card == null
    */
   public void addCascadeLevelTwo(OrientCard card) {
-    assert card != null;
+    assert card != null && card.getCardStatus() == CardStatus.NONE;
 
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
@@ -484,12 +471,7 @@ public class UserInventory implements Iterable<Card> {
    *     given card taking into consideration any token bonuses for owned cards.
    */
   public List<Token> purchaseCard(Card card) {
-    assert card != null;
-
-    // checking that card is not already purchased
-    if (card.getCardStatus() == CardStatus.PURCHASED) {
-      throw new IllegalGameStateException("Cannot purchase a card which is already purchased");
-    }
+    assert card != null && card.getCardStatus() != CardStatus.PURCHASED;
 
     card.setCardStatus(CardStatus.PURCHASED);
 
@@ -660,9 +642,13 @@ public class UserInventory implements Iterable<Card> {
     acquiredPowers.add(power);
     if (power == Power.GAIN_5_PRESTIGE) {
       addPrestige(5);
-    } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
+    }
+    if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
       addPrestige(acquiredPowers.size());
-    } else if (acquiredPowers.contains(Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS)) {
+    }
+    if (power != Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS
+                    && acquiredPowers
+                         .contains(Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS)) {
       addPrestige(1);
     }
   }

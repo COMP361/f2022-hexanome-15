@@ -1,6 +1,8 @@
 package ca.mcgill.splendorserver.model.userinventory;
 
+import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
@@ -8,6 +10,7 @@ import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +21,9 @@ import static ca.mcgill.splendorserver.model.cards.CardStatus.*;
 import static ca.mcgill.splendorserver.model.cards.DeckType.*;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.*;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
+import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.BLUE;
 import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.RED;
-import static ca.mcgill.splendorserver.model.tradingposts.Power.GAIN_5_PRESTIGE;
+import static ca.mcgill.splendorserver.model.tradingposts.Power.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserInventoryTest {
@@ -35,7 +39,8 @@ class UserInventoryTest {
   @BeforeEach
   void setUp() {
     cost = new CardCost(1,0,0,0,0);
-    oCard1 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,true, new ArrayList<>());
+    oCard1 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD)));
     card1 = new Card(1,1, DIAMOND, BASE1, ZERO, cost);
     anoble = new Noble(0, new CardCost(1,0,0,0,0));
     aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
@@ -43,8 +48,33 @@ class UserInventoryTest {
   }
 
   @Test
+  void createUserInventoryNoTradingPosts() {
+    UserInventory userInventory = new UserInventory(aPlayer, Optional.empty());
+    assertEquals(null, userInventory.getCoatOfArmsPile());
+  }
+  @Test
   void getPrestigeWon() {
     assertEquals(0, uinv.getPrestigeWon());
+  }
+
+  @Test
+  void getCards() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    assertTrue(uinv.getCards().contains(card1));
+  }
+
+  @Test
+  void getPowers() {
+    TradingPostSlot tradingSlot1 = new TradingPostSlot(0, false,
+      GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS, cost);
+    TradingPostSlot tradingSlot2 = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addPower(tradingSlot1.getPower());
+    uinv.addPower(tradingSlot2.getPower());
+    assertTrue(uinv.getPowers().contains(GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS)
+                 && uinv.getPowers().contains(GAIN_5_PRESTIGE));
   }
 
   @Test
@@ -72,7 +102,6 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     assertEquals(1, uinv.purchasedCardCount());
-
   }
 
   @Test
@@ -80,6 +109,11 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(oCard1);
     assertEquals(oCard1, uinv.getUnpairedSpiceCard());
+  }
+
+  @Test
+  void getUnpairedSpiceCardNull() {
+    assertEquals(null, uinv.getUnpairedSpiceCard());
   }
 
   @Test
@@ -108,22 +142,90 @@ class UserInventoryTest {
   }
 
   @Test
+  void canAffordCardDoubleGoldPower() {
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GOLD_TOKENS_WORTH_2_GEMS_SAME_COL, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addPower(tradingSlot.getPower());
+    assertFalse(uinv.canAffordCard(card1));
+  }
+
+  @Test
+  void cannotAffordCard() {
+    assertFalse(uinv.canAffordCard(card1));
+  }
+
+  @Test
+  void canAffordOrientCard() {
+    uinv.addToken(new Token(DIAMOND));
+    OrientCard oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,false,
+      new ArrayList<>(List.of(Action.RESERVE_NOBLE)));
+    assertTrue(uinv.canAffordCard(oCard2));
+  }
+
+  @Test
+  void canAffordSpiceCard() {
+    uinv.addToken(new Token(DIAMOND));
+    assertFalse(uinv.canAffordCard(oCard1));
+  }
+
+  @Test
+  void canAffordDiscardWhiteCard() {
+    uinv.addToken(new Token(DIAMOND));
+    OrientCard oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_WHITE_CARD, Action.DISCARD_SECOND_WHITE_CARD)));
+    assertFalse(uinv.canAffordCard(oCard2));
+  }
+
+  @Test
+  void canAffordDiscardBlueCard() {
+    uinv.addToken(new Token(DIAMOND));
+    OrientCard oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_BLUE_CARD, Action.DISCARD_SECOND_BLUE_CARD)));
+    assertFalse(uinv.canAffordCard(oCard2));
+  }
+
+  @Test
+  void canAffordDiscardGreenCard() {
+    uinv.addToken(new Token(DIAMOND));
+    OrientCard oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_GREEN_CARD, Action.DISCARD_SECOND_GREEN_CARD)));
+    assertFalse(uinv.canAffordCard(oCard2));
+  }
+
+  @Test
+  void canAffordDiscardRedCard() {
+    uinv.addToken(new Token(DIAMOND));
+    OrientCard oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_RED_CARD, Action.DISCARD_SECOND_RED_CARD)));
+    assertFalse(uinv.canAffordCard(oCard2));
+  }
+
+  @Test
+  void canAffordDiscardBlackCard() {
+    uinv.addToken(new Token(DIAMOND));
+    OrientCard oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_BLACK_CARD, Action.DISCARD_SECOND_BLACK_CARD)));
+    assertFalse(uinv.canAffordCard(oCard2));
+  }
+
+  @Test
   void addReservedNoble() {
     uinv.addReservedNoble(anoble);
-    assertEquals(anoble, uinv.getNobles().get(0));
+    assertTrue(uinv.getNobles().contains(anoble));
   }
 
   @Test
   void addCascadeLevelOne() {
     uinv.addCascadeLevelOne(oCard1);
-    assertEquals(oCard1, uinv.getCards().get(0));
+    assertTrue(uinv.hasCard(oCard1));
   }
 
   @Test
   void addCascadeLevelTwo() {
     OrientCard oCard2 = new OrientCard(1,3, ONYX, ORIENT2, ZERO, cost,false, new ArrayList<>());
     uinv.addCascadeLevelTwo(oCard2);
-    assertEquals(oCard2, uinv.getCards().get(0));
+    assertTrue(uinv.hasCard(oCard2));
   }
 
   @Test
@@ -131,6 +233,22 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     assertTrue(uinv.canBeVisitedByNoble(anoble));
+  }
+
+  @Test
+  void canBeVisitedByNobleInInventory() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.receiveVisitFrom(anoble);
+    assertFalse(uinv.canBeVisitedByNoble(anoble));
+  }
+
+  @Test
+  void canBeVisitedByNobleReservedByAnotherPlayer() {
+    PlayerWrapper player = PlayerWrapper.newPlayerWrapper("Sofia");
+    UserInventory userInventory = new UserInventory(player, Optional.ofNullable(BLUE));
+    uinv.addReservedNoble(anoble);
+    assertFalse(userInventory.canBeVisitedByNoble(anoble));
   }
 
   @Test
@@ -148,6 +266,7 @@ class UserInventoryTest {
 
   @Test
   void getPlayer() {
+
     assertEquals(aPlayer, uinv.getPlayer());
   }
 
@@ -157,7 +276,7 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());
-    assertEquals(GAIN_5_PRESTIGE, uinv.getPowers().get(0));
+    assertTrue(uinv.hasPower(GAIN_5_PRESTIGE));
   }
 
   @Test
@@ -181,6 +300,7 @@ class UserInventoryTest {
 
   @Test
   void getTokenPiles() {
+
     assertEquals(6, uinv.getTokenPiles().size());
   }
 
@@ -204,7 +324,7 @@ class UserInventoryTest {
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());
     uinv.removePower(GAIN_5_PRESTIGE);
-    assertEquals(0, uinv.getPowers().size());
+    assertFalse(uinv.hasPower(GAIN_5_PRESTIGE));
   }
 
   @Test
@@ -218,6 +338,30 @@ class UserInventoryTest {
 
   @Test
   void getNumSpiceCardsByType() {
-    assertEquals(0, uinv.getNumSpiceCardsByType(ONYX));
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(oCard1);
+    oCard1.pairWithCard(card1);
+    assertEquals(1, uinv.getNumSpiceCardsByType(DIAMOND));
+  }
+
+  @Test
+  void discardCard() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.discardCard(card1);
+    assertFalse(uinv.hasCard(card1));
+  }
+
+  @Test
+  void discardSpiceCard() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(oCard1);
+    oCard1.pairWithCard(card1);
+    uinv.discardSpiceCard(oCard1.getTokenBonusType());
+    assertFalse(uinv.hasCard(oCard1));
   }
 }

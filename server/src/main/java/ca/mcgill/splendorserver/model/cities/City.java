@@ -16,6 +16,7 @@ public class City {
   private final int id;
   private final int requiredPrestige;
   private final CardCost requiredCardBonuses;
+  private final int numSameCards;
   private static final List<City> cities = new ArrayList<City>();
   private static final List<City> citiesInGame = new ArrayList<>();
 
@@ -25,12 +26,14 @@ public class City {
    * @param id the city id
    * @param requiredPrestige the prestige required to obtain this city
    * @param requiredCardBonuses the card bonuses required to obtain this city
+   * @param numSameCards the number of cards of the same token type that this city requires
    */
-  public City(int id, int requiredPrestige, CardCost requiredCardBonuses) {
+  public City(int id, int requiredPrestige, CardCost requiredCardBonuses, int numSameCards) {
     assert id >= 0 && requiredPrestige >= 0 && requiredCardBonuses != null;
     this.requiredPrestige = requiredPrestige;
     this.requiredCardBonuses = requiredCardBonuses;
     this.id = id;
+    this.numSameCards = numSameCards;
   }
 
   /**
@@ -63,6 +66,15 @@ public class City {
   }
 
   /**
+   * Returns the number of cards of the same token type that this city requires.
+   *
+   * @return the number of cards of the same token type that this city requires
+   */
+  public int getNumSameCards() {
+    return numSameCards;
+  }
+
+  /**
    * Returns the cities that are currently on the game board.
    *
    * @param numPlayers the number of players in the game
@@ -88,22 +100,33 @@ public class City {
    * Then 2-4 random cities will be added to the game.
    */
   private static void generateCities() {
-    cities.add(new City(0, 13, new CardCost(0, 0, 0, 4, 3)));
-    cities.add(new City(1, 13, new CardCost(3, 4, 0, 0, 0)));
-    cities.add(new City(2, 17, new CardCost(0, 0, 0, 0, 0)));
-    cities.add(new City(3, 13, new CardCost(0, 0, 3, 0, 4)));
-    cities.add(new City(4, 13, new CardCost(4, 0, 0, 3, 0)));
-    cities.add(new City(5, 16, new CardCost(1, 1, 1, 1, 1)));
-    cities.add(new City(6, 14, new CardCost(2, 1, 1, 2, 2)));
-    cities.add(new City(7, 11, new CardCost(3, 3, 0, 3, 3)));
-    cities.add(new City(8, 11, new CardCost(3, 0, 3, 3, 3)));
-    cities.add(new City(9, 13, new CardCost(0, 3, 4, 0, 0)));
-    cities.add(new City(10, 13, new CardCost(2, 2, 2, 2, 2)));
-
-    //TODO: Make it possible to have a card cost of n cards of the same type
-    /*cities.add(new City(12, new CardCost(6,0,0,0,0)));
-    cities.add(new City(15, new CardCost(5,0,0,0,0)));
-    cities.add(new City(14, new CardCost(0,0,4,4,0)));*/
+    cities.add(new City(0, 13,
+        new CardCost(0, 0, 0, 4, 3), 0));
+    cities.add(new City(1, 13,
+        new CardCost(3, 4, 0, 0, 0), 0));
+    cities.add(new City(2, 17,
+        new CardCost(0, 0, 0, 0, 0), 0));
+    cities.add(new City(3, 13,
+        new CardCost(0, 0, 3, 0, 4), 0));
+    cities.add(new City(4, 13,
+        new CardCost(4, 0, 0, 3, 0), 0));
+    cities.add(new City(5, 16,
+        new CardCost(1, 1, 1, 1, 1), 0));
+    cities.add(new City(6, 14,
+        new CardCost(2, 1, 1, 2, 2), 0));
+    cities.add(new City(7, 11,
+        new CardCost(3, 3, 0, 3, 3), 0));
+    cities.add(new City(8, 11,
+        new CardCost(3, 0, 3, 3, 3), 0));
+    cities.add(new City(9, 13,
+        new CardCost(0, 3, 4, 0, 0), 0));
+    cities.add(new City(10, 13,
+        new CardCost(2, 2, 2, 2, 2), 0));
+    cities.add(new City(11, 12,
+        new CardCost(0, 0, 0, 0, 0), 6));
+    cities.add(new City(12, 14,
+        new CardCost(0, 0, 4, 0, 0), 4));
+    cities.add(new City(13, 15,
+        new CardCost(5, 0, 0, 0, 0), 5));
   }
-
 }
