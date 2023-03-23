@@ -27,21 +27,21 @@ import static ca.mcgill.splendorserver.model.tradingposts.Power.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserInventoryTest {
-  UserInventory uinv;
-  CardCost cost;
-  OrientCard oCard1;
-  Card card1;
+  private UserInventory uinv;
+  private CardCost cost;
+  private OrientCard oCard1;
+  private Card card1;
 
-  Noble anoble;
+  private Noble anoble;
 
-  PlayerWrapper aPlayer;
+  private PlayerWrapper aPlayer;
 
   @BeforeEach
   void setUp() {
     cost = new CardCost(1,0,0,0,0);
     oCard1 = new OrientCard(1,3, null, ORIENT1, ZERO, cost,true,
       new ArrayList<>(List.of(Action.PAIR_SPICE_CARD)));
-    card1 = new Card(1,1, DIAMOND, BASE1, ZERO, cost);
+    card1 = new Card(1,1, DIAMOND, BASE1, ONE, cost);
     anoble = new Noble(0, new CardCost(1,0,0,0,0));
     aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
     uinv = new UserInventory(aPlayer, Optional.ofNullable(RED));
@@ -113,6 +113,8 @@ class UserInventoryTest {
 
   @Test
   void getUnpairedSpiceCardNull() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
     assertEquals(null, uinv.getUnpairedSpiceCard());
   }
 
@@ -123,10 +125,20 @@ class UserInventoryTest {
   }
 
   @Test
-  void hasCard() {
-    uinv.addToken(new Token(DIAMOND));
+  void purchaseCardGold() {
+    uinv.addToken(new Token(GOLD));
     uinv.purchaseCard(card1);
     assertTrue(uinv.hasCard(card1));
+  }
+
+  @Test
+  void purchaseCardGoldCard() {
+    OrientCard goldCard = new OrientCard(1,3, GOLD, ORIENT1, TWO, cost,false,
+      new ArrayList<>());
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(goldCard);
+    uinv.purchaseCard(card1);
+    assertFalse(uinv.hasCard(goldCard));
   }
 
   @Test
@@ -147,7 +159,7 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());
-    assertFalse(uinv.canAffordCard(card1));
+    assertTrue(uinv.canAffordCard(card1));
   }
 
   @Test
@@ -266,7 +278,6 @@ class UserInventoryTest {
 
   @Test
   void getPlayer() {
-
     assertEquals(aPlayer, uinv.getPlayer());
   }
 
@@ -288,6 +299,29 @@ class UserInventoryTest {
   }
 
   @Test
+  void cannotReceivePower() {
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
+    assertFalse(uinv.canReceivePower(tradingSlot));
+  }
+
+  @Test
+  void cannotReceivePowerNoble() {
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, true, GAIN_5_PRESTIGE, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    assertFalse(uinv.canReceivePower(tradingSlot));
+  }
+
+  @Test
+  void cannotReceivePowerInInventory() {
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addPower(tradingSlot.getPower());
+    assertFalse(uinv.canReceivePower(tradingSlot));
+  }
+
+  @Test
   void iterator() {
     OrientCard card2 = new OrientCard(1,3, ONYX, ORIENT2, ZERO, cost,false, new ArrayList<>());
     uinv.addToken(new Token(DIAMOND));
@@ -300,7 +334,6 @@ class UserInventoryTest {
 
   @Test
   void getTokenPiles() {
-
     assertEquals(6, uinv.getTokenPiles().size());
   }
 
@@ -318,13 +351,29 @@ class UserInventoryTest {
   }
 
   @Test
-  void removePower() {
-    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
+  void removePower1() {
+    TradingPostSlot tradingSlot1 = new TradingPostSlot(0, false, GAIN_5_PRESTIGE, cost);
+    TradingPostSlot tradingSlot2 =
+        new TradingPostSlot(1, false, GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(oCard1);
+    uinv.addPower(tradingSlot2.getPower());
+    uinv.addPower(tradingSlot1.getPower());
+    uinv.removePower(tradingSlot1.getPower());
+    assertFalse(uinv.hasPower(GAIN_5_PRESTIGE));
+  }
+
+  @Test
+  void removePower2() {
+    TradingPostSlot tradingSlot =
+      new TradingPostSlot(1, false, GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS, cost);
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());
-    uinv.removePower(GAIN_5_PRESTIGE);
-    assertFalse(uinv.hasPower(GAIN_5_PRESTIGE));
+    uinv.removePower(tradingSlot.getPower());
+    assertFalse(uinv.hasPower(GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS));
   }
 
   @Test

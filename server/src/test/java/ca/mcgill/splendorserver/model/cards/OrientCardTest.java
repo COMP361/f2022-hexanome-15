@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OrientCardTest {
 
-  List<Action> actList = new ArrayList<>();
-  OrientCard oCard;
+  private List<Action> actList = new ArrayList<>();
+  private OrientCard oCard;
 
   @BeforeEach
     void setUp() {

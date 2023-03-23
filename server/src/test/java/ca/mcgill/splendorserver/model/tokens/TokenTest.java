@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TokenTest {
 
-  Token token = new Token(ONYX);
+  private Token token = new Token(ONYX);
   @Test
   void getType() {
     assertEquals(ONYX, token.getType());

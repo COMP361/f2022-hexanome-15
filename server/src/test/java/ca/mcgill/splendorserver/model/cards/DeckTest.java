@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
 
-  Deck deck;
+  private Deck deck;
 
   @BeforeEach
   void setUp() {

@@ -10,7 +10,7 @@ class DeckJsonTest {
   @Test
   void DeckJsonTest() {
     DeckJson dJson= new DeckJson(2,BASE2);
-    assertTrue(dJson != null);
+    assertNotEquals(null, dJson);
 
   }
 }

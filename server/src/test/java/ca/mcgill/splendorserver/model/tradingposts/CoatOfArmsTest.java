@@ -8,7 +8,7 @@ import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.RED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CoatOfArmsTest {
-  CoatOfArms cta;
+  private CoatOfArms cta;
 
   @BeforeEach
   void setUp() {
@@ -24,6 +24,11 @@ class CoatOfArmsTest {
   void testEquals() {
     CoatOfArms cta2 = new CoatOfArms(BLUE);
     assertEquals(cta, cta2);
+  }
+
+  @Test
+  void testNotEquals() {
+    assertFalse(cta.equals(null));
   }
 
   @Test

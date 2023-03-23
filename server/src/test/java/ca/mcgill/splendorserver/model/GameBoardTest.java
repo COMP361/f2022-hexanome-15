@@ -32,55 +32,52 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameBoardTest {
-  UserInventory uinv;
-  UserInventory uinv2;
-  PlayerWrapper player;
-  PlayerWrapper player2;
-  CardCost cost1;
-  CardCost cost2;
-  Noble noble1;
-  Card card1;
-  OrientCard oCard1;
-  OrientCard oCard2;
-  OrientCard oCard3;
-  OrientCard oCard4;
-  TradingPostSlot tpS1;
-  Move amove;
-  Move move2;
-  Move move3;
-  TokenPile t1;
-  TokenPile t2;
-  TokenPile t3;
-  TokenPile t4;
-  TokenPile t6;
+  private UserInventory uinv;
+  private UserInventory uinv2;
+  private PlayerWrapper player;
+  private PlayerWrapper player2;
+  private CardCost cost1;
+  private CardCost cost2;
+  private Noble noble1;
+  private Card card1;
+  private OrientCard oCard1;
+  private OrientCard oCard2;
+  private OrientCard oCard3;
+  private OrientCard oCard4;
+  private TradingPostSlot tpS1;
+  private Move amove;
+  private Move move2;
+  private Move move3;
+  private TokenPile t1;
+  private TokenPile t2;
+  private TokenPile t3;
+  private TokenPile t4;
+  private TokenPile t6;
 
-  Token tokD1;
-  Token tokD2;
-  Token tokD3;
-  Token tokD4;
+  private Token tokD1;
+  private Token tokD2;
+  private Token tokD3;
+  private Token tokD4;
 
-  Token tokO1;
-  Token tokO2;
-  Token tokO3;
-  Token tokO4;
+  private Token tokO1;
+  private Token tokO2;
+  private Token tokO3;
+  private Token tokO4;
 
-  Token tokS1;
-  Token tokS2;
-  Token tokS3;
-  Token tokS4;
+  private Token tokS1;
+  private Token tokS2;
+  private Token tokS3;
+  private Token tokS4;
 
-  Token tokE1;
-  Token tokE2;
-  Token tokE3;
-  Token tokE4;
+  private Token tokE1;
 
-  List<UserInventory> Luinv;
-  List<Deck> decks;
-  List<Card> cards;
-  List <TokenPile> tokenPiles;
-  List<Noble> nobles;
-  List<TradingPostSlot> LtPS;
-  List<City> cities;
+  private List<UserInventory> Luinv;
+  private List<Deck> decks;
+  private List<Card> cards;
+  private List <TokenPile> tokenPiles;
+  private List<Noble> nobles;
+  private List<TradingPostSlot> LtPS;
+  private List<City> cities;
 
   @BeforeEach
   void setUp() {
@@ -187,18 +184,17 @@ class GameBoardTest {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     uinv.addReservedNoble(noble1);
     Action myAction = RECEIVE_NOBLE;
-    assertEquals(myAction, gb.applyMove(amove,player),"");
+    assertEquals(myAction, gb.applyMove(amove,player));
 
-    //uinv.purchaseCard(card1);
     uinv.purchaseCard(oCard1);
     uinv.purchaseCard(oCard2);
 
-    assertEquals(null, gb.applyMove(move2, player),"");
+    assertEquals(null, gb.applyMove(move2, player));
 
     uinv.purchaseCard(oCard3);
     uinv.purchaseCard(oCard4);
     Action action2 = (Action.TAKE_TOKEN);
-    assertEquals(action2, gb.applyMove(move3, player),"");
+    assertEquals(action2, gb.applyMove(move3, player));
 
 
   }

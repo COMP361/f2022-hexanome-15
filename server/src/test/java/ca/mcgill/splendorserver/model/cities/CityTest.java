@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CityTest {
 
-  CardCost cost;
-  City Lima;
+  private CardCost cost;
+  private City Lima;
 
   @BeforeEach
   void setUp() {

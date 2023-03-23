@@ -11,14 +11,13 @@ import java.util.List;
 import static ca.mcgill.splendorserver.model.cards.CardStatus.NONE;
 import static ca.mcgill.splendorserver.model.cards.CardStatus.PURCHASED;
 import static ca.mcgill.splendorserver.model.cards.DeckType.*;
-import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ONE;
-import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.TWO;
+import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.*;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CardTest {
-  CardCost acost;
-  Card acard;
+  private CardCost acost;
+  private Card acard;
 
   @BeforeEach
   void setUp() {
@@ -101,9 +100,15 @@ class CardTest {
   }
 
   @Test
-  void setBonusAmount() {
+  void setBonusAmountTwo() {
     acard.setBonusAmount(TWO);
     assertEquals(2,acard.getTokenBonusAmount());
+  }
+
+  @Test
+  void setBonusAmountZero() {
+    acard.setBonusAmount(ZERO);
+    assertEquals(0,acard.getTokenBonusAmount());
   }
 
   @Test
@@ -146,6 +151,17 @@ class CardTest {
       acard.toString(),
       "");
   }
+
+  @Test
+  void testEqualsSameCard() {
+    assertEquals(acard, acard);
+  }
+
+  @Test
+  void testEqualsNotCard() {
+    assertFalse(acard.equals(null));
+  }
+
   @Test
   void testHashCode() {
     CardCost cost = new CardCost(0, 0, 4, 0, 0);

@@ -25,7 +25,7 @@ public class InventoryJson {
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
-  private List<Integer> visitingNobles;
+  private List<Integer> visitingNobles = new ArrayList<>();
   private List<Power> powers;
   private CoatOfArmsPile coatOfArmsPile;
 

@@ -9,8 +9,8 @@ import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenPileTest {
-  TokenPile tokenP;
 
+  private TokenPile tokenP;
 
   @BeforeEach
   void setUp() {

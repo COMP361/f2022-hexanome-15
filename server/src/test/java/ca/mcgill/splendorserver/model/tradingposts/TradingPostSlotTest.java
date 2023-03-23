@@ -10,8 +10,8 @@ import static ca.mcgill.splendorserver.model.tradingposts.Power.GOLD_TOKENS_WORT
 import static org.junit.jupiter.api.Assertions.*;
 
 class TradingPostSlotTest {
-  CardCost cost;
-  TradingPostSlot tradingSlot;
+  private CardCost cost;
+  private TradingPostSlot tradingSlot;
 
   @BeforeEach
   void setUp() {
@@ -60,5 +60,21 @@ class TradingPostSlotTest {
   @Test
   void getAcquiredCoatOfArms() {
     assertEquals(0, tradingSlot.getAcquiredCoatOfArmsList().size());
+  }
+
+  @Test
+  void removeCoatOfArms() {
+    CoatOfArms cta1 = new CoatOfArms(BLUE);
+    tradingSlot.addCoatOfArms(cta1);
+    CoatOfArms removed = tradingSlot.removeCoatOfArms(cta1.getType());
+    assertEquals(cta1, removed);
+  }
+
+  @Test
+  void removeCoatOfArmsNull() {
+    CoatOfArms cta1 = new CoatOfArms(BLUE);
+    tradingSlot.addCoatOfArms(cta1);
+    CoatOfArms removed = tradingSlot.removeCoatOfArms(RED);
+    assertEquals(null, removed);
   }
 }

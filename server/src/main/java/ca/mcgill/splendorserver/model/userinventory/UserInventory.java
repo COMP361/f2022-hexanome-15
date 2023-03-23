@@ -687,8 +687,13 @@ public class UserInventory implements Iterable<Card> {
     int index = acquiredPowers.indexOf(power);
     if (power == Power.GAIN_5_PRESTIGE) {
       removePrestige(5);
-    } else if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
+    }
+    if (power == Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS) {
       removePrestige(acquiredPowers.size());
+    }
+    if (power != Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS
+          && acquiredPowers.contains(Power.GAIN_1_PRESTIGE_FOR_EVERY_PLACED_COAT_OF_ARMS)) {
+      removePrestige(1);
     }
     acquiredPowers.remove(index);
   }

@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NobleTest {
 
-  CardCost cardc;
-  Noble anoble;
+  private CardCost cardc;
+  private Noble anoble;
 
   @BeforeEach
   void setUp() {

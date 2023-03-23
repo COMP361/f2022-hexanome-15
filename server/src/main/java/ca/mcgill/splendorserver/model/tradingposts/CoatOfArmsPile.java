@@ -68,7 +68,7 @@ public class CoatOfArmsPile {
   private void setUp() {
     for (int i = 0; i < 5; i++) {
       CoatOfArms c = new CoatOfArms(this.type);
-      this.coatOfArmsList.add(c);
+      addCoatOfArms(c);
     }
   }
 
@@ -77,9 +77,10 @@ public class CoatOfArmsPile {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof CoatOfArmsPile that)) {
+    if (!(o instanceof CoatOfArmsPile)) {
       return false;
     }
+    CoatOfArmsPile that = (CoatOfArmsPile) o;
     return type == that.type;
   }
 

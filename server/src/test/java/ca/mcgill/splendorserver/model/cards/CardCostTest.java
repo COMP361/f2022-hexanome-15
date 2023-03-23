@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 class CardCostTest {
-  CardCost cardCost = new CardCost(1,2,3,4,5);
+  private CardCost cardCost = new CardCost(1,2,3,4,5);
 
   @Test
   void testCostByTokenType() {
@@ -28,5 +28,10 @@ class CardCostTest {
     costMap.put(TokenType.RUBY, 4);
     costMap.put(TokenType.ONYX, 5);
     assertEquals(costMap.entrySet(), cardCost.entrySet());
+  }
+
+  @Test
+  void testEqualsNotCardCost() {
+    assertFalse(cardCost.equals(null));
   }
 }

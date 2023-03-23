@@ -7,8 +7,8 @@ import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CoatOfArmsPileTest {
-  CoatOfArms cta;
-  CoatOfArmsPile ctaP;
+  private CoatOfArms cta;
+  private CoatOfArmsPile ctaP;
 
   @BeforeEach
   void setUp() {
@@ -21,7 +21,7 @@ class CoatOfArmsPileTest {
   }
 
   @Test
-  void removeCoatOfArmsTest() {
+  void removeCoatOfArms() {
     CoatOfArms elem = ctaP.removeCoatOfArms();
     assertEquals(elem, cta);
   }
@@ -35,6 +35,16 @@ class CoatOfArmsPileTest {
   void testEquals() {
     CoatOfArmsPile ctaP2 = new CoatOfArmsPile(BLUE);
     assertEquals(ctaP, ctaP2);
+  }
+
+  @Test
+  void testEqualsSamePile() {
+    assertEquals(ctaP, ctaP);
+  }
+
+  @Test
+  void testEqualsNotPile() {
+    assertFalse(ctaP.equals(null));
   }
 
   @Test

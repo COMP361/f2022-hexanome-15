@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest
 {
-  CardCost cardc = new CardCost(1, 0, 0, 3, 0);
-  Noble anoble = new Noble(0, cardc);
-  TradingPostSlot aTPS = new TradingPostSlot(0,false, PURCHASE_CARD_TAKE_TOKEN, cardc);
-  TokenType tkps = DIAMOND;
-  PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
-  Card acard = new Card(1,2,DIAMOND,BASE2,ONE,cardc);
-  Action mAction = PURCHASE_DEV;
-  Move amove = new Move(PURCHASE_DEV, acard, aPlayer, BASE2, anoble, aTPS, tkps);
+  private CardCost cardc = new CardCost(1, 0, 0, 3, 0);
+  private Noble anoble = new Noble(0, cardc);
+  private TradingPostSlot aTPS = new TradingPostSlot(0,false, PURCHASE_CARD_TAKE_TOKEN, cardc);
+  private TokenType tkps = DIAMOND;
+  private PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
+  private Card acard = new Card(1,2,DIAMOND,BASE2,ONE,cardc);
+  private Action mAction = PURCHASE_DEV;
+  private Move amove = new Move(PURCHASE_DEV, acard, aPlayer, BASE2, anoble, aTPS, tkps);
 
   @Test
   void getCard() {
