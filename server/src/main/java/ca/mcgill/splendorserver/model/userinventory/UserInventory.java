@@ -247,6 +247,24 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Returns the number of spice bag cards of a certain token type in the user inventory.
+   *
+   * @param type the token type of the spice bag carda
+   * @return the number of spice bag cards of a certain token type in the user inventory
+   */
+  public int getNumSpiceCardsByType(TokenType type) {
+    int sum = 0;
+    for (Card card : cards) {
+      if (card instanceof OrientCard) {
+        if (((OrientCard) card).isSpiceBag() && card.getTokenBonusType() == type) {
+          sum++;
+        }
+      }
+    }
+    return sum;
+ }
+ 
+  /**
    * Checks if the current player can afford a card with their current card bonuses and tokens.
    *
    * @param card The card the player would like to purchase
@@ -265,27 +283,27 @@ public class UserInventory implements Iterable<Card> {
     if (card instanceof OrientCard) {
       if (!((OrientCard) card).getBonusActions().isEmpty()) {
         switch (((OrientCard) card).getBonusActions().get(0)) {
-          case DISCARD_WHITE_CARD -> {
+          case DISCARD_FIRST_WHITE_CARD -> {
             if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
               return false;
             }
           }
-          case DISCARD_BLUE_CARD -> {
+          case DISCARD_FIRST_BLUE_CARD -> {
             if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
               return false;
             }
           }
-          case DISCARD_GREEN_CARD -> {
+          case DISCARD_FIRST_GREEN_CARD -> {
             if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
               return false;
             }
           }
-          case DISCARD_RED_CARD -> {
+          case DISCARD_FIRST_RED_CARD -> {
             if (purchasedCardCountByType(TokenType.RUBY) < 2) {
               return false;
             }
           }
-          case DISCARD_BLACK_CARD -> {
+          case DISCARD_FIRST_BLACK_CARD -> {
             if (purchasedCardCountByType(TokenType.ONYX) < 2) {
               return false;
             }
@@ -302,6 +320,45 @@ public class UserInventory implements Iterable<Card> {
       }
     }
     return true;
+  }
+
+  /**
+   * Discards the given card from the user inventory.
+   *
+   * @param card the given card
+   */
+  public void discardCard(Card card) {
+    assert card != null && cards.contains(card);
+    removePrestige(card.getPrestige());
+    cards.remove(card);
+  }
+
+  /**
+   * Discards a spice card of a given token type from the user inventory.
+   *
+   * @param type the given token type
+   */
+  public void discardSpiceCard(TokenType type) {
+    assert type != null;
+    for (Card card : cards) {
+      if (card instanceof OrientCard) {
+        if (((OrientCard) card).isSpiceBag() && card.getTokenBonusType() == type) {
+          cards.remove(card);
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Checks if the user inventory has a given power.
+   *
+   * @param power the given power
+   * @return a boolean determining if the user inventory has a given power
+   */
+  public boolean hasPower(Power power) {
+    assert power != null;
+    return acquiredPowers.contains(power);
   }
 
   /**

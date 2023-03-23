@@ -234,6 +234,46 @@ public class ActionManager {
     //TODO: switch on pending actions in gameboard.
     if (splendorGame.getBoard().getPendingAction() != null) {
       switch (splendorGame.getBoard().getPendingAction()) {
+        case DISCARD_FIRST_WHITE_CARD:
+          getDiscardFirstMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.DIAMOND);
+          break;
+        case DISCARD_FIRST_BLUE_CARD:
+          getDiscardFirstMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.SAPPHIRE);
+          break;
+        case DISCARD_FIRST_GREEN_CARD:
+          getDiscardFirstMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.EMERALD);
+          break;
+        case DISCARD_FIRST_RED_CARD:
+          getDiscardFirstMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.RUBY);
+          break;
+        case DISCARD_FIRST_BLACK_CARD:
+          getDiscardFirstMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.ONYX);
+          break;
+        case DISCARD_SECOND_WHITE_CARD:
+          getDiscardSecondMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.DIAMOND);
+          break;
+        case DISCARD_SECOND_BLUE_CARD:
+          getDiscardSecondMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.SAPPHIRE);
+          break;
+        case DISCARD_SECOND_GREEN_CARD:
+          getDiscardSecondMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.EMERALD);
+          break;
+        case DISCARD_SECOND_RED_CARD:
+          getDiscardSecondMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.RUBY);
+          break;
+        case DISCARD_SECOND_BLACK_CARD:
+          getDiscardSecondMoves(moveMap, userInventory,
+              gameBoard, playerWrapper, TokenType.ONYX);
+          break;
         case PAIR_SPICE_CARD:
           getPairSpiceCardMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
@@ -248,9 +288,6 @@ public class ActionManager {
           break;
         case RECEIVE_NOBLE:
           getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
-          break;
-        case PLACE_COAT_OF_ARMS:
-          getPlaceCoatOfArmsMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
         case TAKE_TOKEN:
           //TODO: calculate available remaining token moves. 
@@ -542,4 +579,78 @@ public class ActionManager {
     }
   }
 
+  private void getDiscardFirstMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                  GameBoard gameBoard, PlayerWrapper player, TokenType tokenType) {
+
+    Action action = null;
+
+    switch (tokenType) {
+      case DIAMOND -> {
+        action = Action.DISCARD_FIRST_WHITE_CARD;
+      }
+      case SAPPHIRE -> {
+        action = Action.DISCARD_FIRST_BLUE_CARD;
+      }
+      case EMERALD -> {
+        action = Action.DISCARD_FIRST_GREEN_CARD;
+      }
+      case RUBY -> {
+        action = Action.DISCARD_FIRST_RED_CARD;
+      }
+      case ONYX -> {
+        action = Action.DISCARD_FIRST_BLACK_CARD;
+      }
+      default -> {
+        action = null;
+      }
+    }
+    if (action != null) {
+      for (Card card : inventory.getCards()) {
+        if (card.getTokenBonusType() == tokenType && card.isPurchased()) {
+          Move move = new Move(action, card, player, null, null, null, null);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
+      }
+    }
+  }
+
+  private void getDiscardSecondMoves(Map<String, Move> moveMap, UserInventory inventory,
+                                    GameBoard gameBoard,
+                                     PlayerWrapper player, TokenType tokenType) {
+
+    Action action = null;
+
+    switch (tokenType) {
+      case DIAMOND -> {
+        action = Action.DISCARD_SECOND_WHITE_CARD;
+      }
+      case SAPPHIRE -> {
+        action = Action.DISCARD_SECOND_BLUE_CARD;
+      }
+      case EMERALD -> {
+        action = Action.DISCARD_SECOND_GREEN_CARD;
+      }
+      case RUBY -> {
+        action = Action.DISCARD_SECOND_RED_CARD;
+      }
+      case ONYX -> {
+        action = Action.DISCARD_SECOND_BLACK_CARD;
+      }
+      default -> {
+        action = null;
+      }
+    }
+    if (action != null) {
+      for (Card card : inventory.getCards()) {
+        if (card.getTokenBonusType() == tokenType && card.isPurchased()) {
+          Move move = new Move(action, card, player, null, null, null, null);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
+      }
+    }
+  }
 }

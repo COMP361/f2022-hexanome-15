@@ -103,13 +103,18 @@ public class TradingPostSlot {
   /**
    * Removes a Coat of Arms from the trading post slot.
    *
-   * @param coatOfArms The Coat of Arms to be removed
+   * @param coatOfArmsType The type of Coat of Arms to be removed
    * @return the removed coat of arms
    */
-  public CoatOfArms removeCoatOfArms(CoatOfArms coatOfArms) {
-    assert coatOfArms != null && acquiredCoatOfArmsList.contains(coatOfArms);
-    int index = acquiredCoatOfArmsList.indexOf(coatOfArms);
-    return acquiredCoatOfArmsList.remove(index);
+  public CoatOfArms removeCoatOfArms(CoatOfArmsType coatOfArmsType) {
+    assert coatOfArmsType != null;
+    for (CoatOfArms coatOfArms : acquiredCoatOfArmsList) {
+      if (coatOfArms.getType() == coatOfArmsType) {
+        int index = acquiredCoatOfArmsList.indexOf(coatOfArms);
+        return acquiredCoatOfArmsList.remove(index);
+      }
+    }
+    return null;
   }
 
   /**

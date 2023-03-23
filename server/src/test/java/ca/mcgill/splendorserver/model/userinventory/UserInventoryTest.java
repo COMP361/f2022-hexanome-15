@@ -215,4 +215,9 @@ class UserInventoryTest {
     uinv.removeNoble(anoble);
     assertEquals(0, uinv.getNobles().size());
   }
+
+  @Test
+  void getNumSpiceCardsByType() {
+    assertEquals(0, uinv.getNumSpiceCardsByType(ONYX));
+  }
 }

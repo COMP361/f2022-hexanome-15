@@ -87,7 +87,7 @@ class GameBoardTest {
     cost1 = new CardCost(1,0,0,0,0);
     cost2 = new CardCost(0,0,0,0,1);
     List<Action> actions = new ArrayList<>();
-    actions.add(Action.TAKE_3_GEM_TOKENS_DIFF_COL);
+    actions.add(Action.TAKE_TOKEN);
     oCard1 = new OrientCard(1,3, ONYX, ORIENT1, ZERO, cost1,true, new ArrayList<>());
     oCard2 = new OrientCard(1,3, null, ORIENT1, ZERO, cost2,true, new ArrayList<>());
     oCard3 = new OrientCard(1,3, ONYX, ORIENT1, ZERO, cost2,false, actions);
@@ -197,7 +197,7 @@ class GameBoardTest {
 
     uinv.purchaseCard(oCard3);
     uinv.purchaseCard(oCard4);
-    Action action2 = (Action.TAKE_3_GEM_TOKENS_DIFF_COL);
+    Action action2 = (Action.TAKE_TOKEN);
     assertEquals(action2, gb.applyMove(move3, player),"");
 
 

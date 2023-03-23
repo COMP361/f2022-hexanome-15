@@ -20,10 +20,6 @@ public enum Action {
    */
   RECEIVE_NOBLE,
   /**
-   * This action allows players to take 3 different-coloured gem tokens.
-   */
-  TAKE_3_GEM_TOKENS_DIFF_COL,
-  /**
    * This action allows players to return 1 token to the bank.
    */
   RET_TOKEN,
@@ -64,35 +60,70 @@ public enum Action {
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_WHITE_CARD,
+  DISCARD_FIRST_WHITE_CARD,
+  /**
+   * Discard a white card type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_SECOND_WHITE_CARD,
   /**
    * Discard a blue card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_BLUE_CARD,
+  DISCARD_FIRST_BLUE_CARD,
+  /**
+   * Discard a blue card type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_SECOND_BLUE_CARD,
   /**
    * Discard a green card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_GREEN_CARD,
+  DISCARD_FIRST_GREEN_CARD,
+  /**
+   * Discard a green card type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_SECOND_GREEN_CARD,
   /**
    * Discard a red card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_RED_CARD,
+  DISCARD_FIRST_RED_CARD,
+  /**
+   * Discard a red card type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_SECOND_RED_CARD,
   /**
    * Discard a black card type action.
    * Some Orient expansion cards force a player
    * to discard 2 cards of a certain type
    * in their inventory upon purchasing the card.
    */
-  DISCARD_BLACK_CARD,
+  DISCARD_FIRST_BLACK_CARD,
+  /**
+   * Discard a black card type action.
+   * Some Orient expansion cards force a player
+   * to discard 2 cards of a certain type
+   * in their inventory upon purchasing the card.
+   */
+  DISCARD_SECOND_BLACK_CARD,
   /**
    * Place coat of arms type action.
    * This occurs automatically after noble visitation.
@@ -104,6 +135,5 @@ public enum Action {
    * Taking an extra token as a result of a trading post power.
    */
   TAKE_EXTRA_TOKEN
-
 
 }
