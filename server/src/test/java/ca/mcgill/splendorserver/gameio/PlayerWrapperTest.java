@@ -6,38 +6,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerWrapperTest {
 
-  PlayerWrapper pw = new PlayerWrapper("Jeff");
-  PlayerWrapper pw2 = new PlayerWrapper("Jeff");
-  PlayerWrapper pw3 = new PlayerWrapper("Ojas");
-
-  @Test
-  void testPlayerWrapper() {
-    assertEquals(true,pw instanceof PlayerWrapper, "Test Passed");
-  }
-
-
-  @Test
-  void testnewPlayerWrapper() {
-    pw.newPlayerWrapper("Jeff");
-    assertEquals(pw, pw.newPlayerWrapper("Jeff"), "Test Passed");
-  }
+  private PlayerWrapper pw = PlayerWrapper.newPlayerWrapper("Jeff");
 
   @Test
   void testgetName() {
-    assertEquals
-      ("Jeff",
-        pw.getName(), "Test Passed");
+    assertEquals("Jeff", pw.getName());
   }
 
   @Test
   void testToString() {
-    assertEquals("Player{Jeff}",pw.toString(),"");
+    assertEquals("Player{Jeff}",pw.toString());
   }
 
   @Test
-  void testEquals() {
-    assertTrue(pw.equals(pw2));
-    assertTrue(pw!=pw3);
+  void testNotEqualsNull() {
+    assertFalse(pw.equals(null));
+  }
+
+  @Test
+  void testNotEquals() {
+    PlayerWrapper pw2 = PlayerWrapper.newPlayerWrapper("Sofia");
+    assertNotEquals(pw, pw2);
+  }
+
+  @Test
+  void testEqualsSamePlayer() {
+    assertEquals(pw, pw);
   }
 
   @Test

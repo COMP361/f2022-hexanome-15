@@ -684,7 +684,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public void removePower(Power power) {
     assert power != null && acquiredPowers.contains(power);
-    int index = acquiredPowers.indexOf(power);
+    final int index = acquiredPowers.indexOf(power);
     if (power == Power.GAIN_5_PRESTIGE) {
       removePrestige(5);
     }

@@ -30,16 +30,9 @@ public class PlayerWrapper {
    *
    * @param userName the player's username
    */
-  PlayerWrapper(String userName) {
+  private PlayerWrapper(String userName) {
 
     this.userName = userName;
-  }
-
-  /**
-   * Creates a PlayerWrapper object.
-   */
-  public PlayerWrapper() {
-
   }
 
   /**
