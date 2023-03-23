@@ -247,8 +247,14 @@ public class GameBoard {
    */
   public Action getEndOfTurnActions(Move move, UserInventory inventory) {
     List<Noble> nobles = new ArrayList<>();
-    //TODO: add visiting reserved nobles
-    for (Noble noble : nobles) {
+
+    for (Noble noble : this.nobles) {
+      if (inventory.canBeVisitedByNoble(noble)) {
+        moveCache.add(move);
+        nobles.add(noble);
+      }
+    }
+    for (Noble noble : inventory.getNobles()) {
       if (inventory.canBeVisitedByNoble(noble)) {
         moveCache.add(move);
         nobles.add(noble);
@@ -267,7 +273,21 @@ public class GameBoard {
         return Action.PLACE_COAT_OF_ARMS;
       }
     }
-    
+
+    List<City> cities = new ArrayList<>();
+
+    for (City city : this.cities) {
+      if (inventory.canReceiveCity(city)) {
+        moveCache.add(move);
+        cities.add(city);
+      }
+    }
+    if (cities.size() == 1) {
+      performClaimCityAction(cities.get(0), inventory);
+      actionPending = Action.RECEIVE_CITY;
+      return Action.RECEIVE_CITY;
+    }
+
     return requiresReturnTokens(inventory, move) ? Action.RET_TOKEN : null;
   }
   
@@ -452,8 +472,21 @@ public class GameBoard {
    */
   private void performClaimNobleAction(Noble noble, UserInventory inventory) {
     if (inventory.canBeVisitedByNoble(noble)) {
-      // add prestige and tile to inventory
       inventory.receiveVisitFrom(noble);
+      nobles.remove(noble);
+    }
+  }
+
+  /**
+   * Performs a claim city type action routine.
+   *
+   * @param city     the city to claim
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performClaimCityAction(City city, UserInventory inventory) {
+    if (inventory.canReceiveCity(city)) {
+      inventory.addCity(city);
+      cities.remove(city);
     }
   }
 

@@ -1,11 +1,11 @@
 package ca.mcgill.splendorserver.model.userinventory;
 
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
-import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
@@ -21,15 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 /**
  * Represents the inventory of a Splendor player.
  * Contains cards and token piles.
- * Observes CardView to assess whether a card is affordable.
- * Observed by CardColumnView to add the card to the inventory.
- * Observed by MoveManagerDepr to create the current move
  */
 public class UserInventory implements Iterable<Card> {
 
@@ -40,6 +35,7 @@ public class UserInventory implements Iterable<Card> {
   private final List<Noble>                   visitingNobles;
   private final List<Power> acquiredPowers;
   private final CoatOfArmsPile coatOfArmsPile;
+  private final List<City> cities;
 
 
   /**
@@ -55,6 +51,7 @@ public class UserInventory implements Iterable<Card> {
     prestigeWon    = 0;
     visitingNobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
+    cities = new ArrayList<>();
 
     tokenPiles = new EnumMap<TokenType, TokenPile>(TokenType.class);
     TokenPile white = new TokenPile(TokenType.DIAMOND);
@@ -135,6 +132,15 @@ public class UserInventory implements Iterable<Card> {
   public CoatOfArmsPile getCoatOfArmsPile() {
 
     return coatOfArmsPile;
+  }
+
+  /**
+   * Returns the list of acquired cities in the user inventory.
+   *
+   * @return the list of acquired cities in the user inventory
+   */
+  public List<City> getCities() {
+    return cities;
   }
 
   /**
@@ -362,6 +368,17 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Checks if the user inventory has a given city.
+   *
+   * @param city the given city
+   * @return a boolean determining if the user inventory has a given city
+   */
+  public boolean hasCity(City city) {
+    assert city != null;
+    return cities.contains(city);
+  }
+
+  /**
    * Returns the amount of gold tokens in the user inventory.
    *
    * @return the amount of gold tokens in the user inventory
@@ -401,9 +418,6 @@ public class UserInventory implements Iterable<Card> {
     return goldTokensNeeded;
   }
 
-
-  //TODO: do we check if the card is already in the hand or are the cards all unique???
-
   /**
    * Adds card to user inventory.
    *
@@ -424,7 +438,6 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addReservedNoble(Noble noble) {
     assert noble != null && noble.getStatus() == NobleStatus.ON_BOARD;
-
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
   }
@@ -437,7 +450,6 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelOne(OrientCard card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
-
     if (card.getDeckType() == DeckType.ORIENT1) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
@@ -453,7 +465,6 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
-
     if (card.getDeckType() == DeckType.ORIENT2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
@@ -633,12 +644,62 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Checks if the player can receive a city.
+   *
+   * @param city the given city
+   * @return a boolean determining if the player can receive a city
+   */
+  public boolean canReceiveCity(City city) {
+    assert city != null;
+    if (cities.contains(city)) {
+      return false;
+    }
+    //Checking if the player has the required prestige to unlock this city
+    if (prestigeWon < city.getRequiredPrestige()) {
+      return false;
+    }
+
+    // loop over the city unlock requirements
+    // and see if bonuses in this inventory are sufficient
+    TokenType tokenType = null; //saves the token type that the same token type cards cannot be
+    for (Map.Entry<TokenType, Integer> entry : city.getRequiredCardBonuses().entrySet()) {
+      if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
+        return false;
+      }
+      if (entry.getValue() > 0) {
+        tokenType = entry.getKey();
+      }
+    }
+    if (city.getNumSameCards() > 0) {
+      for (Map.Entry<TokenType, Integer> entry : city.getRequiredCardBonuses().entrySet()) {
+        if (entry.getKey() != tokenType
+              && !notEnoughBonusesFor(entry.getKey(), city.getNumSameCards())) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Adds a city to the user inventory.
+   *
+   * @param city the city to be added
+   */
+  public void addCity(City city) {
+    assert city != null && canReceiveCity(city);
+    cities.add(city);
+  }
+
+  /**
    * Adds a power to the user inventory.
    *
    * @param power the power to be added
    */
   public void addPower(Power power) {
-    assert power != null;
+    assert power != null && !acquiredPowers.contains(power);
     acquiredPowers.add(power);
     if (power == Power.GAIN_5_PRESTIGE) {
       addPrestige(5);
@@ -719,6 +780,4 @@ public class UserInventory implements Iterable<Card> {
 
     return cards.iterator();
   }
-
-
 }

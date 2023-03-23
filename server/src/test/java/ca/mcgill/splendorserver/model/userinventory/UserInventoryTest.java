@@ -1,23 +1,18 @@
 package ca.mcgill.splendorserver.model.userinventory;
 
-import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
-import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
-import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.*;
-
-import static ca.mcgill.splendorserver.model.cards.CardStatus.*;
 import static ca.mcgill.splendorserver.model.cards.DeckType.*;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.*;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
@@ -248,7 +243,12 @@ class UserInventoryTest {
   }
 
   @Test
-  void canBeVisitedByNobleInInventory() {
+  void cannotBeVisitedByNoble() {
+    assertFalse(uinv.canBeVisitedByNoble(anoble));
+  }
+
+  @Test
+  void cannotBeVisitedByNobleInInventory() {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.receiveVisitFrom(anoble);
@@ -412,5 +412,78 @@ class UserInventoryTest {
     oCard1.pairWithCard(card1);
     uinv.discardSpiceCard(oCard1.getTokenBonusType());
     assertFalse(uinv.hasCard(oCard1));
+  }
+
+  @Test
+  void addCity() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 0,
+      new CardCost(1,0,0,0,0),0);
+    uinv.addCity(city);
+    assertTrue(uinv.getCities().contains(city));
+  }
+
+  @Test
+  void hasCity() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 0,
+      new CardCost(1,0,0,0,0),0);
+    uinv.addCity(city);
+    assertTrue(uinv.hasCity(city));
+  }
+
+  @Test
+  void canReceiveCity() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 0,
+      new CardCost(1,0,0,0,0),0);
+    assertTrue(uinv.canReceiveCity(city));
+  }
+
+  @Test
+  void cannotReceiveCity() {
+    City city = new City(1, 0,
+      new CardCost(1,1,1,1,1),0);
+    assertFalse(uinv.canReceiveCity(city));
+  }
+
+  @Test
+  void cannotReceiveCityInInventory() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 0,
+      new CardCost(1,0,0,0,0),0);
+    uinv.addCity(city);
+    assertFalse(uinv.canReceiveCity(city));
+  }
+
+  @Test
+  void cannotReceiveCityPrestige() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 10,
+      new CardCost(0,0,0,0,0),0);
+    assertFalse(uinv.canReceiveCity(city));
+  }
+
+  @Test
+  void canReceiveCitySameCards() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 0,
+      new CardCost(0,0,0,0,0),1);
+    assertTrue(uinv.canReceiveCity(city));
+  }
+
+  @Test
+  void cannotReceiveCitySameCards() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    City city = new City(1, 0,
+      new CardCost(1,0,0,0,0),2);
+    assertFalse(uinv.canReceiveCity(city));
   }
 }

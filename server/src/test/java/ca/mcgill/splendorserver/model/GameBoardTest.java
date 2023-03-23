@@ -5,11 +5,8 @@ import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.*;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
-import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
-import ca.mcgill.splendorserver.model.tokens.TokenType;
-import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,11 +15,9 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockR
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static ca.mcgill.splendorserver.model.action.Action.RECEIVE_NOBLE;
 import static ca.mcgill.splendorserver.model.cards.DeckType.BASE1;
 import static ca.mcgill.splendorserver.model.cards.DeckType.ORIENT1;
-import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ONE;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ZERO;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.BLUE;
@@ -97,9 +92,9 @@ class GameBoardTest {
     uinv = new UserInventory(player, Optional.ofNullable(RED));
     uinv2 = new UserInventory(player2, Optional.ofNullable(BLUE));
     tpS1 = new TradingPostSlot(1,true,GAIN_5_PRESTIGE,cost1);
-    amove = new Move(Action.PURCHASE_DEV,card1,player,BASE1,noble1,tpS1,DIAMOND);
-    move2 = new Move(Action.PAIR_SPICE_CARD,oCard1,player,BASE1,noble1,tpS1,DIAMOND);
-    move3 = new Move(Action.PAIR_SPICE_CARD,oCard3,player,BASE1,noble1,tpS1,ONYX);
+    amove = new Move(Action.PURCHASE_DEV,card1,player,BASE1,noble1,tpS1,DIAMOND, null);
+    move2 = new Move(Action.PAIR_SPICE_CARD,oCard1,player,BASE1,noble1,tpS1,DIAMOND, null);
+    move3 = new Move(Action.PAIR_SPICE_CARD,oCard3,player,BASE1,noble1,tpS1,ONYX, null);
     tokD1 = new Token(DIAMOND);
     tokD2 = new Token(DIAMOND);
     tokD3 = new Token(DIAMOND);

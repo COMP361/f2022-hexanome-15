@@ -3,11 +3,6 @@ package ca.mcgill.splendorserver.model.nobles;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static ca.mcgill.splendorserver.model.tokens.TokenType.DIAMOND;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NobleTest {

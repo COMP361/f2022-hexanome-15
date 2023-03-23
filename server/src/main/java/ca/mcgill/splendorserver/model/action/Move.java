@@ -3,6 +3,7 @@ package ca.mcgill.splendorserver.model.action;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.DeckType;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
@@ -21,6 +22,7 @@ public class Move {
   private final DeckType    deckType;
   private final TradingPostSlot  tradingPostSlot;
   private final Noble     noble;
+  private final City city;
 
   /**
    * Creates a Move.
@@ -40,7 +42,7 @@ public class Move {
   public Move(Action action, Card card, PlayerWrapper player,
               DeckType deckType, Noble noble,
               TradingPostSlot tradingPostSlot,
-              TokenType selectedTokenTypes
+              TokenType selectedTokenTypes, City city
   ) {
     this.action             = action;
     this.card               = card;
@@ -49,6 +51,7 @@ public class Move {
     this.deckType           = deckType;
     this.tradingPostSlot    = tradingPostSlot;
     this.noble              = noble;
+    this.city               = city;
   }
 
   /**
@@ -94,6 +97,15 @@ public class Move {
    */
   public TradingPostSlot getTradingPostSlot() {
     return tradingPostSlot;
+  }
+
+  /**
+   * Returns the city that a player is unlocking.
+   *
+   * @return the city that a player is unlocking
+   */
+  public City getCity() {
+    return city;
   }
 
   /**

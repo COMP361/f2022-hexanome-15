@@ -134,6 +134,11 @@ public enum Action {
   /**
    * Taking an extra token as a result of a trading post power.
    */
-  TAKE_EXTRA_TOKEN
+  TAKE_EXTRA_TOKEN,
+  /**
+   * Receive a city type action.
+   * This occurs in the cities expansion at the end of a player's turn.
+   */
+  RECEIVE_CITY
 
 }
