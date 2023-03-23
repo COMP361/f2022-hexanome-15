@@ -332,8 +332,26 @@ public class GameBoard {
     if (selectedCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) selectedCard).getBonusActions();
       if (actions.size() > 0) {
-        moveCache.add(move);
-        return actions.get(0);
+        if (actions.get(0) == Action.DISCARD_FIRST_WHITE_CARD
+              || actions.get(0) == Action.DISCARD_FIRST_BLUE_CARD
+              || actions.get(0) == Action.DISCARD_FIRST_GREEN_CARD
+              || actions.get(0) == Action.DISCARD_FIRST_RED_CARD
+              || actions.get(0) == Action.DISCARD_FIRST_BLACK_CARD) {
+          int spiceCount = inventory.getNumSpiceCardsByType(move.getCard().getTokenBonusType());
+          if (spiceCount >= 2) {
+            inventory.discardSpiceCard(move.getCard().getTokenBonusType());
+            inventory.discardSpiceCard(move.getCard().getTokenBonusType());
+          } else if (spiceCount == 1) {
+            inventory.discardSpiceCard(move.getCard().getTokenBonusType());
+            return actions.get(1);
+          } else if (spiceCount == 0) {
+            moveCache.add(move);
+            return actions.get(0);
+          }
+        } else {
+          moveCache.add(move);
+          return actions.get(0);
+        }
       }
     }
     for (Noble noble : inventory.getNobles()) {
@@ -461,6 +479,7 @@ public class GameBoard {
     }
 
     inventory.discardCard(move.getCard());
+
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.VISITING && !inventory.canBeVisitedByNoble(noble)) {
         nobles.add(inventory.removeNoble(noble));
@@ -490,14 +509,8 @@ public class GameBoard {
                                             + "then card cannot be empty");
     }
 
-    int spiceCount = inventory.getNumSpiceCardsByType(move.getCard().getTokenBonusType());
-    if (spiceCount >= 2) {
-      inventory.discardSpiceCard(move.getCard().getTokenBonusType());
-      inventory.discardSpiceCard(move.getCard().getTokenBonusType());
-      return null;
-    }
-
     inventory.discardCard(move.getCard());
+
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.VISITING && !inventory.canBeVisitedByNoble(noble)) {
         nobles.add(inventory.removeNoble(noble));
@@ -511,11 +524,6 @@ public class GameBoard {
             tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
         inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
       }
-    }
-
-    if (spiceCount == 1) {
-      inventory.discardSpiceCard(move.getCard().getTokenBonusType());
-      return null;
     }
 
     switch (move.getAction()) {
