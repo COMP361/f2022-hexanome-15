@@ -2,6 +2,7 @@ package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -26,9 +27,10 @@ public class GameBoardJson {
   private List<InventoryJson> inventories;
   private List<DeckJson> decks = new ArrayList<>();
   private List<Integer> nobles = new ArrayList<>();
-  private List<Integer> cardField = new ArrayList<>(); //implicit flattened 2d array
+  private List<Integer> cardField = new ArrayList<>();
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostJson> tradingPosts = new ArrayList<>();
+  private List<Integer> cities = new ArrayList<>();
 
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
@@ -40,11 +42,12 @@ public class GameBoardJson {
    * @param cardField cards on the card field
    * @param tokenField tokens on the playing field
    * @param tradingPostSlots trading post slots on the field
+   * @param cities cities on the field
    */
   public GameBoardJson(String whoseTurn, List<InventoryJson> inventories, List<Deck> decks,
                        List<Noble> nobles, List<Card> cardField,
                        EnumMap<TokenType, TokenPile> tokenField,
-                       List<TradingPostSlot> tradingPostSlots) {
+                       List<TradingPostSlot> tradingPostSlots, List<City> cities) {
     this.whoseTurn = whoseTurn;
     this.inventories = inventories;
     for (Deck deck : decks) {
@@ -65,6 +68,9 @@ public class GameBoardJson {
         coatOfArmsTypes.add(coatOfArms.getType());
       }
       this.tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
+    }
+    for (City city : cities) {
+      this.cities.add(city.getId());
     }
   }
 

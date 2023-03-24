@@ -18,9 +18,10 @@ public class GameBoardJson {
   private List<InventoryJson> inventories;
   private List<DeckJson> decks = new ArrayList<DeckJson>();
   private List<Integer> nobles;
-  private List<Integer> cardField = new ArrayList<Integer>(); //implicit flattened 2d array
+  private List<Integer> cardField = new ArrayList<Integer>();
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostJson> tradingPosts = new ArrayList<>();
+  private List<Integer> cities = new ArrayList<>();
 
   /**
    * Creates a GameBoardJson object.

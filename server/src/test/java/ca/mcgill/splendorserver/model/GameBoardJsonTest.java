@@ -3,6 +3,7 @@ package ca.mcgill.splendorserver.model;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
@@ -20,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameBoardJsonTest {
   private String whoseTurn = "Sofia";
-  private List<InventoryJson> inventories = new ArrayList<>();
-  private List<Deck> decks = new ArrayList<>();
-  private List<Card> cards = new ArrayList<>();
-  private EnumMap<TokenType, TokenPile> tokenPiles = new EnumMap<TokenType, TokenPile>(TokenType.class);
   private GameBoardJson gjson;
 
 
 
   @BeforeEach
   void setUp() {
+    List<InventoryJson> inventories = new ArrayList<>();
+    List<Deck> decks = new ArrayList<>();
+    List<Card> cards = new ArrayList<>();
+    EnumMap<TokenType, TokenPile> tokenPiles = new EnumMap<TokenType, TokenPile>(TokenType.class);
     TokenPile white = new TokenPile(TokenType.DIAMOND);
     tokenPiles.put(TokenType.DIAMOND, white);
     TokenPile blue = new TokenPile(TokenType.SAPPHIRE);
@@ -48,9 +49,10 @@ class GameBoardJsonTest {
     Deck deck1 = new Deck(BASE1);
     decks.add(deck1);
     List<Noble> nobles = Noble.getNobles(2);
+    List<City> cities = City.getCities(2);
     List<TradingPostSlot> tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     gjson = new GameBoardJson(whoseTurn, inventories, decks,
-      nobles, cards, tokenPiles, tradingPostSlots);
+      nobles, cards, tokenPiles, tradingPostSlots, cities);
   }
 
   @Test

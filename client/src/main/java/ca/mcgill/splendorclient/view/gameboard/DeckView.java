@@ -1,8 +1,10 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
+import ca.mcgill.splendorclient.control.ActionManager;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import kong.unirest.HttpResponse;
 
 /**
  * Represents the view of a Splendor Deck.
@@ -26,6 +28,20 @@ public class DeckView extends Rectangle {
     this.setArcWidth(height / 5);
     numCardsDisplay = new Counter(size);
     this.setFill(color);
+
+    // TODO: Add reserving from deck
+    /*
+    this.setOnMouseClicked(arg0 -> {
+      HttpResponse<String> result =
+        ActionManager.findAndSendReserveCardMove(localid);
+      if (result  != null) {
+        if (result.getStatus() == 206) {
+          ActionManager.handleCompoundMoves(result.getBody());
+        } else if (result.getStatus() == 200) {
+          //board updater informs end of turn
+        }
+      }
+    });*/
   }
 
   /**

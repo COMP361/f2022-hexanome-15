@@ -1,11 +1,13 @@
 package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -21,15 +23,16 @@ import java.util.Map;
  */
 public class InventoryJson {
   
-  private List<Integer> purchasedcards = new ArrayList<Integer>();
-  private List<Integer> reservedcards = new ArrayList<Integer>();
+  private List<Integer> purchasedCards = new ArrayList<Integer>();
+  private List<Integer> reservedCards = new ArrayList<Integer>();
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
   private List<Integer> visitingNobles = new ArrayList<>();
   private List<Integer> reservedNobles = new ArrayList<>();
   private List<Power> powers;
-  private CoatOfArmsPile coatOfArmsPile;
+  private CoatOfArmsType coatOfArmsType;
+  private List<Integer> cities = new ArrayList<>();
 
   /**
    * Creates new inventoryjson. Should be based on actual user inventory from splendorgame.
@@ -40,16 +43,17 @@ public class InventoryJson {
    * @param prestige earned by the player
    * @param nobles earned by the player
    * @param powers earned by the player
-   * @param pile of coat of arms
+   * @param pile in the players inventory
+   * @param cities in the players inventory
    */
   public InventoryJson(List<Card> cards, EnumMap<TokenType, TokenPile> tokens, 
       String userName, int prestige, List<Noble> nobles, 
-      List<Power> powers, CoatOfArmsPile pile) {
+      List<Power> powers, CoatOfArmsPile pile, List<City> cities) {
     for (Card card : cards) {
       if (card.isPurchased()) {
-        this.purchasedcards.add(card.getId());
+        this.purchasedCards.add(card.getId());
       } else if (card.isReserved()) {
-        this.reservedcards.add(card.getId());
+        this.reservedCards.add(card.getId());
       }
     }
     for (TokenType type : tokens.keySet()) {
@@ -65,6 +69,9 @@ public class InventoryJson {
       }
     }
     this.powers = powers;
-    coatOfArmsPile = pile;
+    for (City city: cities) {
+      this.cities.add(city.getId());
+    }
+    this.coatOfArmsType = pile.getType();
   }
 }

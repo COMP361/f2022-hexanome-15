@@ -79,12 +79,12 @@ public class GameRestController {
       InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
           inventory.getTokenPiles(), inventory.getPlayer().getName(), 
           inventory.getPrestigeWon(), inventory.getNobles(), 
-          inventory.getPowers(), inventory.getCoatOfArmsPile());
+          inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities());
       inventories.add(inventoryJson);
     }
     GameBoardJson gameBoardJson = new GameBoardJson(whoseTurn, inventories, 
         gameboard.getDecks(), gameboard.getNobles(), 
-        gameboard.getCards(), gameboard.getTokenPiles(), gameboard.getTradingPostSlots());
+        gameboard.getCards(), gameboard.getTokenPiles(), gameboard.getTradingPostSlots(), gameboard.getCities());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
   }

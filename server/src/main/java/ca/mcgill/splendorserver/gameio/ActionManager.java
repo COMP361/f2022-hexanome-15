@@ -9,6 +9,7 @@ import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.action.MoveInfo;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
@@ -483,7 +484,6 @@ public class ActionManager {
     }
     // or can take from one of the decks, but they won't be able to see the card, so it'll be null
     // ,but they will see the different deck levels (1, 2, 3)
-    /*
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
@@ -495,7 +495,6 @@ public class ActionManager {
         moveMap.put(takeFromDeckMd5, takeFromDeck);
       }
     }
-    */
   }
 
   private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,

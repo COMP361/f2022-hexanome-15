@@ -13,14 +13,17 @@ import java.util.Map;
  *
  */
 public class InventoryJson {
-  
-  private List<Integer> cards = new ArrayList<Integer>();
+
+  private List<Integer> purchasedCards = new ArrayList<Integer>();
+  private List<Integer> reservedCards = new ArrayList<Integer>();
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
-  private List<Integer> visitingNobles;
+  private List<Integer> visitingNobles = new ArrayList<>();
+  private List<Integer> reservedNobles = new ArrayList<>();
   private List<Power> powers;
-  private CoatOfArmsPile coatOfArmsPile;
+  private CoatOfArmsType coatOfArmsType;
+  private List<Integer> cities;
 
   /**
    * Creates an InventoryJson object.
