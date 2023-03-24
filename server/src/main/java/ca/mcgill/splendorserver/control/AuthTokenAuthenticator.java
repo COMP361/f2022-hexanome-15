@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public final class AuthTokenAuthenticator {
-  // TODO: is there a better way than just hardcoding it / what if it changes or isn't there?
   private static final String lobbyServiceLocation = "http://127.0.0.1:4242";
   private static final String GET_USERNAME         = "/oauth/username";
   private static final String GET_ROLE             = "/oauth/role";

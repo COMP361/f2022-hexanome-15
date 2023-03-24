@@ -2,6 +2,7 @@ package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.nobles.NobleStatus;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsPile;
@@ -26,6 +27,7 @@ public class InventoryJson {
   private String userName;
   private int prestige;
   private List<Integer> visitingNobles = new ArrayList<>();
+  private List<Integer> reservedNobles = new ArrayList<>();
   private List<Power> powers;
   private CoatOfArmsPile coatOfArmsPile;
 
@@ -36,12 +38,12 @@ public class InventoryJson {
    * @param tokens in the players inventory
    * @param userName of the player 
    * @param prestige earned by the player
-   * @param visitingNobles earned by the player
+   * @param nobles earned by the player
    * @param powers earned by the player
    * @param pile of coat of arms
    */
   public InventoryJson(List<Card> cards, EnumMap<TokenType, TokenPile> tokens, 
-      String userName, int prestige, List<Noble> visitingNobles, 
+      String userName, int prestige, List<Noble> nobles, 
       List<Power> powers, CoatOfArmsPile pile) {
     for (Card card : cards) {
       if (card.isPurchased()) {
@@ -55,8 +57,12 @@ public class InventoryJson {
     }
     this.userName = userName;
     this.prestige = prestige;
-    for (Noble noble : visitingNobles) {
-      this.visitingNobles.add(noble.getId());
+    for (Noble noble : nobles) {
+      if (noble.getStatus() == NobleStatus.VISITING) {
+        this.visitingNobles.add(noble.getId());
+      } else if (noble.getStatus() == NobleStatus.RESERVED) {
+        this.reservedNobles.add(noble.getId());
+      }
     }
     this.powers = powers;
     coatOfArmsPile = pile;

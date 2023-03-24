@@ -317,11 +317,11 @@ public class GameBoardView {
     nobleCards.setLayoutX(screenSize.width / 20f);
     nobleCards.setLayoutY(screenSize.height / 12f);
     int playerCount = players.length();
-      for (int i = 0; i < playerCount + 1; i++) {
-        NobleView nobleView = createNobleView(screenSize);
-        nobleCards.getChildren().add(nobleView);
-      }
-      nobleCards.setSpacing(3);
+    for (int i = 0; i < playerCount + 1; i++) {
+      NobleView nobleView = createNobleView(screenSize);
+      nobleCards.getChildren().add(nobleView);
+    }
+    nobleCards.setSpacing(3);
 
 
     //Creating token piles
