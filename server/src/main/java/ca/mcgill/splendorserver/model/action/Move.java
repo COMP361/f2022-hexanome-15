@@ -34,10 +34,12 @@ public class Move {
    * @param player             The player's username.
    * @param deckType           The level of the deck from which
    *                           they can take from if they want, can be null.
-   * @param noble              a noble tile that represents the noble
+   * @param noble              A noble tile that represents the noble
    *                           which will visit as a result of selecting this move
    * @param tradingPostSlot    The trading post slot that the player is acquiring a power from
    * @param selectedTokenTypes The type(s) of token if any, can be null.
+   * @param city               Represents the city a player will receive
+   *                           as a result of selecting this move
    */
   public Move(Action action, Card card, PlayerWrapper player,
               DeckType deckType, Noble noble,

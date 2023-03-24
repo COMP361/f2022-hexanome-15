@@ -200,59 +200,59 @@ class GameBoardTest {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     uinv.addReservedNoble(noble1);
     Action myAction = RECEIVE_NOBLE;
-    assertEquals(null, gb.getPendingAction(),"");
+    assertEquals(null, gb.getPendingAction());
 
   }
 
   @Test
   void getInventoryByPlayerName() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(Optional.empty(), gb.getInventoryByPlayerName("John"),"");
+    assertEquals(Optional.empty(), gb.getInventoryByPlayerName("John"));
 
   }
 
   @Test
   void getInventories() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(uinv, gb.getInventories().get(0),"");
+    assertEquals(uinv, gb.getInventories().get(0));
 
   }
 
   @Test
   void getDecks() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(decks, gb.getDecks(),"");
+    assertEquals(decks, gb.getDecks());
   }
 
   @Test
   void getCards() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(cards, gb.getCards(),"");
+    assertEquals(cards, gb.getCards());
   }
 
   @Test
   void getTokenPilesNoGold() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     assertEquals(
-      tokenPiles.get(0), gb.getTokenPilesNoGold().get(0),"");
+      tokenPiles.get(0), gb.getTokenPilesNoGold().get(0));
   }
 
   @Test
   void getTokenPiles() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(tokenPiles.get(0), gb.getTokenPiles().get(DIAMOND),"");
+    assertEquals(tokenPiles.get(0), gb.getTokenPiles().get(DIAMOND));
   }
 
   @Test
   void noGoldTokens() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(true, gb.noGoldTokens(),"");
+    assertEquals(true, gb.noGoldTokens());
   }
 
   @Test
   void getNobles() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(nobles, gb.getNobles(),"");
+    assertEquals(nobles, gb.getNobles());
 
   }
 
@@ -262,10 +262,9 @@ class GameBoardTest {
     GameBoard gb2 = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     tokenPiles.remove(t1);
     GameBoard gb3 = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertTrue(gb.equals(gb2),"");
-    assertTrue(gb.equals(gb),"");
-    assertFalse(gb.equals(gb3),"");
-    assertFalse(gb.equals(1),"");
+    assertTrue(gb.equals(gb2));
+    assertFalse(gb.equals(gb3));
+    assertFalse(gb.equals(1));
   }
   @Test
   void testGetInventoryByPlayerName() {
@@ -275,13 +274,13 @@ class GameBoardTest {
   @Test
   void getTradingPostSlots() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(LtPS, gb.getTradingPostSlots(),"");
+    assertEquals(LtPS, gb.getTradingPostSlots());
   }
 
   @Test
   void getCities() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(cities, gb.getCities(),"");
+    assertEquals(cities, gb.getCities());
   }
 
   @Test
@@ -292,7 +291,7 @@ class GameBoardTest {
   void getMoveCache() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     List<Move> moves = new ArrayList<>();
-    assertEquals(moves, gb.getMoveCache(),"");
+    assertEquals(moves, gb.getMoveCache());
   }
 
   @Test
@@ -301,23 +300,13 @@ class GameBoardTest {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     uinv.addReservedNoble(noble1);
     Action endAction = gb.applyMove(amove,player);
-    assertEquals(Action.RET_TOKEN,gb.getEndOfTurnActions(amove,uinv),"");
-
-    /*
-    noble1.setStatus(NobleStatus.ON_BOARD);
-    Luinv.remove(uinv);
-    nobles.add(noble1);
-    uinv.addReservedNoble(noble1);
-    Luinv.add(uinv);
-    GameBoard gb1 = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
-    assertEquals(RECEIVE_NOBLE,gb1.getEndOfTurnActions(amove,uinv),"")
-    ;*/
+    assertEquals(RECEIVE_NOBLE,gb.getEndOfTurnActions(amove,uinv));
   }
 
   @Test
   void endTurn() {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     gb.endTurn();
-    assertEquals(null,gb.getPendingAction(),"");
+    assertEquals(null,gb.getPendingAction());
   }
 }

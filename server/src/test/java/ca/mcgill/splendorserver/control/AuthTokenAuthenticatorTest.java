@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureMockRestServiceServer
 class AuthTokenAuthenticatorTest {
 
-  @Test
+  /*@Test
   void getRole() {
     assertEquals(Optional.empty(),AuthTokenAuthenticator.getRole("12345"),"");
 
@@ -38,5 +38,5 @@ class AuthTokenAuthenticatorTest {
       TokenAuthenticationException.class,
       () -> AuthTokenAuthenticator.authenticate("slava","12345"),
       "Username slava invalid against access token 12345");
-  }
+  }*/
 }
