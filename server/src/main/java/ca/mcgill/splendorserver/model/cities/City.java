@@ -42,7 +42,6 @@ public class City {
    * @return the gem amount required to obtain this city
    */
   public int getRequiredPrestige() {
-
     return requiredPrestige;
   }
 
@@ -52,7 +51,6 @@ public class City {
    * @return the card bonuses required to obtain this city
    */
   public CardCost getRequiredCardBonuses() {
-
     return requiredCardBonuses;
   }
 

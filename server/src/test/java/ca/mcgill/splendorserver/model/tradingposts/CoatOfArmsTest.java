@@ -2,9 +2,7 @@ package ca.mcgill.splendorserver.model.tradingposts;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.BLUE;
-import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.RED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CoatOfArmsTest {

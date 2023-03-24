@@ -1,7 +1,6 @@
 package ca.mcgill.splendorserver.model.tokens;
 
 import org.junit.jupiter.api.Test;
-
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 

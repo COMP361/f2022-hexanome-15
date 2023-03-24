@@ -2,14 +2,10 @@ package ca.mcgill.splendorserver.model.cards;
 
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import org.junit.jupiter.api.Test;
-
 import static ca.mcgill.splendorserver.model.tokens.TokenType.DIAMOND;
 import static org.junit.jupiter.api.Assertions.*;
-import ca.mcgill.splendorserver.model.cards.CardCost;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.HashMap;
 
 class CardCostTest {
   private CardCost cardCost = new CardCost(1,2,3,4,5);

@@ -1,13 +1,9 @@
 package ca.mcgill.splendorserver.model.cards;
 
-import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import static ca.mcgill.splendorserver.model.cards.CardStatus.NONE;
 import static ca.mcgill.splendorserver.model.cards.CardStatus.PURCHASED;
 import static ca.mcgill.splendorserver.model.cards.DeckType.*;

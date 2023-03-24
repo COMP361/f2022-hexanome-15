@@ -257,7 +257,6 @@ public class GameBoard {
    * @return possible end of turn actions
    */
   public Action getEndOfTurnActions(Move move, UserInventory inventory) {
-    //TODO: Reserved Nobles
     List<Noble> candidateNobles = new ArrayList<>();
     for (Noble noble : nobles) {
       if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.ON_BOARD) {
@@ -298,7 +297,21 @@ public class GameBoard {
         return Action.TAKE_EXTRA_TOKEN;
       }
     }
-    
+
+    List<City> cities = new ArrayList<>();
+
+    for (City city : this.cities) {
+      if (inventory.canReceiveCity(city)) {
+        moveCache.add(move);
+        cities.add(city);
+      }
+    }
+    if (cities.size() == 1) {
+      performClaimCityAction(cities.get(0), inventory);
+      actionPending = Action.RECEIVE_CITY;
+      return Action.RECEIVE_CITY;
+    }
+
     return requiresReturnTokens(inventory, move) ? Action.RET_TOKEN : null;
   }
   
@@ -460,8 +473,21 @@ public class GameBoard {
    */
   private void performClaimNobleAction(Noble noble, UserInventory inventory) {
     if (inventory.canBeVisitedByNoble(noble)) {
-      // add prestige and tile to inventory
       inventory.receiveVisitFrom(noble);
+      nobles.remove(noble);
+    }
+  }
+
+  /**
+   * Performs a claim city type action routine.
+   *
+   * @param city     the city to claim
+   * @param inventory the inventory to apply the move side effects to
+   */
+  private void performClaimCityAction(City city, UserInventory inventory) {
+    if (inventory.canReceiveCity(city)) {
+      inventory.addCity(city);
+      cities.remove(city);
     }
   }
 
