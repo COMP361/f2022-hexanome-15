@@ -69,7 +69,7 @@ public class InventoryJson {
       }
     }
     this.powers = powers;
-    for (City city: cities) {
+    for (City city : cities) {
       this.cities.add(city.getId());
     }
     this.coatOfArmsType = pile.getType();

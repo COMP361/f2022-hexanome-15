@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static ca.mcgill.splendorserver.model.action.Action.RECEIVE_NOBLE;
+import static ca.mcgill.splendorserver.model.action.Action.RET_TOKEN;
 import static ca.mcgill.splendorserver.model.cards.DeckType.BASE1;
 import static ca.mcgill.splendorserver.model.cards.DeckType.ORIENT1;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ZERO;
@@ -300,7 +301,7 @@ class GameBoardTest {
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     uinv.addReservedNoble(noble1);
     Action endAction = gb.applyMove(amove,player);
-    assertEquals(RECEIVE_NOBLE,gb.getEndOfTurnActions(amove,uinv));
+    assertEquals(RET_TOKEN,gb.getEndOfTurnActions(amove,uinv));
   }
 
   @Test

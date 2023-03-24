@@ -84,7 +84,8 @@ public class GameRestController {
     }
     GameBoardJson gameBoardJson = new GameBoardJson(whoseTurn, inventories, 
         gameboard.getDecks(), gameboard.getNobles(), 
-        gameboard.getCards(), gameboard.getTokenPiles(), gameboard.getTradingPostSlots(), gameboard.getCities());
+        gameboard.getCards(), gameboard.getTokenPiles(),
+        gameboard.getTradingPostSlots(), gameboard.getCities());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
   }
