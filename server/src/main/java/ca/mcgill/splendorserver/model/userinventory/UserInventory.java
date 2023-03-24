@@ -37,7 +37,7 @@ public class UserInventory implements Iterable<Card> {
   private final EnumMap<TokenType, TokenPile> tokenPiles;
   private final PlayerWrapper                 playerWrapper;
   private       int                           prestigeWon;
-  private final List<Noble>                   visitingNobles;
+  private final List<Noble>                   nobles;
   private final List<Power> acquiredPowers;
   private final CoatOfArmsPile coatOfArmsPile;
 
@@ -53,7 +53,7 @@ public class UserInventory implements Iterable<Card> {
     cards          = new ArrayList<>();
     playerWrapper  = name;
     prestigeWon    = 0;
-    visitingNobles = new ArrayList<>();
+    nobles = new ArrayList<>();
     acquiredPowers = new ArrayList<>();
 
     tokenPiles = new EnumMap<TokenType, TokenPile>(TokenType.class);
@@ -114,7 +114,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public List<Noble> getNobles() {
 
-    return visitingNobles;
+    return nobles;
   }
 
   /**
@@ -426,7 +426,7 @@ public class UserInventory implements Iterable<Card> {
     assert noble != null && noble.getStatus() == NobleStatus.ON_BOARD;
 
     noble.setStatus(NobleStatus.RESERVED);
-    visitingNobles.add(noble);
+    nobles.add(noble);
   }
 
   /**
@@ -552,7 +552,7 @@ public class UserInventory implements Iterable<Card> {
       return false;
     }
     // cannot be visited by a noble that is reserved by another player
-    if (!visitingNobles.contains(noble) && noble.getStatus() == NobleStatus.RESERVED) {
+    if (!nobles.contains(noble) && noble.getStatus() == NobleStatus.RESERVED) {
       return false;
     }
 
@@ -577,7 +577,7 @@ public class UserInventory implements Iterable<Card> {
   public void receiveVisitFrom(Noble noble) {
     assert noble != null;
     addPrestige(noble.getPrestige());
-    visitingNobles.add(noble);
+    nobles.add(noble);
     noble.setStatus(NobleStatus.VISITING);
   }
 
@@ -669,7 +669,7 @@ public class UserInventory implements Iterable<Card> {
     for (Map.Entry<TokenType, Integer> entry : tradingPostSlot.getCardRequirements().entrySet()) {
       if (notEnoughBonusesFor(entry.getKey(), entry.getValue())) {
         return false;
-      } else if (tradingPostSlot.isRequiresNoble() && visitingNobles.size() == 0) {
+      } else if (tradingPostSlot.isRequiresNoble() && nobles.size() == 0) {
         return false;
       }
     }
@@ -706,11 +706,11 @@ public class UserInventory implements Iterable<Card> {
    * @return the discarded noble
    */
   public Noble removeNoble(Noble noble) {
-    assert noble != null && visitingNobles.contains(noble)
+    assert noble != null && nobles.contains(noble)
              && noble.getStatus() == NobleStatus.VISITING;
-    int index = visitingNobles.indexOf(noble);
+    int index = nobles.indexOf(noble);
     removePrestige(3);
-    return visitingNobles.remove(index);
+    return nobles.remove(index);
   }
 
 

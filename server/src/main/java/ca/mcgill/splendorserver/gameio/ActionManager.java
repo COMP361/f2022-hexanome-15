@@ -105,7 +105,6 @@ public class ActionManager {
       return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
           .body(pendingBonusAction.toString());
     } else {
-      //TODO: check for end of turn pending actions.
       Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
 
       if (endOfTurnAction != null) {
@@ -290,11 +289,13 @@ public class ActionManager {
           getPossibleNobleVisitors(moveMap, userInventory, gameBoard, playerWrapper);
           break;
         case TAKE_TOKEN:
-          //TODO: calculate available remaining token moves. 
           getRemainingTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
         case RET_TOKEN:
           getReturnTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
+          break;
+        case TAKE_EXTRA_TOKEN:
+          getTakeExtraTokenMoves(moveMap, userInventory, gameBoard, playerWrapper);
           break;
         default:
           break;
@@ -307,6 +308,26 @@ public class ActionManager {
     }
 
     return moveMap;
+  }
+  
+  private void getTakeExtraTokenMoves(Map<String, Move> moveMap,
+                                         UserInventory inventory,
+                                         GameBoard gameBoard, PlayerWrapper player) {
+    TokenType restrictedType = null;
+    if (gameBoard.getMoveCache().get(0).getAction() == Action.TAKE_TOKEN) {
+      //in this case we need to take a token of the type not already taken
+      restrictedType = gameBoard.getMoveCache().get(0).getSelectedTokenTypes();
+    }
+    for (Entry<TokenType, TokenPile> entry : gameBoard.getTokenPiles().entrySet()) {
+      if (entry.getValue().getSize() > 0
+          && restrictedType == null ? true : entry.getKey() != restrictedType) {
+        Move move = 
+            new Move(Action.TAKE_EXTRA_TOKEN, null, player, null, null, null, entry.getKey());
+        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+            .toUpperCase();
+        moveMap.put(moveMd5, move);
+      }
+    }
   }
   
   private void getReturnTokenMoves(Map<String, Move> moveMap,
@@ -406,7 +427,7 @@ public class ActionManager {
   private void getPossibleNobleVisitors(Map<String, Move> moveMap, UserInventory inventory,
                                                GameBoard gameBoard, PlayerWrapper player) {
     for (Noble noble : gameBoard.getNobles()) {
-      if (inventory.canBeVisitedByNoble(noble)) {
+      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.ON_BOARD) {
         Move move = new Move(Action.RECEIVE_NOBLE, null, player, null,
             noble, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))

@@ -41,6 +41,18 @@ public class ActionManager {
       System.out.println(entry.getKey() + " : " + entry.getValue().getAction());
     }
   }
+  
+  public static HttpResponse<String> findAndSendAssociatedTakeExtraTokenMove(TokenType type) {
+    System.out.println("Searching for take extra token move with type " + type);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("TAKE_EXTRA_TOKEN")) {
+        if (entry.getValue().getTokenType().equals(type.toString())) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
 
   /**
    * Finds token moves in the move map and send token moves to the server.

@@ -112,6 +112,7 @@ public class GameBoard {
         "player (" + player.getName() + ") wasn't found in this current game board"));
 
     Action pendingAction;
+    moveCache.add(move);
     switch (move.getAction()) {
       case PURCHASE_DEV:
         pendingAction = performPurchaseDev(move, player, inventory);
@@ -158,23 +159,23 @@ public class GameBoard {
         }
       case TAKE_TOKEN:
         performTakeToken(move, inventory);
-        if (moveCache.isEmpty()) {
-          moveCache.add(move);
+        if (moveCache.size() == 1) {
           actionPending = Action.TAKE_TOKEN;
           return actionPending;
-        } else if (moveCache.size() == 1) {
+        } else if (moveCache.size() == 2) {
           //selected two of the same token
           if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
-            moveCache.clear();
+            if (inventory.hasPower(Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL)) {
+              actionPending = Action.TAKE_EXTRA_TOKEN;
+              return actionPending;
+            }
             actionPending = null;
             return null;
           } else {
-            moveCache.add(move);
             actionPending = Action.TAKE_TOKEN;
             return actionPending;
           }
         } else {
-          moveCache.clear();
           actionPending = null;
           return null;
         }
@@ -206,10 +207,15 @@ public class GameBoard {
         performReturnToken(move, inventory);
         if (requiresReturnTokens(inventory, move)) {
           //i think this would get swooped up in endOfTurnActions, so maybe this is redundant.
-          moveCache.add(move);
           actionPending = Action.RET_TOKEN;
           return actionPending;
         }
+        return null;
+      case RECEIVE_NOBLE:
+        performReceiveNoble(move, inventory);
+        return null;
+      case TAKE_EXTRA_TOKEN:
+        performTakeToken(move, inventory);
         return null;
       default:
         return null;
@@ -223,6 +229,11 @@ public class GameBoard {
    */
   public Action getPendingAction() {
     return actionPending;
+  }
+  
+  private void performReceiveNoble(Move move, UserInventory inventory) {
+    Noble selectedNoble = move.getNoble();
+    inventory.receiveVisitFrom(selectedNoble);
   }
   
   private void performReturnToken(Move move, UserInventory inventory) {
@@ -246,25 +257,45 @@ public class GameBoard {
    * @return possible end of turn actions
    */
   public Action getEndOfTurnActions(Move move, UserInventory inventory) {
-    List<Noble> nobles = new ArrayList<>();
-    //TODO: add visiting reserved nobles
+    //TODO: Reserved Nobles
+    List<Noble> candidateNobles = new ArrayList<>();
     for (Noble noble : nobles) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        nobles.add(noble);
+      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.ON_BOARD) {
+        candidateNobles.add(noble);
       }
     }
-    if (nobles.size() == 1) {
+    for (Noble noble : inventory.getNobles()) {
+      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.RESERVED) {
+        candidateNobles.add(noble);
+      }
+    }
+    if (candidateNobles.size() == 1) {
       performClaimNobleAction(nobles.get(0), inventory);
+    } else if (candidateNobles.size() > 1) {
       actionPending = Action.RECEIVE_NOBLE;
       return Action.RECEIVE_NOBLE;
     }
 
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.canReceivePower(tradingPostSlot)) {
-        moveCache.add(move);
         performPlaceCoatOfArms(tradingPostSlot, inventory);
-        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
+    
+    if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN)) {
+      boolean btakeextratoken = false;
+      for (Move moveComponent : moveCache) {
+        if (moveComponent.getAction() == Action.PURCHASE_DEV) {
+          btakeextratoken = true;
+        }
+        if (moveComponent.getAction() == Action.TAKE_EXTRA_TOKEN) {
+          btakeextratoken = false;
+          break;
+        }
+      }
+      if (btakeextratoken) {
+        actionPending = Action.TAKE_EXTRA_TOKEN;
+        return Action.TAKE_EXTRA_TOKEN;
       }
     }
     
@@ -277,7 +308,6 @@ public class GameBoard {
       ntokens += entry.getValue().getSize();
     }
     if (ntokens >= 10) {
-      moveCache.add(move);
       actionPending = Action.RET_TOKEN;
       return true;
     }
@@ -375,34 +405,13 @@ public class GameBoard {
             inventory.discardSpiceCard(move.getCard().getTokenBonusType());
             return actions.get(1);
           } else if (spiceCount == 0) {
-            moveCache.add(move);
             return actions.get(0);
           }
         } else {
-          moveCache.add(move);
           return actions.get(0);
         }
       }
     }
-    for (Noble noble : inventory.getNobles()) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        return Action.RECEIVE_NOBLE;
-      }
-    }
-    for (Noble noble : nobles) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        return Action.RECEIVE_NOBLE;
-      }
-    }
-    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
-      if (inventory.canReceivePower(tradingPostSlot)) {
-        moveCache.add(move);
-        return Action.PLACE_COAT_OF_ARMS;
-      }
-    }
-    
     return null;
 
   }
@@ -429,7 +438,6 @@ public class GameBoard {
         "If move to pair a spice card, then an unpaired spice card has to be in user inventory");
     }
     ((OrientCard) spiceCard).pairWithCard(move.getCard());
-    moveCache.add(move);
     for (Action bonusAction : spiceCard.getBonusActions()) {
       boolean doneAction = false;
       for (Move pastMove : moveCache) {
@@ -602,13 +610,12 @@ public class GameBoard {
     OrientCard levelOneCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
     int ix = cardField.indexOf(levelOneCard);
-    returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
+    cardField.remove(ix);
     replenishTakenCardFromDeck(levelOneCard.getDeckType(), ix);
 
     if (levelOneCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
       if (actions.size() > 0) {
-        moveCache.add(move);
         return actions.get(0);
       }
     }
@@ -639,13 +646,12 @@ public class GameBoard {
     OrientCard levelTwoCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
     int ix = cardField.indexOf(levelTwoCard);
-    returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
+    cardField.remove(ix);    
     replenishTakenCardFromDeck(levelTwoCard.getDeckType(), ix);
 
     if (levelTwoCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
       if (actions.size() > 0) {
-        moveCache.add(move);
         return actions.get(0);
       }
     }
