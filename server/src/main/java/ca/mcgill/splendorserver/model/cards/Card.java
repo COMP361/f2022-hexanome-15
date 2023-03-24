@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-//TODO: Make cards flyweights
+// TODO: Make cards flyweights
 
 /**
  * Represents a Splendor Card with id, prestige, tokenBonus, deckType, discount
