@@ -635,7 +635,6 @@ public class GameBoard {
     OrientCard levelOneCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
     int ix = cardField.indexOf(levelOneCard);
-    returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
     replenishTakenCardFromDeck(levelOneCard.getDeckType(), ix);
 
     if (levelOneCard instanceof OrientCard) {
@@ -672,7 +671,6 @@ public class GameBoard {
     OrientCard levelTwoCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
     int ix = cardField.indexOf(levelTwoCard);
-    returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
     replenishTakenCardFromDeck(levelTwoCard.getDeckType(), ix);
 
     if (levelTwoCard instanceof OrientCard) {
