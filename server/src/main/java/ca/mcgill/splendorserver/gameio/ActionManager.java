@@ -325,7 +325,7 @@ public class ActionManager {
       if (entry.getValue().getSize() > 0
           && restrictedType == null ? true : entry.getKey() != restrictedType) {
         Move move = 
-            new Move(Action.TAKE_EXTRA_TOKEN, null, player, null, null, null, entry.getKey());
+            new Move(Action.TAKE_EXTRA_TOKEN, null, player, null, null, null, entry.getKey(), null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
             .toUpperCase();
         moveMap.put(moveMd5, move);
