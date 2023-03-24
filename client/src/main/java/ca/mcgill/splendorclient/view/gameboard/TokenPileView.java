@@ -43,8 +43,7 @@ public class TokenPileView extends Circle {
           } else {
             //error
           }
-        }
-        else {
+        } else {
           result = ActionManager.findAndSendAssociatedReturnTokenMove(type);
           if (result != null) {
             if (result.getStatus() == 206) {

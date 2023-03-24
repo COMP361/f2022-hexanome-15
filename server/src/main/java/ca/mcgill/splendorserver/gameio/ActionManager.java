@@ -231,7 +231,6 @@ public class ActionManager {
     UserInventory userInventory = gameBoard.getInventoryByPlayerName(playerWrapper.getName())
                                            .orElseThrow();
     Map<String, Move> moveMap = new LinkedHashMap<>();
-    //TODO: switch on pending actions in gameboard.
     if (splendorGame.getBoard().getPendingAction() != null) {
       switch (splendorGame.getBoard().getPendingAction()) {
         case DISCARD_FIRST_WHITE_CARD:
