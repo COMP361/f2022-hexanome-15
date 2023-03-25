@@ -382,7 +382,7 @@ public class GameBoardView {
    */
   public static void updateNobleViews(int[] field) {
     int num = 0;
-    for (int i = 0; i < nobleViews.size(); i++) {
+    for (int i = 0; i < nobleViews.size() && num < field.length; i++) {
       nobleViews.get(i).updateView(field[num]);
       num++;
     }
