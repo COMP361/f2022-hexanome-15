@@ -488,7 +488,8 @@ public class ActionManager {
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
-        Move takeFromDeck = new Move(action, null, player, deck.getType(),
+        Card firstCard = deck.getCards().get(0);
+        Move takeFromDeck = new Move(action, firstCard, player, deck.getType(),
             null, null, null, null
         );
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
