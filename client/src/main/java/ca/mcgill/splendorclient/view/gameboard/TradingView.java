@@ -10,6 +10,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 
 /**
  * Represents a Trading Post in Splendor.
@@ -20,7 +21,7 @@ public class TradingView extends Pane {
   private static final String rootPath = new File("").getAbsolutePath();
 
   //order of shields is blue red yellow black
-  private final ArrayList[] shields = new ArrayList[5];
+  private final ArrayList<Rectangle>[] shields = new ArrayList[5];
   
   /**
    * Creates a TradingView.
@@ -35,7 +36,7 @@ public class TradingView extends Pane {
     this.setPrefSize(screenSize.getWidth() / 4.0f, screenSize.getHeight() / 10.0f);
     
     for (int i = 0; i < 5; i++) {
-      shields[i] = new ArrayList<>();
+      shields[i] = new ArrayList<Rectangle>();
     }
   }
   
@@ -55,18 +56,19 @@ public class TradingView extends Pane {
       String[] fourthShields, 
       String[] fifthShields) {
     this.getChildren().clear();
+    //this.getChildren().add(new CoatofarmsView(screenSize, "RED"));
     float xoffset = (float) (screenSize.getWidth() / 65f);
     float yoffset = (float) (screenSize.getHeight() / 40f);
     float xorigin = 0.0f;
     updatePower(0, firstShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(1, secondShields, xoffset, yoffset, xorigin);
+    updatePower(1, firstShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(2, thirdShields, xoffset, yoffset, xorigin);
+    updatePower(2, firstShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(3, fourthShields, xoffset, yoffset, xorigin);
+    updatePower(3, firstShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(4, fifthShields, xoffset, yoffset, xorigin);
+    updatePower(4, firstShields, xoffset, yoffset, xorigin);
     
   }
 

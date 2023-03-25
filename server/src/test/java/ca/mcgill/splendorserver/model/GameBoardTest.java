@@ -77,8 +77,6 @@ class GameBoardTest {
 
   @BeforeEach
   void setUp() {
-    nobles = new ArrayList<>();
-    nobles.add(new Noble(5, new CardCost(2,2,2,2,2)));
     cost1 = new CardCost(1,0,0,0,0);
     cost2 = new CardCost(0,0,0,0,1);
     List<Action> actions = new ArrayList<>();
@@ -171,6 +169,7 @@ class GameBoardTest {
     Luinv.add(uinv);
     Luinv.add(uinv2);
 
+    nobles = new ArrayList<>();
     LtPS = new ArrayList<>();
     cities = new ArrayList<>();
   }
@@ -180,7 +179,8 @@ class GameBoardTest {
     card1.setCardStatus(CardStatus.NONE);
     GameBoard gb = new GameBoard(Luinv,decks,cards,tokenPiles,nobles,LtPS,cities);
     uinv.addReservedNoble(noble1);
-    assertEquals(null, gb.applyMove(amove,player));
+    Action myAction = RECEIVE_NOBLE;
+    assertEquals(myAction, gb.applyMove(amove,player));
 
     uinv.purchaseCard(oCard1);
     uinv.purchaseCard(oCard2);

@@ -30,9 +30,9 @@ public class User {
   // using the user's user-name as the unique key for each of them
   private static final HashMap<String, User> USERS = new HashMap<>();
 
-  private User(String userName, String accessToken, String refreshToken, Role role) {
+  private User(String userName, String acessToken, String refreshToken, Role role) {
     this.userName = userName;
-    this.accessToken = accessToken;
+    this.accessToken = acessToken;
     this.refreshToken = refreshToken;
     this.role = role;
 

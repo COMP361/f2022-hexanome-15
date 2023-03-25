@@ -43,19 +43,12 @@ public class TokenPileView extends Circle {
           } else {
             //error
           }
-        } else {
+        }
+        else {
           result = ActionManager.findAndSendAssociatedReturnTokenMove(type);
           if (result != null) {
             if (result.getStatus() == 206) {
               ActionManager.handleCompoundMoves(result.getBody().toString());
-            }
-          }
-          else {
-            result = ActionManager.findAndSendAssociatedTakeExtraTokenMove(type);
-            if (result != null) {
-              if (result.getStatus() == 206) {
-                ActionManager.handleCompoundMoves(result.getBody().toString());
-              }
             }
           }
         }
