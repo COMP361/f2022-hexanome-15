@@ -55,12 +55,10 @@ class LocalGameStorageTest {
 
   @Test
   void notRequiresUpdate() {
-    try {
-      LocalGameStorage.requiresUpdate(1L);
-    }
-    catch (GameNotFoundException e) {
-      assertEquals("Could not find game ID: 1", e.getMessage());
-    }
+    assertThrows(
+      GameNotFoundException.class,
+      () -> LocalGameStorage.requiresUpdate(1L),
+      "Could not find game ID: 1");
   }
 
   @Test

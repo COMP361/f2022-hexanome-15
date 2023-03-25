@@ -30,8 +30,8 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
    * @param gameCreator game creator name.
    * @param saveGameId  can be null.
    */
-  public SessionInfo(String gameServer, List<Player> playerList, List<PlayerWrapper> players, PlayerWrapper gameCreator,
-                     String saveGameId) {
+  public SessionInfo(String gameServer, List<Player> playerList, List<PlayerWrapper> players,
+                     PlayerWrapper gameCreator, String saveGameId) {
     assert gameServer != null && playerList != null && players != null && gameCreator != null;
     this.players = playerList;
     this.gameServer  = gameServer;
@@ -102,7 +102,6 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     return Optional.empty();
   }
 
-
   @Override
   public Iterator<PlayerWrapper> iterator() {
     return playerWrappers.iterator();
@@ -113,17 +112,18 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof SessionInfo strings)) {
+    if (!(o instanceof SessionInfo that)) {
       return false;
     }
-    return Objects.equals(getGameServer(), strings.getGameServer())
-        && Objects.equals(players, strings.players)
-        && Objects.equals(getGameCreator(), strings.getGameCreator())
-        && Objects.equals(savegame, strings.savegame);
+    return players.equals(that.players)
+             && gameServer.equals(that.gameServer)
+             && savegame.equals(that.savegame)
+             && playerWrappers.equals(that.playerWrappers)
+             && creatorWrapper.equals(that.creatorWrapper);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getGameServer(), players, getGameCreator(), savegame);
+    return Objects.hash(players, gameServer, savegame, playerWrappers, creatorWrapper);
   }
 }
