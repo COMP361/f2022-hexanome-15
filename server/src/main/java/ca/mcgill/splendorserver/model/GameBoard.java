@@ -77,10 +77,10 @@ public class GameBoard {
     this.decks         = decks;
     this.cardField     = cardField;
     this.tokenPiles    = new EnumMap<>(tokenPiles.stream()
-                                                 .collect(Collectors.toMap(
-                                                     TokenPile::getType,
-                                                     tokens -> tokens
-                                                 )));
+                                         .collect(Collectors.toMap(
+                                           TokenPile::getType,
+                                           tokens -> tokens
+                                         )));
     this.nobles        = nobles;
     this.tradingPostSlots = tradingPostSlots;
     this.cities = cities;
@@ -108,10 +108,11 @@ public class GameBoard {
     assert move != null && player != null;
     // getting players inventory or throws exception if not there
     UserInventory inventory = getInventoryByPlayerName(player.getName()).orElseThrow(
-        () -> new IllegalArgumentException(
+      () -> new IllegalArgumentException(
         "player (" + player.getName() + ") wasn't found in this current game board"));
 
     Action pendingAction;
+    moveCache.add(move);
     switch (move.getAction()) {
       case PURCHASE_DEV:
         pendingAction = performPurchaseDev(move, player, inventory);
@@ -158,23 +159,23 @@ public class GameBoard {
         }
       case TAKE_TOKEN:
         performTakeToken(move, inventory);
-        if (moveCache.isEmpty()) {
-          moveCache.add(move);
+        if (moveCache.size() == 1) {
           actionPending = Action.TAKE_TOKEN;
           return actionPending;
-        } else if (moveCache.size() == 1) {
+        } else if (moveCache.size() == 2) {
           //selected two of the same token
           if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
-            moveCache.clear();
+            if (inventory.hasPower(Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL)) {
+              actionPending = Action.TAKE_EXTRA_TOKEN;
+              return actionPending;
+            }
             actionPending = null;
             return null;
           } else {
-            moveCache.add(move);
             actionPending = Action.TAKE_TOKEN;
             return actionPending;
           }
         } else {
-          moveCache.clear();
           actionPending = null;
           return null;
         }
@@ -206,7 +207,6 @@ public class GameBoard {
         performReturnToken(move, inventory);
         if (requiresReturnTokens(inventory, move)) {
           //i think this would get swooped up in endOfTurnActions, so maybe this is redundant.
-          moveCache.add(move);
           actionPending = Action.RET_TOKEN;
           return actionPending;
         }
@@ -251,7 +251,7 @@ public class GameBoard {
     Token token = inventory.removeTokenByTokenType(type);
     this.tokenPiles.get(type).addToken(token);
   }
-  
+
   private void performTakeToken(Move move, UserInventory inventory) {
     TokenType type = move.getSelectedTokenTypes();
     TokenPile pile = this.tokenPiles.get(type);
@@ -267,31 +267,44 @@ public class GameBoard {
    * @return possible end of turn actions
    */
   public Action getEndOfTurnActions(Move move, UserInventory inventory) {
-    List<Noble> nobles = new ArrayList<>();
-
-    for (Noble noble : this.nobles) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        nobles.add(noble);
+    List<Noble> candidateNobles = new ArrayList<>();
+    for (Noble noble : nobles) {
+      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.ON_BOARD) {
+        candidateNobles.add(noble);
       }
     }
     for (Noble noble : inventory.getNobles()) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        nobles.add(noble);
+      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.RESERVED) {
+        candidateNobles.add(noble);
       }
     }
-    if (nobles.size() == 1) {
+    if (candidateNobles.size() == 1) {
       performClaimNobleAction(nobles.get(0), inventory);
+    } else if (candidateNobles.size() > 1) {
       actionPending = Action.RECEIVE_NOBLE;
       return Action.RECEIVE_NOBLE;
     }
 
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.canReceivePower(tradingPostSlot)) {
-        moveCache.add(move);
         performPlaceCoatOfArms(tradingPostSlot, inventory);
-        return Action.PLACE_COAT_OF_ARMS;
+      }
+    }
+
+    if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN)) {
+      boolean btakeextratoken = false;
+      for (Move moveComponent : moveCache) {
+        if (moveComponent.getAction() == Action.PURCHASE_DEV) {
+          btakeextratoken = true;
+        }
+        if (moveComponent.getAction() == Action.TAKE_EXTRA_TOKEN) {
+          btakeextratoken = false;
+          break;
+        }
+      }
+      if (btakeextratoken) {
+        actionPending = Action.TAKE_EXTRA_TOKEN;
+        return Action.TAKE_EXTRA_TOKEN;
       }
     }
 
@@ -304,21 +317,20 @@ public class GameBoard {
     }
     if (candidateCities.size() == 1) {
       performClaimCityAction(cities.get(0), inventory);
-    } else if (candidateCities.size() > 1) {
+    } else if (candidateNobles.size() > 1) {
       actionPending = Action.RECEIVE_CITY;
       return Action.RECEIVE_CITY;
     }
 
     return requiresReturnTokens(inventory, move) ? Action.RET_TOKEN : null;
   }
-  
+
   private boolean requiresReturnTokens(UserInventory inventory, Move move) {
     int ntokens = 0;
     for (Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
       ntokens += entry.getValue().getSize();
     }
     if (ntokens >= 10) {
-      moveCache.add(move);
       actionPending = Action.RET_TOKEN;
       return true;
     }
@@ -348,9 +360,9 @@ public class GameBoard {
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
       replenishTakenCardFromDeck(
-          move.getCard()
-              .getDeckType(),
-          ix
+        move.getCard()
+          .getDeckType(),
+        ix
       );
     }
     if (inventory.tokenCount() < 10 && !noGoldTokens()) {
@@ -388,18 +400,18 @@ public class GameBoard {
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
 
       System.out.println(
-          player + " purchased a face-up dev card from game board: " + selectedCard
+        player + " purchased a face-up dev card from game board: " + selectedCard
       );
     } else {
       // cannot purchase card if it's not reserved in hand or face-up
       System.out.println(
-          "A card has been attempted to be purchased "
-            + "but it wasn't reserved in inventory nor face-up on game board"
+        "A card has been attempted to be purchased "
+          + "but it wasn't reserved in inventory nor face-up on game board"
       );
       throw new IllegalGameStateException(
-          "Cannot purchase card which isn't reserved or face-up");
+        "Cannot purchase card which isn't reserved or face-up");
     }
-    
+
     if (selectedCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) selectedCard).getBonusActions();
       if (actions.size() > 0) {
@@ -416,34 +428,13 @@ public class GameBoard {
             inventory.discardSpiceCard(move.getCard().getTokenBonusType());
             return actions.get(1);
           } else if (spiceCount == 0) {
-            moveCache.add(move);
             return actions.get(0);
           }
         } else {
-          moveCache.add(move);
           return actions.get(0);
         }
       }
     }
-    for (Noble noble : inventory.getNobles()) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        return Action.RECEIVE_NOBLE;
-      }
-    }
-    for (Noble noble : nobles) {
-      if (inventory.canBeVisitedByNoble(noble)) {
-        moveCache.add(move);
-        return Action.RECEIVE_NOBLE;
-      }
-    }
-    for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
-      if (inventory.canReceivePower(tradingPostSlot)) {
-        moveCache.add(move);
-        return Action.PLACE_COAT_OF_ARMS;
-      }
-    }
-    
     return null;
 
   }
@@ -470,7 +461,6 @@ public class GameBoard {
         "If move to pair a spice card, then an unpaired spice card has to be in user inventory");
     }
     ((OrientCard) spiceCard).pairWithCard(move.getCard());
-    moveCache.add(move);
     for (Action bonusAction : spiceCard.getBonusActions()) {
       boolean doneAction = false;
       for (Move pastMove : moveCache) {
@@ -542,8 +532,8 @@ public class GameBoard {
     }
     if (move.getNoble().getStatus() != NobleStatus.ON_BOARD) {
       throw new IllegalGameStateException(
-              "Noble cannot be reserved if it has already been "
-                      + "reserved or is currently visiting a player");
+        "Noble cannot be reserved if it has already been "
+          + "reserved or is currently visiting a player");
     }
     inventory.addReservedNoble(move.getNoble());
 
@@ -574,7 +564,7 @@ public class GameBoard {
             && !inventory.canReceivePower(tradingPostSlot)) {
         inventory.removePower(tradingPostSlot.getPower());
         CoatOfArms coatOfArms =
-            tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
+          tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
         inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
       }
     }
@@ -602,10 +592,10 @@ public class GameBoard {
     }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.hasPower(tradingPostSlot.getPower())
-              && !inventory.canReceivePower(tradingPostSlot)) {
+            && !inventory.canReceivePower(tradingPostSlot)) {
         inventory.removePower(tradingPostSlot.getPower());
         CoatOfArms coatOfArms =
-            tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
+          tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
         inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
       }
     }
@@ -656,12 +646,12 @@ public class GameBoard {
     OrientCard levelOneCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
     int ix = cardField.indexOf(levelOneCard);
+    cardField.remove(ix);
     replenishTakenCardFromDeck(levelOneCard.getDeckType(), ix);
 
     if (levelOneCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
       if (actions.size() > 0) {
-        moveCache.add(move);
         return actions.get(0);
       }
     }
@@ -692,12 +682,12 @@ public class GameBoard {
     OrientCard levelTwoCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
     int ix = cardField.indexOf(levelTwoCard);
+    cardField.remove(ix);
     replenishTakenCardFromDeck(levelTwoCard.getDeckType(), ix);
 
     if (levelTwoCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
       if (actions.size() > 0) {
-        moveCache.add(move);
         return actions.get(0);
       }
     }
@@ -730,7 +720,7 @@ public class GameBoard {
   private void returnTokensToBoard(List<Token> tokens) {
     for (Token token : tokens) {
       tokenPiles.get(token.getType())
-                .addToken(token);
+        .addToken(token);
     }
   }
 
@@ -751,7 +741,7 @@ public class GameBoard {
     }
 
     throw new IllegalGameStateException(
-        "DeckLevel: " + deckLevel + " wasn't found in decks on game board");
+      "DeckLevel: " + deckLevel + " wasn't found in decks on game board");
   }
 
   /**
@@ -763,8 +753,8 @@ public class GameBoard {
   public Optional<UserInventory> getInventoryByPlayerName(String playerName) {
     for (UserInventory userInventory : inventories) {
       if (userInventory.getPlayer()
-                       .getName()
-                       .equals(playerName)) {
+            .getName()
+            .equals(playerName)) {
         return Optional.of(userInventory);
       }
     }
@@ -824,9 +814,9 @@ public class GameBoard {
    */
   public List<TokenPile> getTokenPilesNoGold() {
     return tokenPiles.values()
-                     .stream()
-                     .filter(tokens -> tokens.getType() != TokenType.GOLD)
-                     .toList();
+             .stream()
+             .filter(tokens -> tokens.getType() != TokenType.GOLD)
+             .toList();
   }
 
   /**
@@ -845,7 +835,7 @@ public class GameBoard {
    */
   public boolean noGoldTokens() {
     return tokenPiles.get(TokenType.GOLD)
-                     .getSize() == 0;
+             .getSize() == 0;
   }
 
   /**

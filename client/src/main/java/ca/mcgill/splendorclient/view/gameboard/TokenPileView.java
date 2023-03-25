@@ -43,17 +43,24 @@ public class TokenPileView extends Circle {
           } else {
             //error
           }
-        }
-        else {
+        } else {
           result = ActionManager.findAndSendAssociatedReturnTokenMove(type);
           if (result != null) {
             if (result.getStatus() == 206) {
               ActionManager.handleCompoundMoves(result.getBody().toString());
             }
           }
+          else {
+            result = ActionManager.findAndSendAssociatedTakeExtraTokenMove(type);
+            if (result != null) {
+              if (result.getStatus() == 206) {
+                ActionManager.handleCompoundMoves(result.getBody().toString());
+              }
+            }
+          }
         }
       }
-      
+
     });
   }
 
@@ -65,7 +72,7 @@ public class TokenPileView extends Circle {
   public TokenType getType() {
     return type;
   }
-  
+
   /**
    * Creates a clickable TokenPileView for the gameboard view.
    * On click, it continues generating a token request code.
@@ -88,5 +95,5 @@ public class TokenPileView extends Circle {
   public Counter getCounter() {
     return tokenCounter;
   }
-  
+
 }

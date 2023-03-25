@@ -18,13 +18,13 @@ import kong.unirest.Unirest;
  * Manages actions that are sent to the server.
  */
 public class ActionManager {
-  
-  
+
+
   private static ActionManager instance;
-  
+
   private static Map<String, MoveInfo> currentMoveMap;
-  
-  
+
+
   private ActionManager() {
     instance = new ActionManager();
     currentMoveMap = new HashMap<>();
@@ -40,6 +40,18 @@ public class ActionManager {
     for (Entry<String, MoveInfo> entry : currentMap.entrySet()) {
       System.out.println(entry.getKey() + " : " + entry.getValue().getAction());
     }
+  }
+
+  public static HttpResponse<String> findAndSendAssociatedTakeExtraTokenMove(TokenType type) {
+    System.out.println("Searching for take extra token move with type " + type);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("TAKE_EXTRA_TOKEN")) {
+        if (entry.getValue().getTokenType().equals(type.toString())) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -59,7 +71,13 @@ public class ActionManager {
     }
     return null;
   }
-  
+
+  /**
+   * Finds return token moves in the move map and forwards them to server.
+   *
+   * @param type the token type of the token
+   * @return response from server
+   */
   public static HttpResponse<String> findAndSendAssociatedReturnTokenMove(TokenType type) {
     System.out.println("Searching for return token move with type " + type);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
@@ -71,8 +89,8 @@ public class ActionManager {
     }
     return null;
   }
-  
-  
+
+
   /**
    * Finds reserve dev moves in the move map and forwards them to server.
    *
@@ -82,8 +100,7 @@ public class ActionManager {
   public static HttpResponse<String> findAndSendReserveCardMove(int cardid) {
     System.out.println("Searching for reserve card move with id: " + cardid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
-      if (entry.getValue().getAction().equals("RESERVE_DEV_TAKE_JOKER") 
-          || entry.getValue().getAction().equals("RESERVE_DEV")) {
+      if (entry.getValue().getAction().equals("RESERVE_DEV")) {
         if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
           return sendAction(entry.getKey());
         }
@@ -91,7 +108,7 @@ public class ActionManager {
     }
     return null;
   }
-  
+
   /**
    * Finds purchase dev moves in the move map and forwards to server.
    *
@@ -99,7 +116,7 @@ public class ActionManager {
    * @return response from server
    */
   public static HttpResponse<String> findAndSendPurchaseCardMove(int cardid) {
-    System.out.println("Search for purchase card move with id: " + cardid); 
+    System.out.println("Search for purchase card move with id: " + cardid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("PURCHASE_DEV")) {
         if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
@@ -145,10 +162,10 @@ public class ActionManager {
     }
     return null;
   }
-  
+
   /**
    * Finds and sends pair spice bag move in the move map
-   * and forwards to server. 
+   * and forwards to server.
    *
    * @param cardid requested to pair
    * @return response from server
@@ -157,6 +174,34 @@ public class ActionManager {
     System.out.println("Searching for pair spice card move with id: " + cardid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("PAIR_SPICE_CARD")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds discard and sends discard move in the move map
+   * and forwards to server.
+   *
+   * @param cardid requested to discard
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendDiscardCardMove(int cardid) {
+    System.out.println("Searching for discard card move with id: " + cardid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("DISCARD_FIRST_WHITE_CARD")
+            || entry.getValue().getAction().equals("DISCARD_FIRST_BLUE_CARD")
+            || entry.getValue().getAction().equals("DISCARD_FIRST_GREEN_CARD")
+            || entry.getValue().getAction().equals("DISCARD_FIRST_RED_CARD")
+            || entry.getValue().getAction().equals("DISCARD_FIRST_BLACK_CARD")
+            || entry.getValue().getAction().equals("DISCARD_SECOND_WHITE_CARD")
+            || entry.getValue().getAction().equals("DISCARD_SECOND_BLUE_CARD")
+            || entry.getValue().getAction().equals("DISCARD_SECOND_GREEN_CARD")
+            || entry.getValue().getAction().equals("DISCARD_SECOND_RED_CARD")
+            || entry.getValue().getAction().equals("DISCARD_SECOND_BLACK_CARD")) {
         if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
           return sendAction(entry.getKey());
         }
@@ -184,106 +229,88 @@ public class ActionManager {
     String moves = moveMap.getBody().toString();
     Gson gson = new Gson();
     Map<String, MoveInfo> availableMoves = gson.fromJson(moves,
-        new TypeToken<Map<String, MoveInfo>>() {}.getType());
+      new TypeToken<Map<String, MoveInfo>>() {}.getType());
     ActionManager.setCurrentMoveMap(availableMoves);
     if (action.equals("TAKE_TOKEN")) {
-      //inform user to take next token
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select additional token to take.");
       takeTokenAlert.show();
-    }
-    else if (action.equals("PAIR_SPICE_CARD")) {
-      // inform user to pair card
+    } else if (action.equals("PAIR_SPICE_CARD")) {
       Alert takeTokenAlert = new Alert(Alert.AlertType.INFORMATION);
       takeTokenAlert.setTitle("Compound Move Info");
       takeTokenAlert.setHeaderText("Please select card in your inventory to pair with.");
       takeTokenAlert.show();
-    }
-    else if (action.equals("RECEIVE_NOBLE")) {
-      // inform user to select noble to be visited by if more than one
+    } else if (action.equals("RECEIVE_NOBLE")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to be visited by.");
       alert.show();
-    }
-    else if (action.equals("RESERVE_NOBLE")) {
-      // inform user to select noble to reserve
+    } else if (action.equals("RESERVE_NOBLE")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid noble to reserve.");
       alert.show();
-    }
-    else if (action.equals("RET_TOKEN")) {
-      // inform user to select token to return
+    } else if (action.equals("RET_TOKEN")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid token to return.");
       alert.show();
-    }
-    else if (action.equals("CASCADE_LEVEL_1")) {
-      // inform user to select token to return
+    } else if (action.equals("CASCADE_LEVEL_1")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid level 1 orient card.");
       alert.show();
-    }
-    else if (action.equals("CASCADE_LEVEL_2")) {
-      // inform user to select token to return
+    } else if (action.equals("CASCADE_LEVEL_2")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid level 2 orient card.");
       alert.show();
-    }
-    else if (action.equals("DISCARD_2_WHITE_CARDS")) {
-      // inform user to select token to return
+    } else if (action.equals("DISCARD_FIRST_WHITE_CARD")
+                 || action.equals("DISCARD_SECOND_WHITE_CARD")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid white card to discard.");
       alert.show();
-    }
-    else if (action.equals("DISCARD_2_BLUE_CARDS")) {
-      // inform user to select token to return
+    } else if (action.equals("DISCARD_FIRST_BLUE_CARD")
+                 || action.equals("DISCARD_SECOND_BLUE_CARD")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid blue card to discard.");
       alert.show();
-    }
-    else if (action.equals("DISCARD_2_GREEN_CARDS")) {
-      // inform user to select token to return
+    } else if (action.equals("DISCARD_FIRST_GREEN_CARD")
+                 || action.equals("DISCARD_SECOND_GREEN_CARD")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid green card to discard.");
       alert.show();
-    }
-    else if (action.equals("DISCARD_2_RED_CARDS")) {
-      // inform user to select token to return
+    } else if (action.equals("DISCARD_FIRST_RED_CARD")
+                 || action.equals("DISCARD_SECOND_RED_CARD")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid red card to discard.");
       alert.show();
-    }
-    else if (action.equals("DISCARD_2_BLACK_CARDS")) {
-      // inform user to select token to return
+    } else if (action.equals("DISCARD_FIRST_BLACK_CARD")
+                 || action.equals("DISCARD_SECOND_BLACK_CARD")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select valid black card to discard.");
       alert.show();
-    }
-    else if (action.equals("TAKE_EXTRA_TOKEN")) {
-      // inform user to select token to return
+    } else if (action.equals("TAKE_EXTRA_TOKEN")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("Please select token to take as a result of your trading post power.");
       alert.show();
-    }
-    else if (action.equals("PLACE_COAT_OF_ARMS")) {
-      // inform user to select token to return
+    } else if (action.equals("PLACE_COAT_OF_ARMS")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
       alert.setHeaderText("You've unlocked a power as a result of placing a coat of arms.");
       alert.show();
-
+    } else if (action.equals("RECEIVE_CITY")) {
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Compound Move Info");
+      alert.setHeaderText("Please select a valid city to receive.");
+      alert.show();
     }
   }
 
@@ -293,19 +320,19 @@ public class ActionManager {
    * @return the list of actions in the server
    */
   public static HttpResponse<JsonNode> getActions() {
-    return Unirest.get(String.format("http://%s/api/games/%d/players/%s/actions", 
-        LobbyServiceExecutor.SERVERLOCATION, 
-        GameController.getInstance().getGameId(), 
+    return Unirest.get(String.format("http://%s/api/games/%d/players/%s/actions",
+        LobbyServiceExecutor.SERVERLOCATION,
+        GameController.getInstance().getGameId(),
         User.THISUSER.getUsername()))
-        .queryString("access_token", User.THISUSER.getAccessToken()).asJson();
+             .queryString("access_token", User.THISUSER.getAccessToken()).asJson();
   }
-  
+
   private static HttpResponse<String> sendAction(String action) {
-    return Unirest.put(String.format("http://%s/api/games/%d/players/%s/actions/%s", 
-        LobbyServiceExecutor.SERVERLOCATION, 
-        GameController.getInstance().getGameId(), 
+    return Unirest.put(String.format("http://%s/api/games/%d/players/%s/actions/%s",
+        LobbyServiceExecutor.SERVERLOCATION,
+        GameController.getInstance().getGameId(),
         User.THISUSER.getUsername(), action))
-        .queryString("access_token", User.THISUSER.getAccessToken()).asString();
+             .queryString("access_token", User.THISUSER.getAccessToken()).asString();
   }
 
   /**

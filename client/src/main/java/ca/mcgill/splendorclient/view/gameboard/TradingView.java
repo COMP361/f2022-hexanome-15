@@ -10,7 +10,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Represents a Trading Post in Splendor.
@@ -21,8 +20,8 @@ public class TradingView extends Pane {
   private static final String rootPath = new File("").getAbsolutePath();
 
   //order of shields is blue red yellow black
-  private final ArrayList<Rectangle>[] shields = new ArrayList[5];
-  
+  private final ArrayList[] shields = new ArrayList[5];
+
   /**
    * Creates a TradingView.
    *
@@ -32,14 +31,14 @@ public class TradingView extends Pane {
     this.screenSize = screenSize;
     Image newImage = new Image("file:///" + rootPath + "/resources/tradingBoard.jpg");
     this.setBackground(new Background(
-        new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+      new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     this.setPrefSize(screenSize.getWidth() / 4.0f, screenSize.getHeight() / 10.0f);
-    
+
     for (int i = 0; i < 5; i++) {
-      shields[i] = new ArrayList<Rectangle>();
+      shields[i] = new ArrayList<>();
     }
   }
-  
+
   /**
    * Draws the correct coats of arms under the powers
    * as owned by the players.
@@ -50,34 +49,33 @@ public class TradingView extends Pane {
    * @param fourthShields shields
    * @param fifthShields shields
    */
-  public void updatePowers(String[] firstShields, 
-      String[] secondShields, 
-      String[] thirdShields, 
-      String[] fourthShields, 
-      String[] fifthShields) {
+  public void updatePowers(String[] firstShields,
+                           String[] secondShields,
+                           String[] thirdShields,
+                           String[] fourthShields,
+                           String[] fifthShields) {
     this.getChildren().clear();
-    //this.getChildren().add(new CoatofarmsView(screenSize, "RED"));
     float xoffset = (float) (screenSize.getWidth() / 65f);
     float yoffset = (float) (screenSize.getHeight() / 40f);
     float xorigin = 0.0f;
     updatePower(0, firstShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(1, firstShields, xoffset, yoffset, xorigin);
+    updatePower(1, secondShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(2, firstShields, xoffset, yoffset, xorigin);
+    updatePower(2, thirdShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(3, firstShields, xoffset, yoffset, xorigin);
+    updatePower(3, fourthShields, xoffset, yoffset, xorigin);
     xorigin += screenSize.getWidth() / 20.0f;
-    updatePower(4, firstShields, xoffset, yoffset, xorigin);
-    
+    updatePower(4, fifthShields, xoffset, yoffset, xorigin);
+
   }
 
   private void updatePower(int powerIndex, String[] colors,
-                             float xoffset, float yoffset, float xorigin) {
+                           float xoffset, float yoffset, float xorigin) {
     if (colors.length < 1) {
       return;
     }
-    
+
     CoatofarmsView toAdd = new CoatofarmsView(screenSize, colors[0]);
     this.getChildren().add(toAdd);
     toAdd.setTranslateX(xoffset + xorigin);
@@ -91,7 +89,7 @@ public class TradingView extends Pane {
     toAdd.setTranslateX(2 * xoffset + xorigin);
     toAdd.setTranslateY(yoffset);
 
-    
+
     if (colors.length < 3) {
       return;
     }
@@ -100,7 +98,7 @@ public class TradingView extends Pane {
     toAdd.setTranslateX(xoffset + xorigin);
     toAdd.setTranslateY(2 * yoffset);
 
-    
+
     if (colors.length < 4) {
       return;
     }
@@ -108,7 +106,7 @@ public class TradingView extends Pane {
     this.getChildren().add(toAdd);
     toAdd.setTranslateX(2 * xoffset + xorigin);
     toAdd.setTranslateY(2 * yoffset);
-    
+
 
   }
 }

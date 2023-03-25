@@ -43,21 +43,29 @@ public class CardView extends StackPane {
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {
       HttpResponse<String> result =
-          ActionManager.findAndSendPairSpiceCardMove(localid);
+        ActionManager.findAndSendPairSpiceCardMove(localid);
       if (result  != null) {
         if (result.getStatus() == 206) {
           ActionManager.handleCompoundMoves(result.getBody());
         } else if (result.getStatus() == 200) {
           //board updater informs end of turn
         }
-      }
-      else {
+      } else {
         result = ActionManager.findAndSendPurchaseCardMove(localid);
         if (result  != null) {
           if (result.getStatus() == 206) {
             ActionManager.handleCompoundMoves(result.getBody());
           } else if (result.getStatus() == 200) {
             //board updater informs end of turn
+          }
+        } else {
+          result = ActionManager.findAndSendDiscardCardMove(localid);
+          if (result  != null) {
+            if (result.getStatus() == 206) {
+              ActionManager.handleCompoundMoves(result.getBody());
+            } else if (result.getStatus() == 200) {
+              //board updater informs end of turn
+            }
           }
         }
       }
@@ -107,22 +115,12 @@ public class CardView extends StackPane {
             }
           } else {
             result =
-                ActionManager.findAndSendCascadeLevel1Move(localid);
+              ActionManager.findAndSendCascadeLevel1Move(localid);
             if (result != null) {
               if (result.getStatus() == 206) {
                 ActionManager.handleCompoundMoves(result.getBody());
               } else if (result.getStatus() == 200) {
                 //inform end of turn
-              }
-            } else {
-              result = 
-                  ActionManager.findAndSendPairSpiceCardMove(localid);
-              if (result != null) {
-                if (result.getStatus() == 206) {
-                  ActionManager.handleCompoundMoves(result.getBody());
-                } else if (result.getStatus() == 200) {
-                  //inform end of turn
-                }
               }
             }
           }
