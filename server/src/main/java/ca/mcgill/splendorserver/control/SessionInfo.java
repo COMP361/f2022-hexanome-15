@@ -16,21 +16,10 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
 
   private final List<Player>        players;
   private       String              gameServer;
-  private       String              creator;
   private       String              savegame;
   
   private List<PlayerWrapper> playerWrappers = new ArrayList<PlayerWrapper>();
   private PlayerWrapper creatorWrapper;
-
-  @Override
-  public String toString() {
-    return "SessionInfo{"
-             + "players=" + players
-             + ", gameServer='" + gameServer + '\''
-             + ", gameCreator=" + creator
-             + ", saveGameId='" + savegame + '\''
-             + '}';
-  }
 
   /**
    * Creates a SessionInfo object.
@@ -42,8 +31,7 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
    * @param saveGameId  can be null.
    */
   public SessionInfo(String gameServer, List<Player> playerList, List<PlayerWrapper> players, PlayerWrapper gameCreator,
-                     String saveGameId
-  ) {
+                     String saveGameId) {
     assert gameServer != null && playerList != null && players != null && gameCreator != null;
     this.players = playerList;
     this.gameServer  = gameServer;
@@ -60,13 +48,6 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     for (Player player : players) {
       playerWrappers.add(PlayerWrapper.newPlayerWrapper(player.getName()));
     }
-  }
-
-  /**
-   * Adds the game creator.
-   */
-  public void populateGameCreator() {
-    creatorWrapper = PlayerWrapper.newPlayerWrapper(creator);
   }
 
   /**

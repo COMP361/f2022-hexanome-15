@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorserver.gameio.GameNotFoundException;
 import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.SplendorGame;
@@ -9,16 +10,13 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockR
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class LocalGameStorageTest {
-  SplendorGame sg;
-  SessionInfo si;
-  List<PlayerWrapper> players;
-  List<Player> playerList;
-
+  private SplendorGame sg;
 
   @BeforeEach
   void setUp() {
@@ -26,30 +24,27 @@ class LocalGameStorageTest {
     PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
     Player player1 = new Player("Sofia", "purple");
     Player player2 = new Player("Jeff", "blue");
-    playerList = new ArrayList<>();
+    List<Player> playerList = new ArrayList<>();
     playerList.add(player1);
     playerList.add(player2);
-    players = new ArrayList<>();
+    List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-
-    si = new SessionInfo("12345", playerList, players, sofia,"1L");
-    sg = new SplendorGame(si,1L);
-
+    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
+    sg = new SplendorGame(sessionInfo,1L);
   }
 
   @Test
   void addActiveGame() {
-
+    LocalGameStorage.addActiveGame(sg);
+    assertEquals(Optional.ofNullable(sg), LocalGameStorage.getActiveGame(1L));
   }
 
   @Test
   void removeActiveGame() {
-  }
-
-  @Test
-  void getActiveGame() {
-
+    LocalGameStorage.addActiveGame(sg);
+    LocalGameStorage.removeActiveGame(sg);
+    assertFalse(LocalGameStorage.exists(1L));
   }
 
   @Test
@@ -59,6 +54,18 @@ class LocalGameStorageTest {
   }
 
   @Test
-  void exists() {
+  void notRequiresUpdate() {
+    try {
+      LocalGameStorage.requiresUpdate(1L);
+    }
+    catch (GameNotFoundException e) {
+      assertEquals("Could not find game ID: 1", e.getMessage());
+    }
   }
+
+  @Test
+  void getActiveGameEmpty() {
+    assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(1L));
+  }
+
 }

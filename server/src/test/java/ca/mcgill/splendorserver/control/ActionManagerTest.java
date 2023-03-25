@@ -1,9 +1,6 @@
 package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.gameio.ActionManager;
-import ca.mcgill.splendorserver.gameio.GameRestController;
-import ca.mcgill.splendorserver.gameio.Launcher;
-import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.gameio.*;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.SplendorGame;
@@ -55,8 +52,14 @@ class ActionManagerTest {
     PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
     PlayerWrapper aPlayer2 = PlayerWrapper.newPlayerWrapper("Larry");
     List<PlayerWrapper> lpw = new ArrayList<>();
-    lpw.add(aPlayer); lpw.add(aPlayer2);
-    SessionInfo si = new SessionInfo("",lpw,aPlayer,"");
+    lpw.add(aPlayer);
+    lpw.add(aPlayer2);
+    Player player1 = new Player("Slava", "yellow");
+    Player player2 = new Player("Larry", "orange");
+    List<Player> players = new ArrayList<>();
+    players.add(player1);
+    players.add(player2);
+    SessionInfo si = new SessionInfo("",players,lpw,aPlayer,"1L");
     String playerName = "Slava";
 
     GameRestController gRC = new GameRestController();
