@@ -43,7 +43,7 @@ public class CardView extends StackPane {
     this.getChildren().addAll(outer, inner);
     this.setOnMouseClicked(arg0 -> {
       HttpResponse<String> result =
-        ActionManager.findAndSendPairSpiceCardMove(localid);
+          ActionManager.findAndSendPairSpiceCardMove(localid);
       if (result  != null) {
         if (result.getStatus() == 206) {
           ActionManager.handleCompoundMoves(result.getBody());

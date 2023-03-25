@@ -108,7 +108,7 @@ public class GameBoard {
     assert move != null && player != null;
     // getting players inventory or throws exception if not there
     UserInventory inventory = getInventoryByPlayerName(player.getName()).orElseThrow(
-      () -> new IllegalArgumentException(
+        () -> new IllegalArgumentException(
         "player (" + player.getName() + ") wasn't found in this current game board"));
 
     Action pendingAction;
@@ -360,9 +360,9 @@ public class GameBoard {
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
       replenishTakenCardFromDeck(
-        move.getCard()
+          move.getCard()
           .getDeckType(),
-        ix
+          ix
       );
     }
     if (inventory.tokenCount() < 10 && !noGoldTokens()) {
@@ -400,12 +400,12 @@ public class GameBoard {
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
 
       System.out.println(
-        player + " purchased a face-up dev card from game board: " + selectedCard
+          player + " purchased a face-up dev card from game board: " + selectedCard
       );
     } else {
       // cannot purchase card if it's not reserved in hand or face-up
       System.out.println(
-        "A card has been attempted to be purchased "
+          "A card has been attempted to be purchased "
           + "but it wasn't reserved in inventory nor face-up on game board"
       );
       throw new IllegalGameStateException(
@@ -564,7 +564,7 @@ public class GameBoard {
             && !inventory.canReceivePower(tradingPostSlot)) {
         inventory.removePower(tradingPostSlot.getPower());
         CoatOfArms coatOfArms =
-          tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
+            tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
         inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
       }
     }
@@ -595,7 +595,7 @@ public class GameBoard {
             && !inventory.canReceivePower(tradingPostSlot)) {
         inventory.removePower(tradingPostSlot.getPower());
         CoatOfArms coatOfArms =
-          tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
+            tradingPostSlot.removeCoatOfArms(inventory.getCoatOfArmsPile().getType());
         inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
       }
     }
@@ -720,7 +720,7 @@ public class GameBoard {
   private void returnTokensToBoard(List<Token> tokens) {
     for (Token token : tokens) {
       tokenPiles.get(token.getType())
-        .addToken(token);
+          .addToken(token);
     }
   }
 
