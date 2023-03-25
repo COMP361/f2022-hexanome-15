@@ -114,7 +114,7 @@ public class Noble {
     nobles.add(new Noble(7, new CardCost(0, 3, 3, 3, 0)));
     nobles.add(new Noble(8, new CardCost(0, 0, 3, 3, 3)));
     nobles.add(new Noble(9, new CardCost(3, 0, 0, 3, 3)));
-   /* nobles.add(new Noble(10, new CardCost(0, 4, 0, 4, 0)));
+    /* nobles.add(new Noble(10, new CardCost(0, 4, 0, 4, 0)));
     nobles.add(new Noble(11, new CardCost(0, 3, 3, 0, 3)));
     nobles.add(new Noble(12, new CardCost(4, 0, 4, 0, 0)));
     nobles.add(new Noble(13, new CardCost(0, 0, 4, 0, 4)));

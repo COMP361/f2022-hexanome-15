@@ -330,7 +330,7 @@ public class GameBoard {
     for (Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
       ntokens += entry.getValue().getSize();
     }
-    if (ntokens >= 10) {
+    if (ntokens > 10) {
       actionPending = Action.RET_TOKEN;
       return true;
     }
