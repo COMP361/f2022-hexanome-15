@@ -42,7 +42,6 @@ public class Splendor extends Application {
 
   /**
    * Transitions to the next scene.
-   * TODO: Make this the state machine pattern. Each scene is a state with a transition to function.
    *
    * @param scene the scene to transition to
    * @param title the title of the screen
