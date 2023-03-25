@@ -5,6 +5,11 @@ package ca.mcgill.splendorserver.gameio;
  */
 public class GameServiceAccountJson {
 
+  private String name;
+  private String password;
+  private String preferredColour;
+  private String role;
+
   /**
    * Creates a GameServiceAccountJson object.
    *
@@ -26,10 +31,5 @@ public class GameServiceAccountJson {
   public GameServiceAccountJson() {
 
   }
-
-  private String name;
-  private String password;
-  private String preferredColour;
-  private String role;
 
 }

@@ -3,124 +3,69 @@ package ca.mcgill.splendorserver.gameio;
 
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
-import ca.mcgill.splendorserver.model.SplendorGame;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import ca.mcgill.splendorserver.gameio.GameRestController.*;
-import org.springframework.web.bind.annotation.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameRestControllerTest {
 
-  /*@Test
-  void launchRequest()
-  {
-    pws.add(pw);
-    pws.add(pw2);
-    pws.add(pw3);
-    assertEquals(ResponseEntity.status(HttpStatus.OK).build(),
-      grc.launchRequest(0L,si.toString()),"");
-    assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage()),
-      grc.launchRequest(0L,null),"");
-  }
+  private GameRestController controller = new GameRestController();
+  SessionInfo sessionInfo;
 
-  @Test
-  void quitRequest() {
-    grc.launchRequest(0L,si.toString());
-    grc.quitRequest(0L);
-    assertTrue(LocalGameStorage.getActiveGame(0L).isEmpty());
-  }*/
-
-  /*@Test
-  void getGameBoard() {
-    assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build(),
-      grc.getGameBoard(0L),"No GameId registered on SplendorGame");
-
-
-    grc.launchRequest(0L,si);
-    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0L);
-
-
-    //ResponseEntity<String> aRep = ResponseEntity.status(HttpStatus.OK).body();
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    assertEquals(ResponseEntity.status(HttpStatus.OK),
-      grc.getGameBoard(0L),
-      "GameId 0L registered on SplendorGame");
-
-  }*/
-
-  /*@Test
-  void knockTest() {
-    assertEquals("SOMEONE'S KNOCKING", grc.knock(), "");
-  }*/
-}
-
-/*
-import org.junit.jupiter.api.BeforeEach;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-class GameRestControllerTest {
-  private final PrintStream standardOut = System.out;
-  private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
   @BeforeEach
-  public void setUp() {
-    System.setOut(new PrintStream(outputStreamCaptor));
+  void setUp() {
+    PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
+    PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
+    Player player1 = new Player("Sofia", "purple");
+    Player player2 = new Player("Jeff", "blue");
+    List<Player> playerList = new ArrayList<>();
+    playerList.add(player1);
+    playerList.add(player2);
+    List<PlayerWrapper> players = new ArrayList<>();
+    players.add(sofia);
+    players.add(jeff);
+    sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
   }
 
   @Test
-  @PutMapping
-  public void testlaunchRequest() {
-    String sg = "";
-    long id = 270189000;
-    List<PlayerWrapper> players = new ArrayList<PlayerWrapper>();
-    players.add(PlayerWrapper.newPlayerWrapper("Zack"));
-    players.add(PlayerWrapper.newPlayerWrapper("Jeff"));
-    players.add(PlayerWrapper.newPlayerWrapper("Larry"));
-    GameBoard gb = new GameBoard();
-    Game game = new Game(sg, id, players, gb);
-    Long num = 123456789L;
-    JpaRepository<Game, Long> repo = new SimpleJpaRepository<Game, Long>(game,);
-    Map<String, JsonNode> myMap =
-      new HashMap<String, JsonNode>(0, 0.34f);
-    JsonNodeFactory myJson = new JsonNodeFactory(true);
-    ObjectNode sessionInfo = new ObjectNode(myJson,myMap);
-    Long gameid = 270909000L;
-    GameRepository repo = null;
-    GameRestController gc = new GameRestController();
-    gc.launchRequest(sessionInfo, gameid);
-    assertEquals(null + "\n" + gameid + "\n",
-      outputStreamCaptor.toString().trim(),"");
+  void launchRequest() {
+    String sessionInfoJson = new Gson().toJson(sessionInfo);
+    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(1L, sessionInfoJson));
   }
-  @AfterEach
-  public void tearDown() {
-    System.setOut(standardOut);
-  }
+
   @Test
   void quitRequest() {
+    String sessionInfoJson = new Gson().toJson(sessionInfo);
+    controller.launchRequest(1L, sessionInfoJson);
+    controller.quitRequest(1L);
+    assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(1L));
   }
+
   @Test
-  void endTurn() {
+  void getGameBoard() {
   }
+
   @Test
-  void currentGameBoard() {
+  void getGameBoardNotFound() {
+    assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                   .build(), controller.getGameBoard(1L));
   }
+
   @Test
   void knock() {
+    assertEquals("SOMEONE'S KNOCKING", controller.knock());
   }
-}*/
+}
 
 

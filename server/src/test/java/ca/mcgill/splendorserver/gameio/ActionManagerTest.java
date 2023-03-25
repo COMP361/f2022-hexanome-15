@@ -1,4 +1,4 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.gameio;
 
 import ca.mcgill.splendorserver.gameio.*;
 import ca.mcgill.splendorserver.model.GameBoard;
