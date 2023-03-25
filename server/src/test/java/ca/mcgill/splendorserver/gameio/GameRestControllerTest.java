@@ -24,13 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameRestControllerTest {
-  PlayerWrapper pw = PlayerWrapper.newPlayerWrapper("Jeff");
-  PlayerWrapper pw2 = PlayerWrapper.newPlayerWrapper("Larry");
-  PlayerWrapper pw3 = PlayerWrapper.newPlayerWrapper("Sofia");
-  List<PlayerWrapper> pws = new ArrayList<>();
-  SessionInfo si = new SessionInfo("",pws,pw,"");
-  GameRestController grc = new GameRestController();
-  Exception e = new Exception();
 
   /*@Test
   void launchRequest()
