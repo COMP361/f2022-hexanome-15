@@ -20,22 +20,44 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class InventoryJsonTest {
   private String userName = "Sofia";
   private PlayerWrapper player = PlayerWrapper.newPlayerWrapper(userName);
-  private UserInventory inventory = new UserInventory(player, Optional.ofNullable(RED));
 
   @Test
   void InventoryJson() {
+    UserInventory inventory = new UserInventory(player, Optional.ofNullable(RED));
     CardCost cost = new CardCost(1,0,0,0,0);
     Card card1 = new Card(1,1, DIAMOND, BASE1, ONE, cost);
     Card card2 = new Card(2, 1, DIAMOND, BASE1, ONE, cost);
-    Noble noble = new Noble(0, new CardCost(1,0,0,0,0));
+    Noble noble1 = new Noble(0, new CardCost(1,0,0,0,0));
+    Noble noble2 = new Noble(0, new CardCost(1,0,0,0,0));
     TradingPostSlot tradingSlot = new TradingPostSlot(0, false, PURCHASE_CARD_TAKE_TOKEN, cost);
     City city = new City(0, 0, cost, 0);
     Token token = new Token(DIAMOND);
     inventory.addToken(token);
     inventory.purchaseCard(card1);
     inventory.addReservedCard(card2);
-    inventory.receiveVisitFrom(noble);
+    inventory.receiveVisitFrom(noble1);
+    inventory.addReservedNoble(noble2);
     inventory.addPower(tradingSlot.getPower());
+    inventory.addCity(city);
+    InventoryJson json = new InventoryJson(inventory.getCards(),
+      inventory.getTokenPiles(), userName, inventory.getPrestigeWon(), inventory.getNobles(),
+      inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities());
+    assertNotEquals(null, json);
+  }
+
+  @Test
+  void InventoryJsonNoTradingPosts() {
+    UserInventory inventory = new UserInventory(player, Optional.empty());
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card1 = new Card(1,1, DIAMOND, BASE1, ONE, cost);
+    Card card2 = new Card(2, 1, DIAMOND, BASE1, ONE, cost);
+    Noble noble = new Noble(0, new CardCost(1,0,0,0,0));
+    City city = new City(0, 0, cost, 0);
+    Token token = new Token(DIAMOND);
+    inventory.addToken(token);
+    inventory.purchaseCard(card1);
+    inventory.addReservedCard(card2);
+    inventory.receiveVisitFrom(noble);
     inventory.addCity(city);
     InventoryJson json = new InventoryJson(inventory.getCards(),
       inventory.getTokenPiles(), userName, inventory.getPrestigeWon(), inventory.getNobles(),

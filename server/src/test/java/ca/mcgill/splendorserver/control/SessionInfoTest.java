@@ -89,4 +89,10 @@ class SessionInfoTest {
     SessionInfo sessionInfo1 = new SessionInfo("12345", playerList, players, sofia,"1L");
     assertEquals(sessionInfo.hashCode(), sessionInfo1.hashCode());
   }
+
+  @Test
+  void populatePlayerWrappers() {
+    sessionInfo.populatePlayerWrappers();
+    assertEquals(2, sessionInfo.getNumPlayers());
+  }
 }

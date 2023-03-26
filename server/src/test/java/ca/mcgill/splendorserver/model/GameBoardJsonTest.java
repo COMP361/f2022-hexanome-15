@@ -7,6 +7,7 @@ import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,7 @@ class GameBoardJsonTest {
     List<Noble> nobles = Noble.getNobles(2);
     List<City> cities = City.getCities(2);
     List<TradingPostSlot> tradingPostSlots = TradingPostSlot.getTradingPostSlots();
+    tradingPostSlots.get(0).addCoatOfArms(new CoatOfArms(RED));
     gjson = new GameBoardJson(whoseTurn, inventories, decks,
       nobles, cards, tokenPiles, tradingPostSlots, cities);
   }
