@@ -13,8 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SplendorGameTest {
 
-  private SplendorGame game;
-  private SessionInfo sessionInfo;
+  private SplendorGame game1;
+  private SplendorGame game2;
+  private SplendorGame game3;
+  private SessionInfo sessionInfo1;
+  private SessionInfo sessionInfo2;
+  private SessionInfo sessionInfo3;
   private PlayerWrapper sofia;
   private PlayerWrapper jeff;
 
@@ -30,57 +34,89 @@ class SplendorGameTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
-    game = new SplendorGame(sessionInfo,1L);
+    sessionInfo1 = new SessionInfo("SplendorOrient", playerList, players, sofia,"1L");
+    sessionInfo2 = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia,"2L");
+    sessionInfo3 = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"3L");
+    game1 = new SplendorGame(sessionInfo1,1L);
+    game2 = new SplendorGame(sessionInfo2,2L);
+    game3 = new SplendorGame(sessionInfo3,3L);
   }
 
   @Test
   void setRequiresUpdate() {
-    game.setRequiresUpdate(false);
-    assertFalse(game.getRequiresUpdate());
+    game1.setRequiresUpdate(false);
+    assertFalse(game1.getRequiresUpdate());
   }
 
   @Test
   void setFinished() {
-    game.setFinished();
-    assertTrue(game.isFinished());
+    game1.setFinished();
+    assertTrue(game1.isFinished());
   }
 
   @Test
   void whoseTurn() {
-    assertEquals(sofia, game.whoseTurn());
+    assertEquals(sofia, game1.whoseTurn());
   }
 
   @Test
   void isStartingPlayer() {
-    assertTrue(game.isStartingPlayer(sofia));
+    assertTrue(game1.isStartingPlayer(sofia));
   }
 
   @Test
   void endTurn() {
-    assertEquals(jeff, game.endTurn(sofia));
+    assertEquals(jeff, game1.endTurn(sofia));
   }
 
   @Test
   void endTurnNotYourTurn() {
     assertThrows(
       IllegalGameStateException.class,
-      () -> game.endTurn(jeff), jeff + " cannot end their turn while " + sofia + " is the current player");
+      () -> game1.endTurn(jeff), jeff + " cannot end their turn while " + sofia + " is the current player");
   }
 
   @Test
   void getPlayerByName() {
-    assertEquals(Optional.ofNullable(sofia), game.getPlayerByName("Sofia"));
+    assertEquals(Optional.ofNullable(sofia), game1.getPlayerByName("Sofia"));
   }
 
   @Test
   void getGameId() {
-    assertEquals(1L, game.getGameId());
+    assertEquals(1L, game1.getGameId());
   }
 
   @Test
   void getBoard() {
+    assertEquals(3, game1.getBoard().getNobles().size());
+    assertEquals(18, game1.getBoard().getCards().size());
+    assertEquals(6, game1.getBoard().getDecks().size());
+    assertEquals(6, game1.getBoard().getTokenPiles().size());
+    assertEquals(2, game1.getBoard().getInventories().size());
+    assertEquals(0, game1.getBoard().getTradingPostSlots().size());
+    assertEquals(0, game1.getBoard().getCities().size());
+  }
 
+  @Test
+  void getBoardTradingPosts() {
+    assertEquals(3, game2.getBoard().getNobles().size());
+    assertEquals(18, game2.getBoard().getCards().size());
+    assertEquals(6, game2.getBoard().getDecks().size());
+    assertEquals(6, game2.getBoard().getTokenPiles().size());
+    assertEquals(2, game2.getBoard().getInventories().size());
+    assertEquals(5, game2.getBoard().getTradingPostSlots().size());
+    assertEquals(0, game2.getBoard().getCities().size());
+  }
+
+  @Test
+  void getBoardCities() {
+    assertEquals(3, game3.getBoard().getNobles().size());
+    assertEquals(18, game3.getBoard().getCards().size());
+    assertEquals(6, game3.getBoard().getDecks().size());
+    assertEquals(6, game3.getBoard().getTokenPiles().size());
+    assertEquals(2, game3.getBoard().getInventories().size());
+    assertEquals(0, game3.getBoard().getTradingPostSlots().size());
+    assertEquals(2, game3.getBoard().getCities().size());
   }
 
   @Test
@@ -96,18 +132,18 @@ class SplendorGameTest {
     players.add(sofia);
     players.add(jeff);
     SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
-    SplendorGame game1 = new SplendorGame(sessionInfo,1L);
-    assertEquals(game, game1);
+    SplendorGame game4 = new SplendorGame(sessionInfo,1L);
+    assertEquals(game1, game4);
   }
 
   @Test
   void testEqualsSameGame() {
-    assertEquals(game, game);
+    assertEquals(game1, game1);
   }
 
   @Test
   void testNotEqualsNull() {
-    assertFalse(game.equals(null));
+    assertFalse(game1.equals(null));
   }
 
   @Test
@@ -123,7 +159,7 @@ class SplendorGameTest {
     players.add(sofia);
     players.add(jeff);
     SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
-    SplendorGame game1 = new SplendorGame(sessionInfo,1L);
-    assertEquals(game.hashCode(), game1.hashCode());
+    SplendorGame game4 = new SplendorGame(sessionInfo,1L);
+    assertEquals(game1.hashCode(), game4.hashCode());
   }
 }

@@ -174,14 +174,12 @@ public class GameRestController {
   ) {
 
     SessionInfo sessionInfo = new Gson().fromJson(sessionInfoJson, SessionInfo.class);
-    sessionInfo.populatePlayerWrappers();
     try {
       if (sessionInfo == null || sessionInfo.getGameServer() == null) {
         throw new Exception();
       }
       // Getting the players in the session
-      // gameManager.addGame(gameId, sessionInfo.getPlayers()
-      // .toArray(new Player[launcherInfo.getPlayers().size()]));
+      sessionInfo.populatePlayerWrappers();
       SplendorGame splendorGame = new SplendorGame(sessionInfo, gameId);
       LocalGameStorage.addActiveGame(splendorGame);
       return ResponseEntity.status(HttpStatus.OK)
