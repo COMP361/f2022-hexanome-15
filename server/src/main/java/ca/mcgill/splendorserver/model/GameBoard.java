@@ -834,8 +834,7 @@ public class GameBoard {
    * @return if there are no gold tokens left.
    */
   public boolean noGoldTokens() {
-    return tokenPiles.get(TokenType.GOLD)
-             .getSize() == 0;
+    return tokenPiles.get(TokenType.GOLD).getSize() == 0;
   }
 
   /**
@@ -855,15 +854,17 @@ public class GameBoard {
     if (!(o instanceof GameBoard gameBoard)) {
       return false;
     }
-    return Objects.equals(inventories, gameBoard.inventories)
-             && Objects.equals(decks, gameBoard.decks)
-             && Objects.equals(cardField, gameBoard.cardField)
-             && Objects.equals(tokenPiles, gameBoard.tokenPiles)
-             && Objects.equals(nobles, gameBoard.nobles);
+    return inventories.equals(gameBoard.inventories)
+             && decks.equals(gameBoard.decks)
+             && cardField.equals(gameBoard.cardField)
+             && tokenPiles.equals(gameBoard.tokenPiles)
+             && nobles.equals(gameBoard.nobles)
+             && tradingPostSlots.equals(gameBoard.tradingPostSlots)
+             && cities.equals(gameBoard.cities);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(inventories, decks, cardField, tokenPiles, nobles);
+    return Objects.hash(inventories, decks, cardField, tokenPiles, nobles, tradingPostSlots, cities);
   }
 }
