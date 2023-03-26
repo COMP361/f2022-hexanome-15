@@ -98,6 +98,15 @@ public class SplendorGame {
   }
 
   /**
+   * Returns the session info of this Splendor game.
+   *
+   * @return the session info of this Splendor game
+   */
+  public SessionInfo getSessionInfo() {
+    return sessionInfo;
+  }
+
+  /**
    * Checks if the given player is the player who starts the game.
    *
    * @param player the given player

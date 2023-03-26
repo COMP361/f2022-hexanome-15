@@ -87,6 +87,11 @@ class SplendorGameTest {
   }
 
   @Test
+  void getSessionInfo() {
+    assertEquals(sessionInfo1, game1.getSessionInfo());
+  }
+
+  @Test
   void getBoard() {
     assertEquals(3, game1.getBoard().getNobles().size());
     assertEquals(18, game1.getBoard().getCards().size());

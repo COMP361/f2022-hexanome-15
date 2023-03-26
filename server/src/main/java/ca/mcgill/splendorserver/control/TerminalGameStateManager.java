@@ -25,16 +25,19 @@ public final class TerminalGameStateManager {
   public static boolean isTerminalGameState(SplendorGame game) {
     for (UserInventory inventory : game.getBoard()
                                        .getInventories()) {
-      if (inventory.getPrestigeWon() >= prestigePointsToWin) {
-        game.setFinished();
-        return true;
+      if (game.getSessionInfo().getGameServer().equals("SplendorOrientCities")) {
+        if (!inventory.getCities().isEmpty()) {
+          game.setFinished();
+          return true;
+        }
       }
-      if (!inventory.getCities().isEmpty()) {
-        game.setFinished();
-        return true;
+      else {
+        if (inventory.getPrestigeWon() >= prestigePointsToWin) {
+          game.setFinished();
+          return true;
+        }
       }
     }
-
     return false;
   }
 

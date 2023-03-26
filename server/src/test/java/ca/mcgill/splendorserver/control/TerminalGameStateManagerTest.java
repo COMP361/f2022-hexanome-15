@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TerminalGameStateManagerTest {
 
-  private SplendorGame game;
+  private SplendorGame game1;
+  private SplendorGame game2;
 
   @BeforeEach
   void setUp() {
@@ -33,36 +34,38 @@ class TerminalGameStateManagerTest {
     Player player2 = new Player("Zach", "green");
     players.add(player1);
     players.add(player2);
-    SessionInfo si = new SessionInfo("GameServer",players, lp, larry,"1L");
-    game = new SplendorGame(si,1L);
+    SessionInfo sessionInfo1 = new SessionInfo("SplendorOrient",players, lp, larry,"1L");
+    game1 = new SplendorGame(sessionInfo1,1L);
+    SessionInfo sessionInfo2 = new SessionInfo("SplendorOrientCities",players, lp, larry,"1L");
+    game2 = new SplendorGame(sessionInfo2,1L);
   }
 
   @Test
   void isNotTerminalGameState() {
-    assertFalse(TerminalGameStateManager.isTerminalGameState(game));
+    assertFalse(TerminalGameStateManager.isTerminalGameState(game1));
   }
 
   @Test
   void isTerminalGameState() {
-    UserInventory inventory1 = game.getBoard().getInventoryByPlayerName("Larry").get();
+    UserInventory inventory1 = game1.getBoard().getInventoryByPlayerName("Larry").get();
     CardCost cost = new CardCost(1,0,0,0,0);
     Card card = new Card(0,15, DIAMOND, BASE1, ONE, cost);
     Token token = new Token(DIAMOND);
     inventory1.addToken(token);
     inventory1.purchaseCard(card);
-    assertTrue(TerminalGameStateManager.isTerminalGameState(game));
+    assertTrue(TerminalGameStateManager.isTerminalGameState(game1));
   }
 
   @Test
   void isTerminalGameStateCities() {
-    UserInventory inventory1 = game.getBoard().getInventoryByPlayerName("Larry").get();
+    UserInventory inventory1 = game2.getBoard().getInventoryByPlayerName("Larry").get();
     CardCost cost = new CardCost(1,0,0,0,0);
-    Card card = new Card(0,0, DIAMOND, BASE1, ONE, cost);
+    Card card = new Card(0,15, DIAMOND, BASE1, ONE, cost);
     Token token = new Token(DIAMOND);
     inventory1.addToken(token);
     inventory1.purchaseCard(card);
     City city = new City(0, 0, cost, 0);
     inventory1.addCity(city);
-    assertTrue(TerminalGameStateManager.isTerminalGameState(game));
+    assertTrue(TerminalGameStateManager.isTerminalGameState(game2));
   }
 }
