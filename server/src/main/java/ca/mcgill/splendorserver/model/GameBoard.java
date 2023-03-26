@@ -865,6 +865,7 @@ public class GameBoard {
 
   @Override
   public int hashCode() {
-    return Objects.hash(inventories, decks, cardField, tokenPiles, nobles, tradingPostSlots, cities);
+    return Objects.hash(inventories, decks, cardField, tokenPiles,
+        nobles, tradingPostSlots, cities);
   }
 }

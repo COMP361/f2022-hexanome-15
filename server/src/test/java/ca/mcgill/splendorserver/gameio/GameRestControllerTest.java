@@ -4,8 +4,6 @@ package ca.mcgill.splendorserver.gameio;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import com.google.gson.Gson;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.http.HttpStatus;
@@ -21,22 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameRestControllerTest {
 
   private GameRestController controller = new GameRestController();
-  SessionInfo sessionInfo;
-
-  @BeforeEach
-  void setUp() {
-    PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
-    PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
-    Player player1 = new Player("Sofia", "purple");
-    Player player2 = new Player("Jeff", "blue");
-    List<Player> playerList = new ArrayList<>();
-    playerList.add(player1);
-    playerList.add(player2);
-    List<PlayerWrapper> players = new ArrayList<>();
-    players.add(sofia);
-    players.add(jeff);
-    sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
-  }
+  private PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
+  private PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
+  private List<PlayerWrapper> players = new ArrayList<>(List.of(sofia, jeff));
+  private Player player1 = new Player("Sofia", "purple");
+  private Player player2 = new Player("Jeff", "blue");
+  List<Player> playerList = new ArrayList<>(List.of(player1, player2));
+  private SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
 
   @Test
   void launchRequest() {

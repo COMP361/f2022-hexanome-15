@@ -74,8 +74,7 @@ public class InventoryJson {
     }
     if (pile == null) {
       this.coatOfArmsType = null;
-    }
-    else {
+    } else {
       this.coatOfArmsType = pile.getType();
     }
   }

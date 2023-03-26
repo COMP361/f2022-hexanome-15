@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameBoardTest {
   private SplendorGame game;
   private GameBoard gb;
-  PlayerWrapper sofia;
+  private PlayerWrapper sofia;
 
   private List<UserInventory> inventories;
   private List<Deck> decks;

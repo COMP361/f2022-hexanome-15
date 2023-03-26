@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class SplendorGameTest {
 
   private SplendorGame game;
-  SessionInfo sessionInfo;
+  private SessionInfo sessionInfo;
   private PlayerWrapper sofia;
-  PlayerWrapper jeff;
+  private PlayerWrapper jeff;
 
   @BeforeEach
   void setUp() {
