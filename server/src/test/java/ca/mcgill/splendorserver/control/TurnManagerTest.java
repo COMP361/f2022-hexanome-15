@@ -25,26 +25,25 @@ class TurnManagerTest {
     players = new ArrayList<>();
     players.add(slava); players.add(ojas);
     tm = new TurnManager(players);
-
-
+    TurnManager turnManager = new TurnManager();
   }
 
 
   @Test
   void removePlayer() {
     tm.removePlayer(slava);
-    assertEquals(ojas,tm.whoseTurn(),"");
+    assertEquals(ojas,tm.whoseTurn());
   }
 
   @Test
   void whoseTurn() {
     tm.removePlayer(ojas);
-    assertEquals(slava,tm.whoseTurn(),"");
+    assertEquals(slava,tm.whoseTurn());
   }
 
   @Test
   void endTurn() {
-    assertEquals(ojas,tm.endTurn(),"");
+    assertEquals(ojas,tm.endTurn());
   }
 
   @Test

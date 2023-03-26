@@ -9,13 +9,13 @@ class PlayerWrapperTest {
   private PlayerWrapper pw = PlayerWrapper.newPlayerWrapper("Jeff");
 
   @Test
-  void testgetName() {
+  void testGetName() {
     assertEquals("Jeff", pw.getName());
   }
 
   @Test
   void testToString() {
-    assertEquals("Player{Jeff}",pw.toString());
+    assertEquals("Player{Jeff}", pw.toString());
   }
 
   @Test

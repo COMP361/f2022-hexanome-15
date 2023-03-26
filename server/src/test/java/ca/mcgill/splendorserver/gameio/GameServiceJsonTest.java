@@ -8,7 +8,7 @@ class GameServiceJsonTest {
   @Test
   void GameServiceJson() {
     GameServiceJson gsJ = new GameServiceJson();
-    assertTrue(gsJ != null,"");
+    assertNotEquals(null, gsJ);
   }
 
 }

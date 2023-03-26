@@ -1,9 +1,6 @@
-package ca.mcgill.splendorserver.control;
+package ca.mcgill.splendorserver.gameio;
 
-import ca.mcgill.splendorserver.gameio.ActionManager;
-import ca.mcgill.splendorserver.gameio.GameRestController;
-import ca.mcgill.splendorserver.gameio.Launcher;
-import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.gameio.*;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.SplendorGame;
@@ -20,6 +17,7 @@ import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,16 +44,22 @@ import static ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType.RED;
 import static ca.mcgill.splendorserver.model.tradingposts.Power.PURCHASE_CARD_TAKE_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
 
-/*@AutoConfigureMockRestServiceServer
+@AutoConfigureMockRestServiceServer
 class ActionManagerTest {
-  @Test
+  /*@Test
   void performAction() {
     Logger logger = Logger.getAnonymousLogger();
     PlayerWrapper aPlayer = PlayerWrapper.newPlayerWrapper("Slava");
     PlayerWrapper aPlayer2 = PlayerWrapper.newPlayerWrapper("Larry");
     List<PlayerWrapper> lpw = new ArrayList<>();
-    lpw.add(aPlayer); lpw.add(aPlayer2);
-    SessionInfo si = new SessionInfo("",lpw,aPlayer,"");
+    lpw.add(aPlayer);
+    lpw.add(aPlayer2);
+    Player player1 = new Player("Slava", "yellow");
+    Player player2 = new Player("Larry", "orange");
+    List<Player> players = new ArrayList<>();
+    players.add(player1);
+    players.add(player2);
+    SessionInfo si = new SessionInfo("",players,lpw,aPlayer,"1L");
     String playerName = "Slava";
 
     GameRestController gRC = new GameRestController();
@@ -74,7 +78,6 @@ class ActionManagerTest {
     ltp.add(tp1);
     Optional<CoatOfArmsType> coat = Optional.of(RED);
     UserInventory uinv = new UserInventory(aPlayer,coat);
-    //uinv.addReservedCard(acard);
 
     TurnManager tm = new TurnManager();
     List<UserInventory> inventories = new ArrayList<>();
@@ -97,7 +100,7 @@ class ActionManagerTest {
     List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
     tradingPostSlots.add(aTPS);
 
-    City acity = new City(1,2,cardc);
+    City acity = new City(1,2,cardc, 0);
     List<City> cities = new ArrayList<>();
     cities.add(acity);
     cardField.add(acard);
@@ -110,8 +113,7 @@ class ActionManagerTest {
 
     TokenType tkps = DIAMOND;
 
-
-    Move amove = new Move(PURCHASE_DEV,acard,aPlayer,BASE2,tkps,anoble,aTPS,tkps);
+    Move amove = new Move(PURCHASE_DEV,acard,aPlayer,BASE2,anoble,aTPS,tkps, acity);
     Map<String, Move> moves = new HashMap<>();
     moves.put("Slava",amove);
 
@@ -134,10 +136,10 @@ class ActionManagerTest {
       aM.performAction(1L,"Slava","Purchase Cards","Slava"),
       ""
       );
-  }
+  }*/
 
   @Test
   void getAvailableActions() {
 
   }
-}*/
+}

@@ -72,6 +72,10 @@ public class InventoryJson {
     for (City city : cities) {
       this.cities.add(city.getId());
     }
-    this.coatOfArmsType = pile.getType();
+    if (pile == null) {
+      this.coatOfArmsType = null;
+    } else {
+      this.coatOfArmsType = pile.getType();
+    }
   }
 }

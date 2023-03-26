@@ -104,7 +104,7 @@ public class SplendorGame {
    * @return a boolean determining if the given player is the player who starts the game
    */
   public boolean isStartingPlayer(PlayerWrapper player) {
-    return sessionInfo.getGameCreator() == player;
+    return sessionInfo.getGameCreator().equals(player);
   }
 
   /**
@@ -254,6 +254,6 @@ public class SplendorGame {
 
   @Override
   public int hashCode() {
-    return Objects.hash(sessionInfo, getGameId());
+    return Objects.hash(getGameId());
   }
 }

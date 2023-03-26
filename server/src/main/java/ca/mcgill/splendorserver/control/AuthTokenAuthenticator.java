@@ -81,10 +81,8 @@ public final class AuthTokenAuthenticator {
   public static boolean isPlayer(String accessToken) {
     assert accessToken != null;
     Optional<String> otherRole = getRole(accessToken);
-    return otherRole.filter(s -> s.trim()
-                                  .equals("ROLE_PLAYER") || s.trim()
-                                                             .equals("ROLE_ADMIN"))
-                    .isPresent();
+    return otherRole.filter(s -> s.trim().equals("ROLE_PLAYER")
+                                   || s.trim().equals("ROLE_ADMIN")).isPresent();
   }
 
   /**

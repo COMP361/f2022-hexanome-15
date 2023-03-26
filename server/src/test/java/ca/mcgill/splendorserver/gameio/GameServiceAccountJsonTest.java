@@ -10,17 +10,14 @@ class GameServiceAccountJsonTest {
   void GameServiceAccountJsonTest() {
     GameServiceAccountJson gs =
       new GameServiceAccountJson("Jeff","12345","Blue");
-
-    GameServiceAccountJson gs2 =
-      new GameServiceAccountJson("Jeff","12345","Blue");
-    assertTrue(gs != gs2,"");
+    assertNotEquals(null, gs);
 
   }
 
   @Test
   void GameServiceAccountJsonTest2() {
-    GameServiceAccountJson gs3 = new GameServiceAccountJson();
-    assertTrue(gs3 != null,"");
+    GameServiceAccountJson gs = new GameServiceAccountJson();
+    assertNotEquals(null, gs);
 
   }
 

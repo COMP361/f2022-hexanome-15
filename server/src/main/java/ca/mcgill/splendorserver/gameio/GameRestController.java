@@ -62,15 +62,7 @@ public class GameRestController {
     //register_gameservice(accessToken, gameServiceLocation, 4, 2,
     //"SplendorOrientCities", "Splendor", true);
     System.out.println("in here");
-    
-    /*debugging
-    List<PlayerWrapper> wrappers =
-        Arrays.asList(new PlayerWrapper[] {new PlayerWrapper("foo"), new PlayerWrapper("baz")});
-    SplendorGame splendorGame = new SplendorGame(new SessionInfo(wrappers), 0);
-    LocalGameStorage.addActiveGame(splendorGame);
-    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(0);
-    String json = buildGameBoardJson(manager.get().getBoard());
-    System.out.println(json);*/
+
   }
   
   private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {

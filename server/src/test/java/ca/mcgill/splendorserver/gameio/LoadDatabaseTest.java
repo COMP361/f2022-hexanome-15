@@ -9,6 +9,6 @@ class LoadDatabaseTest {
   @Test
   void LoadDatabaseTest() {
     LoadDatabase ldb = new LoadDatabase();
-    assertTrue(ldb != null,"");
+    assertNotEquals(null, ldb);
   }
 }
