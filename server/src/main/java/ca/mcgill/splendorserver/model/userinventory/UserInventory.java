@@ -314,7 +314,8 @@ public class UserInventory implements Iterable<Card> {
             }
           }
           case PAIR_SPICE_CARD -> {
-            if (purchasedCardCount() < 1) {
+            if (purchasedCardCount() < 1
+                  || purchasedCardCount() == tokenBonusAmountByType(TokenType.GOLD) / 2) {
               return false;
             }
           }

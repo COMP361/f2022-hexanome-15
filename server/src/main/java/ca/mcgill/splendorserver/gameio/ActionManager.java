@@ -510,7 +510,7 @@ public class ActionManager {
         "Illegal to pair spice card when inventory does not contain an unpaired spice card");
     }
     for (Card card : inventory.getCards()) {
-      if (card.getTokenBonusType() != null) {
+      if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
         Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
             null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
