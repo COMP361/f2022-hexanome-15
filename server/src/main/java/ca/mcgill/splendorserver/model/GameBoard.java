@@ -365,7 +365,7 @@ public class GameBoard {
           ix
       );
     }
-    if (inventory.tokenCount() < 10 && !noGoldTokens()) {
+    if (!noGoldTokens()) {
       Token gold = this.tokenPiles.get(TokenType.GOLD).removeToken();
       inventory.addToken(gold);
     }
