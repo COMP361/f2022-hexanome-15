@@ -26,6 +26,7 @@ public class InventoryJson {
   private List<Integer> purchasedCards = new ArrayList<Integer>();
   private List<Integer> reservedCards = new ArrayList<Integer>();
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
+  private Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
   private List<Integer> visitingNobles = new ArrayList<>();
@@ -43,12 +44,14 @@ public class InventoryJson {
    * @param prestige earned by the player
    * @param nobles earned by the player
    * @param powers earned by the player
-   * @param pile in the players inventory
-   * @param cities in the players inventory
+   * @param pile in the player's inventory
+   * @param cities in the player's inventory
+   * @param purchasedCardCount the number of purchased cards per token type in the inventory
    */
   public InventoryJson(List<Card> cards, EnumMap<TokenType, TokenPile> tokens,
                        String userName, int prestige, List<Noble> nobles,
-                       List<Power> powers, CoatOfArmsPile pile, List<City> cities) {
+                       List<Power> powers, CoatOfArmsPile pile, List<City> cities,
+                       Map<TokenType, Integer> purchasedCardCount) {
     for (Card card : cards) {
       if (card.isPurchased()) {
         this.purchasedCards.add(card.getId());
@@ -59,6 +62,7 @@ public class InventoryJson {
     for (TokenType type : tokens.keySet()) {
       this.tokens.put(type, tokens.get(type).getSize());
     }
+    this.purchasedCardCount = purchasedCardCount;
     this.userName = userName;
     this.prestige = prestige;
     for (Noble noble : nobles) {

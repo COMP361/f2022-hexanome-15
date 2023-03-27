@@ -16,7 +16,6 @@ public class CardColumnView extends Pane {
   private final TokenType typeOfColumn;
   private final Dimension screenSize;
   private int ncardsInColumn = 0;
-  private final Counter numCardsDisplay;
 
   /**
    * Creates a HandColumnView.
@@ -27,26 +26,6 @@ public class CardColumnView extends Pane {
   public CardColumnView(TokenType type, Dimension screenSize) {
     this.typeOfColumn = type;
     this.screenSize = screenSize;
-    this.numCardsDisplay = new Counter(ncardsInColumn);
-  }
-
-  /**
-   * Returns the label with the number of cards in that column.
-   *
-   * @return the card counter label
-   */
-  public Counter getNumCardsDisplay() {
-
-    return numCardsDisplay;
-  }
-
-  /**
-   * Returns the token type of the token pile.
-   *
-   * @return the token type of the token pile
-   */
-  public TokenType getTokenType() {
-    return typeOfColumn;
   }
 
 }

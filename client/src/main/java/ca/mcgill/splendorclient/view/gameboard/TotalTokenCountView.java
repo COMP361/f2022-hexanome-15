@@ -20,24 +20,6 @@ public class TotalTokenCountView extends Text {
   }
 
   /**
-   * Increments the total token count and updates the label.
-   */
-  public void increment() {
-    totalTokenCount++;
-    String text = String.format("Total Token Count: %d/10", totalTokenCount);
-    setText(text);
-  }
-
-  /**
-   * Decrements the total token count and updates the label.
-   */
-  public void decrement() {
-    totalTokenCount--;
-    String text = String.format("Total Token Count: %d", totalTokenCount);
-    setText(text);
-  }
-
-  /**
    * Sets the token count and updates the label.
    *
    * @param amount the amount of tokens to set

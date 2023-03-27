@@ -16,6 +16,7 @@ public class UserInventoryView implements Iterable<CardColumnView> {
   private final TotalCardCountView cardCountView;
   private final TotalPrestigeCountView prestigeCountView;
   private final ArrayList<Counter> listOfTokenCounters = new ArrayList<>();
+  private final ArrayList<Counter> listOfCardCounters = new ArrayList<>();
 
   /**
    * Creates a UserInventoryView.
@@ -126,6 +127,30 @@ public class UserInventoryView implements Iterable<CardColumnView> {
   }
 
   /**
+   * Updates the mini card labels in the user inventory.
+   *
+   * @param numWhiteCards the number of white cards in the user inventory
+   * @param numBlueCards the number of blue cards in the user inventory
+   * @param numGreenCards the number of green cards in the user inventory
+   * @param numRedCards the number of red cards in the user inventory
+   * @param numBlackCards the number of black cards in the user inventory
+   * @param numGoldCards the number of gold cards in the user inventory
+   */
+  public void updateMiniCards(int numWhiteCards,
+                           int numBlueCards,
+                           int numGreenCards,
+                           int numRedCards,
+                           int numBlackCards,
+                           int numGoldCards) {
+    listOfCardCounters.get(0).setCount(numWhiteCards);
+    listOfCardCounters.get(1).setCount(numBlueCards);
+    listOfCardCounters.get(2).setCount(numGreenCards);
+    listOfCardCounters.get(3).setCount(numRedCards);
+    listOfCardCounters.get(4).setCount(numBlackCards);
+    listOfCardCounters.get(5).setCount(numGoldCards);
+  }
+
+  /**
    * Updates the prestige counter in the user inventory.
    *
    * @param prestige the prestige in the user inventory
@@ -135,11 +160,29 @@ public class UserInventoryView implements Iterable<CardColumnView> {
   }
 
   /**
+   * Updates the total purchased card counter in the user inventory.
+   *
+   * @param purchasedCardCount the number of purchased cards in the user inventory
+   */
+  public void updateCardCount(int purchasedCardCount) {
+    cardCountView.set(purchasedCardCount);
+  }
+
+  /**
    * Adds a token counter to the user inventory.
    *
    * @param c the counter to be added
    */
-  public void addCounter(Counter c) {
+  public void addTokenCounter(Counter c) {
     listOfTokenCounters.add(c);
+  }
+
+  /**
+   * Adds a card counter to the user inventory.
+   *
+   * @param c the counter to be added
+   */
+  public void addCardCounter(Counter c) {
+    listOfCardCounters.add(c);
   }
 }

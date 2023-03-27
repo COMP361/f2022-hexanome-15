@@ -151,6 +151,12 @@ public class GameController {
                     inventory.getJSONObject("tokens").getInt("RUBY"),
                     inventory.getJSONObject("tokens").getInt("ONYX"),
                     inventory.getJSONObject("tokens").getInt("GOLD"),
+                    inventory.getJSONObject("purchasedCardCount").getInt("DIAMOND"),
+                    inventory.getJSONObject("purchasedCardCount").getInt("SAPPHIRE"),
+                    inventory.getJSONObject("purchasedCardCount").getInt("EMERALD"),
+                    inventory.getJSONObject("purchasedCardCount").getInt("RUBY"),
+                    inventory.getJSONObject("purchasedCardCount").getInt("ONYX"),
+                    inventory.getJSONObject("purchasedCardCount").getInt("GOLD"),
                     inventory.getInt("prestige"),
                     placeholder,
                     placeholder);

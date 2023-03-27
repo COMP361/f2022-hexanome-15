@@ -6,9 +6,14 @@ import ca.mcgill.splendorserver.model.cards.CardCost;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
+import ca.mcgill.splendorserver.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import static ca.mcgill.splendorserver.model.cards.DeckType.BASE1;
 import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ONE;
@@ -39,9 +44,13 @@ class InventoryJsonTest {
     inventory.addReservedNoble(noble2);
     inventory.addPower(tradingSlot.getPower());
     inventory.addCity(city);
+    Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
+    for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+      purchasedCardCount.put(entry.getKey(), inventory.tokenBonusAmountByType(entry.getKey()));
+    }
     InventoryJson json = new InventoryJson(inventory.getCards(),
       inventory.getTokenPiles(), userName, inventory.getPrestigeWon(), inventory.getNobles(),
-      inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities());
+      inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities(), purchasedCardCount);
     assertNotEquals(null, json);
   }
 
@@ -59,9 +68,13 @@ class InventoryJsonTest {
     inventory.addReservedCard(card2);
     inventory.receiveVisitFrom(noble);
     inventory.addCity(city);
+    Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
+    for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+      purchasedCardCount.put(entry.getKey(), inventory.tokenBonusAmountByType(entry.getKey()));
+    }
     InventoryJson json = new InventoryJson(inventory.getCards(),
       inventory.getTokenPiles(), userName, inventory.getPrestigeWon(), inventory.getNobles(),
-      inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities());
+      inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities(), purchasedCardCount);
     assertNotEquals(null, json);
 
   }

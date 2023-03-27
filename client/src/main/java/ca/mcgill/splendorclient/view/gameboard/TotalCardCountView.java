@@ -20,20 +20,13 @@ public class TotalCardCountView extends Text {
   }
 
   /**
-   * Increments the total card count and updates the label.
+   * Sets the total card count and updates the label.
+   *
+   * @param amount the amount of cards to set
    */
-  public void increment() {
-    totalCardCount++;
-    String text = String.format("Total Card Count: %d", totalCardCount);
-    setText(text);
-  }
-
-  /**
-   * Decrements the total card count and updates the label.
-   */
-  public void decrement() {
-    --totalCardCount;
-    String text = String.format("Total Card Count: %d", totalCardCount);
+  public void set(int amount) {
+    totalCardCount = amount;
+    String text = String.format("Total Purchased Card Count: %d", totalCardCount);
     setText(text);
   }
 }

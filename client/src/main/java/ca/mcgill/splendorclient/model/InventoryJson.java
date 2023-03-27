@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Facilitates the creation of a stripped down user inventory json. 
+ * Facilitates the creation of a stripped down user inventory json.
  *
  * @author lawrenceberardelli
  *
@@ -17,6 +17,7 @@ public class InventoryJson {
   private List<Integer> purchasedCards = new ArrayList<Integer>();
   private List<Integer> reservedCards = new ArrayList<Integer>();
   private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
+  private Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
   private String userName;
   private int prestige;
   private List<Integer> visitingNobles = new ArrayList<>();

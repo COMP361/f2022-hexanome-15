@@ -142,10 +142,11 @@ public class GameBoardView {
           new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
       Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
       miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
-      Counter cardCounter = cardColumn.getNumCardsDisplay();
       HBox tokenRow = new HBox();
+      Counter cardCounter = new Counter(0);
       tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
-      userInventoryView.addCounter(pileView.getCounter());
+      userInventoryView.addTokenCounter(pileView.getCounter());
+      userInventoryView.addCardCounter(cardCounter);
       tokenColumn.getChildren().add(tokenRow);
       ++i;
     }
@@ -154,10 +155,11 @@ public class GameBoardView {
     TokenPileView pileView =
         new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
     Rectangle miniCard = new Rectangle(screenSize.height / 45f, screenSize.width / 50f);
-    Counter cardCounter = new Counter(0);
     miniCard.setFill(ColorManager.getColor(TokenType.values()[i]));
+    Counter cardCounter = new Counter(0);
     tokenRow.getChildren().addAll(pileView, pileView.getCounter(), miniCard, cardCounter);
-    userInventoryView.addCounter(pileView.getCounter());
+    userInventoryView.addTokenCounter(pileView.getCounter());
+    userInventoryView.addCardCounter(cardCounter);
     tokenColumn.getChildren().add(tokenRow);
   }
 
@@ -214,7 +216,7 @@ public class GameBoardView {
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
-    TotalCardCountView cardCountView = new TotalCardCountView("Total Card Count: 0");
+    TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Card Count: 0");
     TotalPrestigeCountView prestigeCountView =
         new TotalPrestigeCountView("Total Prestige Count: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
@@ -402,6 +404,12 @@ public class GameBoardView {
    * @param numOfRubies number of ruby tokens in player's possession
    * @param numOfOnyx number of onyx tokens in player's possession
    * @param numOfGolds number of gold tokens in player's possession
+   * @param numWhiteCards number purchased white cards in player's possession
+   * @param numBlueCards number purchased blue cards in player's possession
+   * @param numGreenCards number purchased green cards in player's possession
+   * @param numRedCards number purchased red cards in player's possession
+   * @param numBlackCards number purchased black cards in player's possession
+   * @param numGoldCards number purchased gold cards in player's possession
    * @param prestige player's current prestige score
    * @param visitingNobles IDs of nobles currently visiting player
    * @param powers int[] array representing unlocked Trading Posts powers
@@ -415,6 +423,12 @@ public class GameBoardView {
                                        int numOfRubies,
                                        int numOfOnyx,
                                        int numOfGolds,
+                                       int numWhiteCards,
+                                       int numBlueCards,
+                                       int numGreenCards,
+                                       int numRedCards,
+                                       int numBlackCards,
+                                       int numGoldCards,
                                        int prestige,
                                        int[] visitingNobles,
                                        int[] powers) {
@@ -425,7 +439,14 @@ public class GameBoardView {
         numOfRubies,
         numOfOnyx,
         numOfGolds);
+    userViews.get(playerIndex).updateMiniCards(numWhiteCards,
+        numBlueCards,
+        numGreenCards,
+        numRedCards,
+        numBlackCards,
+        numGoldCards);
     userViews.get(playerIndex).updatePrestige(prestige);
+    userViews.get(playerIndex).updateCardCount(cards.length);
   }
 
   /**

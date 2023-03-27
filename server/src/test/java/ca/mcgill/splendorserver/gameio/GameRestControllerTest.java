@@ -7,6 +7,8 @@ import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
+import ca.mcgill.splendorserver.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,9 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockR
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,10 +65,14 @@ class GameRestControllerTest {
   private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
     for (UserInventory inventory : gameboard.getInventories()) {
+      Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
+      for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+        purchasedCardCount.put(entry.getKey(), inventory.tokenBonusAmountByType(entry.getKey()));
+      }
       InventoryJson inventoryJson = new InventoryJson(inventory.getCards(),
         inventory.getTokenPiles(), inventory.getPlayer().getName(),
         inventory.getPrestigeWon(), inventory.getNobles(),
-        inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities());
+        inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities(), purchasedCardCount);
       inventories.add(inventoryJson);
     }
     GameBoardJson gameBoardJson = new GameBoardJson(whoseTurn, inventories,

@@ -8,12 +8,15 @@ import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
+import ca.mcgill.splendorserver.model.tokens.TokenPile;
+import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,10 +71,15 @@ public class GameRestController {
   private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
     for (UserInventory inventory : gameboard.getInventories()) {
+      Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
+      for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+        purchasedCardCount.put(entry.getKey(), inventory.tokenBonusAmountByType(entry.getKey()));
+      }
       InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
           inventory.getTokenPiles(), inventory.getPlayer().getName(), 
           inventory.getPrestigeWon(), inventory.getNobles(), 
-          inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities());
+          inventory.getPowers(), inventory.getCoatOfArmsPile(),
+          inventory.getCities(), purchasedCardCount);
       inventories.add(inventoryJson);
     }
     GameBoardJson gameBoardJson = new GameBoardJson(whoseTurn, inventories, 
