@@ -390,6 +390,7 @@ public class GameBoard {
       // they have the card, and it has been reserved, so they can legally buy it
       // add the card to their inventory as a purchased card
       // return the required tokens to purchase the card from user to board
+      inventory.discardCard(selectedCard);
       returnTokensToBoard(inventory.purchaseCard(selectedCard));
       System.out.println(player + " purchased a reserved dev card: " + selectedCard);
     } else if (cardField.contains(selectedCard)) { // purchase face-up dev card
