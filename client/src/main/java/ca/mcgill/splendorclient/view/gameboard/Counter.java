@@ -1,6 +1,9 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 /**
  * Represents a label used to count the number of cards in a deck
@@ -14,6 +17,7 @@ public class Counter extends Label {
    */
   public Counter(int count) {
     this.setText(String.valueOf(count));
+    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 35));
   }
 
   /**
@@ -31,7 +35,9 @@ public class Counter extends Label {
    * @param count the given integer
    */
   public void setCount(int count) {
+
     this.setText(String.valueOf(count));
+    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 35));
   }
 
 }
