@@ -67,15 +67,11 @@ public class Splendor extends Application {
    * @param sessionInfo the session info of the game
    */
   public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
-    SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players")));
+    System.out.println(sessionInfo.toString());
+    JSONObject parameters = sessionInfo.getJSONObject("gameParameters");
+    SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players"),
+        parameters.getString("name")));
     stage.setScene(SceneManager.getGameScreen());  
-  }
-  
-  /**
-   * Creates a who's turn notification.
-   */
-  public void createTurnPopup() {
-    
   }
 
 

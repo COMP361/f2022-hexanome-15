@@ -82,7 +82,7 @@ public class GameRestController {
           inventory.getCities(), purchasedCardCount);
       inventories.add(inventoryJson);
     }
-    GameBoardJson gameBoardJson = new GameBoardJson(whoseTurn, inventories, 
+    GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
         gameboard.getDecks(), gameboard.getNobles(), 
         gameboard.getCards(), gameboard.getTokenPiles(),
         gameboard.getTradingPostSlots(), gameboard.getCities());

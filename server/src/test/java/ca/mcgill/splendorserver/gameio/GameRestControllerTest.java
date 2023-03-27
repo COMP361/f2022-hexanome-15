@@ -31,30 +31,30 @@ class GameRestControllerTest {
   private Player player1 = new Player("Sofia", "purple");
   private Player player2 = new Player("Jeff", "blue");
   List<Player> playerList = new ArrayList<>(List.of(player1, player2));
-  private SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
+  private SessionInfo sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"5L");
 
   @Test
   void launchRequestBadRequest() {
     assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).build(),
-      controller.launchRequest(1L, null));
+      controller.launchRequest(5L, null));
   }
 
   @Test
   void quitRequest() {
     String sessionInfoJson = new Gson().toJson(sessionInfo);
-    controller.launchRequest(1L, sessionInfoJson);
-    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(1L, sessionInfoJson));
-    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(1L);
+    controller.launchRequest(5L, sessionInfoJson);
+    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(5L, sessionInfoJson));
+    Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(5L);
     String json = buildGameBoardJson(manager.get().whoseTurn().getName(), manager.get().getBoard());
-    assertEquals(ResponseEntity.status(HttpStatus.OK).body(json), controller.getGameBoard(1L));
-    controller.quitRequest(1L);
-    assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(1L));
+    assertEquals(ResponseEntity.status(HttpStatus.OK).body(json), controller.getGameBoard(5L));
+    controller.quitRequest(5L);
+    assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(5L));
   }
 
   @Test
   void getGameBoardNotFound() {
     assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                   .build(), controller.getGameBoard(1L));
+                   .build(), controller.getGameBoard(10L));
   }
 
   @Test
@@ -75,7 +75,7 @@ class GameRestControllerTest {
         inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities(), purchasedCardCount);
       inventories.add(inventoryJson);
     }
-    GameBoardJson gameBoardJson = new GameBoardJson(whoseTurn, inventories,
+    GameBoardJson gameBoardJson = new GameBoardJson("SplendorOrientCities", whoseTurn, inventories,
       gameboard.getDecks(), gameboard.getNobles(),
       gameboard.getCards(), gameboard.getTokenPiles(),
       gameboard.getTradingPostSlots(), gameboard.getCities());

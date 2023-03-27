@@ -25,6 +25,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 
 /**
  * Represents the view of the Splendor game board.
@@ -215,11 +216,12 @@ public class GameBoardView {
     VBox tokenColumn = new VBox();
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
+    Label username = new Label(playerName);
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
     TotalPrestigeCountView prestigeCountView =
         new TotalPrestigeCountView("Total Prestige: 0");
-    tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
+    tokenColumn.getChildren().addAll(username, tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView(playerName,
         screenSize.height / 15f,
         screenSize.width / 15f,
@@ -242,7 +244,7 @@ public class GameBoardView {
    * @param players the players in the game
    * @return the gameboard scene
    */
-  public static Scene setupGameBoard(JSONArray players) {
+  public static Scene setupGameBoard(JSONArray players, String gameServer) {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     //building the decks of cards
@@ -333,16 +335,20 @@ public class GameBoardView {
     tokenRow.setLayoutX(screenSize.width / 6f);
     populateGameBoardTokenPiles(tokenRow, screenSize, nPlayers);
 
-    //creating Trade Routes expansion
-    tradingView = new TradingView(screenSize);
-    tradingView.setLayoutY(screenSize.height / 2.4f);
-    tradingView.setLayoutX(screenSize.width / 4f);
-
     //adding to the scene graph
     Pane root = new Pane();
-    root.getChildren()
-        .addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow, tradingView);
+    root.getChildren().addAll(decksBox, orientDecksBox, faceupCardsRow, nobleCards, tokenRow);
     root.getChildren().addAll(allUserInventoryViews);
+
+    //creating Trade Routes expansion
+    if (gameServer.equals("SplendorOrientTradingPosts")) {
+      tradingView = new TradingView(screenSize);
+      tradingView.setLayoutY(screenSize.height / 2.4f);
+      tradingView.setLayoutX(screenSize.width / 4f);
+      root.getChildren().addAll(tradingView);
+    }
+
+
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
     root.setBackground(new Background(
@@ -376,7 +382,6 @@ public class GameBoardView {
     cardViews.get(17).updateView(field[13]);
   }
 
-  //TODO: Fix this. There was a index out of bounds error when this was there
   /**
    * Updates the noble views.
    *

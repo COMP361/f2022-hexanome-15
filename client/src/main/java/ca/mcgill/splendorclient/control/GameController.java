@@ -189,49 +189,51 @@ public class GameController {
               GameBoardView.updateDecks(decksArray);
 
               //update Trading
-              JSONArray tradingPostArray = response.getBody().getObject()
+              String gameServer = response.getBody().getObject()
+                  .getJSONObject("gameServer").toString();
+              if (gameServer.equals("SplendorOrientTradingPosts")) {
+                JSONArray tradingPostArray = response.getBody().getObject()
                                                .getJSONArray("tradingPosts");
 
-              JSONArray firstShieldArray = tradingPostArray.getJSONObject(0)
+                JSONArray firstShieldArray = tradingPostArray.getJSONObject(0)
                                                .getJSONArray("acquiredCoatOfArmsList");
-              JSONArray secondShieldArray = tradingPostArray.getJSONObject(1)
+                JSONArray secondShieldArray = tradingPostArray.getJSONObject(1)
                                                 .getJSONArray("acquiredCoatOfArmsList");
-              JSONArray thirdShieldArray = tradingPostArray.getJSONObject(2)
+                JSONArray thirdShieldArray = tradingPostArray.getJSONObject(2)
                                                .getJSONArray("acquiredCoatOfArmsList");
-              JSONArray fourthShieldArray = tradingPostArray.getJSONObject(3)
+                JSONArray fourthShieldArray = tradingPostArray.getJSONObject(3)
                                                 .getJSONArray("acquiredCoatOfArmsList");
-              JSONArray fifthShieldArray = tradingPostArray.getJSONObject(4)
+                JSONArray fifthShieldArray = tradingPostArray.getJSONObject(4)
                                                .getJSONArray("acquiredCoatOfArmsList");
 
-              final String[] shields1 = new String[firstShieldArray.length()];
-              final String[] shields2 = new String[secondShieldArray.length()];
-              final String[] shields3 = new String[thirdShieldArray.length()];
-              final String[] shields4 = new String[fourthShieldArray.length()];
-              final String[] shields5 = new String[fifthShieldArray.length()];
+                final String[] shields1 = new String[firstShieldArray.length()];
+                final String[] shields2 = new String[secondShieldArray.length()];
+                final String[] shields3 = new String[thirdShieldArray.length()];
+                final String[] shields4 = new String[fourthShieldArray.length()];
+                final String[] shields5 = new String[fifthShieldArray.length()];
 
-              for (int i = 0; i < shields1.length; i++) {
-                shields1[i] = firstShieldArray.getString(i);
+                for (int i = 0; i < shields1.length; i++) {
+                  shields1[i] = firstShieldArray.getString(i);
+                }
+
+                for (int i = 0; i < shields2.length; i++) {
+                  shields2[i] = secondShieldArray.getString(i);
+                }
+
+                for (int i = 0; i < shields3.length; i++) {
+                  shields3[i] = thirdShieldArray.getString(i);
+                }
+
+                for (int i = 0; i < shields4.length; i++) {
+                  shields4[i] = fourthShieldArray.getString(i);
+                }
+
+                for (int i = 0; i < shields5.length; i++) {
+                  shields5[i] = fifthShieldArray.getString(i);
+                }
+
+                GameBoardView.updatePowers(shields1, shields2, shields3, shields4, shields5);
               }
-
-              for (int i = 0; i < shields2.length; i++) {
-                shields2[i] = secondShieldArray.getString(i);
-              }
-
-              for (int i = 0; i < shields3.length; i++) {
-                shields3[i] = thirdShieldArray.getString(i);
-              }
-
-              for (int i = 0; i < shields4.length; i++) {
-                shields4[i] = fourthShieldArray.getString(i);
-              }
-
-              for (int i = 0; i < shields5.length; i++) {
-                shields5[i] = fifthShieldArray.getString(i);
-              }
-
-              //String[] testarray = {"RED", "RED", "BLUE", "YELLOW"};
-
-              GameBoardView.updatePowers(shields1, shields2, shields3, shields4, shields5);
             }
 
           });

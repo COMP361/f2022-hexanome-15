@@ -24,6 +24,7 @@ import java.util.Map;
 public class GameBoardJson {
   
   private String whoseTurn;
+  private String gameServer;
   private List<InventoryJson> inventories;
   private List<DeckJson> decks = new ArrayList<>();
   private List<Integer> nobles = new ArrayList<>();
@@ -35,6 +36,7 @@ public class GameBoardJson {
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
    *
+   * @param gameServer the game service of this gameboard
    * @param whoseTurn the name of the player whose turn it is
    * @param inventories the player inventories
    * @param decks the decks on the field
@@ -44,11 +46,13 @@ public class GameBoardJson {
    * @param tradingPostSlots trading post slots on the field
    * @param cities cities on the field
    */
-  public GameBoardJson(String whoseTurn, List<InventoryJson> inventories, List<Deck> decks,
+  public GameBoardJson(String gameServer, String whoseTurn,
+                       List<InventoryJson> inventories, List<Deck> decks,
                        List<Noble> nobles, List<Card> cardField,
                        EnumMap<TokenType, TokenPile> tokenField,
                        List<TradingPostSlot> tradingPostSlots, List<City> cities) {
     this.whoseTurn = whoseTurn;
+    this.gameServer = gameServer;
     this.inventories = inventories;
     for (Deck deck : decks) {
       this.decks.add(new DeckJson(deck.getSize(), deck.getType()));
