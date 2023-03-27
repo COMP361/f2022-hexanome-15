@@ -25,7 +25,7 @@ public class TotalPrestigeCountView extends Text {
    */
   public void set(int amount) {
     totalPrestigeCount = amount;
-    String text = String.format("Total Prestige Count: %d", totalPrestigeCount);
+    String text = String.format("Total Prestige: %d", totalPrestigeCount);
     setText(text);
   }
 }

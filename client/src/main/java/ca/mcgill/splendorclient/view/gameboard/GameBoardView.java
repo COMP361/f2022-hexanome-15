@@ -215,10 +215,10 @@ public class GameBoardView {
     VBox tokenColumn = new VBox();
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
-    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Token Count: 15");
-    TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Card Count: 0");
+    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
+    TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
     TotalPrestigeCountView prestigeCountView =
-        new TotalPrestigeCountView("Total Prestige Count: 0");
+        new TotalPrestigeCountView("Total Prestige: 0");
     tokenColumn.getChildren().addAll(tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView(playerName,
         screenSize.height / 15f,

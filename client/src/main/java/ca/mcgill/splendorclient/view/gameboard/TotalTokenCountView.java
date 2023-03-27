@@ -26,7 +26,7 @@ public class TotalTokenCountView extends Text {
    */
   public void set(int amount) {
     totalTokenCount = amount;
-    String text = String.format("Total Token Count: %d", totalTokenCount);
+    String text = String.format("Total Tokens: %d", totalTokenCount);
     setText(text);
   }
 }

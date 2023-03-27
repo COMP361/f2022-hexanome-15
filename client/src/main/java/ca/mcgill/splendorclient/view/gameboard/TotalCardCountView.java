@@ -26,7 +26,7 @@ public class TotalCardCountView extends Text {
    */
   public void set(int amount) {
     totalCardCount = amount;
-    String text = String.format("Total Purchased Card Count: %d", totalCardCount);
+    String text = String.format("Total Purchased Cards: %d", totalCardCount);
     setText(text);
   }
 }
