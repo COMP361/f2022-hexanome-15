@@ -34,12 +34,6 @@ class GameRestControllerTest {
   private SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
 
   @Test
-  void launchRequest() {
-    String sessionInfoJson = new Gson().toJson(sessionInfo);
-    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(1L, sessionInfoJson));
-  }
-
-  @Test
   void launchRequestBadRequest() {
     assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).build(),
       controller.launchRequest(1L, null));
@@ -49,17 +43,12 @@ class GameRestControllerTest {
   void quitRequest() {
     String sessionInfoJson = new Gson().toJson(sessionInfo);
     controller.launchRequest(1L, sessionInfoJson);
-    controller.quitRequest(1L);
-    assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(1L));
-  }
-
-  @Test
-  void getGameBoard() {
-    String sessionInfoJson = new Gson().toJson(sessionInfo);
-    controller.launchRequest(1L, sessionInfoJson);
+    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(1L, sessionInfoJson));
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(1L);
     String json = buildGameBoardJson(manager.get().whoseTurn().getName(), manager.get().getBoard());
     assertEquals(ResponseEntity.status(HttpStatus.OK).body(json), controller.getGameBoard(1L));
+    controller.quitRequest(1L);
+    assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(1L));
   }
 
   @Test
