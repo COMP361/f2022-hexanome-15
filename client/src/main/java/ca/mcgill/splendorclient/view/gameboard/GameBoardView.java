@@ -23,6 +23,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Popup;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -217,6 +220,7 @@ public class GameBoardView {
     tokenColumn.setSpacing(3);
     userInventoryView.getChildren().add(tokenColumn);
     Label username = new Label(playerName);
+    username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
     TotalPrestigeCountView prestigeCountView =
