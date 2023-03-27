@@ -600,6 +600,10 @@ public class GameBoard {
       }
     }
 
+    if (move.getCard().getTokenBonusAmount() == 2) {
+      return null;
+    }
+
     switch (move.getAction()) {
       case DISCARD_FIRST_WHITE_CARD -> {
         return Action.DISCARD_SECOND_WHITE_CARD;

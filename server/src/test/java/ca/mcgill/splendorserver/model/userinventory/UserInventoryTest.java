@@ -347,7 +347,7 @@ class UserInventoryTest {
   void purchasedCardCountByType() {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
-    assertEquals(1, uinv.purchasedCardCountByType(DIAMOND));
+    assertEquals(1, uinv.tokenBonusAmountByType(DIAMOND));
   }
 
   @Test

@@ -190,16 +190,15 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
-   * Returns the number of purchased cards of a certain token type in the user inventory.
+   * Returns the number of bonuses of a certain token type in the user inventory.
    *
-   * @param type the token bonus type of the purchased cards
-   * @return the number of purchased cards of a certain token type in the user inventory
+   * @param tokenType the token bonus type of the purchased cards
+   * @return the number of bonuses of a certain token type in the user inventory
    */
-  public int purchasedCardCountByType(TokenType type) {
-    return (int) cards
-                   .stream()
-                   .filter(card -> card.isPurchased() && card.getTokenBonusType() == type)
-                   .count();
+  public int tokenBonusAmountByType(TokenType tokenType) {
+    return cards.stream().filter(card -> card.getTokenBonusType() == tokenType)
+      .map(Card::getTokenBonusAmount)
+      .reduce(0, Integer::sum);
   }
 
   /**
@@ -278,7 +277,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public boolean canAffordCard(Card card) {
     assert card != null;
-    int currentGoldTokenCount = getGoldTokenCount() + 2 * purchasedCardCountByType(TokenType.GOLD);
+    int currentGoldTokenCount = getGoldTokenCount() + tokenBonusAmountByType(TokenType.GOLD);
     for (Map.Entry<TokenType, Integer> entry : card.getCardCost()
                                                    .entrySet()) {
       currentGoldTokenCount -= amountGoldTokensNeeded(entry.getKey(), entry.getValue());
@@ -290,27 +289,27 @@ public class UserInventory implements Iterable<Card> {
       if (!((OrientCard) card).getBonusActions().isEmpty()) {
         switch (((OrientCard) card).getBonusActions().get(0)) {
           case DISCARD_FIRST_WHITE_CARD -> {
-            if (purchasedCardCountByType(TokenType.DIAMOND) < 2) {
+            if (tokenBonusAmountByType(TokenType.DIAMOND) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_BLUE_CARD -> {
-            if (purchasedCardCountByType(TokenType.SAPPHIRE) < 2) {
+            if (tokenBonusAmountByType(TokenType.SAPPHIRE) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_GREEN_CARD -> {
-            if (purchasedCardCountByType(TokenType.EMERALD) < 2) {
+            if (tokenBonusAmountByType(TokenType.EMERALD) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_RED_CARD -> {
-            if (purchasedCardCountByType(TokenType.RUBY) < 2) {
+            if (tokenBonusAmountByType(TokenType.RUBY) < 2) {
               return false;
             }
           }
           case DISCARD_FIRST_BLACK_CARD -> {
-            if (purchasedCardCountByType(TokenType.ONYX) < 2) {
+            if (tokenBonusAmountByType(TokenType.ONYX) < 2) {
               return false;
             }
           }
@@ -400,10 +399,7 @@ public class UserInventory implements Iterable<Card> {
 
   private int amountGoldTokensNeeded(TokenType tokenType, int cost) {
     assert tokenType != null && cost >= 0;
-    int bonusDiscount = cards.stream()
-                             .filter(card -> card.getTokenBonusType() == tokenType)
-                             .map(Card::getTokenBonusAmount)
-                             .reduce(0, Integer::sum);
+    int bonusDiscount = tokenBonusAmountByType(tokenType);
     int actualCost = cost - bonusDiscount;
     int goldTokensNeeded = 0;
     if (actualCost > tokenPiles.get(tokenType).getSize()) {
@@ -504,13 +500,16 @@ public class UserInventory implements Iterable<Card> {
                                           == entry.getKey() && c.isPurchased())
                                .map(Card::getTokenBonusAmount)
                                .reduce(0, Integer::sum);
-      int actualCost = entry.getValue() - bonusDiscount;
+      final int actualCost = entry.getValue() - bonusDiscount;
 
       int numGoldTokensNeeded = amountGoldTokensNeeded(entry.getKey(), entry.getValue());
       int numGoldCardsNeeded = (int) Math.ceil((double) numGoldTokensNeeded / 2);
+      if (acquiredPowers.contains(Power.GOLD_TOKENS_WORTH_2_GEMS_SAME_COL)) {
+        numGoldCardsNeeded = (int) Math.ceil((double) numGoldTokensNeeded / 2);
+      }
       int numGoldCardsUsed = 0;
 
-      while (numGoldCardsNeeded > 0 && purchasedCardCountByType(TokenType.GOLD) > 0) {
+      while (numGoldCardsNeeded > 0 && tokenBonusAmountByType(TokenType.GOLD) > 0) {
         removeGoldCard();
         numGoldCardsNeeded--;
         numGoldCardsUsed++;
@@ -598,7 +597,7 @@ public class UserInventory implements Iterable<Card> {
     assert tokenType != null && amount >= 0;
     // gets all cards that are purchased and have matching bonus token type
     // accumulate the result and see if enough for the given amount
-    return purchasedCardCountByType(tokenType) < amount;
+    return tokenBonusAmountByType(tokenType) < amount;
   }
 
   /**
