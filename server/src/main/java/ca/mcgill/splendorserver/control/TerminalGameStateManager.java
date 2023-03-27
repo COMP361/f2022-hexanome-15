@@ -30,8 +30,7 @@ public final class TerminalGameStateManager {
           game.setFinished();
           return true;
         }
-      }
-      else {
+      } else {
         if (inventory.getPrestigeWon() >= prestigePointsToWin) {
           game.setFinished();
           return true;
