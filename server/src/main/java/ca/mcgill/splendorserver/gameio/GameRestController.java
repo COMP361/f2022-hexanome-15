@@ -59,11 +59,11 @@ public class GameRestController {
   public GameRestController() {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrientTradingPosts", "Splendor", true);
-    //register_gameservice(accessToken, gameServiceLocation, 4, 2,
-    //   "SplendorOrient", "Splendor", true);
-    //register_gameservice(accessToken, gameServiceLocation, 4, 2,
-    //"SplendorOrientCities", "Splendor", true);
+        "SplendorOrient", "SplendorOrient", true);
+    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrientTradingPosts", "SplendorOrientTradingPosts", true);
+    register_gameservice(accessToken, gameServiceLocation, 4, 2,
+        "SplendorOrientCities", "SplendorOrientCities", true);
     System.out.println("in here");
 
   }
@@ -146,7 +146,7 @@ public class GameRestController {
     GameServiceJson
         gs = new GameServiceJson(
         gameName,
-        "Splendor",
+        displayName,
         "http://127.0.0.1:8080",
         "2",
         "4",
