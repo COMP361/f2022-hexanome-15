@@ -16,7 +16,7 @@ public class Noble {
   private NobleStatus status;
   private final int         prestige;
   private static final List<Noble> nobles  = new ArrayList<Noble>();
-  private static final List<Noble> noblesInGame = new ArrayList<>();
+  private static List<Noble> noblesInGame = new ArrayList<>();
 
   /**
    * Creates a noble.
@@ -85,16 +85,16 @@ public class Noble {
    * @return a list of nobles that are currently in the game
    */
   public static List<Noble> getNobles(int numPlayers) {
+    assert numPlayers >= 2 && numPlayers <= 4;
     if (nobles.size() == 0) {
       generateNobles();
     }
     Random random = new Random();
-    if (noblesInGame.size() == 0) {
-      for (int i = 0; i < numPlayers + 1; i++) {
-        int randomIndex = random.nextInt(nobles.size());
-        Noble randomNoble = nobles.get(randomIndex);
-        noblesInGame.add(randomNoble);
-      }
+    noblesInGame = new ArrayList<>();
+    for (int i = 0; i < numPlayers + 1; i++) {
+      int randomIndex = random.nextInt(nobles.size());
+      Noble randomNoble = nobles.get(randomIndex);
+      noblesInGame.add(randomNoble);
     }
     return noblesInGame;
   }

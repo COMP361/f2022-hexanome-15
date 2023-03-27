@@ -484,11 +484,6 @@ public class UserInventory implements Iterable<Card> {
   public List<Token> purchaseCard(Card card) {
     assert card != null && card.getCardStatus() != CardStatus.PURCHASED;
 
-    if (card.getCardStatus() == CardStatus.NONE) {
-      cards.add(card);
-    }
-    card.setCardStatus(CardStatus.PURCHASED);
-
     // accredit the prestige points won by purchasing this card
     addPrestige(card.getPrestige());
 
@@ -529,6 +524,11 @@ public class UserInventory implements Iterable<Card> {
         costs.addAll(removeTokensByTokenType(TokenType.GOLD, numGoldTokensNeeded));
       }
     }
+    if (card.getCardStatus() == CardStatus.NONE) {
+      cards.add(card);
+    }
+    card.setCardStatus(CardStatus.PURCHASED);
+
     return costs;
   }
 

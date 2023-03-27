@@ -18,7 +18,7 @@ public class City {
   private final CardCost requiredCardBonuses;
   private final int numSameCards;
   private static final List<City> cities = new ArrayList<City>();
-  private static final List<City> citiesInGame = new ArrayList<>();
+  private static List<City> citiesInGame = new ArrayList<>();
 
   /**
    * Creates a city.
@@ -79,16 +79,16 @@ public class City {
    * @return a list of cities that are currently on the game board
    */
   public static List<City> getCities(int numPlayers) {
+    assert numPlayers >= 2 && numPlayers <= 4;
     if (cities.size() == 0) {
       generateCities();
     }
     Random random = new Random();
-    if (citiesInGame.size() == 0) {
-      for (int i = 0; i < numPlayers; i++) {
-        int randomIndex = random.nextInt(cities.size());
-        City randomCity = cities.get(randomIndex);
-        citiesInGame.add(randomCity);
-      }
+    citiesInGame = new ArrayList<>();
+    for (int i = 0; i < numPlayers; i++) {
+      int randomIndex = random.nextInt(cities.size());
+      City randomCity = cities.get(randomIndex);
+      citiesInGame.add(randomCity);
     }
     return citiesInGame;
   }

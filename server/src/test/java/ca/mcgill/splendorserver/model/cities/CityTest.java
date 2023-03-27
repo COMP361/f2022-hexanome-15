@@ -32,6 +32,16 @@ class CityTest {
   }
 
   @Test
+  void getCitiesThreePlayers() {
+    assertEquals(3, City.getCities(3).size());
+  }
+
+  @Test
+  void getCitiesFourPlayers() {
+    assertEquals(4, City.getCities(4).size());
+  }
+
+  @Test
   void getId() {
     assertEquals(0, Lima.getId());
   }

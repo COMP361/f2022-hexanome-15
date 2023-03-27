@@ -50,4 +50,14 @@ class NobleTest {
     assertEquals(3, Noble.getNobles(2).size());
   }
 
+  @Test
+  void getNoblesThreePlayers() {
+    assertEquals(4, Noble.getNobles(3).size());
+  }
+
+  @Test
+  void getNoblesFourPlayers() {
+    assertEquals(5, Noble.getNobles(4).size());
+  }
+
 }

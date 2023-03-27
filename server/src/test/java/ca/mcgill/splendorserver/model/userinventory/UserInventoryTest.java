@@ -128,7 +128,7 @@ class UserInventoryTest {
 
   @Test
   void purchaseCardGoldCard() {
-    OrientCard goldCard = new OrientCard(1,3, GOLD, ORIENT1, TWO, cost,false,
+    OrientCard goldCard = new OrientCard(1,0, GOLD, ORIENT1, TWO, cost,false,
       new ArrayList<>());
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(goldCard);
