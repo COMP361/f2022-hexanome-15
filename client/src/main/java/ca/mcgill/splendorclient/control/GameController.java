@@ -190,7 +190,7 @@ public class GameController {
 
               //update Trading
               String gameServer = response.getBody().getObject()
-                  .getJSONObject("gameServer").toString();
+                  .getString("gameServer");
               if (gameServer.equals("SplendorOrientTradingPosts")) {
                 JSONArray tradingPostArray = response.getBody().getObject()
                                                .getJSONArray("tradingPosts");
