@@ -1,0 +1,41 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- app icon credits: https://en.wikipedia.org/wiki/Portable_Network_Graphics#/media/File:PNG_transparency_demonstration_1.png Creative Commons License -->
+    <meta name="apple-mobile-web-app-title" content="Board Games">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, user-scalable=no, maximum-scale=1, minimum-scale=1" />
+    <script src="jquery.min.js"></script>
+    <script src="loginUtils.js"></script>
+    <script src="cookieTokenUtils.js"></script>
+    <script src="contextPathResolver.js"></script>
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link rel="stylesheet" href="lobbyservice.css"/>
+</head>
+<body onload="registerLoginHandler(); preFillUserNameField();">
+<div id=RowDivWithBackground class="container bg-white fill">
+
+    <div class = fillinner>
+    <!-- this is the main div for the white center overlay with reasonable responsiveness-->
+        <br/>
+        <h1 id="title" style="text-align:center">Login</h1>
+        <title>Login</title>
+
+        <!--        Login form with two fields.-->
+        <div class="col-sm-4 mx-auto text-center mt-5" style="min-width: 26rem;">
+
+            <div class="form-group mt-4" id="lang2">
+                <input id="user-name-field" type="text" class="form-control mt-1" id="lang2Field"
+                       placeholder="Username">
+                <input id="password-field" type="password" class="form-control" id="lang1Field" placeholder="Password"
+                       autocomplete="off" style="margin-top: 5px">
+
+                <button id="loginButton" type="submit" class="btn btn-outline-primary float-right mt-2"
+                        style="min-width: 10rem;">Login
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

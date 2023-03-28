@@ -1,0 +1,4 @@
+FROM maven:3.6-jdk-13 as clientbuild
+MAINTAINER zachary hayden
+COPY docker_resources/client /usr/src/app
+RUN mvn -f /usr/src/app/pom.xml clean install

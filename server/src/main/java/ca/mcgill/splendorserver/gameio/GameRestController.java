@@ -26,6 +26,7 @@ import kong.unirest.Unirest;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,55 +44,80 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
-  private static final String gameServiceLocation = "http://127.0.0.1:8080";
+
+  @Value("{lobbyservice.location}")
+  private        String lobbyServiceLocation = "http://lobby:4242";
+  private static String gameServiceLocation = "http://splendor_server:4244";
+
+  /**
+   * Setter for static field, value is injected from properties file.
+   *
+   * @param address address of game service.
+   */
+  @Value("{gameservice.location}")
+  public void setGameServiceLocation(String address) {
+    GameRestController.gameServiceLocation = address;
+  }
+
   // 4 threads for the max 4 players
-  private final ExecutorService updaters = Executors.newFixedThreadPool(4);
-  private String gameName;
-  private JSONObject adminAuth = LobbyServiceExecutor
-                                   .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
-  private String refreshToken = (String) Parsejson
-                                           .PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+  private final ExecutorService updaters     = Executors.newFixedThreadPool(4);
+  private       String          gameName;
+  private       JSONObject      adminAuth    = LobbyServiceExecutor
+      .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
+  private       String          refreshToken = (String) Parsejson
+      .PARSE_JSON.getFromKey(adminAuth, "refresh_token");
 
   /**
    * Creates a GameRestController.
-   *
    */
   public GameRestController() {
     String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrient", "SplendorOrient", true);
+                         "SplendorOrient", "SplendorOrient", true
+    );
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrientTradingPosts", "SplendorOrientTradingPosts", true);
+                         "SplendorOrientTradingPosts", "SplendorOrientTradingPosts", true
+    );
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
-        "SplendorOrientCities", "SplendorOrientCities", true);
+                         "SplendorOrientCities", "SplendorOrientCities", true
+    );
     System.out.println("in here");
 
   }
-  
+
   private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
-      for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+      for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles()
+                                                            .entrySet()) {
         purchasedCardCount.put(entry.getKey(), inventory.tokenBonusAmountByType(entry.getKey()));
       }
-      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
-          inventory.getTokenPiles(), inventory.getPlayer().getName(), 
-          inventory.getPrestigeWon(), inventory.getNobles(), 
-          inventory.getPowers(), inventory.getCoatOfArmsPile(),
-          inventory.getCities(), purchasedCardCount);
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(),
+                                                      inventory.getTokenPiles(),
+                                                      inventory.getPlayer()
+                                                               .getName(),
+                                                      inventory.getPrestigeWon(),
+                                                      inventory.getNobles(),
+                                                      inventory.getPowers(),
+                                                      inventory.getCoatOfArmsPile(),
+                                                      inventory.getCities(), purchasedCardCount
+      );
       inventories.add(inventoryJson);
     }
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
-        gameboard.getDecks(), gameboard.getNobles(), 
-        gameboard.getCards(), gameboard.getTokenPiles(),
-        gameboard.getTradingPostSlots(), gameboard.getCities());
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                                                    gameboard.getDecks(), gameboard.getNobles(),
+                                                    gameboard.getCards(), gameboard.getTokenPiles(),
+                                                    gameboard.getTradingPostSlots(),
+                                                    gameboard.getCities()
+    );
+    Gson gson = new GsonBuilder().setPrettyPrinting()
+                                 .create();
     return gson.toJson(gameBoardJson);
   }
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {
-    return Unirest.get("http://127.0.0.1:4242/api/gameservices")
+    return Unirest.get(lobbyServiceLocation + "/api/gameservices")
                   .header("accept", "application/json")
                   .asJson();
   }
@@ -110,10 +136,10 @@ public class GameRestController {
    * @param webSupport        boolean value for webSupport
    */
   private final void register_gameservice(String accessToken, String gameLocation,
-                                            int maxSessionPlayers,
-                                            int minSessionPlayers, String gameName,
-                                            String displayName,
-                                            boolean webSupport
+                                          int maxSessionPlayers,
+                                          int minSessionPlayers, String gameName,
+                                          String displayName,
+                                          boolean webSupport
   ) {
     checkNotNullNotEmpty(accessToken, gameLocation, gameName, displayName);
 
@@ -130,14 +156,14 @@ public class GameRestController {
     String newUserjSon = new Gson().toJson(acc);
 
     final HttpResponse<String> response1 = Unirest.put(
-                                                "http://127.0.0.1:4242/api/users/"
-                                                    + gameName
-                                                    + "?access_token="
-                                                    + accessToken.replace("+", "%2B")
-                                            )
-                                            .header("Content-Type", "application/json")
-                                            .body(newUserjSon)
-                                            .asString();
+                                                      lobbyServiceLocation + "/api/users/"
+                                                          + gameName
+                                                          + "?access_token="
+                                                          + accessToken.replace("+", "%2B")
+                                                  )
+                                                  .header("Content-Type", "application/json")
+                                                  .body(newUserjSon)
+                                                  .asString();
 
 
     adminAuth    = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
@@ -147,7 +173,7 @@ public class GameRestController {
         gs = new GameServiceJson(
         gameName,
         displayName,
-        "http://127.0.0.1:8080",
+        gameServiceLocation,
         "2",
         "4",
         "true"
@@ -157,7 +183,7 @@ public class GameRestController {
     String newServicejSon = new Gson().toJson(gs);
 
     HttpResponse<String> response2 = Unirest.put(
-                                                "http://127.0.0.1:4242/api/gameservices/"
+                                                lobbyServiceLocation + "/api/gameservices/"
                                                     + gameName
                                                     + "?access_token="
                                                     + accessToken.replace("+", "%2B")
@@ -172,7 +198,7 @@ public class GameRestController {
   /**
    * Sends a launch request to the server and launches the session.
    *
-   * @param gameId The game id of the session to be launched
+   * @param gameId          The game id of the session to be launched
    * @param sessionInfoJson The session info of the session to be launched
    * @return a response entity determining if the request was successful
    */
@@ -205,7 +231,8 @@ public class GameRestController {
    */
   @DeleteMapping("/api/games/{gameid}")
   public void quitRequest(@PathVariable Long gameid) {
-    LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid).get());
+    LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid)
+                                                      .get());
     LOGGER.info("DELETED GAME ID: " + gameid);
   }
 
@@ -230,10 +257,15 @@ public class GameRestController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
     } else {
-      String json = buildGameBoardJson(manager.get().whoseTurn().getName(), 
-          manager.get().getBoard());
+      String json = buildGameBoardJson(
+          manager.get()
+                 .whoseTurn()
+                 .getName(),
+          manager.get()
+                 .getBoard()
+      );
       return ResponseEntity.status(HttpStatus.OK)
-      .body(json);
+                           .body(json);
     }
   }
 

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--    ToDo: add a funny icon-->
+    <!--    <link rel="icon" href="arl.png">-->
+
+    <meta charset="UTF-8">
+    <script src="jquery.min.js"></script>
+    <script src="loginUtils.js"></script>
+    <script src="cookieTokenUtils.js"></script>
+    <script src="navbar.js"></script>
+    <script src="contextPathResolver.js"></script>
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link rel="stylesheet" href="lobbyservice.css"/>
+    <script type="text/javascript" src="md5.js"></script>
+    <script type="text/javascript" src="testApiOnline.js"></script>
+    <script type="text/javascript" src="admin.js"></script>
+</head>
+
+<!--"onload"-script removes API unreachable warning if backend was successfully tested-->
+<body onload="anonymousIntercept();timedTokenRenew();setupNavbar('admin');testApiOnline();registerButtonHandlers();updateDisplayedAccounts();updateDisplayedGameServices();">
+<div id=RowDivWithBackground class="container bg-white fill">
+
+<!--    TODO: build navbar dynamically in navbar script. Remove all duplicated structure from HTML files.-->
+    <!--dynamic load would be better than static copies over different html files. But it causes issues with the handler mapping (order messed up / unreliable.)-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar  w-100 order-3">
+            <!-- content of navbar is filled programmatically , by navbar.js-->
+            <ul id='nav-ul' class="navbar-nav ml-auto">
+            </ul>
+        </div>
+    </nav>
+
+    <!--    white overlay, perfect responsiveness-->
+    <div class=fillinner>
+
+
+        <!--actual page starts here-->
+        <br/>
+        <h1 style="text-align:center" class="title">Admin Zone</h1>
+        <title>Admin Zone</title>
+
+        <!--error message that is automatically removed from DOM if server is reachable (testApiOnline.js)-->
+        <div id='notonline' class="alert alert-danger mt-5 col-md-12 d-none" role="alert">
+            No connection to server!
+        </div>
+
+        <!--form to register a new user.-->
+        <!--callback is registered in accounts.js -->
+        <h3>Add User</h3>
+        <form class="needs-validation">
+            <div class="row">
+                <div class="col">
+                    <label for="nameField">Name</label>
+                    <input id="nameField" type="text" class="form-control"
+                           aria-describedby="button-addon2"/>
+                    <small id="nicknameFieldHelpBlock" class="form-text text-muted">
+                        Only latin alphabet characters.
+                    </small>
+                </div>
+                <div class="col">
+                    <label for="passwordField">Password</label>
+                    <input type="password" id="passwordField" class="form-control" aria-describedby="passwordHelpBlock">
+                    <small id="passwordHelpBlock" class="form-text text-muted">
+                        <!--                    (?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,32} -->
+                        8-32 characters long, at least one upper, lower, digit, special char.
+                    </small>
+                </div>
+                <div class="col">
+                    <label for="adminField">Type</label>
+                    <select class="custom-select" id="adminField">
+                        <option value="PLAYER">Player</option>
+                        <option value="ADMIN">Admin</option>
+                        <option value="SERVICE">Service</option>
+                    </select>
+                    <small id="adminHelpBlock" class="form-text text-muted">
+                        Admins accounts can not be used for playing.
+                    </small>
+                </div>
+                <div class="col">
+                    <label for="colourField">Colour</label>
+                    <div>
+                        <input type="color" id="colourField" value="#0275d8"
+                               style="width:38px; height:38px;">
+                        <button id="addButton" type="button" class="btn btn-outline-primary  ml-1 mt-0">Add User
+                        </button>
+                    </div>
+                    <small id="colourHelpBlock" class="form-text text-muted">
+                        Preferred in-game colour.
+                    </small>
+                </div>
+            </div>
+        </form>
+
+        <!-- empty table of users that is initialized on page load and refreshed if users are added -->
+        <br/>
+        <h3>Registered Users</h3>
+        <div class="mt-3">
+            <table class="table table-hover" id="playertable"></table>
+        </div>
+
+        <!-- list of registered game services, details and force unregister options -->
+        <h3>Registered Game Servers</h3>
+        <div class="mt-3">
+            <table class="table table-hover" id="servicetable"></table>
+        </div>
+        <br/>
+
+        <!--    <br/>-->
+        <!--    <h3>Registered Sessions</h3>-->
+        <!--    TODO: add section to force-remove registered sessions.-->
+    </div>
+</div>
+</body>
+</html>

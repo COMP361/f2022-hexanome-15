@@ -1,0 +1,24 @@
+FROM maven:3.8.3-adoptopenjdk-16 as serverbuild
+MAINTAINER zachary hayden
+COPY docker_resources/client /usr/src/client
+RUN mvn -f /usr/src/client/pom.xml clean install -P prod
+
+COPY ../src /usr/src/app/src
+COPY ../pom.xml /usr/src/app
+RUN mvn -DskipTests -f /usr/src/app/pom.xml clean package -P prod
+
+# discard maven and run the jar file using java
+FROM amazoncorretto:16
+
+# wait for lobby service and in turn DB to be ready using docker wait tool
+ENV WAIT_VERSION 2.7.2
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
+RUN chmod +x /wait
+
+#  copy the jar from the build process earlier, and expose / use the proper port then run it
+COPY --from=serverbuild /usr/src/app/target/splendorServer.jar /usr/app/splendorServer.jar
+EXPOSE 4244
+#ENTRYPOINT ["java", "-jar", "/usr/app/splendorServer.jar"]
+
+# allow debug if startup fails, with: docker run -it --entrypoint /bin/bash ls-xox -s
+#RUN apk add --no-cache bash coreutils grep sed
