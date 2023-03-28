@@ -10,6 +10,7 @@ import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,11 +32,11 @@ class GameBoardTest {
 
   private List<UserInventory> inventories;
   private List<Deck> decks;
-  private List<Card> cards;
+  private List<Card> cards = new ArrayList<>();
   private List <TokenPile> tokenPiles;
-  private List<Noble> nobles;
-  private List<TradingPostSlot> tradingPosts;
-  private List<City> cities;
+  private List<Noble> nobles = new ArrayList<>();
+  private List<TradingPostSlot> tradingPosts = new ArrayList<>();
+  private List<City> cities = new ArrayList<>();
 
   @BeforeEach
   void setUp() {
@@ -53,11 +54,62 @@ class GameBoardTest {
     game = new SplendorGame(sessionInfo,1L);
     inventories = game.getBoard().getInventories();
     decks = game.getBoard().getDecks();
-    cards = game.getBoard().getCards();
     tokenPiles = game.getBoard().getTokenPiles().values().stream().toList();
-    nobles = game.getBoard().getNobles();
-    tradingPosts = game.getBoard().getTradingPostSlots();
-    cities = game.getBoard().getCities();
+
+    //Setting up the gameboard
+    cards.add(new Card(0, 1, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE,
+      new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new OrientCard(1, 0, null, DeckType.ORIENT1, TokenBonusAmount.ZERO,
+      new CardCost(0, 0, 0, 0, 0), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
+    cards.add(new OrientCard(2, 1, TokenType.DIAMOND, DeckType.ORIENT2, TokenBonusAmount.ONE,
+      new CardCost(1, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.RESERVE_NOBLE))));
+    cards.add(new OrientCard(3, 0, null, DeckType.ORIENT2, TokenBonusAmount.ZERO,
+      new CardCost(1, 0, 0, 0, 1), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD, Action.CASCADE_LEVEL_1))));
+    cards.add(new OrientCard(4, 0, TokenType.DIAMOND, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(1, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.CASCADE_LEVEL_2))));
+    cards.add(new OrientCard(5, 3, TokenType.DIAMOND, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_BLACK_CARD,
+        Action.DISCARD_SECOND_BLACK_CARD))));
+    cards.add(new OrientCard(6, 3, TokenType.SAPPHIRE, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_WHITE_CARD,
+        Action.DISCARD_SECOND_WHITE_CARD))));
+    cards.add(new OrientCard(7, 3, TokenType.EMERALD, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_BLUE_CARD,
+        Action.DISCARD_SECOND_BLUE_CARD))));
+    cards.add(new OrientCard(8, 3, TokenType.RUBY, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_GREEN_CARD,
+        Action.DISCARD_SECOND_GREEN_CARD))));
+    cards.add(new OrientCard(9, 3, TokenType.ONYX, DeckType.ORIENT3, TokenBonusAmount.ONE,
+      new CardCost(0, 0, 0, 0, 0), false,
+      new ArrayList<>(List.of(Action.DISCARD_FIRST_RED_CARD,
+        Action.DISCARD_SECOND_RED_CARD))));
+    cards.add(new OrientCard(10, 0, TokenType.SAPPHIRE, DeckType.ORIENT1, TokenBonusAmount.TWO,
+      new CardCost(1, 0, 0, 0, 0), false,
+      new ArrayList<>()));
+
+    Noble noble = new Noble(0, new CardCost(3, 0, 0, 0, 0));
+    nobles.add(noble);
+
+    TradingPostSlot tradingPost1 = new TradingPostSlot(0, false, Power.PURCHASE_CARD_TAKE_TOKEN,
+      new CardCost(3, 0, 0, 0, 0));
+    TradingPostSlot tradingPost2 = new TradingPostSlot(1, false,
+      Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL,
+      new CardCost(3, 0, 0, 0, 0));
+    tradingPosts.add(tradingPost1);
+    tradingPosts.add(tradingPost2);
+
+    City city = new City(0, 2,
+      new CardCost(3, 0, 0, 0, 0), 0);
+    cities.add(city);
+
     gb = new GameBoard(inventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
   }
 
@@ -153,16 +205,13 @@ class GameBoardTest {
     UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
     Card purchasedCard = cards.get(0);
     //Taking enough tokens to afford the card
-    for (Map.Entry<TokenType, Integer> entry : purchasedCard.getCardCost().entrySet()) {
-        for (int i = 0; i < entry.getValue(); i++) {
-          Move move = new Move(Action.TAKE_TOKEN, null, sofia, null,
-            null, null, entry.getKey(), null);
-          gb.applyMove(move, sofia);
-        }
-    }
-    Move move = new Move(Action.PURCHASE_DEV, purchasedCard, sofia, null,
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Move move2 = new Move(Action.PURCHASE_DEV, purchasedCard, sofia, null,
       null, null, null, null);
-    Action action = gb.applyMove(move, sofia);
+    Action action = gb.applyMove(move2, sofia);
     assertNull(action);
     assertTrue(inventory.hasCard(purchasedCard));
     assertEquals(0, inventory.tokenCount());
@@ -178,13 +227,10 @@ class GameBoardTest {
     gb.applyMove(move1, sofia);
 
     //Taking enough tokens to afford the card
-    for (Map.Entry<TokenType, Integer> entry : purchasedCard.getCardCost().entrySet()) {
-      for (int i = 0; i < entry.getValue(); i++) {
-        Move move2 = new Move(Action.TAKE_TOKEN, null, sofia, null,
-          null, null, entry.getKey(), null);
-        gb.applyMove(move2, sofia);
-      }
-    }
+    Move move2 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move2, sofia);
+
     Move move3 = new Move(Action.PURCHASE_DEV, purchasedCard, sofia, null,
       null, null, null, null);
     Action action = gb.applyMove(move3, sofia);
@@ -194,9 +240,91 @@ class GameBoardTest {
   }
 
   @Test
+  void applyPairSpiceMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+    Card firstCard = cards.get(0);
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Move move2 = new Move(Action.PURCHASE_DEV, cards.get(0), sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    Card purchasedCard = cards.get(1);
+    Move move3 = new Move(Action.PURCHASE_DEV, purchasedCard, sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move3, sofia);
+
+    assertEquals(Action.PAIR_SPICE_CARD, action1);
+
+    Move move4 = new Move(Action.PAIR_SPICE_CARD, firstCard, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move4, sofia);
+    assertEquals(2, inventory.tokenBonusAmountByType(DIAMOND));
+    assertNull(action2);
+  }
+
+  @Test
+  void applyReserveNobleMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Move move2 = new Move(Action.PURCHASE_DEV, cards.get(2), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move2, sofia);
+    assertEquals(Action.RESERVE_NOBLE, action1);
+
+    Noble noble = nobles.get(0);
+    Move move3 = new Move(Action.RESERVE_NOBLE, null, sofia, null,
+      noble, null, null, null);
+    Action action2 = gb.applyMove(move3, sofia);
+    assertEquals(noble, inventory.getNobles().get(0));
+    assertNull(action2);
+  }
+
+  @Test
+  void applyPairSpiceAndCascadeMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+    Card firstCard = cards.get(0);
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Move move2 = new Move(Action.PURCHASE_DEV, cards.get(0), sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    Card purchasedCard = cards.get(3);
+    Move move3 = new Move(Action.PURCHASE_DEV, purchasedCard, sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move3, sofia);
+    assertEquals(Action.PAIR_SPICE_CARD, action1);
+
+    Move move4 = new Move(Action.PAIR_SPICE_CARD, firstCard, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move4, sofia);
+    assertEquals(Action.CASCADE_LEVEL_1, action2);
+
+    Card cascadeCard = cards.get(10);
+    Move move5 = new Move(Action.CASCADE_LEVEL_1, cascadeCard, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move5, sofia);
+    assertTrue(inventory.hasCard(cascadeCard));
+    assertNull(action3);
+  }
+
+  @Test
   void getPendingAction() {
     assertEquals(null, gb.getPendingAction());
-
   }
 
   @Test
