@@ -67,7 +67,6 @@ public class Splendor extends Application {
    * @param sessionInfo the session info of the game
    */
   public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
-    System.out.println(sessionInfo.toString());
     JSONObject parameters = sessionInfo.getJSONObject("gameParameters");
     SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players"),
         parameters.getString("name")));
