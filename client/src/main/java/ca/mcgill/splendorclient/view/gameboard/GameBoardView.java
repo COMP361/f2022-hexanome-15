@@ -26,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -83,7 +84,7 @@ public class GameBoardView {
    */
   private static StackPane getDeckPane(DeckView deckView) {
     StackPane deckPane = new StackPane();
-    Label cardCount = deckView.getNumCardsDisplay();
+    Text cardCount = deckView.getNumCardsDisplay();
     deckPane.getChildren().addAll(deckView, cardCount);
     return deckPane;
   }
@@ -181,11 +182,9 @@ public class GameBoardView {
   private static void populateGameBoardTokenPiles(HBox tokenRow,
                                                   Dimension screenSize, int numPlayers) {
     for (int i = 0; i < TokenType.values().length; ++i) {
-      final VBox tokenColumn = new VBox();
       TokenPileView pileView =
           new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
-      tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
-      tokenRow.getChildren().add(tokenColumn);
+      tokenRow.getChildren().add(pileView);
       instance.tokenPileViews.add(pileView);
     }
   }
