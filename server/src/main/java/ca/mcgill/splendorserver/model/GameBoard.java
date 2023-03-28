@@ -123,7 +123,7 @@ public class GameBoard {
           return null;
         }
       case RESERVE_DEV:
-        pendingAction = performReserveDev(move, inventory);
+        performReserveDev(move, inventory);
         return null;
       case PAIR_SPICE_CARD:
         pendingAction = performPairSpiceCard(move, inventory);
@@ -150,13 +150,8 @@ public class GameBoard {
           return null;
         }
       case RESERVE_NOBLE:
-        pendingAction = performReserveNoble(move, inventory);
-        if (pendingAction != null) {
-          actionPending = pendingAction;
-          return pendingAction;
-        } else {
-          return null;
-        }
+        performReserveNoble(move, inventory);
+        return null;
       case TAKE_TOKEN:
         performTakeToken(move, inventory);
         if (moveCache.size() == 1) {
@@ -196,13 +191,8 @@ public class GameBoard {
       case DISCARD_SECOND_GREEN_CARD:
       case DISCARD_SECOND_RED_CARD:
       case DISCARD_SECOND_BLACK_CARD:
-        pendingAction = performDiscardSecondCard(move, inventory);
-        if (pendingAction != null) {
-          actionPending = pendingAction;
-          return pendingAction;
-        } else {
-          return null;
-        }
+        performDiscardSecondCard(move, inventory);
+        return null;
       case RET_TOKEN:
         performReturnToken(move, inventory);
         if (requiresReturnTokens(inventory, move)) {
@@ -351,7 +341,7 @@ public class GameBoard {
    * @param move      the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
-  private Action performReserveDev(Move move, UserInventory inventory) {
+  private void performReserveDev(Move move, UserInventory inventory) {
     // no gold token (joker) will be received, just the reserved card
     Card selectedCard = move.getCard();
     // if we're taking from the table, replenish table from the deck
@@ -371,7 +361,6 @@ public class GameBoard {
     }
     // add to inventory as reserved card now
     inventory.addReservedCard(selectedCard);
-    return null;
   }
 
   /**
@@ -383,6 +372,8 @@ public class GameBoard {
    * @return any bonus actions that need to be performed
    */
   private Action performPurchaseDev(Move move, PlayerWrapper player, UserInventory inventory) {
+    assert move.getCard() != null
+             && (inventory.hasCardReserved(move.getCard()) || cardField.contains(move.getCard()));
     // checking to see whether they're buying from reserved card in hand / table or from deck
     Card selectedCard = move.getCard();
     // check to make sure that the card they wish to purchase from their hand is valid
@@ -391,25 +382,11 @@ public class GameBoard {
       // add the card to their inventory as a purchased card
       // return the required tokens to purchase the card from user to board
       returnTokensToBoard(inventory.purchaseCard(selectedCard));
-      System.out.println(player + " purchased a reserved dev card: " + selectedCard);
-    } else if (cardField.contains(selectedCard)) { // purchase face-up dev card
-      // purchase card which is face-up on the board
+    } else {
       // purchase card, take it from the face up table and replace that card on table
       int ix = cardField.indexOf(selectedCard);
       returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
-
-      System.out.println(
-          player + " purchased a face-up dev card from game board: " + selectedCard
-      );
-    } else {
-      // cannot purchase card if it's not reserved in hand or face-up
-      System.out.println(
-          "A card has been attempted to be purchased "
-          + "but it wasn't reserved in inventory nor face-up on game board"
-      );
-      throw new IllegalGameStateException(
-        "Cannot purchase card which isn't reserved or face-up");
     }
 
     if (selectedCard instanceof OrientCard) {
@@ -447,20 +424,10 @@ public class GameBoard {
    * @return any bonus actions that need to be performed
    */
   private Action performPairSpiceCard(Move move, UserInventory inventory) {
-    if (move.getCard() == null) {
-      throw new IllegalGameStateException(
-        "If move to pair a spice card, then card cannot be empty");
-    }
-    if (!inventory.hasCard(move.getCard())) {
-      throw new IllegalGameStateException(
-        "If move to pair a spice card, then card has to be in user inventory");
-    }
+    assert move.getCard() != null && inventory.hasCard(move.getCard())
+             && inventory.getUnpairedSpiceCard() != null;
     OrientCard spiceCard = inventory.getUnpairedSpiceCard();
-    if (spiceCard == null) {
-      throw new IllegalGameStateException(
-        "If move to pair a spice card, then an unpaired spice card has to be in user inventory");
-    }
-    ((OrientCard) spiceCard).pairWithCard(move.getCard());
+    spiceCard.pairWithCard(move.getCard());
     for (Action bonusAction : spiceCard.getBonusActions()) {
       boolean doneAction = false;
       for (Move pastMove : moveCache) {
@@ -508,11 +475,7 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private void performPlaceCoatOfArms(TradingPostSlot tradingPostSlot, UserInventory inventory) {
-    assert tradingPostSlot != null;
-    if (tradingPostSlot.isFull()) {
-      throw new IllegalGameStateException("If move is to place coat of arms,"
-                                            + "then trading post slot cannot be full");
-    }
+    assert tradingPostSlot != null && !tradingPostSlot.isFull();
     if (inventory.canReceivePower(tradingPostSlot)) {
       inventory.addPower(tradingPostSlot.getPower());
       tradingPostSlot.addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
@@ -525,19 +488,10 @@ public class GameBoard {
    * @param move the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
-  private Action performReserveNoble(Move move, UserInventory inventory) {
-    if (move.getNoble() == null) {
-      throw new IllegalGameStateException("If move is to reserve noble, "
-                                            + "then noble cannot be empty");
-    }
-    if (move.getNoble().getStatus() != NobleStatus.ON_BOARD) {
-      throw new IllegalGameStateException(
-        "Noble cannot be reserved if it has already been "
-          + "reserved or is currently visiting a player");
-    }
+  private void performReserveNoble(Move move, UserInventory inventory) {
+    assert move.getNoble() != null && move.getNoble().getStatus() == NobleStatus.ON_BOARD;
     inventory.addReservedNoble(move.getNoble());
-
-    return null;
+    nobles.remove(move.getNoble());
   }
 
   /**
@@ -546,11 +500,8 @@ public class GameBoard {
    * @param move the move to be performed
    * @param inventory the inventory to apply the move side effects to
    */
-  private Action performDiscardSecondCard(Move move, UserInventory inventory) {
-    if (move.getCard() == null) {
-      throw new IllegalGameStateException("If move is to discard card, "
-                                            + "then card cannot be empty");
-    }
+  private void performDiscardSecondCard(Move move, UserInventory inventory) {
+    assert move.getCard() != null;
 
     inventory.discardCard(move.getCard());
 
@@ -568,7 +519,6 @@ public class GameBoard {
         inventory.getCoatOfArmsPile().addCoatOfArms(coatOfArms);
       }
     }
-    return null;
   }
 
   /**
@@ -578,10 +528,7 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private Action performDiscardFirstCard(Move move, UserInventory inventory) {
-    if (move.getCard() == null) {
-      throw new IllegalGameStateException("If move is to discard card, "
-                                            + "then card cannot be empty");
-    }
+    assert move.getCard() != null;
 
     inventory.discardCard(move.getCard());
 
@@ -633,19 +580,9 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private Action performCascadeLevelOne(Move move, UserInventory inventory) {
-    if (move.getCard() == null) {
-      throw new IllegalGameStateException("If move is to choose a cascade level one card,"
-                                            + "then card cannot be empty");
-    }
-    if (move.getCard().getDeckType() != DeckType.ORIENT1) {
-      throw new IllegalGameStateException("If move is to choose a cascade level one card,"
-                                            + "then card must be from Orient 1 deck");
-    }
-    if (move.getCard().getCardStatus() != CardStatus.NONE) {
-      throw new IllegalGameStateException(
-        "Card cannot be taken if it has already been "
-          + "reserved or purchased by a player");
-    }
+    assert move.getCard() != null
+             && move.getCard().getDeckType() != DeckType.ORIENT1
+             && move.getCard().getCardStatus() == CardStatus.NONE;
 
     OrientCard levelOneCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
@@ -653,11 +590,9 @@ public class GameBoard {
     cardField.remove(ix);
     replenishTakenCardFromDeck(levelOneCard.getDeckType(), ix);
 
-    if (levelOneCard instanceof OrientCard) {
-      List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
-      if (actions.size() > 0) {
-        return actions.get(0);
-      }
+    List<Action> actions = levelOneCard.getBonusActions();
+    if (actions.size() > 0) {
+      return actions.get(0);
     }
     return null;
   }
@@ -669,19 +604,9 @@ public class GameBoard {
    * @param inventory the inventory to apply the move side effects to
    */
   private Action performCascadeLevelTwo(Move move, UserInventory inventory) {
-    if (move.getCard() == null) {
-      throw new IllegalGameStateException("If move is to choose a cascade level two card,"
-                                            + "then card cannot be empty");
-    }
-    if (move.getCard().getDeckType() != DeckType.ORIENT2) {
-      throw new IllegalGameStateException("If move is to choose a cascade level two card,"
-                                            + "then card must be from Orient 2 deck");
-    }
-    if (move.getCard().getCardStatus() != CardStatus.NONE) {
-      throw new IllegalGameStateException(
-        "Card cannot be taken if it has already been "
-          + "reserved or purchased by a player");
-    }
+    assert move.getCard() != null
+             && move.getCard().getDeckType() != DeckType.ORIENT2
+             && move.getCard().getCardStatus() == CardStatus.NONE;
 
     OrientCard levelTwoCard = (OrientCard) move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
@@ -689,11 +614,9 @@ public class GameBoard {
     cardField.remove(ix);
     replenishTakenCardFromDeck(levelTwoCard.getDeckType(), ix);
 
-    if (levelTwoCard instanceof OrientCard) {
-      List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
-      if (actions.size() > 0) {
-        return actions.get(0);
-      }
+    List<Action> actions = levelTwoCard.getBonusActions();
+    if (actions.size() > 0) {
+      return actions.get(0);
     }
     return null;
   }
@@ -726,26 +649,6 @@ public class GameBoard {
       tokenPiles.get(token.getType())
           .addToken(token);
     }
-  }
-
-  /**
-   * Draws a card from the top of the deck with the specified deck level.
-   *
-   * @param deckLevel the level of the deck
-   * @return the card from the top of the deck
-   */
-  private Card getCardByDeckLevel(DeckType deckLevel) {
-    assert deckLevel != null;
-    for (Deck deck : decks) {
-      if (deck.getType() == deckLevel) {
-        if (!deck.isEmpty()) {
-          return deck.draw();
-        }
-      }
-    }
-
-    throw new IllegalGameStateException(
-      "DeckLevel: " + deckLevel + " wasn't found in decks on game board");
   }
 
   /**

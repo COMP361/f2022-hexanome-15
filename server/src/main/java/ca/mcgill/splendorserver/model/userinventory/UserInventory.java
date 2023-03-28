@@ -190,6 +190,19 @@ public class UserInventory implements Iterable<Card> {
   }
 
   /**
+   * Returns the number of purchased gold cards in the user inventory.
+   *
+   * @return number of purchased gold cards in the user inventory
+   */
+  private int purchasedGoldCardCount() {
+    return (int) cards
+                   .stream()
+                   .filter(card -> card.isPurchased()
+                                     && card.getTokenBonusType() == TokenType.GOLD)
+                   .count();
+  }
+
+  /**
    * Returns the number of bonuses of a certain token type in the user inventory.
    *
    * @param tokenType the token bonus type of the purchased cards
@@ -315,7 +328,7 @@ public class UserInventory implements Iterable<Card> {
           }
           case PAIR_SPICE_CARD -> {
             if (purchasedCardCount() < 1
-                  || purchasedCardCount() == tokenBonusAmountByType(TokenType.GOLD) / 2) {
+                  || purchasedCardCount() == purchasedGoldCardCount()) {
               return false;
             }
           }
@@ -393,7 +406,7 @@ public class UserInventory implements Iterable<Card> {
     for (Card card : cards) {
       if (card.getTokenBonusType() == TokenType.GOLD) {
         cards.remove(card);
-        return;
+        break;
       }
     }
   }
