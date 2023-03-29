@@ -500,21 +500,15 @@ public class ActionManager {
 
   private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,
                                      GameBoard gameBoard, PlayerWrapper player) {
-    if (inventory.getCards().size() == 0) {
-      throw new IllegalGameStateException(
-        "Illegal for spice card to have be purchased when inventory has 0 cards");
-    }
-    if (inventory.getUnpairedSpiceCard() == null) {
-      throw new IllegalGameStateException(
-        "Illegal to pair spice card when inventory does not contain an unpaired spice card");
-    }
     for (Card card : inventory.getCards()) {
-      if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
-        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
+      if (inventory.getCards().size() > 0 && inventory.getUnpairedSpiceCard() != null) {
+        if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
+          Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
             null, null, null, null);
-        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                           .toUpperCase();
-        moveMap.put(moveMd5, move);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
       }
     }
   }
