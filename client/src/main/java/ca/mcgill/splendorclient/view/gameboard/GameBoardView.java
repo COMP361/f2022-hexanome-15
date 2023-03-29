@@ -278,7 +278,7 @@ public class GameBoardView {
    * @return the gameboard scene
    */
   public static Scene setupGameBoard(JSONArray players, String gameServer) {
-    Dimension screenSize = new Dimension(1920,1080);//Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
     universalUnitY = screenSize.height / 100f;
     cardHeight = universalUnitY * 16;
