@@ -95,8 +95,8 @@ public class GameBoardView {
    * @param type       the type of deck that is being represented by the DeckView
    * @param screenSize the size of the screen
    */
-  private static DeckView createDeckView(DeckType type, Dimension screenSize) {
-    DeckView newView = new DeckView(screenSize.height / 15f, screenSize.width / 15f,
+  private static DeckView createDeckView(DeckType type, float x, float y) {
+    DeckView newView = new DeckView(x, y,
         0, type);
     return newView;
   }
@@ -238,7 +238,7 @@ public class GameBoardView {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
     universalUnitY = screenSize.height / 100f;
-    cardHeight = universalUnitY * 17;
+    cardHeight = universalUnitY * 16;
     cardWidth = universalUnitX * 6;
 
     //building the decks of cards
@@ -278,13 +278,13 @@ public class GameBoardView {
     }
     faceupCardsRow.getChildren().addAll(columns);
 
-    DeckView redDeckView = createDeckView(DeckType.BASE3, screenSize);
-    DeckView yellowDeckView = createDeckView(DeckType.BASE2, screenSize);
-    DeckView greenDeckView = createDeckView(DeckType.BASE1, screenSize);
+    DeckView redDeckView = createDeckView(DeckType.BASE3, cardWidth, cardHeight);
+    DeckView yellowDeckView = createDeckView(DeckType.BASE2, cardWidth, cardHeight);
+    DeckView greenDeckView = createDeckView(DeckType.BASE1, cardWidth, cardHeight);
 
-    DeckView orient3DeckView = createDeckView(DeckType.ORIENT3, screenSize);
-    DeckView orient2DeckView = createDeckView(DeckType.ORIENT2, screenSize);
-    DeckView orient1DeckView = createDeckView(DeckType.ORIENT1, screenSize);
+    DeckView orient3DeckView = createDeckView(DeckType.ORIENT3, cardWidth, cardHeight);
+    DeckView orient2DeckView = createDeckView(DeckType.ORIENT2, cardWidth, cardHeight);
+    DeckView orient1DeckView = createDeckView(DeckType.ORIENT1, cardWidth, cardHeight);
 
     //adding deckviews to list field for modification by GameController
     //these follow order b123,o123 as in state json
