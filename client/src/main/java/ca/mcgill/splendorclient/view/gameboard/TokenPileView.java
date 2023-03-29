@@ -34,7 +34,7 @@ public class TokenPileView extends StackPane {
     this.type = type;
     tokenCounter = new Counter(0);
     this.getChildren().addAll(icon, tokenCounter);
-    icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
       @Override
       public void handle(MouseEvent event) {
