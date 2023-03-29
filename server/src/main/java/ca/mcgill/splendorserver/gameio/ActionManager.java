@@ -183,8 +183,9 @@ public class ActionManager {
       String tokenType =
           move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
       String noble = move.getNoble() != null ? move.getNoble().toString() : null;
+      String city = move.getCity() != null ? move.getCity().toString() : null;
       simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(),
-          move.getAction().toString(), cardId, tokenType, noble));
+          move.getAction().toString(), cardId, tokenType, noble, city));
     }
     return simplifiedMap;
   }
