@@ -1,6 +1,7 @@
 package ca.mcgill.splendorclient.control;
 
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.model.DeckType;
 import ca.mcgill.splendorclient.model.MoveInfo;
 import ca.mcgill.splendorclient.model.TokenType;
 import ca.mcgill.splendorclient.model.users.User;
@@ -108,6 +109,24 @@ public class ActionManager {
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RESERVE_DEV")) {
         if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds reserve dev moves in the move map and forwards them to server.
+   *
+   * @param deckType requested to reserve
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReserveFromDeckMove(DeckType deckType) {
+    System.out.println("Searching for reserve card move with deck level: " + deckType);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RESERVE_DEV")) {
+        if (entry.getValue().getDeckLevel().equals(String.valueOf(deckType))) {
           return sendAction(entry.getKey());
         }
       }

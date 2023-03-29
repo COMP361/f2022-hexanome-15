@@ -70,9 +70,6 @@ public class GameController {
     return gameId;
   }
 
-
-  //TODO: disable multiple calls to this method
-
   /**
    * Starts the game.
    */
@@ -94,7 +91,6 @@ public class GameController {
           try {
             Thread.sleep(2000);
           } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
           continue;
@@ -259,7 +255,6 @@ public class GameController {
 
               @Override
               public void run() {
-                // TODO Auto-generated method stub
                 Alert yourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 yourTurnAlert.setTitle("Turn Information");
                 yourTurnAlert.setHeaderText("It's your turn, please make your move.");
@@ -275,7 +270,6 @@ public class GameController {
 
               @Override
               public void run() {
-                // TODO Auto-generated method stub
                 Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 notYourTurnAlert.setTitle("Turn Information");
                 notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername()
@@ -288,7 +282,6 @@ public class GameController {
         try {
           Thread.sleep(2000);
         } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }

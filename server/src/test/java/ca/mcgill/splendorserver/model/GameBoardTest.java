@@ -1,26 +1,28 @@
 package ca.mcgill.splendorserver.model;
+
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
-import ca.mcgill.splendorserver.model.cards.*;
+import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardCost;
+import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cards.OrientCard;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
-import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
-import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static ca.mcgill.splendorserver.model.cards.DeckType.*;
@@ -30,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameBoardTest {
-  private SplendorGame game;
   private GameBoard gb;
   private PlayerWrapper sofia;
   private PlayerWrapper jeff;
@@ -56,7 +57,7 @@ class GameBoardTest {
     players.add(sofia);
     players.add(jeff);
     SessionInfo sessionInfo = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia,"1L");
-    game = new SplendorGame(sessionInfo,1L);
+    SplendorGame game = new SplendorGame(sessionInfo, 1L);
     inventories = game.getBoard().getInventories();
     decks = game.getBoard().getDecks();
     tokenPiles = game.getBoard().getTokenPiles().values().stream().toList();
@@ -193,6 +194,24 @@ class GameBoardTest {
   void applyReserveMove() {
     Card reservedCard = cards.get(0);
     Move move = new Move(Action.RESERVE_DEV, reservedCard, sofia, null,
+      null, null, null, null);
+    Action action = gb.applyMove(move, sofia);
+    assertNull(action);
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+    List<Card> reservedCards = new ArrayList<>();
+    for (Card card : inventory.getCards()) {
+      if (card.isReserved()) {
+        reservedCards.add(card);
+      }
+    }
+    assertEquals(reservedCard, reservedCards.get(0));
+    assertEquals(1, inventory.getTokenPiles().get(GOLD).getSize());
+  }
+
+  @Test
+  void applyReserveFromDeckMove() {
+    Card reservedCard = decks.get(0).getCards().get(0);
+    Move move = new Move(Action.RESERVE_DEV, null, sofia, BASE1,
       null, null, null, null);
     Action action = gb.applyMove(move, sofia);
     assertNull(action);
@@ -1233,7 +1252,7 @@ class GameBoardTest {
 
   @Test
   void getPendingAction() {
-    assertEquals(null, gb.getPendingAction());
+    assertNull(gb.getPendingAction());
   }
 
   @Test
@@ -1302,7 +1321,7 @@ class GameBoardTest {
 
   @Test
   void testNotEqualsNull() {
-    assertFalse(gb.equals(null));
+    assertNotEquals(null, gb);
   }
 
   @Test
@@ -1323,7 +1342,7 @@ class GameBoardTest {
   @Test
   void endTurn() {
     gb.endTurn();
-    assertEquals(null, gb.getPendingAction());
+    assertNull(gb.getPendingAction());
     assertEquals(0, gb.getMoveCache().size());
   }
 }

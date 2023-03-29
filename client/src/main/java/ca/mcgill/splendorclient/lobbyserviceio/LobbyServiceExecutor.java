@@ -238,7 +238,6 @@ public class LobbyServiceExecutor {
     }
   }
 
-  // TODO: Should be moved to server service controller.
   /**
    * Sends the move done by a player to the server at the end of their turn.
    *

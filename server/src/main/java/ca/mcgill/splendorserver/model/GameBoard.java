@@ -316,17 +316,38 @@ public class GameBoard {
   }
 
   /**
+   * Draws a card from the top of the deck with the specified deck level.
+   *
+   * @param deckLevel the level of the deck
+   * @return the card from the top of the deck
+   */
+  private Card getCardByDeckLevel(DeckType deckLevel) {
+    assert deckLevel != null;
+    Card card = null;
+    for (Deck deck : decks) {
+      if (deck.getType() == deckLevel) {
+        if (!deck.isEmpty()) {
+          card = deck.draw();
+          break;
+        }
+      }
+    }
+    return card;
+  }
+
+  /**
    * Performs a reserve development type action routine.
    *
    * @param move      the move to perform
    * @param inventory the inventory to apply the move side effects to
    */
   private void performReserveDev(Move move, UserInventory inventory) {
-    // no gold token (joker) will be received, just the reserved card
-    Card selectedCard = move.getCard();
+    assert move.getCard() != null || move.getDeckType() != null;
     // if we're taking from the table, replenish table from the deck
+    Card selectedCard;
     if (move.getCard() != null) {
       // remove the selected card from the board and replenish from same deck type
+      selectedCard = move.getCard();
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
       replenishTakenCardFromDeck(
@@ -334,13 +355,17 @@ public class GameBoard {
           .getDeckType(),
           ix
       );
+    } else {
+      selectedCard = getCardByDeckLevel(move.getDeckType());
     }
-    if (!noGoldTokens()) {
-      Token gold = this.tokenPiles.get(TokenType.GOLD).removeToken();
-      inventory.addToken(gold);
+    if (selectedCard != null) {
+      if (!noGoldTokens()) {
+        Token gold = this.tokenPiles.get(TokenType.GOLD).removeToken();
+        inventory.addToken(gold);
+      }
+      // add to inventory as reserved card now
+      inventory.addReservedCard(selectedCard);
     }
-    // add to inventory as reserved card now
-    inventory.addReservedCard(selectedCard);
   }
 
   /**
