@@ -202,13 +202,17 @@ public class GameBoard {
         }
         return null;
       case RECEIVE_NOBLE:
-        performReceiveNoble(move, inventory);
+        if (move.getNoble() != null) {
+          performClaimNobleAction(move.getNoble(), inventory);
+        }
         return null;
       case TAKE_EXTRA_TOKEN:
         performTakeToken(move, inventory);
         return null;
       case RECEIVE_CITY:
-        performReceiveCity(move, inventory);
+        if (move.getCity() != null) {
+          performClaimCityAction(move.getCity(), inventory);
+        }
         return null;
       default:
         return null;
@@ -222,18 +226,6 @@ public class GameBoard {
    */
   public Action getPendingAction() {
     return actionPending;
-  }
-
-  private void performReceiveNoble(Move move, UserInventory inventory) {
-    Noble selectedNoble = move.getNoble();
-    inventory.receiveVisitFrom(selectedNoble);
-    nobles.remove(selectedNoble);
-  }
-
-  private void performReceiveCity(Move move, UserInventory inventory) {
-    City selectedCity = move.getCity();
-    inventory.addCity(selectedCity);
-    cities.remove(selectedCity);
   }
 
   private void performReturnToken(Move move, UserInventory inventory) {
