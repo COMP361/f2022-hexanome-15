@@ -198,13 +198,7 @@ class GameBoardTest {
     Action action = gb.applyMove(move, sofia);
     assertNull(action);
     UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
-    List<Card> reservedCards = new ArrayList<>();
-    for (Card card : inventory.getCards()) {
-      if (card.isReserved()) {
-        reservedCards.add(card);
-      }
-    }
-    assertEquals(reservedCard, reservedCards.get(0));
+    assertTrue(inventory.hasCardReserved(reservedCard));
     assertEquals(1, inventory.getTokenPiles().get(GOLD).getSize());
   }
 
@@ -216,13 +210,7 @@ class GameBoardTest {
     Action action = gb.applyMove(move, sofia);
     assertNull(action);
     UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
-    List<Card> reservedCards = new ArrayList<>();
-    for (Card card : inventory.getCards()) {
-      if (card.isReserved()) {
-        reservedCards.add(card);
-      }
-    }
-    assertEquals(reservedCard, reservedCards.get(0));
+    assertTrue(inventory.hasCardReserved(reservedCard));
     assertEquals(1, inventory.getTokenPiles().get(GOLD).getSize());
   }
 
@@ -242,14 +230,7 @@ class GameBoardTest {
       null, null, null, null);
     Action action = gb.applyMove(move, jeff);
     assertNull(action);
-    List<Card> reservedCards = new ArrayList<>();
-    for (Card card : inventory2.getCards()) {
-      if (card.isReserved()) {
-        reservedCards.add(card);
-      }
-    }
-
-    assertEquals(reservedCard, reservedCards.get(0));
+    assertTrue(inventory2.hasCardReserved(reservedCard));
     assertEquals(0, inventory2.getTokenPiles().get(GOLD).getSize());
   }
 
