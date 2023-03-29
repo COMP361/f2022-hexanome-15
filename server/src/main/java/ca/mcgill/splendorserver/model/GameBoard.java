@@ -123,8 +123,7 @@ public class GameBoard {
           if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN)) {
             actionPending = Action.TAKE_EXTRA_TOKEN;
             return actionPending;
-          }
-          else {
+          } else {
             return null;
           }
         }
@@ -378,15 +377,38 @@ public class GameBoard {
               || actions.get(0) == Action.DISCARD_FIRST_GREEN_CARD
               || actions.get(0) == Action.DISCARD_FIRST_RED_CARD
               || actions.get(0) == Action.DISCARD_FIRST_BLACK_CARD) {
-          int spiceCount = inventory.getNumSpiceCardsByType(move.getCard().getTokenBonusType());
-          if (spiceCount >= 2) {
-            inventory.discardSpiceCard(move.getCard().getTokenBonusType());
-            inventory.discardSpiceCard(move.getCard().getTokenBonusType());
-          } else if (spiceCount == 1) {
-            inventory.discardSpiceCard(move.getCard().getTokenBonusType());
-            return actions.get(1);
-          } else if (spiceCount == 0) {
-            return actions.get(0);
+          TokenType tokenType = null;
+          switch (actions.get(0)) {
+            case DISCARD_FIRST_WHITE_CARD:
+              tokenType = TokenType.DIAMOND;
+              break;
+            case DISCARD_FIRST_BLUE_CARD:
+              tokenType = TokenType.SAPPHIRE;
+              break;
+            case DISCARD_FIRST_GREEN_CARD:
+              tokenType = TokenType.EMERALD;
+              break;
+            case DISCARD_FIRST_RED_CARD:
+              tokenType = TokenType.RUBY;
+              break;
+            case DISCARD_FIRST_BLACK_CARD:
+              tokenType = TokenType.ONYX;
+              break;
+            default:
+              tokenType = null;
+          }
+          if (tokenType != null) {
+            int spiceCount = inventory.getNumSpiceCardsByType(tokenType);
+            if (spiceCount >= 2) {
+              inventory.discardSpiceCard(tokenType);
+              inventory.discardSpiceCard(tokenType);
+              return null;
+            } else if (spiceCount == 1) {
+              inventory.discardSpiceCard(tokenType);
+              return actions.get(1);
+            } else if (spiceCount == 0) {
+              return actions.get(0);
+            }
           }
         } else {
           return actions.get(0);
@@ -486,10 +508,14 @@ public class GameBoard {
 
     inventory.discardCard(move.getCard());
 
+    List<Noble> discardedNobles = new ArrayList<>();
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.VISITING && !inventory.canBeVisitedByNoble(noble)) {
-        nobles.add(inventory.removeNoble(noble));
+        discardedNobles.add(noble);
       }
+    }
+    for (Noble noble : discardedNobles) {
+      nobles.add(inventory.removeNoble(noble));
     }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.hasPower(tradingPostSlot.getPower())
@@ -513,10 +539,14 @@ public class GameBoard {
 
     inventory.discardCard(move.getCard());
 
+    List<Noble> discardedNobles = new ArrayList<>();
     for (Noble noble : inventory.getNobles()) {
       if (noble.getStatus() == NobleStatus.VISITING && !inventory.canBeVisitedByNoble(noble)) {
-        nobles.add(inventory.removeNoble(noble));
+        discardedNobles.add(noble);
       }
+    }
+    for (Noble noble : discardedNobles) {
+      nobles.add(inventory.removeNoble(noble));
     }
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
       if (inventory.hasPower(tradingPostSlot.getPower())

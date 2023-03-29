@@ -10,6 +10,8 @@ import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
@@ -101,9 +103,9 @@ class GameBoardTest {
       new CardCost(1, 0, 0, 0, 4), false,
       new ArrayList<>()));
     cards.add(new Card(12, 1, DIAMOND, BASE1, ONE,
-      new CardCost(0, 1, 0, 0, 0)));
+      new CardCost(1, 0, 0, 0, 0)));
     cards.add(new Card(13, 1, DIAMOND, BASE1, ONE,
-      new CardCost(0, 0, 1, 0, 0)));
+      new CardCost(1, 0, 0, 0, 0)));
     cards.add(new Card(14, 1, EMERALD, BASE1, ONE,
       new CardCost(1, 0, 0, 0, 0)));
     cards.add(new Card(15, 1, EMERALD, BASE1, ONE,
@@ -118,6 +120,11 @@ class GameBoardTest {
       new CardCost(1, 0, 0, 0, 0)));
     cards.add(new Card(20, 1, SAPPHIRE, BASE1, ONE,
       new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new Card(21, 1, SAPPHIRE, BASE1, ONE,
+      new CardCost(1, 0, 0, 0, 0)));
+    cards.add(new OrientCard(22, 0, null, ORIENT1, ZERO,
+      new CardCost(0, 0, 0, 0, 0), true,
+      new ArrayList<>(List.of(Action.PAIR_SPICE_CARD))));
 
     Noble noble1 = new Noble(0, new CardCost(0, 0, 0, 2, 0));
     Noble noble2 = new Noble(1, new CardCost(0, 3, 0, 0, 0));
@@ -264,6 +271,538 @@ class GameBoardTest {
     assertNull(action);
     assertTrue(inventory.hasCard(purchasedCard));
     assertEquals(1, inventory.tokenCount());
+  }
+  @Test
+  void applyDiscardTwoLoseNoble() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    nobles = new ArrayList<>();
+    Noble noble = new Noble(0, new CardCost(0, 0, 0, 0, 2));
+    nobles.add(noble);
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(18));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(18));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    inventory1.receiveVisitFrom(noble);
+
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move1 = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move1, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLACK_CARD, action1);
+
+    Move move2 = new Move(Action.DISCARD_SECOND_BLACK_CARD, cards.get(18), sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move2, sofia);
+
+    assertEquals(0, inventory1.tokenBonusAmountByType(ONYX));
+    assertFalse(inventory1.getNobles().contains(noble));
+    assertNull(action2);
+  }
+
+  @Test
+  void applyDiscardOneLoseNoble() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    nobles = new ArrayList<>();
+    Noble noble = new Noble(0, new CardCost(0, 0, 0, 0, 1));
+    nobles.add(noble);
+
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(18);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    gb.getEndOfTurnActions(move2, inventory1);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(19);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_BLACK_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_BLACK_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLACK_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_BLACK_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory1.tokenBonusAmountByType(ONYX));
+    assertNull(action3);
+  }
+
+  @Test
+  void applyDiscardTwoLosePower() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    tradingPosts = new ArrayList<>();
+    TradingPostSlot tradingPost = new TradingPostSlot(0, false, Power.PURCHASE_CARD_TAKE_TOKEN,
+      new CardCost(0, 0, 0, 0, 2));
+    tradingPosts = new ArrayList<>();
+    tradingPosts.add(tradingPost);
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(18));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(18));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    inventory1.addPower(tradingPost.getPower());
+    tradingPost.addCoatOfArms(new CoatOfArms(inventory1.getCoatOfArmsPile().getType()));
+
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move1 = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move1, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLACK_CARD, action1);
+
+    Move move2 = new Move(Action.DISCARD_SECOND_BLACK_CARD, cards.get(18), sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move2, sofia);
+
+    assertEquals(0, inventory1.tokenBonusAmountByType(ONYX));
+    assertFalse(inventory1.hasPower(tradingPost.getPower()));
+    assertNull(action2);
+  }
+
+  @Test
+  void applyDiscardOneLosePower() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    tradingPosts = new ArrayList<>();
+    TradingPostSlot tradingPost = new TradingPostSlot(0, false, Power.PURCHASE_CARD_TAKE_TOKEN,
+      new CardCost(0, 0, 0, 0, 1));
+    tradingPosts = new ArrayList<>();
+    tradingPosts.add(tradingPost);
+
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(18);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    gb.getEndOfTurnActions(move2, inventory1);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(19);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_BLACK_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_BLACK_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLACK_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_BLACK_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory1.tokenBonusAmountByType(ONYX));
+    assertNull(action3);
+  }
+
+  @Test
+  void applyDiscardTwoBlackSpiceMove() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(18));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(18));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(22));
+    ((OrientCard) cards.get(22)).pairWithCard(cards.get(18));
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move, sofia);
+    assertEquals(1, inventory1.tokenBonusAmountByType(ONYX));
+    assertNull(action1);
+  }
+
+  @Test
+  void applyDiscardOneBlackSpiceMove() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(18));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(18));
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move1 = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move1, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLACK_CARD, action1);
+
+    Move move2 = new Move(Action.DISCARD_SECOND_BLACK_CARD, cards.get(18), sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move2, sofia);
+
+    assertEquals(0, inventory1.tokenBonusAmountByType(ONYX));
+    assertNull(action2);
+  }
+
+  @Test
+  void applyDiscardTwoBlackMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(18);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(19);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(5), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_BLACK_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_BLACK_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLACK_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_BLACK_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory.tokenBonusAmountByType(ONYX));
+    assertNull(action3);
+  }
+
+  @Test
+  void applyDiscardTwoBlueSpiceMove() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(20));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(20));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(22));
+    ((OrientCard) cards.get(22)).pairWithCard(cards.get(20));
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move = new Move(Action.PURCHASE_DEV, cards.get(7), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move, sofia);
+    assertEquals(1, inventory1.tokenBonusAmountByType(SAPPHIRE));
+    assertNull(action1);
+  }
+
+  @Test
+  void applyDiscardOneBlueMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(11);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    Move move3 = new Move(Action.PURCHASE_DEV, cards.get(7), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move3, sofia);
+    assertEquals(Action.DISCARD_FIRST_BLUE_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_BLUE_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(0, inventory.tokenBonusAmountByType(SAPPHIRE));
+    assertNull(action2);
+  }
+
+  @Test
+  void applyDiscardTwoBlueMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(20);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(21);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(7), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_BLUE_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_BLUE_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_BLUE_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_BLUE_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory.tokenBonusAmountByType(SAPPHIRE));
+    assertNull(action3);
+  }
+
+  @Test
+  void applyDiscardTwoGreenSpiceMove() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(14));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(14));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(22));
+    ((OrientCard) cards.get(22)).pairWithCard(cards.get(14));
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move = new Move(Action.PURCHASE_DEV, cards.get(8), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move, sofia);
+    assertEquals(1, inventory1.tokenBonusAmountByType(EMERALD));
+    assertNull(action1);
+  }
+
+  @Test
+  void applyDiscardTwoGreenMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(14);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(15);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(8), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_GREEN_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_GREEN_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_GREEN_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_GREEN_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory.tokenBonusAmountByType(EMERALD));
+    assertNull(action3);
+  }
+
+  @Test
+  void applyDiscardTwoRedSpiceMove() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(16));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(16));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(22));
+    ((OrientCard) cards.get(22)).pairWithCard(cards.get(16));
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move = new Move(Action.PURCHASE_DEV, cards.get(9), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move, sofia);
+    assertEquals(1, inventory1.tokenBonusAmountByType(RUBY));
+    assertNull(action1);
+  }
+
+  @Test
+  void applyDiscardTwoRedMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(16);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(17);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(9), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_RED_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_RED_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_RED_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_RED_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory.tokenBonusAmountByType(RUBY));
+    assertNull(action3);
+  }
+
+  @Test
+  void applyDiscardTwoWhiteSpiceMove() {
+    UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
+    UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(12));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(1));
+    ((OrientCard) cards.get(1)).pairWithCard(cards.get(12));
+    inventory1.addToken(new Token(DIAMOND));
+    inventory1.purchaseCard(cards.get(22));
+    ((OrientCard) cards.get(22)).pairWithCard(cards.get(12));
+    List<UserInventory> userInventories = new ArrayList<>(List.of(inventory1, inventory2));
+    gb = new GameBoard(userInventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Move move = new Move(Action.PURCHASE_DEV, cards.get(6), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move, sofia);
+    assertEquals(1, inventory1.tokenBonusAmountByType(DIAMOND));
+    assertNull(action1);
+  }
+
+  @Test
+  void applyDiscardTwoWhiteMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Card card1 = cards.get(12);
+    Move move2 = new Move(Action.PURCHASE_DEV, card1, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Card card2 = cards.get(13);
+    Move move4 = new Move(Action.PURCHASE_DEV, card2, sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    Move move5 = new Move(Action.PURCHASE_DEV, cards.get(6), sofia, null,
+      null, null, null, null);
+    Action action1 = gb.applyMove(move5, sofia);
+    assertEquals(Action.DISCARD_FIRST_WHITE_CARD, action1);
+
+    Move move6 = new Move(Action.DISCARD_FIRST_WHITE_CARD, card1, sofia, null,
+      null, null, null, null);
+    Action action2 = gb.applyMove(move6, sofia);
+    assertEquals(Action.DISCARD_SECOND_WHITE_CARD, action2);
+
+    Move move7 = new Move(Action.DISCARD_SECOND_WHITE_CARD, card2, sofia, null,
+      null, null, null, null);
+    Action action3 = gb.applyMove(move7, sofia);
+    assertEquals(0, inventory.tokenBonusAmountByType(DIAMOND));
+    assertNull(action3);
   }
 
   @Test
@@ -555,7 +1094,7 @@ class GameBoardTest {
   }
 
   @Test
-  void getCoatOfArmsMoveAndPerformTakeExtraToken() {
+  void getCoatOfArmsMove() {
     UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
     //Taking enough tokens to afford the card
     Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
@@ -656,6 +1195,40 @@ class GameBoardTest {
       null, null, null, city);
     Action action2 = gb.applyMove(move5, sofia);
     assertNull(action2);
+  }
+
+  @Test
+  void applyReceiveCityMove() {
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+    //Taking enough tokens to afford the card
+    Move move1 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move1, sofia);
+
+    Move move2 = new Move(Action.PURCHASE_DEV, cards.get(14), sofia, null,
+      null, null, null, null);
+    gb.applyMove(move2, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move3 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move3, sofia);
+
+    Move move4 = new Move(Action.PURCHASE_DEV, cards.get(16), sofia, null,
+      null, null, null, null);
+    gb.applyMove(move4, sofia);
+
+    //Taking enough tokens to afford the card
+    Move move5 = new Move(Action.TAKE_TOKEN, null, sofia, null,
+      null, null, DIAMOND, null);
+    gb.applyMove(move5, sofia);
+
+    Move move6 = new Move(Action.PURCHASE_DEV, cards.get(18), sofia, null,
+      null, null, null, null);
+    gb.applyMove(move6, sofia);
+
+    Action action1 = gb.getEndOfTurnActions(move4, inventory);
+    assertNull(action1);
   }
 
   @Test
