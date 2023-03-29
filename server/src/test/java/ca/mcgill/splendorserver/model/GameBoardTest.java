@@ -228,17 +228,16 @@ class GameBoardTest {
 
   @Test
   void applyReserveMoveNoGold() {
-    gb = new GameBoard(inventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
     UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
 
     int numGold = gb.getTokenPiles().get(GOLD).getSize();
     for (int i = 0; i < numGold; i++) {
-      Move move = new Move(Action.RESERVE_DEV, cards.get(0), sofia, null,
+      Move move = new Move(Action.RESERVE_DEV, cards.get(i), sofia, null,
         null, null, null, null);
       gb.applyMove(move, sofia);
     }
 
-    Card reservedCard = cards.get(0);
+    Card reservedCard = cards.get(6);
     Move move = new Move(Action.RESERVE_DEV, reservedCard, jeff, null,
       null, null, null, null);
     Action action = gb.applyMove(move, jeff);
