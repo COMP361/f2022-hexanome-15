@@ -10,6 +10,7 @@ public class MoveInfo {
   private final String cardId;
   private final String tokenType;
   private final String nobleId;
+  private final String cityId;
 
   /**
    * Creates a moveInfo object.
@@ -19,14 +20,16 @@ public class MoveInfo {
    * @param cardId the cardId of the card that was purchased/reserved
    * @param tokenType the tokenType of the token that was taken
    * @param nobleId the nobleId of the noble that was reserved/visited
+   * @param cityId the cityId of the city that was received
    */
   public MoveInfo(String playerName, String action, String cardId,
-                    String tokenType, String nobleId) {
+                    String tokenType, String nobleId, String cityId) {
     this.playerName = playerName;
     this.action = action;
     this.cardId = cardId;
     this.tokenType = tokenType;
     this.nobleId = nobleId;
+    this.cityId = cityId;
   }
 
   /**
@@ -54,6 +57,24 @@ public class MoveInfo {
    */
   public String getCardId() {
     return cardId;
+  }
+
+  /**
+   * Returns noble id associated with this move.
+   *
+   * @return the noble id
+   */
+  public String getNobleId() {
+    return nobleId;
+  }
+
+  /**
+   * Returns city id associated with this move.
+   *
+   * @return the city id
+   */
+  public String getCityId() {
+    return cityId;
   }
 
 }
