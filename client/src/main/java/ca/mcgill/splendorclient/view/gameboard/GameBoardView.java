@@ -248,7 +248,7 @@ public class GameBoardView {
     tokenColumn.setSpacing(spacer);
     userInventoryView.getChildren().add(tokenColumn);
     Label username = new Label(playerName);
-    username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
+    username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, fontSize/1.5));
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
     TotalPrestigeCountView prestigeCountView =
@@ -278,11 +278,13 @@ public class GameBoardView {
    * @return the gameboard scene
    */
   public static Scene setupGameBoard(JSONArray players, String gameServer) {
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screenSize = new Dimension(1920,1080);//Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
     universalUnitY = screenSize.height / 100f;
     cardHeight = universalUnitY * 16;
     cardWidth = universalUnitX * 6;
+    //spacer is final and defined above
+    fontSize = (int) (universalUnitX + universalUnitY);
 
     //building the decks of cards
     VBox decksBox = new VBox();
