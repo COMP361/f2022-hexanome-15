@@ -235,7 +235,8 @@ public class LobbyController implements Initializable {
       JSONObject session = (JSONObject) obj.get((String) key);
       JSONObject gameParameters = (JSONObject) session.get("gameParameters");
       String name = gameParameters.getString("displayName");
-      String sessionInfo = name + " - " + (String) key;
+      //TODO : Add game service name
+      String sessionInfo = (String) key;
       arr.add(sessionInfo);
     }
     return arr;
