@@ -228,6 +228,7 @@ class GameBoardTest {
 
   @Test
   void applyReserveMoveNoGold() {
+    gb = new GameBoard(inventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
     UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
 
     int numGold = gb.getTokenPiles().get(GOLD).getSize();
@@ -1306,6 +1307,11 @@ class GameBoardTest {
   void testEquals() {
     GameBoard gb2 = new GameBoard(inventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
     assertEquals(gb, gb2);
+  }
+
+  @Test
+  void testNotEquals() {
+    assertFalse(gb.equals(null));
   }
 
   @Test
