@@ -92,36 +92,41 @@ public class ActionManager {
     Move selectedMove = moves.get(actionMd5);
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
-    // apply the selected move to game board
-    Action pendingBonusAction = splendorGame.getBoard()
-                                  .applyMove(selectedMove, playerWrapper.get());
-    UserInventory inventory = splendorGame.getBoard()
-                                .getInventoryByPlayerName(playerName).get();
+    // Checking if the move is null
+    if (selectedMove != null) {
+      // apply the selected move to game board
+      Action pendingBonusAction = splendorGame.getBoard()
+                                    .applyMove(selectedMove, playerWrapper.get());
+      UserInventory inventory = splendorGame.getBoard()
+                                  .getInventoryByPlayerName(playerName).get();
 
-    // need to handle potential compound actions
-    if (pendingBonusAction != null) {
-      System.out.println(new Gson().toJson(pendingBonusAction));
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-               .body(pendingBonusAction.toString());
-    } else {
-      Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
-
-      if (endOfTurnAction != null) {
+      // need to handle potential compound actions
+      if (pendingBonusAction != null) {
+        System.out.println(new Gson().toJson(pendingBonusAction));
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                 .body(endOfTurnAction.toString());
-      }
+                 .body(pendingBonusAction.toString());
+      } else {
+        Action endOfTurnAction =
+            splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
 
-      splendorGame.getBoard().endTurn();
+        if (endOfTurnAction != null) {
+          return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                   .body(endOfTurnAction.toString());
+        }
 
-      // check for terminal game state after action has been performed
-      if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
-        logger.log(Level.INFO, "Terminal game state reached");
+        splendorGame.getBoard().endTurn();
+
+        // check for terminal game state after action has been performed
+        if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+          logger.log(Level.INFO, "Terminal game state reached");
+        }
+        // advance to the next players turn
+        PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
+        return ResponseEntity.status(HttpStatus.OK)
+                 .body(whoseUpNext.getName());
       }
-      // advance to the next players turn
-      PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
-      return ResponseEntity.status(HttpStatus.OK)
-               .body(whoseUpNext.getName());
     }
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
 
@@ -500,21 +505,15 @@ public class ActionManager {
 
   private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,
                                      GameBoard gameBoard, PlayerWrapper player) {
-    if (inventory.getCards().size() == 0) {
-      throw new IllegalGameStateException(
-        "Illegal for spice card to have be purchased when inventory has 0 cards");
-    }
-    if (inventory.getUnpairedSpiceCard() == null) {
-      throw new IllegalGameStateException(
-        "Illegal to pair spice card when inventory does not contain an unpaired spice card");
-    }
     for (Card card : inventory.getCards()) {
-      if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
-        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
-            null, null, null, null);
-        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                           .toUpperCase();
-        moveMap.put(moveMd5, move);
+      if (inventory.getCards().size() > 0 && inventory.getUnpairedSpiceCard() != null) {
+        if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
+          Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
+              null, null, null, null);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
       }
     }
   }

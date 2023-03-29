@@ -209,7 +209,8 @@ public class UserInventory implements Iterable<Card> {
    * @return the number of bonuses of a certain token type in the user inventory
    */
   public int tokenBonusAmountByType(TokenType tokenType) {
-    return cards.stream().filter(card -> card.getTokenBonusType() == tokenType)
+    return cards.stream().filter(card -> card.isPurchased()
+                                           && card.getTokenBonusType() == tokenType)
       .map(Card::getTokenBonusAmount)
       .reduce(0, Integer::sum);
   }

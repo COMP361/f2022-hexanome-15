@@ -110,7 +110,6 @@ public class GameBoard {
     UserInventory inventory = getInventoryByPlayerName(player.getName()).orElseThrow(
         () -> new IllegalArgumentException(
         "player (" + player.getName() + ") wasn't found in this current game board"));
-
     Action pendingAction;
     moveCache.add(move);
     switch (move.getAction()) {
@@ -164,21 +163,27 @@ public class GameBoard {
           return actionPending;
         } else if (moveCache.size() == 2) {
           //selected two of the same token
-          if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
-            if (inventory.hasPower(Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL)) {
-              actionPending = Action.TAKE_EXTRA_TOKEN;
+          if (moveCache.get(0).getSelectedTokenTypes() != null) {
+            if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
+              if (inventory.hasPower(Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL)) {
+                actionPending = Action.TAKE_EXTRA_TOKEN;
+                return actionPending;
+              }
+              actionPending = null;
+              return null;
+            } else {
+              actionPending = Action.TAKE_TOKEN;
               return actionPending;
             }
+          } else {
             actionPending = null;
             return null;
-          } else {
-            actionPending = Action.TAKE_TOKEN;
-            return actionPending;
           }
         } else {
           actionPending = null;
           return null;
         }
+
       case DISCARD_FIRST_WHITE_CARD:
       case DISCARD_FIRST_BLUE_CARD:
       case DISCARD_FIRST_GREEN_CARD:
@@ -201,7 +206,6 @@ public class GameBoard {
       case RET_TOKEN:
         performReturnToken(move, inventory);
         if (requiresReturnTokens(inventory, move)) {
-          //i think this would get swooped up in endOfTurnActions, so maybe this is redundant.
           actionPending = Action.RET_TOKEN;
           return actionPending;
         }
