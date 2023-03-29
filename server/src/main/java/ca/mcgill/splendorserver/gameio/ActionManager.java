@@ -92,36 +92,41 @@ public class ActionManager {
     Move selectedMove = moves.get(actionMd5);
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
-    // apply the selected move to game board
-    Action pendingBonusAction = splendorGame.getBoard()
-                                  .applyMove(selectedMove, playerWrapper.get());
-    UserInventory inventory = splendorGame.getBoard()
-                                .getInventoryByPlayerName(playerName).get();
+    // Checking if the move is null
+    if (selectedMove != null) {
+      // apply the selected move to game board
+      Action pendingBonusAction = splendorGame.getBoard()
+                                    .applyMove(selectedMove, playerWrapper.get());
+      UserInventory inventory = splendorGame.getBoard()
+                                  .getInventoryByPlayerName(playerName).get();
 
-    // need to handle potential compound actions
-    if (pendingBonusAction != null) {
-      System.out.println(new Gson().toJson(pendingBonusAction));
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-               .body(pendingBonusAction.toString());
-    } else {
-      Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
-
-      if (endOfTurnAction != null) {
+      // need to handle potential compound actions
+      if (pendingBonusAction != null) {
+        System.out.println(new Gson().toJson(pendingBonusAction));
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                 .body(endOfTurnAction.toString());
-      }
+                 .body(pendingBonusAction.toString());
+      } else {
+        Action endOfTurnAction =
+            splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
 
-      splendorGame.getBoard().endTurn();
+        if (endOfTurnAction != null) {
+          return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                   .body(endOfTurnAction.toString());
+        }
 
-      // check for terminal game state after action has been performed
-      if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
-        logger.log(Level.INFO, "Terminal game state reached");
+        splendorGame.getBoard().endTurn();
+
+        // check for terminal game state after action has been performed
+        if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+          logger.log(Level.INFO, "Terminal game state reached");
+        }
+        // advance to the next players turn
+        PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
+        return ResponseEntity.status(HttpStatus.OK)
+                 .body(whoseUpNext.getName());
       }
-      // advance to the next players turn
-      PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
-      return ResponseEntity.status(HttpStatus.OK)
-               .body(whoseUpNext.getName());
     }
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
 
