@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import kong.unirest.HttpResponse;
 
 /**
@@ -54,7 +55,7 @@ public class DeckView extends Rectangle {
    *
    * @return the counter that displays the number of cards in the deck
    */
-  public Label getNumCardsDisplay() {
+  public Text getNumCardsDisplay() {
     return numCardsDisplay;
   }
   

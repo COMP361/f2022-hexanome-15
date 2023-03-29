@@ -26,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -44,6 +45,11 @@ public class GameBoardView {
   private static GameBoardView instance = new GameBoardView();
   //private static final float baseUnit_X = screenSize.height / 15f;
   private static final String rootPath = new File("").getAbsolutePath();
+  private static float universalUnitX;
+  private static float universalUnitY;
+  private static float cardWidth;
+  private static float cardHeight;
+  private static final float spacer = 5f;
 
   /**
    * Creates a GameBoardView.
@@ -78,7 +84,7 @@ public class GameBoardView {
    */
   private static StackPane getDeckPane(DeckView deckView) {
     StackPane deckPane = new StackPane();
-    Label cardCount = deckView.getNumCardsDisplay();
+    Text cardCount = deckView.getNumCardsDisplay();
     deckPane.getChildren().addAll(deckView, cardCount);
     return deckPane;
   }
@@ -100,14 +106,14 @@ public class GameBoardView {
    *
    * @param screenSize the size of the screen
    */
-  private static CardView createCardView(Dimension screenSize, String location) {
-    CardView newView = new CardView(screenSize.height / 15f, screenSize.width / 15f, location);
+  private static CardView createCardView(float x, float y, String location) {
+    CardView newView = new CardView(x, y, location);
     cardViews.add(newView);
     return newView;
   }
 
-  private static NobleView createNobleView(Dimension screenSize) {
-    NobleView newView = new NobleView(screenSize.width / 13f, screenSize.width / 13f);
+  private static NobleView createNobleView(float x, float y) {
+    NobleView newView = new NobleView(x, y);
     nobleViews.add(newView);
     return newView;
   }
@@ -119,13 +125,13 @@ public class GameBoardView {
    * @param screenSize the size of the screen
    * @param aggregator the list of cardViews
    */
-  private static void createCardFieldColumn(VBox column, Dimension screenSize,
+  private static void createCardFieldColumn(VBox column, float x, float y,
                                             List<CardView> aggregator, int columnCount) {
     int numRows = 3;
     for (int i = 0; i < numRows; ++i) {
       //flatten the 2d playing field for cardview location data.
       int location = columnCount * numRows + i;
-      CardView cardView = createCardView(screenSize, "C" + location);
+      CardView cardView = createCardView(x, y, "C" + location);
       column.getChildren().add(cardView);
       aggregator.add(cardView);
     }
@@ -175,11 +181,9 @@ public class GameBoardView {
   private static void populateGameBoardTokenPiles(HBox tokenRow,
                                                   Dimension screenSize, int numPlayers) {
     for (int i = 0; i < TokenType.values().length; ++i) {
-      final VBox tokenColumn = new VBox();
       TokenPileView pileView =
           new TokenPileView((float) screenSize.height / 55f, TokenType.values()[i]);
-      tokenColumn.getChildren().addAll(pileView, pileView.getCounter());
-      tokenRow.getChildren().add(tokenColumn);
+      tokenRow.getChildren().add(pileView);
       instance.tokenPileViews.add(pileView);
     }
   }
@@ -216,7 +220,7 @@ public class GameBoardView {
     userInventoryView.setLayoutY(yoffset);
     userInventoryView.setLayoutX(xoffset);
     VBox tokenColumn = new VBox();
-    tokenColumn.setSpacing(3);
+    tokenColumn.setSpacing(spacer);
     userInventoryView.getChildren().add(tokenColumn);
     Label username = new Label(playerName);
     username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
@@ -249,25 +253,29 @@ public class GameBoardView {
    */
   public static Scene setupGameBoard(JSONArray players, String gameServer) {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    universalUnitX = screenSize.width / 100f;
+    universalUnitY = screenSize.height / 100f;
+    cardHeight = universalUnitY * 17;
+    cardWidth = universalUnitX * 6;
 
     //building the decks of cards
     VBox decksBox = new VBox();
-    decksBox.setSpacing(3);
-    decksBox.setLayoutX(screenSize.width / 6f);
-    decksBox.setLayoutY(screenSize.height / 20f);
+    decksBox.setSpacing(spacer);
+    decksBox.setLayoutX(1 * universalUnitX + cardWidth * 1.2 + spacer);
+    decksBox.setLayoutY(universalUnitY);
 
-    //building the decks of cards
+    //building the decks of orient cards
     VBox orientDecksBox = new VBox();
-    orientDecksBox.setSpacing(3);
-    orientDecksBox.setLayoutX(screenSize.width / 1.8f);
-    orientDecksBox.setLayoutY(screenSize.height / 20f);
+    orientDecksBox.setSpacing(spacer);
+    orientDecksBox.setLayoutX(1 * universalUnitX + (8.2) * cardWidth + 8 * spacer + 2);
+    orientDecksBox.setLayoutY(universalUnitY);
 
 
     //building the layout of the faceup cards
     HBox faceupCardsRow = new HBox();
-    faceupCardsRow.setSpacing(3);
-    faceupCardsRow.setLayoutX(screenSize.width / 6f + screenSize.width / 10f + 10);
-    faceupCardsRow.setLayoutY(screenSize.height / 20f);
+    faceupCardsRow.setSpacing(spacer);
+    faceupCardsRow.setLayoutX(1 * universalUnitX + cardWidth * 1.2 + spacer + cardWidth + spacer);
+    faceupCardsRow.setLayoutY(universalUnitY);
     VBox faceupCardsFirstColumn = new VBox();
     VBox faceupCardsSecondColumn = new VBox();
     VBox faceupCardsThirdColumn = new VBox();
@@ -281,8 +289,8 @@ public class GameBoardView {
 
     int columnCount = 0;
     for (VBox column : columns) {
-      column.setSpacing(3);
-      createCardFieldColumn(column, screenSize, cardViewAggregator, columnCount);
+      column.setSpacing(spacer);
+      createCardFieldColumn(column, cardWidth, cardHeight, cardViewAggregator, columnCount);
       ++columnCount;
     }
     faceupCardsRow.getChildren().addAll(columns);
@@ -321,21 +329,21 @@ public class GameBoardView {
     }
 
     VBox nobleCards = new VBox();
-    nobleCards.setLayoutX(screenSize.width / 20f);
-    nobleCards.setLayoutY(screenSize.height / 12f);
+    nobleCards.setLayoutX(universalUnitX);
+    nobleCards.setLayoutY(universalUnitY);
     int playerCount = players.length();
     for (int i = 0; i < playerCount + 1; i++) {
-      NobleView nobleView = createNobleView(screenSize);
+      NobleView nobleView = createNobleView(cardWidth*1.2f, cardWidth*1.2f);
       nobleCards.getChildren().add(nobleView);
     }
-    nobleCards.setSpacing(3);
+    nobleCards.setSpacing(spacer);
 
 
     //Creating token piles
     HBox tokenRow = new HBox();
     tokenRow.setSpacing(50);
-    tokenRow.setLayoutY(5.25 * screenSize.height / 10f);
-    tokenRow.setLayoutX(screenSize.width / 6f);
+    tokenRow.setLayoutY(3 * cardHeight + 3 * spacer + 1 * universalUnitY);
+    tokenRow.setLayoutX(1 * universalUnitX + 1 * spacer + 1.2 * cardWidth);
     populateGameBoardTokenPiles(tokenRow, screenSize, nPlayers);
 
     //adding to the scene graph
