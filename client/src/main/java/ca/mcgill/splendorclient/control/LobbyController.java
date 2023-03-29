@@ -228,7 +228,7 @@ public class LobbyController implements Initializable {
   private ArrayList<String> get_all_sessions() {
     HttpResponse<JsonNode> response = Unirest.get(
         "http://127.0.0.1:4242/api/sessions").asJson();
-//    System.out.println("Response from launch: " + response.getBody().toString());
+    //System.out.println("Response from launch: " + response.getBody().toString());
     JSONObject obj = response.getBody().getObject();
     obj = obj.getJSONObject("sessions");
     ArrayList<String> arr = new ArrayList<>();
@@ -238,7 +238,8 @@ public class LobbyController implements Initializable {
       JSONObject session = (JSONObject) obj.get((String) key);
       JSONObject gameParameters = (JSONObject) session.get("gameParameters");
       String name = gameParameters.getString("displayName");
-      String sessionInfo = name + " - " + (String) key;
+      //TODO : Add game service name
+      String sessionInfo = (String) key;
       arr.add(sessionInfo);
     }
     return arr;

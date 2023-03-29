@@ -209,7 +209,8 @@ public class UserInventory implements Iterable<Card> {
    * @return the number of bonuses of a certain token type in the user inventory
    */
   public int tokenBonusAmountByType(TokenType tokenType) {
-    return cards.stream().filter(card -> card.getTokenBonusType() == tokenType)
+    return cards.stream().filter(card -> card.isPurchased()
+                                           && card.getTokenBonusType() == tokenType)
       .map(Card::getTokenBonusAmount)
       .reduce(0, Integer::sum);
   }
@@ -460,7 +461,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelOne(OrientCard card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
-    if (card.getDeckType() == DeckType.ORIENT1) {
+    if (card.getDeckType() == DeckType.ORIENT1 || card.getDeckType() == DeckType.BASE1) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());
@@ -475,7 +476,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
-    if (card.getDeckType() == DeckType.ORIENT2) {
+    if (card.getDeckType() == DeckType.ORIENT2 || card.getDeckType() == DeckType.BASE2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());

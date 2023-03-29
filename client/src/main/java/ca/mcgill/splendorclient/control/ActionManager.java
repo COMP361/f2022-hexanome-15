@@ -129,7 +129,7 @@ public class ActionManager {
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RESERVE_DEV")) {
         if (entry.getValue().getDeckLevel() != null) {
-          if (entry.getValue().getDeckLevel().equals(String.valueOf(deckType))) {
+          if (entry.getValue().getDeckLevel().equals(deckType.toString())) {
             return sendAction(entry.getKey());
           }
         }

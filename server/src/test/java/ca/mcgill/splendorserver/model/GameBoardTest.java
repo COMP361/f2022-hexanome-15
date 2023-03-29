@@ -198,13 +198,7 @@ class GameBoardTest {
     Action action = gb.applyMove(move, sofia);
     assertNull(action);
     UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
-    List<Card> reservedCards = new ArrayList<>();
-    for (Card card : inventory.getCards()) {
-      if (card.isReserved()) {
-        reservedCards.add(card);
-      }
-    }
-    assertEquals(reservedCard, reservedCards.get(0));
+    assertTrue(inventory.hasCardReserved(reservedCard));
     assertEquals(1, inventory.getTokenPiles().get(GOLD).getSize());
   }
 
@@ -216,13 +210,7 @@ class GameBoardTest {
     Action action = gb.applyMove(move, sofia);
     assertNull(action);
     UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
-    List<Card> reservedCards = new ArrayList<>();
-    for (Card card : inventory.getCards()) {
-      if (card.isReserved()) {
-        reservedCards.add(card);
-      }
-    }
-    assertEquals(reservedCard, reservedCards.get(0));
+    assertTrue(inventory.hasCardReserved(reservedCard));
     assertEquals(1, inventory.getTokenPiles().get(GOLD).getSize());
   }
 
@@ -232,24 +220,17 @@ class GameBoardTest {
 
     int numGold = gb.getTokenPiles().get(GOLD).getSize();
     for (int i = 0; i < numGold; i++) {
-      Move move = new Move(Action.RESERVE_DEV, cards.get(0), sofia, null,
+      Move move = new Move(Action.RESERVE_DEV, cards.get(i), sofia, null,
         null, null, null, null);
       gb.applyMove(move, sofia);
     }
 
-    Card reservedCard = cards.get(0);
+    Card reservedCard = cards.get(6);
     Move move = new Move(Action.RESERVE_DEV, reservedCard, jeff, null,
       null, null, null, null);
     Action action = gb.applyMove(move, jeff);
     assertNull(action);
-    List<Card> reservedCards = new ArrayList<>();
-    for (Card card : inventory2.getCards()) {
-      if (card.isReserved()) {
-        reservedCards.add(card);
-      }
-    }
-
-    assertEquals(reservedCard, reservedCards.get(0));
+    assertTrue(inventory2.hasCardReserved(reservedCard));
     assertEquals(0, inventory2.getTokenPiles().get(GOLD).getSize());
   }
 
@@ -1306,6 +1287,11 @@ class GameBoardTest {
   void testEquals() {
     GameBoard gb2 = new GameBoard(inventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
     assertEquals(gb, gb2);
+  }
+
+  @Test
+  void testNotEquals() {
+    assertFalse(gb.equals(null));
   }
 
   @Test

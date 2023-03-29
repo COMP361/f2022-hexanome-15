@@ -26,6 +26,7 @@ import kong.unirest.Unirest;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
-  private static final String gameServiceLocation = "http://127.0.0.1:8080";
+  private final String gameServiceLocation = "http://127.0.0.1:8080";
   // 4 threads for the max 4 players
   private final ExecutorService updaters = Executors.newFixedThreadPool(4);
   private String gameName;
@@ -147,7 +148,7 @@ public class GameRestController {
         gs = new GameServiceJson(
         gameName,
         displayName,
-        "http://127.0.0.1:8080",
+        gameServiceLocation,
         "2",
         "4",
         "true"
