@@ -108,8 +108,10 @@ public class ActionManager {
     System.out.println("Searching for reserve card move with id: " + cardid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RESERVE_DEV")) {
-        if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
-          return sendAction(entry.getKey());
+        if (entry.getValue().getCardId() != null) {
+          if (entry.getValue().getCardId().equals(String.valueOf(cardid))) {
+            return sendAction(entry.getKey());
+          }
         }
       }
     }
@@ -126,8 +128,10 @@ public class ActionManager {
     System.out.println("Searching for reserve card move with deck level: " + deckType);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RESERVE_DEV")) {
-        if (entry.getValue().getDeckLevel().equals(String.valueOf(deckType))) {
-          return sendAction(entry.getKey());
+        if (entry.getValue().getDeckLevel() != null) {
+          if (entry.getValue().getDeckLevel().equals(String.valueOf(deckType))) {
+            return sendAction(entry.getKey());
+          }
         }
       }
     }
