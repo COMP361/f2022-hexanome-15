@@ -460,7 +460,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelOne(OrientCard card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
-    if (card.getDeckType() == DeckType.ORIENT1) {
+    if (card.getDeckType() == DeckType.ORIENT1 || card.getDeckType() == DeckType.BASE1) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());
@@ -475,7 +475,7 @@ public class UserInventory implements Iterable<Card> {
    */
   public void addCascadeLevelTwo(OrientCard card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
-    if (card.getDeckType() == DeckType.ORIENT2) {
+    if (card.getDeckType() == DeckType.ORIENT2 || card.getDeckType() == DeckType.BASE2) {
       card.setCardStatus(CardStatus.PURCHASED);
       cards.add(card);
       addPrestige(card.getPrestige());

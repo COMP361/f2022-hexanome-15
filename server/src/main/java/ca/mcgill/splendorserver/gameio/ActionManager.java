@@ -567,7 +567,7 @@ public class ActionManager {
   private void getCascadeLevelOneMoves(Map<String, Move> moveMap, UserInventory inventory,
                                        GameBoard gameBoard, PlayerWrapper player) {
     for (Card card : gameBoard.getCards()) {
-      if (card.getDeckType() == DeckType.ORIENT1) {
+      if (card.getDeckType() == DeckType.ORIENT1 || card.getDeckType() == DeckType.BASE1) {
         Move move = new Move(Action.CASCADE_LEVEL_1, card, player,
             DeckType.ORIENT1, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
@@ -589,7 +589,7 @@ public class ActionManager {
   private void getCascadeLevelTwoMoves(Map<String, Move> moveMap, UserInventory inventory,
                                        GameBoard gameBoard, PlayerWrapper player) {
     for (Card card : gameBoard.getCards()) {
-      if (card.getDeckType() == DeckType.ORIENT2) {
+      if (card.getDeckType() == DeckType.ORIENT2 || card.getDeckType() == DeckType.BASE2) {
         Move move = new Move(Action.CASCADE_LEVEL_2, card, player,
             DeckType.ORIENT2, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))

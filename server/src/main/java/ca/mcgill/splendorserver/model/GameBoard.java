@@ -617,7 +617,8 @@ public class GameBoard {
    */
   private Action performCascadeLevelOne(Move move, UserInventory inventory) {
     assert move.getCard() != null
-             && move.getCard().getDeckType() == DeckType.ORIENT1
+             && (move.getCard().getDeckType() == DeckType.ORIENT1
+                   || move.getCard().getDeckType() == DeckType.BASE1)
              && move.getCard().getCardStatus() == CardStatus.NONE;
 
     OrientCard levelOneCard = (OrientCard) move.getCard();
@@ -641,7 +642,8 @@ public class GameBoard {
    */
   private Action performCascadeLevelTwo(Move move, UserInventory inventory) {
     assert move.getCard() != null
-             && move.getCard().getDeckType() == DeckType.ORIENT2
+             && (move.getCard().getDeckType() == DeckType.ORIENT2
+                   || move.getCard().getDeckType() == DeckType.BASE2)
              && move.getCard().getCardStatus() == CardStatus.NONE;
 
     OrientCard levelTwoCard = (OrientCard) move.getCard();
