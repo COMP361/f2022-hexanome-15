@@ -51,8 +51,6 @@ public class ActionManager {
   public ActionManager() {
   }
 
-  // TODO: do we need the users access token as request param to validate here???
-
   /**
    * Sends a message to the server to perform the given action.
    *
@@ -184,8 +182,9 @@ public class ActionManager {
           move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
       String noble = move.getNoble() != null ? move.getNoble().toString() : null;
       String city = move.getCity() != null ? move.getCity().toString() : null;
+      String deckLevel = move.getDeckType() != null ? move.getDeckType().toString() : null;
       simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(),
-          move.getAction().toString(), cardId, tokenType, noble, city));
+          move.getAction().toString(), cardId, tokenType, noble, city, deckLevel));
     }
     return simplifiedMap;
   }
@@ -489,8 +488,7 @@ public class ActionManager {
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
-        Card firstCard = deck.getCards().get(0);
-        Move takeFromDeck = new Move(action, firstCard, player, deck.getType(),
+        Move takeFromDeck = new Move(action, null, player, deck.getType(),
             null, null, null, null
         );
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
