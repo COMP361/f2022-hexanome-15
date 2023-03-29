@@ -50,6 +50,49 @@ public class GameBoardView {
   private static float cardWidth;
   private static float cardHeight;
   private static final float spacer = 5f;
+  private static int fontSize;
+  
+  /**
+   * @return the horizontal universal unit, 1% of screen resolution
+   */
+  public static float getUniversalUnitX() {
+    return universalUnitX;
+  }
+
+  /**
+   * @return the vertical universal unit, 1% of screen resolution
+   */
+  public static float getUniversalUnitY() {
+    return universalUnitY;
+  }
+
+  /**
+   * @return the currently used resolution-dependent card width
+   */
+  public static float getCardWidth() {
+    return cardWidth;
+  }
+
+  /**
+   * @return the currently used resolution-dependent card height
+   */
+  public static float getCardHeight() {
+    return cardHeight;
+  }
+
+  /**
+   * @return the minimum space between UI elements such as cards, in px
+   */
+  public static float getSpacer() {
+    return spacer;
+  }
+
+  /**
+   * @return the fontSize
+   */
+  public static int getFontSize() {
+    return fontSize;
+  }
 
   /**
    * Creates a GameBoardView.
