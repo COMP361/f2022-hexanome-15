@@ -1,6 +1,5 @@
 /**
  * Nov 22, 2022.
- * TODO
  */
 
 package ca.mcgill.splendorserver.gameio;

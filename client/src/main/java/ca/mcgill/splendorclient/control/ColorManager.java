@@ -1,7 +1,7 @@
 package ca.mcgill.splendorclient.control;
 
 
-import ca.mcgill.splendorclient.model.CardType;
+import ca.mcgill.splendorclient.model.DeckType;
 import ca.mcgill.splendorclient.model.TokenType;
 import javafx.scene.paint.Color;
 
@@ -73,7 +73,7 @@ public class ColorManager {
    * @param type the given card type
    * @return the color of a card type
    */
-  public static Color getColor(CardType type) {
+  public static Color getColor(DeckType type) {
     switch (type) {
       // yes ik switch statements used liberally are an antipattern,
       // but I have to bind colors somewhere

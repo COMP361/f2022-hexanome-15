@@ -1,7 +1,7 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
 import ca.mcgill.splendorclient.control.ColorManager;
-import ca.mcgill.splendorclient.model.CardType;
+import ca.mcgill.splendorclient.model.DeckType;
 import ca.mcgill.splendorclient.model.TokenType;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -95,10 +95,9 @@ public class GameBoardView {
    * @param type       the type of deck that is being represented by the DeckView
    * @param screenSize the size of the screen
    */
-  private static DeckView createDeckView(CardType type, float x, float y) {
-    DeckView newView = new DeckView(x, y,
-        0, ColorManager.getColor(type));
-    //deckViews.add(newView);
+  private static DeckView createDeckView(DeckType type, Dimension screenSize) {
+    DeckView newView = new DeckView(screenSize.height / 15f, screenSize.width / 15f,
+        0, type);
     return newView;
   }
 
@@ -296,13 +295,13 @@ public class GameBoardView {
     }
     faceupCardsRow.getChildren().addAll(columns);
 
-    DeckView redDeckView = createDeckView(CardType.BASE3, cardWidth, cardHeight);
-    DeckView yellowDeckView = createDeckView(CardType.BASE2, cardWidth, cardHeight);
-    DeckView greenDeckView = createDeckView(CardType.BASE1, cardWidth, cardHeight);
+    DeckView redDeckView = createDeckView(DeckType.BASE3, screenSize);
+    DeckView yellowDeckView = createDeckView(DeckType.BASE2, screenSize);
+    DeckView greenDeckView = createDeckView(DeckType.BASE1, screenSize);
 
-    DeckView orient3DeckView = createDeckView(CardType.ORIENT3, cardWidth, cardHeight);
-    DeckView orient2DeckView = createDeckView(CardType.ORIENT2, cardWidth, cardHeight);
-    DeckView orient1DeckView = createDeckView(CardType.ORIENT1, cardWidth, cardHeight);
+    DeckView orient3DeckView = createDeckView(DeckType.ORIENT3, screenSize);
+    DeckView orient2DeckView = createDeckView(DeckType.ORIENT2, screenSize);
+    DeckView orient1DeckView = createDeckView(DeckType.ORIENT1, screenSize);
 
     //adding deckviews to list field for modification by GameController
     //these follow order b123,o123 as in state json
