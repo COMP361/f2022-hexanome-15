@@ -504,7 +504,7 @@ public class ActionManager {
       if (inventory.getCards().size() > 0 && inventory.getUnpairedSpiceCard() != null) {
         if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
           Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
-            null, null, null, null);
+              null, null, null, null);
           String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
                              .toUpperCase();
           moveMap.put(moveMd5, move);
