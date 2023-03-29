@@ -2,10 +2,10 @@ package ca.mcgill.splendorserver.model.cities;
 
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-//TODO: Make cities flyweights
 
 /**
  * Represents a Splendor Cities expansion City
@@ -83,12 +83,11 @@ public class City {
     if (cities.size() == 0) {
       generateCities();
     }
-    Random random = new Random();
+    Collections.shuffle(cities);
     citiesInGame = new ArrayList<>();
     for (int i = 0; i < numPlayers; i++) {
-      int randomIndex = random.nextInt(cities.size());
-      City randomCity = cities.get(randomIndex);
-      citiesInGame.add(randomCity);
+      City city = cities.get(i);
+      citiesInGame.add(city);
     }
     return citiesInGame;
   }

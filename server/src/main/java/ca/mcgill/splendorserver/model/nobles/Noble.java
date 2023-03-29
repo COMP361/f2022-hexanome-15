@@ -2,10 +2,8 @@ package ca.mcgill.splendorserver.model.nobles;
 
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-
-//TODO: Make Nobles flyweights
 
 /**
  * Represents a Splendor Noble with reserved status and prestige.
@@ -89,12 +87,12 @@ public class Noble {
     if (nobles.size() == 0) {
       generateNobles();
     }
-    Random random = new Random();
+    Collections.shuffle(nobles);
     noblesInGame = new ArrayList<>();
+
     for (int i = 0; i < numPlayers + 1; i++) {
-      int randomIndex = random.nextInt(nobles.size());
-      Noble randomNoble = nobles.get(randomIndex);
-      noblesInGame.add(randomNoble);
+      Noble noble = nobles.get(i);
+      noblesInGame.add(noble);
     }
     return noblesInGame;
   }
