@@ -101,11 +101,6 @@ public class GameBoardView {
     return newView;
   }
 
-  /**
-   * Creates a CardView and returns it.
-   *
-   * @param screenSize the size of the screen
-   */
   private static CardView createCardView(float x, float y, String location) {
     CardView newView = new CardView(x, y, location);
     cardViews.add(newView);
@@ -118,13 +113,6 @@ public class GameBoardView {
     return newView;
   }
 
-  /**
-   * Creates a column of cards for the game board view.
-   *
-   * @param column     the column
-   * @param screenSize the size of the screen
-   * @param aggregator the list of cardViews
-   */
   private static void createCardFieldColumn(VBox column, float x, float y,
                                             List<CardView> aggregator, int columnCount) {
     int numRows = 3;
@@ -137,12 +125,6 @@ public class GameBoardView {
     }
   }
 
-  /**
-   * Creates a token display for the player's inventory.
-   *
-   * @param tokenColumn the column of tokens
-   * @param screenSize  the size of the screen
-   */
   private static void populateUserInventoryDisplay(VBox tokenColumn, Dimension screenSize,
                                                    final UserInventoryView userInventoryView) {
     int i = 0;
@@ -249,6 +231,7 @@ public class GameBoardView {
    * Initializes the game board.
    *
    * @param players the players in the game
+   * @param gameServer the game server of the game
    * @return the gameboard scene
    */
   public static Scene setupGameBoard(JSONArray players, String gameServer) {
@@ -333,7 +316,7 @@ public class GameBoardView {
     nobleCards.setLayoutY(universalUnitY);
     int playerCount = players.length();
     for (int i = 0; i < playerCount + 1; i++) {
-      NobleView nobleView = createNobleView(cardWidth*1.2f, cardWidth*1.2f);
+      NobleView nobleView = createNobleView(cardWidth * 1.2f, cardWidth * 1.2f);
       nobleCards.getChildren().add(nobleView);
     }
     nobleCards.setSpacing(spacer);
