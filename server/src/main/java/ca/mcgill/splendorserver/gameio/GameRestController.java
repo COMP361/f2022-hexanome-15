@@ -43,8 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class GameRestController {
-  @Value("${server.port}")
-  private String port;
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
   private final String gameServiceLocation = "http://127.0.0.1:8080";
   // 4 threads for the max 4 players
