@@ -128,6 +128,19 @@ class UserInventoryTest {
   }
 
   @Test
+  void purchaseCardGold2() {
+    uinv.addToken(new Token(GOLD));
+    uinv.addToken(new Token(DIAMOND));
+    uinv.addToken(new Token(DIAMOND));
+    CardCost cost2 = new CardCost(3,0,0,0,0);
+    Card card2 = new Card(1,1, DIAMOND, BASE1, ONE, cost2);
+    uinv.purchaseCard(card2);
+    assertTrue(uinv.hasCard(card2));
+    assertEquals(0, uinv.getTokenPiles().get(GOLD).getSize());
+    assertEquals(0, uinv.getTokenPiles().get(DIAMOND).getSize());
+  }
+
+  @Test
   void purchaseCardGoldCard() {
     OrientCard goldCard = new OrientCard(1,0, GOLD, ORIENT1, TWO, cost,false,
       new ArrayList<>());

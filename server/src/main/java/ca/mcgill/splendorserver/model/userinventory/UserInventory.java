@@ -509,12 +509,7 @@ public class UserInventory implements Iterable<Card> {
       }
       // bonusDiscount = sum(tokenBonusAmount)
       // for owned cards that match the current cost token in iteration
-      int bonusDiscount = cards.stream()
-                               .filter(
-                                   c -> c.getTokenBonusType()
-                                          == entry.getKey() && c.isPurchased())
-                               .map(Card::getTokenBonusAmount)
-                               .reduce(0, Integer::sum);
+      int bonusDiscount = tokenBonusAmountByType(entry.getKey());
       final int actualCost = entry.getValue() - bonusDiscount;
 
       int numGoldTokensNeeded = amountGoldTokensNeeded(entry.getKey(), entry.getValue());
@@ -625,9 +620,10 @@ public class UserInventory implements Iterable<Card> {
   private List<Token> removeTokensByTokenType(TokenType tokenType, int n) {
     assert tokenType != null && n >= 0;
     List<Token> removed = new ArrayList<>(n);
+    int tokenPileSize = tokenPiles.get(tokenType).getSize();
 
     if (tokenPiles.get(tokenType).getSize() < n) {
-      for (int i = 0; i < tokenPiles.get(tokenType).getSize(); i++) {
+      for (int i = 0; i < tokenPileSize; i++) {
         removed.add(removeTokenByTokenType(tokenType));
       }
     } else {
