@@ -120,7 +120,13 @@ public class GameBoard {
           actionPending = pendingAction;
           return pendingAction;
         } else {
-          return null;
+          if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN)) {
+            actionPending = Action.TAKE_EXTRA_TOKEN;
+            return actionPending;
+          }
+          else {
+            return null;
+          }
         }
       case RESERVE_DEV:
         performReserveDev(move, inventory);
@@ -273,23 +279,6 @@ public class GameBoard {
       }
     }
 
-    if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN)) {
-      boolean btakeextratoken = false;
-      for (Move moveComponent : moveCache) {
-        if (moveComponent.getAction() == Action.PURCHASE_DEV) {
-          btakeextratoken = true;
-        }
-        if (moveComponent.getAction() == Action.TAKE_EXTRA_TOKEN) {
-          btakeextratoken = false;
-          break;
-        }
-      }
-      if (btakeextratoken) {
-        actionPending = Action.TAKE_EXTRA_TOKEN;
-        return Action.TAKE_EXTRA_TOKEN;
-      }
-    }
-
     List<City> candidateCities = new ArrayList<>();
 
     for (City city : cities) {
@@ -299,7 +288,7 @@ public class GameBoard {
     }
     if (candidateCities.size() == 1) {
       performClaimCityAction(cities.get(0), inventory);
-    } else if (candidateNobles.size() > 1) {
+    } else if (candidateCities.size() > 1) {
       actionPending = Action.RECEIVE_CITY;
       return Action.RECEIVE_CITY;
     }
