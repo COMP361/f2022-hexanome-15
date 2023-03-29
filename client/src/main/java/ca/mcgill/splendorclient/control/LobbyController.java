@@ -240,7 +240,7 @@ public class LobbyController implements Initializable {
       String name = gameParameters.getString("displayName");
       //TODO : Add game service name
       String sessionInfo = (String) key;
-      arr.add(sessionInfo);
+      arr.add(name + " - " + sessionInfo);
     }
     return arr;
   }
