@@ -28,7 +28,7 @@ services:
       context: ..
       dockerfile: docker_resources/Dockerfile-splendor-server
     ports:
-      - "4244:4244"
+      - "8080:8080"
     depends_on:
       - lobby
     command: sh -c "/wait && java -jar /usr/app/splendorServer.jar"

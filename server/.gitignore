@@ -1,3 +1,4 @@
-/target/
-/docs/
-/.settings/
+*/target/*
+*/docs/*
+*/.idea/*
+*/.settings/*
