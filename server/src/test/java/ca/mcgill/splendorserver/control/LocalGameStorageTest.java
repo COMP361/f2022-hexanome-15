@@ -48,20 +48,6 @@ class LocalGameStorageTest {
   }
 
   @Test
-  void requiresUpdate() {
-    LocalGameStorage.addActiveGame(sg);
-    assertTrue(LocalGameStorage.requiresUpdate(1L));
-  }
-
-  @Test
-  void notRequiresUpdate() {
-    assertThrows(
-      GameNotFoundException.class,
-      () -> LocalGameStorage.requiresUpdate(1L),
-      "Could not find game ID: 1");
-  }
-
-  @Test
   void getActiveGameEmpty() {
     assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(1L));
   }

@@ -3,13 +3,24 @@ package ca.mcgill.splendorserver.gameio;
 import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
+import ca.mcgill.splendorserver.control.SaveGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
+import ca.mcgill.splendorserver.model.TradingPostJson;
+import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cities.City;
+import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.savegame.DeckJson;
+import ca.mcgill.splendorserver.model.savegame.SaveGame;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import kong.unirest.HttpResponse;
@@ -209,8 +221,53 @@ public class GameRestController {
   public ResponseEntity<String> saveGame(@PathVariable long gameId) {
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameId).get();
     //refresh registrar token or just log in again actually with gameName Antichrist! account
-    
-    //grab the game and flush it to the disk with a generated savegameid.
+    JSONObject adminAuth = LobbyServiceExecutor
+        .LOBBY_SERVICE_EXECUTOR.auth_token(
+            splendorGame.getSessionInfo().getGameServer(), "Antichrist1!");
+    //grab the game model, generate a savegameid and add it to an in-memory json "db"
+    List<InventoryJson> inventoriesJson = new ArrayList<>();
+    GameBoard gameboard = splendorGame.getBoard();
+    for (UserInventory inventory : gameboard.getInventories()) {
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(), 
+            inventory.getTokenPiles(), inventory.getPlayer().getName(), 
+            inventory.getPrestigeWon(), inventory.getNobles(), 
+            inventory.getPowers(), inventory.getCoatOfArmsPile(),
+            inventory.getCities(), null);
+      inventoriesJson.add(inventoryJson);
+    }
+    List<DeckJson> decksJson = new ArrayList<>();
+    for (Deck deck : gameboard.getDecks()) {
+      decksJson.add(new DeckJson(deck));
+    }
+    List<Integer> nobles = new ArrayList<>();
+    for (Noble noble : gameboard.getNobles()) {
+      nobles.add(noble.getId());
+    }
+    List<Integer> cardField = new ArrayList<>();
+    for (Card card : gameboard.getCards()) {
+      cardField.add(card.getId());
+    }
+    List<TradingPostJson> tradingPosts = new ArrayList<>();
+    for (TradingPostSlot tradingPostSlot : gameboard.getTradingPostSlots()) {
+      List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()) {
+        coatOfArmsTypes.add(coatOfArms.getType());
+      }
+      tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
+    }
+    List<Integer> cities = new ArrayList<>();
+    for (City city : gameboard.getCities()) {
+      cities.add(city.getId());
+    }
+    ca.mcgill.splendorserver.model.savegame.GameBoardJson 
+        gameboardJson = 
+            new ca.mcgill.splendorserver.model.savegame.GameBoardJson(
+                splendorGame.whoseTurn().getName(), inventoriesJson, decksJson,
+                nobles, cardField, gameboard.getTokenPiles(), tradingPosts,
+                cities);
+    String id = String.valueOf(new Random());
+    SaveGame savegame = new SaveGame(id, gameboardJson.toString());
+    SaveGameStorage.addSaveGame(savegame);
     return null;
   }
 

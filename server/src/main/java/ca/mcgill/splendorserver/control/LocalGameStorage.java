@@ -1,6 +1,5 @@
 package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.gameio.GameNotFoundException;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,30 +53,6 @@ public class LocalGameStorage {
     } else {
       return Optional.empty();
     }
-  }
-
-  /**
-   * Checks if an update is required.
-   *
-   * @param gameid the game id of the active game
-   * @return a boolean determining if an update is required
-   */
-  public static boolean requiresUpdate(long gameid) {
-    if (activeGames.containsKey(gameid)) {
-      if (gameStates.containsKey(gameid)) {
-        if (activeGames.get(gameid).hashCode() != gameStates.get(gameid)) {
-          gameStates.put(gameid, activeGames.get(gameid).hashCode());
-          return true;
-        } else {
-          if (activeGames.get(gameid).getRequiresUpdate()) {
-            activeGames.get(gameid).setRequiresUpdate(false);
-            return true;
-          }
-          return false;
-        }
-      }
-    }
-    throw new GameNotFoundException(gameid);
   }
 
   /**
