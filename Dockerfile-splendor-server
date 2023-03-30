@@ -1,10 +1,10 @@
 FROM maven:3.8.3-adoptopenjdk-16 as serverbuild
 MAINTAINER zachary hayden
-COPY docker_resources/client /usr/src/client
+COPY client /usr/src/client
 RUN mvn -f /usr/src/client/pom.xml clean install -P prod
 
-COPY ../src /usr/src/app/src
-COPY ../pom.xml /usr/src/app
+COPY server/src /usr/src/app/src
+COPY server/pom.xml /usr/src/app
 RUN mvn -DskipTests -f /usr/src/app/pom.xml clean package -P prod
 
 # discard maven and run the jar file using java

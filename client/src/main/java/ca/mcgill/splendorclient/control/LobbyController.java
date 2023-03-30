@@ -25,10 +25,13 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Controls Lobby Service functions.
  */
+@Component
 public class LobbyController implements Initializable {
   @FXML
   private Button createSessionButton;
@@ -46,6 +49,10 @@ public class LobbyController implements Initializable {
   private Button logoutButton;
   @FXML
   private ChoiceBox<String> gameserviceChoiceBox;
+
+  // setting lobby service location
+  @Value("{lobbyservice.location}")
+  private String lobbyServiceLocation = "http://127.0.0.1:4242"; // TODO: fix the value injection
 
   /**
    * Creates a LobbyController object.
@@ -189,7 +196,7 @@ public class LobbyController implements Initializable {
 
     if (saveGame == null) {
       HttpResponse<String> response = Unirest.post(
-          "http://127.0.0.1:4242/api/sessions"
+          lobbyServiceLocation + "/api/sessions"
             + "?access_token="
             + accessToken)
                                         .header("Authorization", "Bearer" + accessToken)
@@ -203,7 +210,7 @@ public class LobbyController implements Initializable {
     } else {
       HttpResponse<String> response2;
       response2 = Unirest.post(
-        "http://127.0.0.1:4242/api/sessions"
+        lobbyServiceLocation + "/api/sessions"
           + "?access_token="
           + accessToken)
                     .header("Authorization", "Bearer" + accessToken)
@@ -224,7 +231,7 @@ public class LobbyController implements Initializable {
    */
   private ArrayList<String> get_all_sessions() {
     HttpResponse<JsonNode> response = Unirest.get(
-        "http://127.0.0.1:4242/api/sessions").asJson();
+        lobbyServiceLocation + "/api/sessions").asJson();
     JSONObject obj = response.getBody().getObject();
     obj = obj.getJSONObject("sessions");
     ArrayList<String> arr = new ArrayList<>();
@@ -244,7 +251,7 @@ public class LobbyController implements Initializable {
    */
   private JSONObject get_session(String sessionid) {
     HttpResponse<JsonNode> response = Unirest.get(
-        "http://127.0.0.1:4242/api/sessions/"
+        lobbyServiceLocation + "/api/sessions/"
         + sessionid).asJson();
     return response.getBody().getObject();
   }
@@ -258,7 +265,7 @@ public class LobbyController implements Initializable {
   private boolean launch_session(String sessionid, String accessToken) {
     try {
       HttpResponse<String> response = Unirest.post(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          lobbyServiceLocation + "/api/sessions/" + sessionid
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
@@ -281,7 +288,7 @@ public class LobbyController implements Initializable {
   private boolean delete_session(String sessionid, String accessToken) {
     try {
       HttpResponse<String> response = Unirest.delete(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          lobbyServiceLocation + "/api/sessions/" + sessionid
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
@@ -296,7 +303,7 @@ public class LobbyController implements Initializable {
   private void revoke_auth(String accessToken) {
     try {
       HttpResponse<String> response =
-          Unirest.delete("http://127.0.0.1:4242/oauth/active?access_token="
+          Unirest.delete(lobbyServiceLocation + "/oauth/active?access_token="
                          + URLEncoder.encode(accessToken, "UTF-8")).asString();
       if (!response.isSuccess()) {
         System.out.println("Failed to logout");
@@ -317,7 +324,7 @@ public class LobbyController implements Initializable {
     HttpResponse<String> response;
     try {
       response = Unirest.put(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          lobbyServiceLocation + "/api/sessions/" + sessionid
             + "/players/" + playerName + "?access_token="
             + URLEncoder.encode(accessToken, "UTF-8")
         )
@@ -345,7 +352,7 @@ public class LobbyController implements Initializable {
     HttpResponse<String> response;
     try {
       response = Unirest.delete(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          lobbyServiceLocation + "/api/sessions/" + sessionid
             + "/players/" + playerName + "?access_token="
             + URLEncoder.encode(accessToken, "UTF-8")
         )
@@ -364,7 +371,7 @@ public class LobbyController implements Initializable {
    */
   private ArrayList<String> get_gameservices() {
     HttpResponse<JsonNode> response = Unirest.get(
-        "http://127.0.0.1:4242/api/gameservices"
+        lobbyServiceLocation + "/api/gameservices"
       )
                                         .asJson();
     System.out.println("Response from get_gameservices: " + response.getBody().toString());

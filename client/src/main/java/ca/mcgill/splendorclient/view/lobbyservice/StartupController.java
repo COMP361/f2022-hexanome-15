@@ -19,12 +19,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Controls the start up for the lobby service.
  */
+@Component
 public class StartupController implements Initializable {
-  private final LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
+  @Autowired
+  private LobbyServiceExecutor ls;
 
   @FXML
   private TextField usernameField;

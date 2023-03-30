@@ -6,33 +6,46 @@ import java.io.InputStreamReader;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 
 /**
  * Executes Lobby Service commands.
  *
  * @author zacharyhayden
  */
+@Component
 public class LobbyServiceExecutor {
+
   /**
    * Instance of Lobby Service Executor.
    */
-  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242");
+  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor();
   /**
    * The location of the server.
    */
-  public static final String SERVERLOCATION = "127.0.0.1:8080";
+  public static String SERVERLOCATION = "http://splendor_server:8080"; // TODO: fix the value injection;
+
+  /**
+   * Sets the game service location from properties.
+   *
+   * @param location location to set.
+   */
+  @Value("{gameservice.location}")
+  public void setServerLocation(String location) {
+    LobbyServiceExecutor.SERVERLOCATION = location;
+  }
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
-  private final String lobbyServiceLocation;
+  @Value("{lobbyservice.location}")
+  private String lobbyServiceLocation = "http://lobby:4242"; // TODO: fix the value injection;
 
   /**
    * Creates a LobbyServiceExecutor.
    *
-   * @param lobbyServiceLocation location of running lobby service
    */
-  private LobbyServiceExecutor(String lobbyServiceLocation) {
-    assert lobbyServiceLocation != null && lobbyServiceLocation.length() != 0;
-    this.lobbyServiceLocation = lobbyServiceLocation;
+  private LobbyServiceExecutor() {
   }
 
   /**

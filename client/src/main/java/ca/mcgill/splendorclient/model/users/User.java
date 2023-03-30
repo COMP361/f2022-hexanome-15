@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Represents a user.
@@ -83,11 +84,13 @@ public class User {
    * @author zacharyhayden
    */
   private class RenewAccessToken extends TimerTask {
+    @Autowired
+    private LobbyServiceExecutor lobbyServiceExecutor;
 
     @Override
     public void run() {
       JSONObject renewedTokens =
-          LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.renew_auth_token(refreshToken);
+          lobbyServiceExecutor.renew_auth_token(refreshToken);
       accessToken = (String) Parsejson.PARSE_JSON.getFromKey(renewedTokens, "access_token");
       expiresIn = (int) Parsejson.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
     }

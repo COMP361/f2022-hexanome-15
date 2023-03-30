@@ -82,6 +82,29 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!--dev profile is intended for native deployment of LS, client, and server via jar -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<activatedProperties>dev</activatedProperties>
+				<packaging.type>jar</packaging.type>
+			</properties>
+		</profile>
+		<!-- prod profile is intended for dockerized deployment of ls, client, and server -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<activatedProperties>prod</activatedProperties>
+				<packaging.type>jar</packaging.type>
+			</properties>
+		</profile>
+	</profiles>
+
 	<name>splendorclient</name>
 	<dependencies>
 		<dependency>
