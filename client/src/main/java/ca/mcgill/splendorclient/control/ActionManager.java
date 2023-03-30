@@ -240,6 +240,60 @@ public class ActionManager {
   }
 
   /**
+   * Finds receive noble moves in the move map and forwards to server.
+   *
+   * @param nobleid requested to receive
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReceiveNobleMove(int nobleid) {
+    System.out.println("Search for receive noble move with id: " + nobleid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RECEIVE_NOBLE")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(nobleid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds reserve noble moves in the move map and forwards to server.
+   *
+   * @param nobleid requested to reserve
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReserveNobleMove(int nobleid) {
+    System.out.println("Search for reserve noble move with id: " + nobleid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RESERVE_NOBLE")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(nobleid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds receive city moves in the move map and forwards to server.
+   *
+   * @param cityid requested to receive
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReceiveCityMove(int cityid) {
+    System.out.println("Search for receive city move with id: " + cityid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RECEIVE_CITY")) {
+        if (entry.getValue().getCardId().equals(String.valueOf(cityid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Returns this instance of ActionManager.
    *
    * @return this instance of ActionManager

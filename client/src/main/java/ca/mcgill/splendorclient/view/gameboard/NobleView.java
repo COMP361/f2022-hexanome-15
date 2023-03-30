@@ -8,6 +8,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import kong.unirest.HttpResponse;
 import kong.unirest.json.JSONException;
 
 /**
@@ -34,6 +35,25 @@ public class NobleView extends StackPane {
     inner.setArcHeight((height - 10) / 5);
     inner.setArcWidth((height - 10) / 5);
     this.getChildren().addAll(outer, inner);
+    this.setOnMouseClicked(arg0 -> {
+      HttpResponse<String> result = ActionManager.findAndSendReceiveNobleMove(localid);
+      if (result != null) {
+        if (result.getStatus() == 206) {
+          ActionManager.handleCompoundMoves(result.getBody());
+        } else if (result.getStatus() == 200) {
+            //inform end of turn
+        }
+      } else {
+        result = ActionManager.findAndSendReserveNobleMove(localid);
+        if (result != null) {
+          if (result.getStatus() == 206) {
+            ActionManager.handleCompoundMoves(result.getBody());
+          } else if (result.getStatus() == 200) {
+              //inform end of turn
+          }
+        }
+      }
+    });
   }
 
   /**
