@@ -3,6 +3,10 @@ package ca.mcgill.splendorclient.lobbyserviceio;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.json.JSONObject;
@@ -131,6 +135,18 @@ public class LobbyServiceExecutor {
       output = (long) run(command, ParseText.PARSE_TEXT);
     }
     return output;
+  }
+  
+  public void save_game(String accessToken, String body, String gameserviceName, String id) {
+    try {
+      System.out.println(Unirest.put(lobbyServiceLocation + "/api/gameservices/" + 
+                  gameserviceName + "/savegames/" + id + 
+                   "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
+                  .body(body).asString().getBody());
+    } catch (UnsupportedEncodingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**

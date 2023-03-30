@@ -16,6 +16,7 @@ import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.savegame.DeckJson;
 import ca.mcgill.splendorserver.model.savegame.SaveGame;
+import ca.mcgill.splendorserver.model.savegame.SaveGameJson;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
@@ -268,6 +269,15 @@ public class GameRestController {
     String id = String.valueOf(new Random());
     SaveGame savegame = new SaveGame(id, gameboardJson.toString());
     SaveGameStorage.addSaveGame(savegame);
+    //inform lobby service
+    List<String> players = new ArrayList<>();
+    for (PlayerWrapper player : splendorGame.getSessionInfo().getPlayers()) {
+      players.add(player.getName());
+    }
+    SaveGameJson body = new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
+    LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.save_game(
+        (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token"), 
+        body.toString(), splendorGame.getSessionInfo().getGameServer(), id);
     return null;
   }
 
