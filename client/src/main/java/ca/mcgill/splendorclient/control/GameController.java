@@ -273,7 +273,7 @@ public class GameController {
                 Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 notYourTurnAlert.setTitle("Turn Information");
                 notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername()
-                                                 + " turn, please wait for them to go.");
+                                                 + "'s turn, please wait for them to go.");
                 notYourTurnAlert.show();
               }
             });
