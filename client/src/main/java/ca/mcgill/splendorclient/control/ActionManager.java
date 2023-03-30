@@ -249,7 +249,7 @@ public class ActionManager {
     System.out.println("Search for receive noble move with id: " + nobleid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RECEIVE_NOBLE")) {
-        if (entry.getValue().getCardId().equals(String.valueOf(nobleid))) {
+        if (entry.getValue().getNobleId().equals(String.valueOf(nobleid))) {
           return sendAction(entry.getKey());
         }
       }
@@ -267,7 +267,7 @@ public class ActionManager {
     System.out.println("Search for reserve noble move with id: " + nobleid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RESERVE_NOBLE")) {
-        if (entry.getValue().getCardId().equals(String.valueOf(nobleid))) {
+        if (entry.getValue().getNobleId().equals(String.valueOf(nobleid))) {
           return sendAction(entry.getKey());
         }
       }
@@ -285,7 +285,7 @@ public class ActionManager {
     System.out.println("Search for receive city move with id: " + cityid);
     for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
       if (entry.getValue().getAction().equals("RECEIVE_CITY")) {
-        if (entry.getValue().getCardId().equals(String.valueOf(cityid))) {
+        if (entry.getValue().getCityId().equals(String.valueOf(cityid))) {
           return sendAction(entry.getKey());
         }
       }
