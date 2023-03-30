@@ -8,6 +8,8 @@ import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
+import ca.mcgill.splendorserver.model.cities.City;
+import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
@@ -71,6 +73,8 @@ public class GameRestController {
   
   private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    List<Noble> nobles = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
       for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
@@ -82,11 +86,15 @@ public class GameRestController {
           inventory.getPowers(), inventory.getCoatOfArmsPile(),
           inventory.getCities(), purchasedCardCount);
       inventories.add(inventoryJson);
+      nobles.addAll(inventory.getNobles());
+      cities.addAll(inventory.getCities());
     }
+    nobles.addAll(gameboard.getNobles());
+    cities.addAll(gameboard.getCities());
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
-        gameboard.getDecks(), gameboard.getNobles(), 
+        gameboard.getDecks(), nobles,
         gameboard.getCards(), gameboard.getTokenPiles(),
-        gameboard.getTradingPostSlots(), gameboard.getCities());
+        gameboard.getTradingPostSlots(), cities);
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
   }
