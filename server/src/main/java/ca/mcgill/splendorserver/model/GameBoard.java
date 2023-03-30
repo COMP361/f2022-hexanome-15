@@ -675,12 +675,11 @@ public class GameBoard {
         if (!deck.isEmpty()) {
           // we know draw is ok cause of the check for emptiness above
           cardField.add(replenishIndex, deck.draw());
-        }
-        else {
+        } else {
           // If the deck is empty, we're going to replace the missing card
           // with a card that is not purchasable/reservable and has an id of -1
           Card card = new Card(-1, 0, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE,
-            new CardCost(100, 100, 100, 100, 100));
+              new CardCost(100, 100, 100, 100, 100));
           card.setCardStatus(CardStatus.PURCHASED);
           cardField.add(replenishIndex, card);
         }
