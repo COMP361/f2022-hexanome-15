@@ -347,7 +347,7 @@ public class GameBoardView {
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
     if (newImage != null) {
       root.setBackground(new Background(
-        new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+          new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     }
     return toReturn;
   }

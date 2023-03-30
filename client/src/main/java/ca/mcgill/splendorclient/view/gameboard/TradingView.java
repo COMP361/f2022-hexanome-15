@@ -32,7 +32,7 @@ public class TradingView extends Pane {
     Image newImage = new Image("file:///" + rootPath + "/resources/tradingBoard.jpg");
     if (newImage != null) {
       this.setBackground(new Background(
-        new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+          new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     }
     this.setPrefSize(screenSize.getWidth() / 4.0f, screenSize.getHeight() / 10.0f);
 

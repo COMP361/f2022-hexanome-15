@@ -42,8 +42,8 @@ public class NobleView extends StackPane {
    * @param num the noble id
    */
   public void updateView(int num) {
-    Image newImage = new Image("file:///" + rootPath + "/resources/noble_" + num + ".jpg");
-    if (newImage != null) {
+    if (num >= 0 && num < 19) {
+      Image newImage = new Image("file:///" + rootPath + "/resources/noble_" + num + ".jpg");
       outer.setFill(ColorManager.getColor(num));
       inner.setFill(new ImagePattern(newImage));
     }

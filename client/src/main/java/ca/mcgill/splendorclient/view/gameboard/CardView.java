@@ -135,8 +135,8 @@ public class CardView extends StackPane {
    * @param num the card id
    */
   public void updateView(int num) {
-    Image newImage = new Image("file:///" + rootPath + "/resources/card_" + num + ".jpg");
-    if (newImage != null) {
+    if (num >= 0 && num < 120) {
+      Image newImage = new Image("file:///" + rootPath + "/resources/card_" + num + ".jpg");
       outer.setFill(ColorManager.getColor(num));
       inner.setFill(new ImagePattern(newImage));
     }
@@ -149,8 +149,8 @@ public class CardView extends StackPane {
    * @param num the card id
    */
   public void updateViewReserved(int num) {
-    Image newImage = new Image("file:///" + rootPath + "/resources/card_" + num + ".jpg");
-    if (newImage != null) {
+    if (num >= 0 && num < 120) {
+      Image newImage = new Image("file:///" + rootPath + "/resources/card_" + num + ".jpg");
       outer.setFill(Color.BLACK);
       inner.setFill(new ImagePattern(newImage));
     }
