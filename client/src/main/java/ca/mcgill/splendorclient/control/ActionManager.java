@@ -288,12 +288,12 @@ public class ActionManager {
     } else if (action.equals("CASCADE_LEVEL_1")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
-      alert.setHeaderText("Please select valid level 1 orient card.");
+      alert.setHeaderText("Please select valid level 1 card.");
       alert.show();
     } else if (action.equals("CASCADE_LEVEL_2")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
-      alert.setHeaderText("Please select valid level 2 orient card.");
+      alert.setHeaderText("Please select valid level 2 card.");
       alert.show();
     } else if (action.equals("DISCARD_FIRST_WHITE_CARD")
                  || action.equals("DISCARD_SECOND_WHITE_CARD")) {

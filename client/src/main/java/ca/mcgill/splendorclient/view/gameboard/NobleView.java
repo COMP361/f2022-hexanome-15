@@ -43,8 +43,10 @@ public class NobleView extends StackPane {
    */
   public void updateView(int num) {
     Image newImage = new Image("file:///" + rootPath + "/resources/noble_" + num + ".jpg");
-    outer.setFill(ColorManager.getColor(num));
-    inner.setFill(new ImagePattern(newImage));
+    if (newImage != null) {
+      outer.setFill(ColorManager.getColor(num));
+      inner.setFill(new ImagePattern(newImage));
+    }
     localid = num;
   }
 }
