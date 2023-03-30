@@ -140,6 +140,10 @@ public class CardView extends StackPane {
       outer.setFill(ColorManager.getColor(num));
       inner.setFill(new ImagePattern(newImage));
     }
+    if (num == -1)  {
+      outer.setFill(Color.BLACK);
+      inner.setFill(Color.BLACK);
+    }
     localid = num;
   }
 
@@ -153,6 +157,10 @@ public class CardView extends StackPane {
       Image newImage = new Image("file:///" + rootPath + "/resources/card_" + num + ".jpg");
       outer.setFill(Color.BLACK);
       inner.setFill(new ImagePattern(newImage));
+    }
+    if (num == -1) {
+      outer.setFill(Color.BLACK);
+      inner.setFill(Color.BLACK);
     }
     localid = num;
   }
