@@ -59,6 +59,8 @@ public class GameBoard {
   private Action actionPending;
   private List<TradingPostSlot> tradingPostSlots;
   private final List<City> cities;
+  private boolean unlockedNoble;
+  private boolean unlockedCity;
 
   /**
    * Creates a game board.
@@ -86,6 +88,8 @@ public class GameBoard {
     this.nobles        = nobles;
     this.tradingPostSlots = tradingPostSlots;
     this.cities = cities;
+    this.unlockedNoble = false;
+    this.unlockedCity = false;
   }
 
   /**
@@ -215,6 +219,7 @@ public class GameBoard {
       case RECEIVE_NOBLE:
         if (move.getNoble() != null) {
           performClaimNobleAction(move.getNoble(), inventory);
+          unlockedNoble = true;
         }
         return null;
       case TAKE_EXTRA_TOKEN:
@@ -223,6 +228,7 @@ public class GameBoard {
       case RECEIVE_CITY:
         if (move.getCity() != null) {
           performClaimCityAction(move.getCity(), inventory);
+          unlockedCity = true;
         }
         return null;
       default:
@@ -260,22 +266,25 @@ public class GameBoard {
    * @return possible end of turn actions
    */
   public Action getEndOfTurnActions(Move move, UserInventory inventory) {
-    List<Noble> candidateNobles = new ArrayList<>();
-    for (Noble noble : nobles) {
-      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.ON_BOARD) {
-        candidateNobles.add(noble);
+
+    if (!unlockedNoble) {
+      List<Noble> candidateNobles = new ArrayList<>();
+      for (Noble noble : nobles) {
+        if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.ON_BOARD) {
+          candidateNobles.add(noble);
+        }
       }
-    }
-    for (Noble noble : inventory.getNobles()) {
-      if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.RESERVED) {
-        candidateNobles.add(noble);
+      for (Noble noble : inventory.getNobles()) {
+        if (inventory.canBeVisitedByNoble(noble) && noble.getStatus() == NobleStatus.RESERVED) {
+          candidateNobles.add(noble);
+        }
       }
-    }
-    if (candidateNobles.size() == 1) {
-      performClaimNobleAction(nobles.get(0), inventory);
-    } else if (candidateNobles.size() > 1) {
-      actionPending = Action.RECEIVE_NOBLE;
-      return Action.RECEIVE_NOBLE;
+      if (candidateNobles.size() == 1) {
+        performClaimNobleAction(nobles.get(0), inventory);
+      } else if (candidateNobles.size() > 1) {
+        actionPending = Action.RECEIVE_NOBLE;
+        return Action.RECEIVE_NOBLE;
+      }
     }
 
     for (TradingPostSlot tradingPostSlot : tradingPostSlots) {
@@ -284,18 +293,20 @@ public class GameBoard {
       }
     }
 
-    List<City> candidateCities = new ArrayList<>();
+    if (!unlockedCity) {
+      List<City> candidateCities = new ArrayList<>();
 
-    for (City city : cities) {
-      if (inventory.canReceiveCity(city)) {
-        candidateCities.add(city);
+      for (City city : cities) {
+        if (inventory.canReceiveCity(city)) {
+          candidateCities.add(city);
+        }
       }
-    }
-    if (candidateCities.size() == 1) {
-      performClaimCityAction(cities.get(0), inventory);
-    } else if (candidateCities.size() > 1) {
-      actionPending = Action.RECEIVE_CITY;
-      return Action.RECEIVE_CITY;
+      if (candidateCities.size() == 1) {
+        performClaimCityAction(cities.get(0), inventory);
+      } else if (candidateCities.size() > 1) {
+        actionPending = Action.RECEIVE_CITY;
+        return Action.RECEIVE_CITY;
+      }
     }
 
     return requiresReturnTokens(inventory, move) ? Action.RET_TOKEN : null;
