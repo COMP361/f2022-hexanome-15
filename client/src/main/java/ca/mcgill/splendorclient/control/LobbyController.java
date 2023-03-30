@@ -35,6 +35,8 @@ public class LobbyController implements Initializable {
   @FXML
   private ListView<String> availableSessionList;
   @FXML
+  private ListView<String> availableSavegamesList;
+  @FXML
   private Button launchSessionButton;
   @FXML
   private Button joinSessionButton;
@@ -44,6 +46,10 @@ public class LobbyController implements Initializable {
   private Button deleteSessionButton;
   @FXML
   private Button logoutButton;
+  @FXML
+  private Button forkSavegameButton;
+  @FXML
+  private Button refreshSavegames;
   @FXML
   private ChoiceBox<String> gameserviceChoiceBox;
 
@@ -80,6 +86,17 @@ public class LobbyController implements Initializable {
         }
       }
     }).start();
+    
+    refreshSavegames.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        // TODO Auto-generated method stub
+        availableSavegamesList.getItems().clear();
+        availableSavegamesList.getItems().addAll(get_savegames(User.THISUSER.getAccessToken()));
+      }
+      
+    });
 
     logoutButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -89,6 +106,21 @@ public class LobbyController implements Initializable {
         User.logout(User.THISUSER.getUsername());
         Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
       }
+    });
+    
+    forkSavegameButton.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        String savegame = availableSavegamesList.getSelectionModel().getSelectedItem();
+        String[] idAndName = savegame.split(",");
+        User user = User.THISUSER;
+        // ls.create_session(user.getAccessToken(),
+        // user.getUsername(), gameserviceChoiceBox.getValue(), "");
+        create_session(user.getAccessToken(),
+            user.getUsername(), idAndName[1], idAndName[0]);
+      }
+      
     });
 
     deleteSessionButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -104,6 +136,7 @@ public class LobbyController implements Initializable {
         }
       }
     });
+    
     joinSessionButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent arg0) {
@@ -166,7 +199,6 @@ public class LobbyController implements Initializable {
         User user = User.THISUSER;
         // ls.create_session(user.getAccessToken(),
         // user.getUsername(), gameserviceChoiceBox.getValue(), "");
-        System.out.println(user.getAccessToken());
         create_session(user.getAccessToken(),
             user.getUsername(), gameserviceChoiceBox.getValue(), "");
         availableSessionList.getItems().clear();
@@ -186,35 +218,19 @@ public class LobbyController implements Initializable {
   private void create_session(String accessToken,
                               String createUserName, String gameName, String saveGame) {
     checkNotNullNotEmpty(accessToken, createUserName, gameName, saveGame);
-
-    if (saveGame == null) {
-      HttpResponse<String> response = Unirest.post(
-          "http://127.0.0.1:4242/api/sessions"
-            + "?access_token="
-            + accessToken)
-                                        .header("Authorization", "Bearer" + accessToken)
-                                        .header("Content-Type", "application/json")
-                                        .body(String.format("{\"creator\":\"%s\", "
-                                                              + "\"game\":\"%s\", "
-                                                              + "\"savegame\":\"\"}",
-                                          createUserName, gameName))
-                                        .asString();
-      System.out.println(response.getBody());
-    } else {
-      HttpResponse<String> response2;
-      response2 = Unirest.post(
-        "http://127.0.0.1:4242/api/sessions"
-          + "?access_token="
-          + accessToken)
-                    .header("Authorization", "Bearer" + accessToken)
-                    .header("Content-Type", "application/json")
-                    .body(String.format("{\"creator\":\"%s\", "
-                                          + "\"game\":\"%s\", "
-                                          + "\"savegame\":\"%s\"}",
-                      createUserName, gameName, saveGame))
-                    .asString();
+    HttpResponse<String> response2;
+    response2 = Unirest.post(
+      "http://127.0.0.1:4242/api/sessions"
+        + "?access_token="
+        + accessToken)
+                  .header("Authorization", "Bearer" + accessToken)
+                  .header("Content-Type", "application/json")
+                  .body(String.format("{\"creator\":\"%s\", "
+                                        + "\"game\":\"%s\", "
+                                        + "\"savegame\":\"%s\"}",
+                    createUserName, gameName, saveGame))
+                  .asString();
       System.out.println(response2.getBody());
-    }
   }
 
   /**
@@ -240,6 +256,29 @@ public class LobbyController implements Initializable {
       arr.add(sessionInfo);
     }
     return arr;
+  }
+  
+  private ArrayList<String> get_savegames(String accessToken) {
+    ArrayList<String> gameServices = get_gameservices();
+    ArrayList<String> ret = new ArrayList<>();
+    for (String gameService : gameServices) {
+      try {
+        HttpResponse<JsonNode> response = Unirest.get(
+            "http://127.0.0.1:4242/api/gameservices/" 
+            + gameService + "/savegames"
+            + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
+            .asJson();
+        JSONArray array = response.getBody().getArray();
+        for (Object object : array) {
+          ret.add(((JSONObject)object).getString("savegameid") 
+              + "," + ((JSONObject)object).getString("gamename"));
+        }
+      } catch (UnsupportedEncodingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return ret;
   }
 
   /**
@@ -373,7 +412,6 @@ public class LobbyController implements Initializable {
         "http://127.0.0.1:4242/api/gameservices"
       )
                                         .asJson();
-    System.out.println("Response from get_gameservices: " + response.getBody().toString());
     ArrayList<String> arr = new ArrayList<>();
     JsonNode json = response.getBody(); //new JSONArray(response.getBody().getObject());
     JSONArray jarr = new JSONArray(json.toString());

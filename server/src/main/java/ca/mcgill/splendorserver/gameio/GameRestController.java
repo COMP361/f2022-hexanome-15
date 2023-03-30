@@ -47,7 +47,6 @@ public class GameRestController {
   private final String gameServiceLocation = "http://127.0.0.1:8080";
   // 4 threads for the max 4 players
   private final ExecutorService updaters = Executors.newFixedThreadPool(4);
-  private String gameName;
   private JSONObject adminAuth = LobbyServiceExecutor
                                    .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
   private String refreshToken = (String) Parsejson
@@ -69,7 +68,7 @@ public class GameRestController {
 
   }
   
-  private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
+  private String buildGameBoardJson(String gameName, String whoseTurn, GameBoard gameboard) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
@@ -167,7 +166,6 @@ public class GameRestController {
                                             .body(newServicejSon)
                                             .asString();
     System.out.println("Response from registration request: " + response2.getBody());
-    this.gameName = gameName;
   }
 
   /**
@@ -183,6 +181,7 @@ public class GameRestController {
   ) {
 
     SessionInfo sessionInfo = new Gson().fromJson(sessionInfoJson, SessionInfo.class);
+    System.out.println(sessionInfoJson);
     try {
       if (sessionInfo == null || sessionInfo.getGameServer() == null) {
         throw new Exception();
@@ -197,6 +196,22 @@ public class GameRestController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                            .body(e.getMessage());
     }
+  }
+  
+  
+  /**
+   * Route for registering a savegame.
+   *
+   * @param gameId to identify the game that requested this save
+   * @return the results of the savegame request
+   */
+  @PutMapping(value = "/api/games/{gameId}/savegame")
+  public ResponseEntity<String> saveGame(@PathVariable long gameId) {
+    SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameId).get();
+    //refresh registrar token or just log in again actually with gameName Antichrist! account
+    
+    //grab the game and flush it to the disk with a generated savegameid.
+    return null;
   }
 
   /**
@@ -231,7 +246,8 @@ public class GameRestController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
     } else {
-      String json = buildGameBoardJson(manager.get().whoseTurn().getName(), 
+      String json = buildGameBoardJson(manager.get().getSessionInfo().getGameServer(),
+          manager.get().whoseTurn().getName(), 
           manager.get().getBoard());
       return ResponseEntity.status(HttpStatus.OK)
       .body(json);
