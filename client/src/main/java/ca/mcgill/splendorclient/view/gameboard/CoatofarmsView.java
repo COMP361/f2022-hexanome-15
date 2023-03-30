@@ -24,7 +24,9 @@ public class CoatofarmsView extends Rectangle {
     super(screenSize.getWidth() / 65f, screenSize.getHeight() / 40.f);
     Image newImage = new Image("file:///" + rootPath + "/resources/shield_"
                                    + color.toLowerCase() + ".png");
-    this.setFill(new ImagePattern(newImage));
+    if (newImage != null) {
+      this.setFill(new ImagePattern(newImage));
+    }
     this.screenSize = screenSize;
   }
 }

@@ -345,8 +345,10 @@ public class GameBoardView {
 
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
-    root.setBackground(new Background(
+    if (newImage != null) {
+      root.setBackground(new Background(
         new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
+    }
     return toReturn;
   }
 
