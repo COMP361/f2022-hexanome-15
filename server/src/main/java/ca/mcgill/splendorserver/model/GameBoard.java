@@ -5,10 +5,12 @@ import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardCost;
 import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cards.OrientCard;
+import ca.mcgill.splendorserver.model.cards.TokenBonusAmount;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.nobles.NobleStatus;
@@ -354,11 +356,7 @@ public class GameBoard {
       selectedCard = move.getCard();
       int ix = cardField.indexOf(selectedCard);
       cardField.remove(selectedCard);
-      replenishTakenCardFromDeck(
-          move.getCard()
-          .getDeckType(),
-          ix
-      );
+      replenishTakenCardFromDeck(move.getCard().getDeckType(), ix);
     } else {
       selectedCard = getCardByDeckLevel(move.getDeckType());
     }
@@ -676,6 +674,13 @@ public class GameBoard {
       if (deck.getType() == deckType && !deck.isEmpty()) {
         // we know draw is ok cause of the check for emptiness above
         cardField.add(replenishIndex, deck.draw());
+      } else {
+        // If the deck is empty, we're going to replace the missing card
+        // with a card that is not purchasable/reservable and has an id of -1
+        Card card = new Card(-1, 0, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE,
+            new CardCost(100, 100, 100, 100, 100));
+        card.setCardStatus(CardStatus.PURCHASED);
+        cardField.add(replenishIndex, card);
       }
     }
   }
