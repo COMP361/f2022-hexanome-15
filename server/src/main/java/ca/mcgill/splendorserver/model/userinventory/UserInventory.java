@@ -459,7 +459,7 @@ public class UserInventory implements Iterable<Card> {
    * @param card orient level one card to add
    * @throws AssertionError if card == null
    */
-  public void addCascadeLevelOne(OrientCard card) {
+  public void addCascadeLevelOne(Card card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
     if (card.getDeckType() == DeckType.ORIENT1 || card.getDeckType() == DeckType.BASE1) {
       card.setCardStatus(CardStatus.PURCHASED);
@@ -474,7 +474,7 @@ public class UserInventory implements Iterable<Card> {
    * @param card orient level two card to add
    * @throws AssertionError if card == null
    */
-  public void addCascadeLevelTwo(OrientCard card) {
+  public void addCascadeLevelTwo(Card card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
     if (card.getDeckType() == DeckType.ORIENT2 || card.getDeckType() == DeckType.BASE2) {
       card.setCardStatus(CardStatus.PURCHASED);

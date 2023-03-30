@@ -623,15 +623,17 @@ public class GameBoard {
                    || move.getCard().getDeckType() == DeckType.BASE1)
              && move.getCard().getCardStatus() == CardStatus.NONE;
 
-    OrientCard levelOneCard = (OrientCard) move.getCard();
+    Card levelOneCard = move.getCard();
     inventory.addCascadeLevelOne(levelOneCard);
     int ix = cardField.indexOf(levelOneCard);
     cardField.remove(ix);
     replenishTakenCardFromDeck(levelOneCard.getDeckType(), ix);
 
-    List<Action> actions = levelOneCard.getBonusActions();
-    if (actions.size() > 0) {
-      return actions.get(0);
+    if (levelOneCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
+      if (actions.size() > 0) {
+        return actions.get(0);
+      }
     }
     return null;
   }
@@ -648,15 +650,17 @@ public class GameBoard {
                    || move.getCard().getDeckType() == DeckType.BASE2)
              && move.getCard().getCardStatus() == CardStatus.NONE;
 
-    OrientCard levelTwoCard = (OrientCard) move.getCard();
+    Card levelTwoCard = move.getCard();
     inventory.addCascadeLevelTwo(levelTwoCard);
     int ix = cardField.indexOf(levelTwoCard);
     cardField.remove(ix);
     replenishTakenCardFromDeck(levelTwoCard.getDeckType(), ix);
 
-    List<Action> actions = levelTwoCard.getBonusActions();
-    if (actions.size() > 0) {
-      return actions.get(0);
+    if (levelTwoCard instanceof OrientCard) {
+      List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
+      if (actions.size() > 0) {
+        return actions.get(0);
+      }
     }
     return null;
   }
