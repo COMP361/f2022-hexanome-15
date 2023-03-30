@@ -1,6 +1,10 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
 import ca.mcgill.splendorclient.control.ColorManager;
+import ca.mcgill.splendorclient.control.GameController;
+import ca.mcgill.splendorclient.control.SceneManager;
+import ca.mcgill.splendorclient.control.Splendor;
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.DeckType;
 import ca.mcgill.splendorclient.model.TokenType;
 import java.awt.Dimension;
@@ -9,10 +13,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -28,6 +37,10 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import kong.unirest.HttpRequestWithBody;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -341,8 +354,28 @@ public class GameBoardView {
       tradingView.setLayoutX(screenSize.width / 4f);
       root.getChildren().addAll(tradingView);
     }
+    
+    //save and quit buttons
+    Button saveButton = new Button("Save Game");
+//    saveButton.setLayoutX(screenSize.width - 100);
+//    saveButton.setLayoutY(screenSize.height - 50);
+    saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-
+      @Override
+      public void handle(MouseEvent event) {
+        Long gameid = GameController.getInstance().getGameId();
+        //send to server /api/games/{gameId}/savegame
+        String location = LobbyServiceExecutor.SERVERLOCATION;
+        String url = String.format("http://%s/api/games/%d/savegame", location, gameid);
+        HttpResponse<JsonNode> response = 
+            Unirest.put(url).asJson();
+        System.out.println(response.getStatus());
+        GameController.stop();
+        Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
+      }
+      
+    });
+    root.getChildren().add(saveButton);
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
     root.setBackground(new Background(

@@ -222,7 +222,7 @@ public class GameRestController {
   public ResponseEntity<String> saveGame(@PathVariable long gameId) {
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameId).get();
     //refresh registrar token or just log in again actually with gameName Antichrist! account
-    JSONObject adminAuth = LobbyServiceExecutor
+    final JSONObject adminAuth = LobbyServiceExecutor
         .LOBBY_SERVICE_EXECUTOR.auth_token(
             splendorGame.getSessionInfo().getGameServer(), "Antichrist1!");
     //grab the game model, generate a savegameid and add it to an in-memory json "db"
@@ -274,11 +274,13 @@ public class GameRestController {
     for (PlayerWrapper player : splendorGame.getSessionInfo().getPlayers()) {
       players.add(player.getName());
     }
-    SaveGameJson body = new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
+    SaveGameJson body = 
+        new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
     LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.save_game(
         (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token"), 
         body.toString(), splendorGame.getSessionInfo().getGameServer(), id);
-    return null;
+    System.out.println(new Gson().toJson(gameboardJson));
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   /**
@@ -310,6 +312,7 @@ public class GameRestController {
   public ResponseEntity<String> getGameBoard(@PathVariable long gameid) {
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(gameid);
     if (manager.isEmpty()) {
+      System.out.println("Unable to find game: " + gameid);
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
     } else {

@@ -52,11 +52,17 @@ public class LobbyController implements Initializable {
   private Button refreshSavegames;
   @FXML
   private ChoiceBox<String> gameserviceChoiceBox;
+  
+  private boolean exitThread = false;
 
   /**
    * Creates a LobbyController object.
    */
   public LobbyController() {
+  }
+  
+  public void setExitThread(boolean b) {
+    exitThread = b;
   }
 
   @Override
@@ -70,7 +76,7 @@ public class LobbyController implements Initializable {
 
       @Override
       public void run() {
-        while (true) {
+        while (true && !exitThread) {
           Platform.runLater(() -> { 
             if (!availableSessionList.getItems().stream()
                    .collect(Collectors.toList()).equals(get_all_sessions())) {
@@ -104,6 +110,7 @@ public class LobbyController implements Initializable {
       public void handle(ActionEvent event) {
         revoke_auth(User.THISUSER.getAccessToken());
         User.logout(User.THISUSER.getUsername());
+        exitThread = true;
         Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
       }
     });

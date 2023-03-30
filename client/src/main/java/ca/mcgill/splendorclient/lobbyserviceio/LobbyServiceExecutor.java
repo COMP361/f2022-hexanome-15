@@ -142,6 +142,7 @@ public class LobbyServiceExecutor {
       System.out.println(Unirest.put(lobbyServiceLocation + "/api/gameservices/" + 
                   gameserviceName + "/savegames/" + id + 
                    "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
+                  .header("accept", "application/json")
                   .body(body).asString().getBody());
     } catch (UnsupportedEncodingException e) {
       // TODO Auto-generated catch block
@@ -265,7 +266,7 @@ public class LobbyServiceExecutor {
     //String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
     // SERVERLOCATION, gameId, username, move);
     // run(command, NullParser.NULLPARSER);
-    HttpResponse<String> response = Unirest.put(String.format("http://127.0.0.1:8080/api/games/%d/endturn", gameId, username))
+    HttpResponse<String> response = Unirest.put(String.format("http://" + SERVERLOCATION + "/api/games/%d/endturn", gameId, username))
         .header("Content-Type", "application/json")
         .body(move)
         .asString();

@@ -26,6 +26,7 @@ public class GameController {
   private GameBoardView localView;
 
   private static GameController instance = new GameController();
+  private BoardUpdater updaterThread;
 
   /**
    * Sets the GameBoardView to the given view.
@@ -71,24 +72,37 @@ public class GameController {
   }
 
   /**
-   * Starts the game.
+   * Starts the game updater.
    */
   public static void start() {
-    new Thread(instance.new BoardUpdater()).start();
+    instance.updaterThread = instance.new BoardUpdater();
+    instance.updaterThread.start();
+  }
+  
+  
+  public static void stop() {
+    instance.updaterThread.setExit();
   }
 
 
   private class BoardUpdater extends Thread {
+    
+    private boolean exit = false;
+    
+    public void setExit() {
+      exit = true;
+    }
 
     @Override
     public void run() {
       boolean requestedActions = false;
-      while (true) {
+      while (true && !exit) {
         HttpResponse<JsonNode> response = Unirest
                                             .get(String.format("http://%s/api/games/%d/board", LobbyServiceExecutor.SERVERLOCATION, gameId))
                                             .asJson();
         if (response.getStatus() == 404) {
           try {
+            System.out.println("Sleeping due to bad board response");
             Thread.sleep(2000);
           } catch (InterruptedException e) {
             e.printStackTrace();

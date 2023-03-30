@@ -2,6 +2,13 @@ package ca.mcgill.splendorserver.model.savegame;
 
 import java.util.List;
 
+/**
+ * Utility to automate translation to/from JSON for the body of the
+ * savegame request.
+ *
+ * @author lawrenceberardelli
+ *
+ */
 public class SaveGameJson {
   
   public String gameName;

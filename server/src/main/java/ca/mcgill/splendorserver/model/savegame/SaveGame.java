@@ -1,12 +1,18 @@
 package ca.mcgill.splendorserver.model.savegame;
 
+/**
+ * SaveGame model storing the json representation of the gamestate and id of game. 
+ *
+ * @author lawrenceberardelli
+ *
+ */
 public class SaveGame {
   
   private String id;
   private String json;
   
   /**
-   * Creates a savegame model object
+   * Creates a savegame model object.
    *
    * @param id generated; key for a savegame
    * @param json the representation of a savegame
@@ -17,7 +23,7 @@ public class SaveGame {
   }
   
   /**
-   * Gets savegame id
+   * Gets savegame id.
    *
    * @return id of this savegame
    */
@@ -26,7 +32,7 @@ public class SaveGame {
   }
   
   /**
-   * Gets the json of this savegame 
+   * Gets the json of this savegame.
    *
    * @return json of this savegame
    */
