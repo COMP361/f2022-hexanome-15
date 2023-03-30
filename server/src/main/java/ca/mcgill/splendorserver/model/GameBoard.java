@@ -671,16 +671,19 @@ public class GameBoard {
   private void replenishTakenCardFromDeck(DeckType deckType, int replenishIndex) {
     // empty card field means we cant replenish because otherwise it would have been replenished alr
     for (Deck deck : decks) {
-      if (deck.getType() == deckType && !deck.isEmpty()) {
-        // we know draw is ok cause of the check for emptiness above
-        cardField.add(replenishIndex, deck.draw());
-      } else {
-        // If the deck is empty, we're going to replace the missing card
-        // with a card that is not purchasable/reservable and has an id of -1
-        Card card = new Card(-1, 0, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE,
+      if (deck.getType() == deckType) {
+        if (!deck.isEmpty()) {
+          // we know draw is ok cause of the check for emptiness above
+          cardField.add(replenishIndex, deck.draw());
+        }
+        else {
+          // If the deck is empty, we're going to replace the missing card
+          // with a card that is not purchasable/reservable and has an id of -1
+          Card card = new Card(-1, 0, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE,
             new CardCost(100, 100, 100, 100, 100));
-        card.setCardStatus(CardStatus.PURCHASED);
-        cardField.add(replenishIndex, card);
+          card.setCardStatus(CardStatus.PURCHASED);
+          cardField.add(replenishIndex, card);
+        }
       }
     }
   }
