@@ -350,6 +350,7 @@ public class UserInventory implements Iterable<Card> {
   public void discardCard(Card card) {
     assert card != null && cards.contains(card);
     removePrestige(card.getPrestige());
+    int index = cards.indexOf(card);
     cards.remove(card);
   }
 
