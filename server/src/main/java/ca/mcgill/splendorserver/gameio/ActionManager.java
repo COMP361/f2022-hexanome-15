@@ -329,7 +329,7 @@ public class ActionManager {
       restrictedType = gameBoard.getMoveCache().get(0).getSelectedTokenTypes();
     }
     for (Entry<TokenType, TokenPile> entry : gameBoard.getTokenPiles().entrySet()) {
-      if (entry.getValue().getSize() > 0
+      if (entry.getValue().getSize() > 0 && gameBoard.getTokenCount() > 0
             && restrictedType == null ? true : entry.getKey() != restrictedType) {
         Move move =
             new Move(Action.TAKE_EXTRA_TOKEN, null, player, null, null, null, entry.getKey(), null);
@@ -357,24 +357,43 @@ public class ActionManager {
   private void getRemainingTokenMoves(Map<String, Move> moveMap,
                                       UserInventory inventory,
                                       GameBoard gameBoard, PlayerWrapper player) {
-    List<Move> moveCache = gameBoard.getMoveCache();
-    if (moveCache.size() == 1) {
-      Move pastMove = moveCache.get(0);
-      TokenType pastType = pastMove.getSelectedTokenTypes();
-      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
-        if (type == TokenType.GOLD) {
-          continue;
-        }
-        TokenPile pile = gameBoard.getTokenPiles().get(type);
-        if (type == pastType) {
-          if (pile.getSize() >= 3) {
-            Move move = new Move(Action.TAKE_TOKEN, null, player,
-                null, null, null, pile.getType(), null);
-            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                               .toUpperCase();
-            moveMap.put(moveMd5, move);
+    if (gameBoard.getTokenCount() >= 2) {
+      List<Move> moveCache = gameBoard.getMoveCache();
+      if (moveCache.size() == 1) {
+        Move pastMove = moveCache.get(0);
+        TokenType pastType = pastMove.getSelectedTokenTypes();
+        for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+          if (type == TokenType.GOLD) {
+            continue;
           }
-        } else {
+          TokenPile pile = gameBoard.getTokenPiles().get(type);
+          if (type == pastType) {
+            if (pile.getSize() >= 3) {
+              Move move = new Move(Action.TAKE_TOKEN, null, player,
+                  null, null, null, pile.getType(), null);
+              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                 .toUpperCase();
+              moveMap.put(moveMd5, move);
+            }
+          } else {
+            if (pile.getSize() > 0 && gameBoard.getTokenCount() >= 2) {
+              Move move = new Move(Action.TAKE_TOKEN,
+                  null, player, null,
+                  null, null, pile.getType(), null);
+              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                 .toUpperCase();
+              moveMap.put(moveMd5, move);
+            }
+          }
+        }
+      } else if (moveCache.size() == 2) {
+        for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+          if (moveCache.get(0).getSelectedTokenTypes() == type
+                || moveCache.get(1).getSelectedTokenTypes() == type
+                || type == TokenType.GOLD) {
+            continue;
+          }
+          TokenPile pile = gameBoard.getTokenPiles().get(type);
           if (pile.getSize() > 0) {
             Move move = new Move(Action.TAKE_TOKEN,
                 null, player, null,
@@ -383,23 +402,6 @@ public class ActionManager {
                                .toUpperCase();
             moveMap.put(moveMd5, move);
           }
-        }
-      }
-    } else if (moveCache.size() == 2) {
-      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
-        if (moveCache.get(0).getSelectedTokenTypes() == type
-              || moveCache.get(1).getSelectedTokenTypes() == type
-              || type == TokenType.GOLD) {
-          continue;
-        }
-        TokenPile pile = gameBoard.getTokenPiles().get(type);
-        if (pile.getSize() > 0) {
-          Move move = new Move(Action.TAKE_TOKEN,
-              null, player, null,
-              null, null, pile.getType(), null);
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                             .toUpperCase();
-          moveMap.put(moveMd5, move);
         }
       }
     }

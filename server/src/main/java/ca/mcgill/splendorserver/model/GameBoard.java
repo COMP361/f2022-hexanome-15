@@ -166,25 +166,27 @@ public class GameBoard {
         if (moveCache.size() == 1) {
           actionPending = Action.TAKE_TOKEN;
           return actionPending;
-        } else if (moveCache.size() == 2) {
-          //selected two of the same token
-          if (moveCache.get(0).getSelectedTokenTypes() != null) {
-            if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
-              if (inventory.hasPower(Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL)) {
-                actionPending = Action.TAKE_EXTRA_TOKEN;
-                return actionPending;
-              }
-              actionPending = null;
-              return null;
-            } else {
-              actionPending = Action.TAKE_TOKEN;
-              return actionPending;
-            }
-          } else {
-            actionPending = null;
-            return null;
-          }
         } else {
+          if (moveCache.size() == 2) {
+            //selected two of the same token
+            if (moveCache.get(0).getSelectedTokenTypes() != null) {
+              if (moveCache.get(0).getSelectedTokenTypes() == move.getSelectedTokenTypes()) {
+                if (inventory.hasPower(Power.TAKE_2_GEMS_SAME_COL_AND_TAKE_1_GEM_DIF_COL)) {
+                  if (getTokenCount() > 0) {
+                    actionPending = Action.TAKE_EXTRA_TOKEN;
+                    return actionPending;
+                  }
+                  actionPending = null;
+                  return null;
+                }
+              } else {
+                if (getTokenCount() > 0) {
+                  actionPending = Action.TAKE_TOKEN;
+                  return actionPending;
+                }
+              }
+            }
+          }
           actionPending = null;
           return null;
         }
@@ -255,6 +257,19 @@ public class GameBoard {
     TokenPile pile = this.tokenPiles.get(type);
     Token token = pile.removeToken();
     inventory.addToken(token);
+  }
+
+  /**
+   * Returns the number of tokens on the gameboard.
+   *
+   * @return the number of tokens on the gameboard
+   */
+  public int getTokenCount() {
+    int sum = 0;
+    for (Entry<TokenType, TokenPile> entry : tokenPiles.entrySet()) {
+      sum += entry.getValue().getSize();
+    }
+    return sum;
   }
 
   /**
