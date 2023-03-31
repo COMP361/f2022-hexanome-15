@@ -357,7 +357,7 @@ public class ActionManager {
   private void getRemainingTokenMoves(Map<String, Move> moveMap,
                                       UserInventory inventory,
                                       GameBoard gameBoard, PlayerWrapper player) {
-    if (gameBoard.getTokenCount() >= 2) {
+    if (gameBoard.getTokenCount() >= 3) {
       List<Move> moveCache = gameBoard.getMoveCache();
       if (moveCache.size() == 1) {
         Move pastMove = moveCache.get(0);
