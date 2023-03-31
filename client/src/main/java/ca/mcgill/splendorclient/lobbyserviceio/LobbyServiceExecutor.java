@@ -20,11 +20,11 @@ public class LobbyServiceExecutor {
   /**
    * Instance of Lobby Service Executor.
    */
-  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://10.122.147.22:4242");
+  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://localhost:4242");
   /**
    * The location of the server.
    */
-  public static final String SERVERLOCATION = "10.122.147.22:8080";
+  public static final String SERVERLOCATION = "localhost:8080";
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;

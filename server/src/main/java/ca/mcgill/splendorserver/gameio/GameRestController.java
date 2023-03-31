@@ -58,14 +58,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
-  private final String gameServiceLocation = "http://10.122.147.22:8080";
+  private final String gameServiceLocation = "http://localhost:8080";
   // 4 threads for the max 4 players
   private final ExecutorService updaters = Executors.newFixedThreadPool(4);
   private JSONObject adminAuth = LobbyServiceExecutor
                                    .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
   private String refreshToken = (String) Parsejson
                                            .PARSE_JSON.getFromKey(adminAuth, "refresh_token");
-  private final String lobbyServiceLocation = "http://10.122.147.22:4242";
+  private final String lobbyServiceLocation = "http://localhost:4242";
 
   /**
    * Creates a GameRestController.
