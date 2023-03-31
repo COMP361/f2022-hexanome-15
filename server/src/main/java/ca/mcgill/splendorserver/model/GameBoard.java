@@ -410,6 +410,11 @@ public class GameBoard {
     if (selectedCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) selectedCard).getBonusActions();
       if (actions.size() > 0) {
+        if (actions.get(0) == Action.RESERVE_NOBLE) {
+          if (!nobles.isEmpty()) {
+            return actions.get(0);
+          }
+        }
         if (actions.get(0) == Action.DISCARD_FIRST_WHITE_CARD
               || actions.get(0) == Action.DISCARD_FIRST_BLUE_CARD
               || actions.get(0) == Action.DISCARD_FIRST_GREEN_CARD
