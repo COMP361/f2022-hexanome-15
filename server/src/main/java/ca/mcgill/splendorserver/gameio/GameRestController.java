@@ -174,7 +174,7 @@ public class GameRestController {
     String newServicejSon = new Gson().toJson(gs);
 
     HttpResponse<String> response2 = Unirest.put(
-        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                                                  lobbyServiceLocation
                                                     + "/api/gameservices/"
                                                     + gameName
                                                     + "?access_token="
