@@ -409,8 +409,6 @@ public class GameBoardView {
     
     //save and quit buttons
     HBox menu = new HBox();
-    menu.setLayoutX(screenSize.width-3*universalUnitX);
-    menu.setLayoutY(screenSize.height - 3*universalUnitY);
     menu.setSpacing(10);
     Button saveButton = new Button("Save Game");
     saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
