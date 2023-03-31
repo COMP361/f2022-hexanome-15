@@ -53,6 +53,8 @@ public class GameBoardView {
   private static int fontSize;
   
   /**
+   * Returns the horizontal universal unit, 1% of screen resolution.
+   *
    * @return the horizontal universal unit, 1% of screen resolution
    */
   public static float getUniversalUnitX() {
@@ -60,6 +62,8 @@ public class GameBoardView {
   }
 
   /**
+   * Returns the vertical universal unit, 1% of screen resolution.
+   *
    * @return the vertical universal unit, 1% of screen resolution
    */
   public static float getUniversalUnitY() {
@@ -67,6 +71,8 @@ public class GameBoardView {
   }
 
   /**
+   * Returns the currently used resolution-dependent card width.
+   *
    * @return the currently used resolution-dependent card width
    */
   public static float getCardWidth() {
@@ -74,6 +80,8 @@ public class GameBoardView {
   }
 
   /**
+   * Returns the currently used resolution-dependent card height.
+   *
    * @return the currently used resolution-dependent card height
    */
   public static float getCardHeight() {
@@ -81,6 +89,8 @@ public class GameBoardView {
   }
 
   /**
+   * Returns the minimum space between UI elements such as cards, in px.
+   *
    * @return the minimum space between UI elements such as cards, in px
    */
   public static float getSpacer() {
@@ -88,6 +98,8 @@ public class GameBoardView {
   }
 
   /**
+   * Returns the fontSize.
+   *
    * @return the fontSize
    */
   public static int getFontSize() {
@@ -132,12 +144,6 @@ public class GameBoardView {
     return deckPane;
   }
 
-  /**
-   * Creates a DeckView for the given deck and returns it.
-   *
-   * @param type       the type of deck that is being represented by the DeckView
-   * @param screenSize the size of the screen
-   */
   private static DeckView createDeckView(DeckType type, float x, float y) {
     DeckView newView = new DeckView(x, y,
         0, type);
@@ -248,7 +254,8 @@ public class GameBoardView {
     tokenColumn.setSpacing(spacer);
     userInventoryView.getChildren().add(tokenColumn);
     Label username = new Label(playerName);
-    username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, fontSize/1.5));
+    username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD,
+        FontPosture.REGULAR, fontSize / 1.5));
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
     TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
     TotalPrestigeCountView prestigeCountView =
