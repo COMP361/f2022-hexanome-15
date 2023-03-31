@@ -382,6 +382,25 @@ public class GameBoard {
   }
 
   /**
+   * Checks if there is a card of a specific level on the gameboard.
+   *
+   * @param level the level of the deck (either 1 or 2)
+   * @return a boolean determining if there is a card of a specific level on the gameboard
+   */
+  private boolean deckLevelExists(int level) {
+    for (Card card : cardField) {
+      if (level == 1 && (card.getDeckType() == DeckType.BASE1
+                           || card.getDeckType() == DeckType.ORIENT1)) {
+        return true;
+      } else if (level == 2 && (card.getDeckType() == DeckType.BASE2
+                                || card.getDeckType() == DeckType.ORIENT2)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Performs a purchase development card action routine.
    *
    * @param move      the move to perform
@@ -412,6 +431,16 @@ public class GameBoard {
       if (actions.size() > 0) {
         if (actions.get(0) == Action.RESERVE_NOBLE) {
           if (!nobles.isEmpty()) {
+            return actions.get(0);
+          }
+        }
+        if (actions.get(0) == Action.CASCADE_LEVEL_1) {
+          if (deckLevelExists(1)) {
+            return actions.get(0);
+          }
+        }
+        if (actions.get(0) == Action.CASCADE_LEVEL_2) {
+          if (deckLevelExists(2)) {
             return actions.get(0);
           }
         }
@@ -698,7 +727,7 @@ public class GameBoard {
         } else {
           // If the deck is empty, we're going to replace the missing card
           // with a card that is not purchasable/reservable and has an id of -1
-          Card card = new Card(-1, 0, TokenType.DIAMOND, DeckType.BASE1, TokenBonusAmount.ONE,
+          Card card = new Card(-1, 0, null, null, null,
               new CardCost(100, 100, 100, 100, 100));
           card.setCardStatus(CardStatus.PURCHASED);
           cardField.add(replenishIndex, card);
