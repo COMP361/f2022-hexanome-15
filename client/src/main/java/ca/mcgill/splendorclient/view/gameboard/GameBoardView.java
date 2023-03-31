@@ -13,8 +13,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -409,12 +407,6 @@ public class GameBoardView {
       tradingView.setLayoutX(screenSize.width / 4f);
       root.getChildren().addAll(tradingView);
     }
-    
-    //save and quit buttons
-    Button saveButton = new Button("Save Game");
-//    saveButton.setLayoutX(screenSize.width - 100);
-//    saveButton.setLayoutY(screenSize.height - 50);
-    saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
     //creating Cities expansion
     if (gameServer.equals("SplendorOrientCities")) {
       for (int i = 3; i > 0; i--) {
@@ -426,13 +418,19 @@ public class GameBoardView {
       root.getChildren().addAll(cityViews);
     }
 
+    //save and quit buttons
+    Button saveButton = new Button("Save Game");
+    //saveButton.setLayoutX(screenSize.width - 100);
+    //saveButton.setLayoutY(screenSize.height - 50);
+    saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
       @Override
       public void handle(MouseEvent event) {
         Long gameid = GameController.getInstance().getGameId();
         //send to server /api/games/{gameId}/savegame
         String location = LobbyServiceExecutor.SERVERLOCATION;
         String url = String.format("http://%s/api/games/%d/savegame", location, gameid);
-        HttpResponse<JsonNode> response = 
+        HttpResponse<JsonNode> response =
             Unirest.put(url).asJson();
         System.out.println(response.getStatus());
         /* TODO: only do this when the quit button is clicked
@@ -440,9 +438,11 @@ public class GameBoardView {
         Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
         */
       }
-      
-    });
+    }
+    );
+
     root.getChildren().add(saveButton);
+
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
     if (newImage != null) {
@@ -484,10 +484,8 @@ public class GameBoardView {
    * @param field the game board field
    */
   public static void updateNobleViews(int[] field) {
-    int num = 0;
-    for (int i = 0; i < nobleViews.size() && num < field.length; i++) {
-      nobleViews.get(i).updateView(field[num]);
-      num++;
+    for (int i = 0; i < nobleViews.size(); i++) {
+      nobleViews.get(i).updateView(field[i]);
     }
   }
 
@@ -579,8 +577,10 @@ public class GameBoardView {
     tradingView.updatePowers(firstShields, secondShields,
         thirdShields, fourthShields, fifthShields);
   }
+
   /**
    * Draws the correct cities as received from server state json.
+   *
    * @param cities the array of int IDs representing cities.
    */
   public static void updateCityViews(int[] cities) {

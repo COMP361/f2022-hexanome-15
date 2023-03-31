@@ -1,9 +1,7 @@
 package ca.mcgill.splendorclient.view.gameboard;
 
-import java.io.File;
-
 import ca.mcgill.splendorclient.control.ActionManager;
-import ca.mcgill.splendorclient.control.ColorManager;
+import java.io.File;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -13,20 +11,21 @@ import kong.unirest.HttpResponse;
 
 /**
  * Represents a City in Splendor.
- * 
+ *
  * @author Svyatoslav Sklokin
  */
 public class CityView extends StackPane {
 
   private final Rectangle outer;
   private final Rectangle inner;
+  private int cityid;
   private static final String rootPath = new File("").getAbsolutePath();
 
   /**
-   * Creates a NobleView.
+   * Creates a CityView.
    *
-   * @param height the height of the noble view
-   * @param width the width of the noble view
+   * @param height the height of the city view
+   * @param width the width of the city view
    */
   public CityView(float width, float height) {
     this.outer = new Rectangle(width, height);
@@ -36,12 +35,22 @@ public class CityView extends StackPane {
     inner.setArcHeight((height - 10) / 5);
     inner.setArcWidth((width - 10) / 5);
     this.getChildren().addAll(outer, inner);
+    this.setOnMouseClicked(arg0 -> {
+      HttpResponse<String> result = ActionManager.findAndSendReceiveCityMove(cityid);
+      if (result != null) {
+        if (result.getStatus() == 206) {
+          ActionManager.handleCompoundMoves(result.getBody());
+        } else if (result.getStatus() == 200) {
+          //inform end of turn
+        }
+      }
+    });
   }
 
   /**
-   * Updates the noble view.
+   * Updates the city view.
    *
-   * @param num the noble id
+   * @param num the city id
    */
   public void updateView(int num) {
     if (num >= 0 && num < 19) {
@@ -49,5 +58,6 @@ public class CityView extends StackPane {
       outer.setFill(Color.FLORALWHITE);
       inner.setFill(new ImagePattern(newImage));
     }
+    cityid = num;
   }
 }

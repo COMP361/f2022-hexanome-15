@@ -240,7 +240,7 @@ public class LobbyController implements Initializable {
                                         + "\"savegame\":\"%s\"}",
                     createUserName, gameName, saveGame))
                   .asString();
-      System.out.println(response2.getBody());
+    System.out.println(response2.getBody());
   }
 
   /**
@@ -280,8 +280,8 @@ public class LobbyController implements Initializable {
             .asJson();
         JSONArray array = response.getBody().getArray();
         for (Object object : array) {
-          ret.add(((JSONObject)object).getString("savegameid") 
-              + "," + ((JSONObject)object).getString("gamename"));
+          ret.add(((JSONObject) object).getString("savegameid")
+              + "," + ((JSONObject) object).getString("gamename"));
         }
       } catch (UnsupportedEncodingException e) {
         // TODO Auto-generated catch block

@@ -33,7 +33,7 @@ public class LobbyScreen {
   }
   
   /**
-   * Grabs the instance of the lobby controller
+   * Grabs the instance of the lobby controller.
    *
    * @return the lobby controller instance.
    */
