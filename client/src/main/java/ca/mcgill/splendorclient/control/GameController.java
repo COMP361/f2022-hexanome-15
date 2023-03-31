@@ -188,6 +188,7 @@ public class GameController {
                   tokens.getInt("GOLD"));
 
               //update nobles
+              
 
 
               //update decks
@@ -244,6 +245,17 @@ public class GameController {
 
                 GameBoardView.updatePowers(shields1, shields2, shields3, shields4, shields5);
               }
+
+              //update cities
+              if (gameServer.equals("SplendorOrientCities")) {
+                JSONArray cityArray = response.getBody().getObject().optJSONArray("cities");
+                int[] cityids = new int[cityArray.length()];
+                for (int i = 0; i < cityArray.length(); i++) {
+                  cityids[i] = (int) (cityArray.get(i));
+                }
+                GameBoardView.updateCityViews(cityids);
+              }
+              
             }
 
           });

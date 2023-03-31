@@ -82,8 +82,8 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     for (int card : cardids) {
       CardView toAdd = new CardView(sizeX, sizeY);
       toAdd.updateView(card);
-      cardColumns.get((int) (counter / 4)).getChildren().add(toAdd);
-      toAdd.setTranslateY(20f * (counter % 4));
+      cardColumns.get((int) counter % 4).getChildren().add(toAdd);
+      toAdd.setTranslateY(30f * ((int) (counter / 4)));
       counter++;
     }
     counter = 0;
@@ -91,7 +91,7 @@ public class UserInventoryView implements Iterable<CardColumnView> {
       CardView toAdd = new CardView(sizeX, sizeY);
       toAdd.updateViewReserved(card);
       cardColumns.get(3).getChildren().add(toAdd);
-      toAdd.setTranslateY(40f * (counter % 4));
+      toAdd.setTranslateY(30f * (counter));
       counter++;
     }
   }
