@@ -394,7 +394,7 @@ public class ActionManager {
             continue;
           }
           TokenPile pile = gameBoard.getTokenPiles().get(type);
-          if (pile.getSize() > 0) {
+          if (pile.getSize() > 0 && gameBoard.getTokenCount() >= 1) {
             Move move = new Move(Action.TAKE_TOKEN,
                 null, player, null,
                 null, null, pile.getType(), null);
