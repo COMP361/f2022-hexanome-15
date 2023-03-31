@@ -121,7 +121,7 @@ class SplendorGameTest {
     assertEquals(6, game3.getBoard().getTokenPiles().size());
     assertEquals(2, game3.getBoard().getInventories().size());
     assertEquals(0, game3.getBoard().getTradingPostSlots().size());
-    assertEquals(2, game3.getBoard().getCities().size());
+    assertEquals(3, game3.getBoard().getCities().size());
   }
 
   @Test

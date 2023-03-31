@@ -240,7 +240,7 @@ public class SplendorGame {
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
       setUpUserInventories(inventories);
-      cities = City.getCities(sessionInfo.getNumPlayers());
+      cities = City.getCities();
     } else {
       setUpUserInventories(inventories);
     }
