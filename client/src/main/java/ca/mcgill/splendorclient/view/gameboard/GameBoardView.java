@@ -492,7 +492,7 @@ public class GameBoardView {
    * @param field the game board field
    */
   public static void updateNobleViews(int[] field) {
-    for (int i = 0; i < nobleViews.size(); i++) {
+    for (int i = 0; i < nobleViews.size() && i < field.length; i++) {
       nobleViews.get(i).updateView(field[i]);
     }
   }
