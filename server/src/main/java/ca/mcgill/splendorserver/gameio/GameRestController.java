@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
-  private final String gameServiceLocation = "http://127.0.0.1:8080";
+  private final String gameServiceLocation = "http://10.122.147.22:8080";
   // 4 threads for the max 4 players
   private final ExecutorService updaters = Executors.newFixedThreadPool(4);
   private JSONObject adminAuth = LobbyServiceExecutor
