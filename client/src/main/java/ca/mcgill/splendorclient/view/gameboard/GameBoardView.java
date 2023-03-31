@@ -370,8 +370,10 @@ public class GameBoardView {
         HttpResponse<JsonNode> response = 
             Unirest.put(url).asJson();
         System.out.println(response.getStatus());
+        /* TODO: only do this when the quit button is clicked
         GameController.stop();
         Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
+        */
       }
       
     });
