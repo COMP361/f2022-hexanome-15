@@ -186,8 +186,8 @@ public class ActionManager {
       String cardId = move.getCard() != null ? Integer.toString(move.getCard().getId()) : null;
       String tokenType =
           move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
-      String noble = move.getNoble() != null ? move.getNoble().toString() : null;
-      String city = move.getCity() != null ? move.getCity().toString() : null;
+      String noble = move.getNoble() != null ? Integer.toString(move.getNoble().getId()) : null;
+      String city = move.getCity() != null ? Integer.toString(move.getCity().getId()) : null;
       String deckLevel = move.getDeckType() != null ? move.getDeckType().toString() : null;
       simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(),
           move.getAction().toString(), cardId, tokenType, noble, city, deckLevel));
