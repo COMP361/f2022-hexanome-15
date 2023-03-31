@@ -9,6 +9,7 @@ import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.action.MoveInfo;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cities.City;
@@ -51,8 +52,6 @@ public class ActionManager {
   public ActionManager() {
   }
 
-  // TODO: do we need the users access token as request param to validate here???
-
   /**
    * Sends a message to the server to perform the given action.
    *
@@ -94,36 +93,41 @@ public class ActionManager {
     Move selectedMove = moves.get(actionMd5);
     logger.log(
         Level.INFO, playerName + " played: " + selectedMove); // log the move that was selected
-    // apply the selected move to game board
-    Action pendingBonusAction = splendorGame.getBoard()
-                                  .applyMove(selectedMove, playerWrapper.get());
-    UserInventory inventory = splendorGame.getBoard()
-                                .getInventoryByPlayerName(playerName).get();
+    // Checking if the move is null
+    if (selectedMove != null) {
+      // apply the selected move to game board
+      Action pendingBonusAction = splendorGame.getBoard()
+                                    .applyMove(selectedMove, playerWrapper.get());
+      UserInventory inventory = splendorGame.getBoard()
+                                  .getInventoryByPlayerName(playerName).get();
 
-    // need to handle potential compound actions
-    if (pendingBonusAction != null) {
-      System.out.println(new Gson().toJson(pendingBonusAction));
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-               .body(pendingBonusAction.toString());
-    } else {
-      Action endOfTurnAction = splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
-
-      if (endOfTurnAction != null) {
+      // need to handle potential compound actions
+      if (pendingBonusAction != null) {
+        System.out.println(new Gson().toJson(pendingBonusAction));
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                 .body(endOfTurnAction.toString());
-      }
+                 .body(pendingBonusAction.toString());
+      } else {
+        Action endOfTurnAction =
+            splendorGame.getBoard().getEndOfTurnActions(selectedMove, inventory);
 
-      splendorGame.getBoard().endTurn();
+        if (endOfTurnAction != null) {
+          return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                   .body(endOfTurnAction.toString());
+        }
 
-      // check for terminal game state after action has been performed
-      if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
-        logger.log(Level.INFO, "Terminal game state reached");
+        splendorGame.getBoard().endTurn();
+
+        // check for terminal game state after action has been performed
+        if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+          logger.log(Level.INFO, "Terminal game state reached");
+        }
+        // advance to the next players turn
+        PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
+        return ResponseEntity.status(HttpStatus.OK)
+                 .body(whoseUpNext.getName());
       }
-      // advance to the next players turn
-      PlayerWrapper whoseUpNext = splendorGame.endTurn(playerWrapper.get());
-      return ResponseEntity.status(HttpStatus.OK)
-               .body(whoseUpNext.getName());
     }
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
 
@@ -182,9 +186,11 @@ public class ActionManager {
       String cardId = move.getCard() != null ? Integer.toString(move.getCard().getId()) : null;
       String tokenType =
           move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
-      String noble = move.getNoble() != null ? move.getNoble().toString() : null;
+      String noble = move.getNoble() != null ? Integer.toString(move.getNoble().getId()) : null;
+      String city = move.getCity() != null ? Integer.toString(move.getCity().getId()) : null;
+      String deckLevel = move.getDeckType() != null ? move.getDeckType().toString() : null;
       simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(),
-          move.getAction().toString(), cardId, tokenType, noble));
+          move.getAction().toString(), cardId, tokenType, noble, city, deckLevel));
     }
     return simplifiedMap;
   }
@@ -323,7 +329,7 @@ public class ActionManager {
       restrictedType = gameBoard.getMoveCache().get(0).getSelectedTokenTypes();
     }
     for (Entry<TokenType, TokenPile> entry : gameBoard.getTokenPiles().entrySet()) {
-      if (entry.getValue().getSize() > 0
+      if (entry.getValue().getSize() > 0 && gameBoard.getTokenCount() > 0
             && restrictedType == null ? true : entry.getKey() != restrictedType) {
         Move move =
             new Move(Action.TAKE_EXTRA_TOKEN, null, player, null, null, null, entry.getKey(), null);
@@ -351,25 +357,44 @@ public class ActionManager {
   private void getRemainingTokenMoves(Map<String, Move> moveMap,
                                       UserInventory inventory,
                                       GameBoard gameBoard, PlayerWrapper player) {
-    List<Move> moveCache = gameBoard.getMoveCache();
-    if (moveCache.size() == 1) {
-      Move pastMove = moveCache.get(0);
-      TokenType pastType = pastMove.getSelectedTokenTypes();
-      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
-        if (type == TokenType.GOLD) {
-          continue;
-        }
-        TokenPile pile = gameBoard.getTokenPiles().get(type);
-        if (type == pastType) {
-          if (pile.getSize() >= 3) {
-            Move move = new Move(Action.TAKE_TOKEN, null, player,
-                null, null, null, pile.getType(), null);
-            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                               .toUpperCase();
-            moveMap.put(moveMd5, move);
+    if (gameBoard.getTokenCount() >= 3) {
+      List<Move> moveCache = gameBoard.getMoveCache();
+      if (moveCache.size() == 1) {
+        Move pastMove = moveCache.get(0);
+        TokenType pastType = pastMove.getSelectedTokenTypes();
+        for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+          if (type == TokenType.GOLD) {
+            continue;
           }
-        } else {
-          if (pile.getSize() > 0) {
+          TokenPile pile = gameBoard.getTokenPiles().get(type);
+          if (type == pastType) {
+            if (pile.getSize() >= 3) {
+              Move move = new Move(Action.TAKE_TOKEN, null, player,
+                  null, null, null, pile.getType(), null);
+              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                 .toUpperCase();
+              moveMap.put(moveMd5, move);
+            }
+          } else {
+            if (pile.getSize() > 0 && gameBoard.getTokenCount() >= 2) {
+              Move move = new Move(Action.TAKE_TOKEN,
+                  null, player, null,
+                  null, null, pile.getType(), null);
+              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                                 .toUpperCase();
+              moveMap.put(moveMd5, move);
+            }
+          }
+        }
+      } else if (moveCache.size() == 2) {
+        for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+          if (moveCache.get(0).getSelectedTokenTypes() == type
+                || moveCache.get(1).getSelectedTokenTypes() == type
+                || type == TokenType.GOLD) {
+            continue;
+          }
+          TokenPile pile = gameBoard.getTokenPiles().get(type);
+          if (pile.getSize() > 0 && gameBoard.getTokenCount() >= 1) {
             Move move = new Move(Action.TAKE_TOKEN,
                 null, player, null,
                 null, null, pile.getType(), null);
@@ -377,23 +402,6 @@ public class ActionManager {
                                .toUpperCase();
             moveMap.put(moveMd5, move);
           }
-        }
-      }
-    } else if (moveCache.size() == 2) {
-      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
-        if (moveCache.get(0).getSelectedTokenTypes() == type
-              || moveCache.get(1).getSelectedTokenTypes() == type
-              || type == TokenType.GOLD) {
-          continue;
-        }
-        TokenPile pile = gameBoard.getTokenPiles().get(type);
-        if (pile.getSize() > 0) {
-          Move move = new Move(Action.TAKE_TOKEN,
-              null, player, null,
-              null, null, pile.getType(), null);
-          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                             .toUpperCase();
-          moveMap.put(moveMd5, move);
         }
       }
     }
@@ -406,7 +414,7 @@ public class ActionManager {
     // cards face-up on table
     for (Card faceUp : gameBoard.getCards()) {
       // cannot offer a move involving a card already purchased
-      if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
+      if (inventory.canAffordCard(faceUp) && faceUp.getCardStatus() == CardStatus.NONE) {
         Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null,
             null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
@@ -472,24 +480,24 @@ public class ActionManager {
       return;
     }
 
-
     Action action = Action.RESERVE_DEV;
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
-      Move takeFaceUp = new Move(action, card, player, null, null,
-          null, null, null);
-      String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
-                               .toUpperCase();
-      moveMap.put(takeFaceUpMd5, takeFaceUp);
+      if (card.getCardStatus() == CardStatus.NONE) {
+        Move takeFaceUp = new Move(action, card, player, null, null,
+            null, null, null);
+        String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
+                                 .toUpperCase();
+        moveMap.put(takeFaceUpMd5, takeFaceUp);
+      }
     }
     // or can take from one of the decks, but they won't be able to see the card, so it'll be null
     // ,but they will see the different deck levels (1, 2, 3)
     for (Deck deck : gameBoard.getDecks()) {
       // can only legally take from the given deck if it isn't empty
       if (!deck.isEmpty()) {
-        Card firstCard = deck.getCards().get(0);
-        Move takeFromDeck = new Move(action, firstCard, player, deck.getType(),
+        Move takeFromDeck = new Move(action, null, player, deck.getType(),
             null, null, null, null
         );
         String takeFromDeckMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFromDeck))
@@ -501,21 +509,15 @@ public class ActionManager {
 
   private void getPairSpiceCardMoves(Map<String, Move> moveMap, UserInventory inventory,
                                      GameBoard gameBoard, PlayerWrapper player) {
-    if (inventory.getCards().size() == 0) {
-      throw new IllegalGameStateException(
-        "Illegal for spice card to have be purchased when inventory has 0 cards");
-    }
-    if (inventory.getUnpairedSpiceCard() == null) {
-      throw new IllegalGameStateException(
-        "Illegal to pair spice card when inventory does not contain an unpaired spice card");
-    }
     for (Card card : inventory.getCards()) {
-      if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
-        Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
-            null, null, null, null);
-        String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                           .toUpperCase();
-        moveMap.put(moveMd5, move);
+      if (inventory.getCards().size() > 0 && inventory.getUnpairedSpiceCard() != null) {
+        if (card.getTokenBonusType() != null && card.getTokenBonusType() != TokenType.GOLD) {
+          Move move = new Move(Action.PAIR_SPICE_CARD, card, player, null,
+              null, null, null, null);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
+        }
       }
     }
   }
@@ -568,7 +570,9 @@ public class ActionManager {
   private void getCascadeLevelOneMoves(Map<String, Move> moveMap, UserInventory inventory,
                                        GameBoard gameBoard, PlayerWrapper player) {
     for (Card card : gameBoard.getCards()) {
-      if (card.getDeckType() == DeckType.ORIENT1) {
+      if (card.getCardStatus() == CardStatus.NONE
+            && (card.getDeckType() == DeckType.ORIENT1
+                  || card.getDeckType() == DeckType.BASE1)) {
         Move move = new Move(Action.CASCADE_LEVEL_1, card, player,
             DeckType.ORIENT1, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
@@ -590,7 +594,9 @@ public class ActionManager {
   private void getCascadeLevelTwoMoves(Map<String, Move> moveMap, UserInventory inventory,
                                        GameBoard gameBoard, PlayerWrapper player) {
     for (Card card : gameBoard.getCards()) {
-      if (card.getDeckType() == DeckType.ORIENT2) {
+      if (card.getCardStatus() == CardStatus.NONE
+            && (card.getDeckType() == DeckType.ORIENT2
+                  || card.getDeckType() == DeckType.BASE2)) {
         Move move = new Move(Action.CASCADE_LEVEL_2, card, player,
             DeckType.ORIENT2, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))

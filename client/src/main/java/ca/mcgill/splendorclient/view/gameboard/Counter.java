@@ -4,12 +4,13 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 /**
  * Represents a label used to count the number of cards in a deck
  * or the number of tokens in a token pile.
  */
-public class Counter extends Label {
+public class Counter extends Text {
   /**
    * Creates a counter label.
    *
@@ -17,7 +18,10 @@ public class Counter extends Label {
    */
   public Counter(int count) {
     this.setText(String.valueOf(count));
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 35));
+    this.setFont(Font.font("Comic Sans MS",
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 
   /**
@@ -37,7 +41,10 @@ public class Counter extends Label {
   public void setCount(int count) {
 
     this.setText(String.valueOf(count));
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 35));
+    this.setFont(Font.font("Comic Sans MS", 
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 
 }

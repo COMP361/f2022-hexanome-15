@@ -13,29 +13,40 @@
    <left>
       <AnchorPane prefHeight="200.0" prefWidth="700.0" style="-fx-background-color: #A9A9A9;" BorderPane.alignment="CENTER">
          <children>
-            <ChoiceBox fx:id="gameserviceChoiceBox" layoutX="275.0" layoutY="200.0" prefWidth="300.0" />
-            <Label layoutX="100.0" layoutY="150.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Create New Session">
+            <ChoiceBox fx:id="gameserviceChoiceBox" layoutX="275.0" layoutY="100.0" prefWidth="300.0" />
+            <Label layoutX="100.0" layoutY="50.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Create New Session">
                <font>
                   <Font size="25.0" />
                </font>
             </Label>
-            <Button fx:id="createSessionButton" layoutX="600.0" layoutY="196.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Create">
+            <ListView fx:id="availableSavegamesList" editable="true" layoutY="175.0" prefHeight="100.0" prefWidth="700.0" />
+            <Label layoutX="100.0" layoutY="150.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Available Savegames">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Label>
+            <Button fx:id="createSessionButton" layoutX="600.0" layoutY="96.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Create">
                <font>
                   <Font size="15.0" />
                </font>
             </Button>
-            <ListView fx:id="availableSessionList" editable="true" layoutY="350.0" prefHeight="350.0" prefWidth="700.0" />
-            <Label layoutX="100.0" layoutY="300.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Available Sessions">
+            <ListView fx:id="availableSessionList" editable="true" layoutY="350" prefHeight="350.0" prefWidth="700.0" />
+            <Label layoutX="100.0" layoutY="300" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Available Sessions">
                <font>
                   <Font size="25.0" />
                </font>
             </Label>
-            <Label layoutX="125.0" layoutY="30.0" style="-fx-background-color: transparent; -fx-text-fill: #24a0ed;" text="H15 Lobby">
+          	<Button fx:id="refreshSavegames" layoutX="600.0" layoutY="175.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Refresh">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Label layoutX="125.0" layoutY="10.0" style="-fx-background-color: transparent; -fx-text-fill: #24a0ed;" text="H15 Lobby">
                <font>
                   <Font size="30.0" />
                </font>
             </Label>
-            <TextField fx:id="sessionNameText" layoutX="10.0" layoutY="198.0" prefHeight="30.0" prefWidth="250.0" promptText="Session Name" style="-fx-border-width: 2; -fx-border-color: #A9A9A9; -fx-border-radius: 5;">
+            <TextField fx:id="sessionNameText" layoutX="10.0" layoutY="98" prefHeight="30.0" prefWidth="250.0" promptText="Session Name" style="-fx-border-width: 2; -fx-border-color: #A9A9A9; -fx-border-radius: 5;">
                <font>
                   <Font size="14.0" />
                </font>
@@ -46,16 +57,6 @@
    <right>
       <AnchorPane prefHeight="200.0" prefWidth="400.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Admin">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
-            <Button layoutX="100.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Settings">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
             <Button fx:id="logoutButton" layoutX="200.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Logout">
                <font>
                   <Font size="15.0" />
@@ -81,12 +82,7 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Resume">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
-            <Button layoutX="100.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Play">
+            <Button fx:id="forkSavegameButton" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Fork">
                <font>
                   <Font size="15.0" />
                </font>

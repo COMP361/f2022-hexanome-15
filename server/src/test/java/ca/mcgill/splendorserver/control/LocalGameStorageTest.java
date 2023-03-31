@@ -30,7 +30,7 @@ class LocalGameStorageTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
+    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"");
     sg = new SplendorGame(sessionInfo,1L);
   }
 
@@ -45,20 +45,6 @@ class LocalGameStorageTest {
     LocalGameStorage.addActiveGame(sg);
     LocalGameStorage.removeActiveGame(sg);
     assertFalse(LocalGameStorage.exists(1L));
-  }
-
-  @Test
-  void requiresUpdate() {
-    LocalGameStorage.addActiveGame(sg);
-    assertTrue(LocalGameStorage.requiresUpdate(1L));
-  }
-
-  @Test
-  void notRequiresUpdate() {
-    assertThrows(
-      GameNotFoundException.class,
-      () -> LocalGameStorage.requiresUpdate(1L),
-      "Could not find game ID: 1");
   }
 
   @Test

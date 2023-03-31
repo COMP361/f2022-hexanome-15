@@ -5,6 +5,7 @@ import ca.mcgill.splendorclient.control.ColorManager;
 import ca.mcgill.splendorclient.model.TokenType;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -13,8 +14,9 @@ import kong.unirest.JsonNode;
  * Represents the view of a token pile.
  * Observes token piles.
  */
-public class TokenPileView extends Circle {
+public class TokenPileView extends StackPane {
 
+  private final Circle icon;
   private final Counter tokenCounter;
   private TokenType type;
 
@@ -25,10 +27,13 @@ public class TokenPileView extends Circle {
    * @param type   the type of tokens in the token pile
    */
   public TokenPileView(float radius, TokenType type) {
-    super(radius);
-    this.setFill(ColorManager.getColor(type));
+    super();
+    //this.setPrefSize(radius * 2, radius * 2);
+    icon = new Circle(radius);
+    icon.setFill(ColorManager.getColor(type));
     this.type = type;
     tokenCounter = new Counter(0);
+    this.getChildren().addAll(icon, tokenCounter);
     this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
       @Override
@@ -70,20 +75,6 @@ public class TokenPileView extends Circle {
    */
   public TokenType getType() {
     return type;
-  }
-
-  /**
-   * Creates a clickable TokenPileView for the gameboard view.
-   * On click, it continues generating a token request code.
-   *
-   * @param radius the radius of the token pile view
-   * @param type the type of tokens in the token pile
-   * @param locationCode the location code of the token pile
-   */
-  public TokenPileView(float radius, TokenType type, String locationCode) {
-    super(radius);
-    this.setFill(ColorManager.getColor(type));
-    tokenCounter = new Counter(0);
   }
 
   /**

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-//TODO: Make cards flyweights
-
 /**
  * Represents a Splendor Card with id, prestige, tokenBonus, deckType, discount
  * and cost This class implements the Flyweight design pattern.
@@ -72,7 +70,10 @@ public class Card implements Comparable<Card> {
    * @param id The id of the card
    * @return the requested card
    */
-  public Card getCard(int id) {
+  public static Card getCard(int id) {
+    if (cards.size() == 0) {
+      generateCards();
+    }
     return cards.get(id);
   }
 

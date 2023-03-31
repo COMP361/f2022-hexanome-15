@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Represents a user.
- * Flyweight design pattern. (maybe singleton TODO)
+ * Flyweight design pattern.
  *
  * @author zacharyhayden
  */

@@ -48,9 +48,9 @@ public class Splendor extends Application {
    */
   public static void transitionTo(Scene scene, Optional<String> title) {
     stage.setScene(scene);
-    if (title.get() == "Game Screen") {
-      //get the game info from the server
-      
+    if (title.get().equals("Splendor Lobby")) {
+      //absolutely terrible, but works for now. 
+      LobbyScreen.getInstance().getLobbyController().setExitThread(false);
     }
     if (title.isPresent()) {
       stage.setTitle(title.get());
@@ -67,7 +67,6 @@ public class Splendor extends Application {
    * @param sessionInfo the session info of the game
    */
   public static void transitionToGameScreen(long gameId, JSONObject sessionInfo) {
-    System.out.println(sessionInfo.toString());
     JSONObject parameters = sessionInfo.getJSONObject("gameParameters");
     SceneManager.setGameScreen(GameBoardView.setupGameBoard(sessionInfo.getJSONArray("players"),
         parameters.getString("name")));

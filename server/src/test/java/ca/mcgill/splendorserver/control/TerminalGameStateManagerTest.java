@@ -34,9 +34,9 @@ class TerminalGameStateManagerTest {
     Player player2 = new Player("Zach", "green");
     players.add(player1);
     players.add(player2);
-    SessionInfo sessionInfo1 = new SessionInfo("SplendorOrient",players, lp, larry,"1L");
+    SessionInfo sessionInfo1 = new SessionInfo("SplendorOrient",players, lp, larry,"");
     game1 = new SplendorGame(sessionInfo1,1L);
-    SessionInfo sessionInfo2 = new SessionInfo("SplendorOrientCities",players, lp, larry,"1L");
+    SessionInfo sessionInfo2 = new SessionInfo("SplendorOrientCities",players, lp, larry,"");
     game2 = new SplendorGame(sessionInfo2,1L);
   }
 

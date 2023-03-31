@@ -1,5 +1,6 @@
 package ca.mcgill.splendorclient.view.lobbyservice;
 
+import ca.mcgill.splendorclient.control.LobbyController;
 import ca.mcgill.splendorclient.control.Splendor;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,8 @@ import javafx.scene.Scene;
  */
 public class LobbyScreen {
   private Scene scene;
+  
+  private LobbyController controller;
 
   /**
    * Lobby screen instance.
@@ -28,6 +31,15 @@ public class LobbyScreen {
   public static LobbyScreen getInstance() {
     return instance;
   }
+  
+  /**
+   * Grabs the instance of the lobby controller.
+   *
+   * @return the lobby controller instance.
+   */
+  public LobbyController getLobbyController() {
+    return controller;
+  }
 
   /**
    * Returns the current scene of the lobby service.
@@ -39,6 +51,7 @@ public class LobbyScreen {
     if (scene == null) {
       FXMLLoader fxmlLoader = new FXMLLoader(Splendor.class.getResource("/lobby-view.fxml"));
       Scene scene = new Scene(fxmlLoader.load(), 1000, 700);
+      controller = fxmlLoader.getController();
       this.scene = scene;
     }
     return scene;

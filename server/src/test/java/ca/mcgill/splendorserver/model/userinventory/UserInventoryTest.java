@@ -124,6 +124,20 @@ class UserInventoryTest {
     uinv.addToken(new Token(GOLD));
     uinv.purchaseCard(card1);
     assertTrue(uinv.hasCard(card1));
+    assertEquals(0, uinv.getTokenPiles().get(GOLD).getSize());
+  }
+
+  @Test
+  void purchaseCardGold2() {
+    uinv.addToken(new Token(GOLD));
+    uinv.addToken(new Token(DIAMOND));
+    uinv.addToken(new Token(DIAMOND));
+    CardCost cost2 = new CardCost(3,0,0,0,0);
+    Card card2 = new Card(1,1, DIAMOND, BASE1, ONE, cost2);
+    uinv.purchaseCard(card2);
+    assertTrue(uinv.hasCard(card2));
+    assertEquals(0, uinv.getTokenPiles().get(GOLD).getSize());
+    assertEquals(0, uinv.getTokenPiles().get(DIAMOND).getSize());
   }
 
   @Test
@@ -133,6 +147,22 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(goldCard);
     uinv.purchaseCard(card1);
+    assertFalse(uinv.hasCard(goldCard));
+  }
+
+  @Test
+  void purchaseCardGoldCardAndPower() {
+    TradingPostSlot tradingSlot = new TradingPostSlot(0, false, GOLD_TOKENS_WORTH_2_GEMS_SAME_COL, cost);
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(card1);
+    uinv.addPower(tradingSlot.getPower());
+    OrientCard goldCard = new OrientCard(1,0, GOLD, ORIENT1, TWO, cost,false,
+      new ArrayList<>());
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(goldCard);
+    CardCost cost2 = new CardCost(0, 1, 2, 0, 0);
+    Card card2 = new Card(1,1, DIAMOND, BASE1, ONE, cost2);
+    uinv.purchaseCard(card2);
     assertFalse(uinv.hasCard(goldCard));
   }
 
@@ -154,7 +184,10 @@ class UserInventoryTest {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(card1);
     uinv.addPower(tradingSlot.getPower());
-    assertTrue(uinv.canAffordCard(card1));
+    uinv.addToken(new Token(GOLD));
+    CardCost cost2 = new CardCost(0, 0, 2, 0, 0);
+    Card card2 = new Card(1,1, DIAMOND, BASE1, ONE, cost2);
+    assertTrue(uinv.canAffordCard(card2));
   }
 
   @Test
@@ -173,6 +206,15 @@ class UserInventoryTest {
   @Test
   void canAffordSpiceCard() {
     uinv.addToken(new Token(DIAMOND));
+    assertFalse(uinv.canAffordCard(oCard1));
+  }
+
+  @Test
+  void canAffordSpiceOnlyGoldCards() {
+    OrientCard goldCard = new OrientCard(1,0, GOLD, ORIENT1, TWO, cost,false,
+      new ArrayList<>());
+    uinv.addToken(new Token(DIAMOND));
+    uinv.purchaseCard(goldCard);
     assertFalse(uinv.canAffordCard(oCard1));
   }
 

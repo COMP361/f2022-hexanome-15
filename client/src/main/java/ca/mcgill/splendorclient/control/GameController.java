@@ -26,6 +26,7 @@ public class GameController {
   private GameBoardView localView;
 
   private static GameController instance = new GameController();
+  private BoardUpdater updaterThread;
 
   /**
    * Sets the GameBoardView to the given view.
@@ -70,31 +71,40 @@ public class GameController {
     return gameId;
   }
 
-
-  //TODO: disable multiple calls to this method
-
   /**
-   * Starts the game.
+   * Starts the game updater.
    */
   public static void start() {
-    new Thread(instance.new BoardUpdater()).start();
+    instance.updaterThread = instance.new BoardUpdater();
+    instance.updaterThread.start();
+  }
+  
+  
+  public static void stop() {
+    instance.updaterThread.setExit();
   }
 
 
   private class BoardUpdater extends Thread {
+    
+    private boolean exit = false;
+    
+    public void setExit() {
+      exit = true;
+    }
 
     @Override
     public void run() {
       boolean requestedActions = false;
-      while (true) {
+      while (true && !exit) {
         HttpResponse<JsonNode> response = Unirest
                                             .get(String.format("http://%s/api/games/%d/board", LobbyServiceExecutor.SERVERLOCATION, gameId))
                                             .asJson();
         if (response.getStatus() == 404) {
           try {
-            Thread.sleep(2000);
+            System.out.println("Sleeping due to bad board response");
+            Thread.sleep(5000);
           } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
           continue;
@@ -178,6 +188,7 @@ public class GameController {
                   tokens.getInt("GOLD"));
 
               //update nobles
+              
 
 
               //update decks
@@ -190,7 +201,7 @@ public class GameController {
 
               //update Trading
               String gameServer = response.getBody().getObject()
-                  .getJSONObject("gameServer").toString();
+                  .getString("gameServer");
               if (gameServer.equals("SplendorOrientTradingPosts")) {
                 JSONArray tradingPostArray = response.getBody().getObject()
                                                .getJSONArray("tradingPosts");
@@ -234,6 +245,17 @@ public class GameController {
 
                 GameBoardView.updatePowers(shields1, shields2, shields3, shields4, shields5);
               }
+
+              //update cities
+              if (gameServer.equals("SplendorOrientCities")) {
+                JSONArray cityArray = response.getBody().getObject().optJSONArray("cities");
+                int[] cityids = new int[cityArray.length()];
+                for (int i = 0; i < cityArray.length(); i++) {
+                  cityids[i] = (int) (cityArray.get(i));
+                }
+                GameBoardView.updateCityViews(cityids);
+              }
+              
             }
 
           });
@@ -259,7 +281,6 @@ public class GameController {
 
               @Override
               public void run() {
-                // TODO Auto-generated method stub
                 Alert yourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 yourTurnAlert.setTitle("Turn Information");
                 yourTurnAlert.setHeaderText("It's your turn, please make your move.");
@@ -275,11 +296,10 @@ public class GameController {
 
               @Override
               public void run() {
-                // TODO Auto-generated method stub
                 Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 notYourTurnAlert.setTitle("Turn Information");
                 notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername()
-                                                 + " turn, please wait for them to go.");
+                                                 + "'s turn, please wait for them to go.");
                 notYourTurnAlert.show();
               }
             });
@@ -288,7 +308,6 @@ public class GameController {
         try {
           Thread.sleep(2000);
         } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }

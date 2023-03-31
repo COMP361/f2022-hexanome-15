@@ -27,18 +27,8 @@ class CityTest {
   }
 
   @Test
-  void getCitiesTwoPlayers() {
-    assertEquals(2, City.getCities(2).size());
-  }
-
-  @Test
-  void getCitiesThreePlayers() {
-    assertEquals(3, City.getCities(3).size());
-  }
-
-  @Test
-  void getCitiesFourPlayers() {
-    assertEquals(4, City.getCities(4).size());
+  void getCities() {
+    assertEquals(3, City.getCities().size());
   }
 
   @Test

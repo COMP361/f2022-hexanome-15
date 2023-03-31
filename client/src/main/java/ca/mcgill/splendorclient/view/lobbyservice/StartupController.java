@@ -68,7 +68,6 @@ public class StartupController implements Initializable {
           } else {
             System.out.println("Successfully logged in " + usernameField.getText());
             Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
-            //TODO: actually get the role
             String accessToken = (String) Parsejson.PARSE_JSON
                                             .getFromKey((JSONObject) userInfo, "access_token");
             String refreshToken = (String) Parsejson.PARSE_JSON

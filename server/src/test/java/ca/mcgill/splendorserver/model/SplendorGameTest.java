@@ -34,9 +34,9 @@ class SplendorGameTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    sessionInfo1 = new SessionInfo("SplendorOrient", playerList, players, sofia,"1L");
-    sessionInfo2 = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia,"2L");
-    sessionInfo3 = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"3L");
+    sessionInfo1 = new SessionInfo("SplendorOrient", playerList, players, sofia,"");
+    sessionInfo2 = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia,"");
+    sessionInfo3 = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
     game1 = new SplendorGame(sessionInfo1,1L);
     game2 = new SplendorGame(sessionInfo2,2L);
     game3 = new SplendorGame(sessionInfo3,3L);
@@ -121,7 +121,7 @@ class SplendorGameTest {
     assertEquals(6, game3.getBoard().getTokenPiles().size());
     assertEquals(2, game3.getBoard().getInventories().size());
     assertEquals(0, game3.getBoard().getTradingPostSlots().size());
-    assertEquals(2, game3.getBoard().getCities().size());
+    assertEquals(3, game3.getBoard().getCities().size());
   }
 
   @Test
@@ -136,7 +136,7 @@ class SplendorGameTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
+    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"");
     SplendorGame game4 = new SplendorGame(sessionInfo,1L);
     assertEquals(game1, game4);
   }
@@ -163,7 +163,7 @@ class SplendorGameTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
+    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"");
     SplendorGame game4 = new SplendorGame(sessionInfo,1L);
     assertEquals(game1.hashCode(), game4.hashCode());
   }

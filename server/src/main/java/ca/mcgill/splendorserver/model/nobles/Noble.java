@@ -2,10 +2,8 @@ package ca.mcgill.splendorserver.model.nobles;
 
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-
-//TODO: Make Nobles flyweights
 
 /**
  * Represents a Splendor Noble with reserved status and prestige.
@@ -89,14 +87,27 @@ public class Noble {
     if (nobles.size() == 0) {
       generateNobles();
     }
-    Random random = new Random();
+    Collections.shuffle(nobles);
     noblesInGame = new ArrayList<>();
+
     for (int i = 0; i < numPlayers + 1; i++) {
-      int randomIndex = random.nextInt(nobles.size());
-      Noble randomNoble = nobles.get(randomIndex);
-      noblesInGame.add(randomNoble);
+      Noble noble = nobles.get(i);
+      noblesInGame.add(noble);
     }
     return noblesInGame;
+  }
+  
+  /**
+   * Get noble by id.
+   *
+   * @param id of sought noble
+   * @return the sought noble.
+   */
+  public static Noble getNoble(int id) {
+    if (nobles.size() == 0) {
+      generateNobles();
+    }
+    return nobles.get(id);
   }
 
   /**
@@ -114,7 +125,7 @@ public class Noble {
     nobles.add(new Noble(7, new CardCost(0, 3, 3, 3, 0)));
     nobles.add(new Noble(8, new CardCost(0, 0, 3, 3, 3)));
     nobles.add(new Noble(9, new CardCost(3, 0, 0, 3, 3)));
-    /* nobles.add(new Noble(10, new CardCost(0, 4, 0, 4, 0)));
+    /*nobles.add(new Noble(10, new CardCost(0, 4, 0, 4, 0)));
     nobles.add(new Noble(11, new CardCost(0, 3, 3, 0, 3)));
     nobles.add(new Noble(12, new CardCost(4, 0, 4, 0, 0)));
     nobles.add(new Noble(13, new CardCost(0, 0, 4, 0, 4)));
