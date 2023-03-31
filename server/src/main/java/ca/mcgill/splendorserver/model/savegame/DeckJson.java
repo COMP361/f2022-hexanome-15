@@ -13,7 +13,14 @@ import java.util.List;
  */
 public class DeckJson {
   
+  /**
+   * The card type of the deck.
+   */
   public String deckType;
+  
+  /**
+   * The cards in the deck.
+   */
   public List<Integer> cards = new ArrayList<>();
   
   /**

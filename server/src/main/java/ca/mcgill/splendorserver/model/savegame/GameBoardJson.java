@@ -19,13 +19,44 @@ import java.util.Map.Entry;
  */
 public class GameBoardJson {
   
+  /**
+   * Name of current turn holder.
+   */
   public String whoseTurn;
+  
+  /**
+   * Inventories on the board.
+   */
   public List<InventoryJson> inventories;
+  
+  /**
+   * Decks on the board.
+   */
   public List<DeckJson> decks = new ArrayList<>();
+  
+  /**
+   * Nobles on the board.
+   */
   public List<Integer> nobles = new ArrayList<>();
+  
+  /**
+   * Cardfield on the board.
+   */
   public List<Integer> cardField = new ArrayList<>();
+  
+  /**
+   * Tokens on the board.
+   */
   public EnumMap<TokenType, Integer> tokenField = new EnumMap<TokenType, Integer>(TokenType.class);
+  
+  /**
+   * Trading posts on the board, optional.
+   */
   public List<TradingPostJson> tradingPosts = new ArrayList<>();
+  
+  /**
+   * Cities on the board, optional.
+   */
   public List<Integer> cities = new ArrayList<>();
   
   /**

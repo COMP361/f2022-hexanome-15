@@ -17,6 +17,13 @@ public class SaveGameStorage {
   private static List<SaveGame> savegames = new ArrayList<>();
   
   /**
+   * Here to silence javadoc warnings.
+   */
+  public SaveGameStorage() {
+    
+  }
+  
+  /**
    * Adds a savegame to the bucket of savegames.
    *
    * @param savegame to put into the bucket

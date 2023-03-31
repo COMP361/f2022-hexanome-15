@@ -101,6 +101,7 @@ public class Noble {
    * Get noble by id.
    *
    * @param id of sought noble
+   * @return the sought noble.
    */
   public static Noble getNoble(int id) {
     if (nobles.size() == 0) {

@@ -23,16 +23,59 @@ import java.util.Map;
  */
 public class InventoryJson {
 
+  /**
+   * Purchased cards in the inventory.
+   */
   public List<Integer> purchasedCards = new ArrayList<Integer>();
+  
+  /**
+   * Reserved cards.
+   */
   public List<Integer> reservedCards = new ArrayList<Integer>();
+  
+  /**
+   * Tokens.
+   */
   public Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
+  
+  /**
+   * For updating the tiny view in the client.
+   */
   public Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
+  
+  /**
+   * User name.
+   */
   public String userName;
+  
+  /**
+   * Prestige count.
+   */
   public int prestige;
+  
+  /**
+   * Visiting nobles.
+   */
   public List<Integer> visitingNobles = new ArrayList<>();
+  
+  /**
+   * Reserved nobles.
+   */
   public List<Integer> reservedNobles = new ArrayList<>();
+  
+  /**
+   * Owned powers.
+   */
   public List<Power> powers;
+  
+  /**
+   * Type of coat of arms.
+   */
   public CoatOfArmsType coatOfArmsType;
+  
+  /**
+   * Owned cities.
+   */
   public List<Integer> cities = new ArrayList<>();
 
   /**

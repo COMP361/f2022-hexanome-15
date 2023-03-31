@@ -11,10 +11,19 @@ import java.util.List;
  */
 public class SaveGameJson {
   
+  /**
+   * Game service name.
+   */
   public String gamename;
   
+  /**
+   * Players in the savegame.
+   */
   public List<String> players;
   
+  /**
+   * Id of the savegame.
+   */
   public String savegameid;
   
   /**
