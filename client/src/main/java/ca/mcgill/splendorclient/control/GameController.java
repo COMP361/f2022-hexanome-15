@@ -103,7 +103,7 @@ public class GameController {
         if (response.getStatus() == 404) {
           try {
             System.out.println("Sleeping due to bad board response");
-            Thread.sleep(2000);
+            Thread.sleep(5000);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
