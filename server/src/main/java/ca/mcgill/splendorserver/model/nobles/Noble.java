@@ -96,6 +96,19 @@ public class Noble {
     }
     return noblesInGame;
   }
+  
+  /**
+   * Get noble by id.
+   *
+   * @param id of sought noble
+   * @return the sought noble.
+   */
+  public static Noble getNoble(int id) {
+    if (nobles.size() == 0) {
+      generateNobles();
+    }
+    return nobles.get(id);
+  }
 
   /**
    * Generates all nobles.

@@ -3,6 +3,10 @@ package ca.mcgill.splendorclient.lobbyserviceio;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.json.JSONObject;
@@ -249,7 +253,7 @@ public class LobbyServiceExecutor {
     //String command = String.format("curl -x POST %s/api/games/%d/%s/endTurn -d %s",
     // SERVERLOCATION, gameId, username, move);
     // run(command, NullParser.NULLPARSER);
-    HttpResponse<String> response = Unirest.put(String.format("http://127.0.0.1:8080/api/games/%d/endturn", gameId, username))
+    HttpResponse<String> response = Unirest.put(String.format("http://" + SERVERLOCATION + "/api/games/%d/endturn", gameId, username))
         .header("Content-Type", "application/json")
         .body(move)
         .asString();
