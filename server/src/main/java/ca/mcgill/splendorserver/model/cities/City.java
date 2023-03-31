@@ -135,6 +135,6 @@ public class City {
     cities.add(new City(12, 14,
         new CardCost(0, 0, 4, 0, 0), 4));
     cities.add(new City(13, 15,
-        new CardCost(5, 0, 0, 0, 0), 5));
+        new CardCost(0, 0, 0, 0, 0), 5));
   }
 }

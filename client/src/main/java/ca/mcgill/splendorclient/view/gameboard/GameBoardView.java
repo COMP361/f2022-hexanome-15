@@ -53,6 +53,7 @@ public class GameBoardView {
   private static final ArrayList<DeckView> deckViews = new ArrayList<>();
   private static final ArrayList<NobleView> nobleViews = new ArrayList<>();
   private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
+  private static final ArrayList<CityView> cityViews = new ArrayList<>();
   private static TradingView tradingView;
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
@@ -376,6 +377,8 @@ public class GameBoardView {
       allUserInventoryViews.add(userInventoryView);
     }
 
+    
+    //creating nobles
     VBox nobleCards = new VBox();
     nobleCards.setLayoutX(universalUnitX);
     nobleCards.setLayoutY(universalUnitY);
@@ -406,7 +409,17 @@ public class GameBoardView {
       tradingView.setLayoutX(screenSize.width / 4f);
       root.getChildren().addAll(tradingView);
     }
-    
+    //creating Cities expansion
+    if (gameServer.equals("SplendorOrientCities")) {
+      for (int i = 3; i > 0; i--) {
+        CityView city = new CityView(1.5f * cardHeight, 0.8f * cardHeight);
+        city.setLayoutX(universalUnitX * (99) - 1.5f * 0.8 * cardHeight);
+        city.setLayoutY(universalUnitY * (95) - i * (0.8 * cardHeight + spacer));
+        cityViews.add(city);
+      }
+      root.getChildren().addAll(cityViews);
+    }
+
     //save and quit buttons
     HBox menu = new HBox();
     menu.setSpacing(10);
@@ -479,10 +492,8 @@ public class GameBoardView {
    * @param field the game board field
    */
   public static void updateNobleViews(int[] field) {
-    int num = 0;
-    for (int i = 0; i < nobleViews.size() && num < field.length; i++) {
-      nobleViews.get(i).updateView(field[num]);
-      num++;
+    for (int i = 0; i < nobleViews.size(); i++) {
+      nobleViews.get(i).updateView(field[i]);
     }
   }
 
@@ -573,5 +584,16 @@ public class GameBoardView {
                                   String[] fifthShields) {
     tradingView.updatePowers(firstShields, secondShields,
         thirdShields, fourthShields, fifthShields);
+  }
+
+  /**
+   * Draws the correct cities as received from server state json.
+   *
+   * @param cities the array of int IDs representing cities.
+   */
+  public static void updateCityViews(int[] cities) {
+    for (int i = 0; i < cities.length; i++) {
+      cityViews.get(i).updateView(cities[i]);
+    }
   }
 }

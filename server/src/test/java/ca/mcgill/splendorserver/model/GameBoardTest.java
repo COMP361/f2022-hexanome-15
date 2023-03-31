@@ -1345,6 +1345,11 @@ class GameBoardTest {
   }
 
   @Test
+  void getTokenCount() {
+    assertEquals(20, gb.getTokenCount());
+  }
+
+  @Test
   void endTurn() {
     gb.endTurn();
     assertNull(gb.getPendingAction());
