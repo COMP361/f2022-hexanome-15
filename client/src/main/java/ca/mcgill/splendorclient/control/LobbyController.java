@@ -134,7 +134,8 @@ public class LobbyController implements Initializable {
 
       @Override
       public void handle(ActionEvent event) {
-        String toDelete = availableSessionList.getSelectionModel().getSelectedItem();
+        String sessionString = availableSessionList.getSelectionModel().getSelectedItem();
+        String toDelete = sessionString.split(" - ")[1];
         if (delete_session(toDelete, User.THISUSER.getAccessToken())) {
           //TODO: add something to this if block
         } else {
@@ -148,8 +149,9 @@ public class LobbyController implements Initializable {
       @Override
       public void handle(ActionEvent arg0) {
         User user = User.THISUSER;
-        String sessionToJoin = availableSessionList
+        String sessionString = availableSessionList
                                  .getSelectionModel().getSelectedItem();
+        String sessionToJoin = sessionString.split(" - ")[1];
         if (add_player_to_session(user.getUsername(),
             user.getAccessToken(), sessionToJoin)) {
           new Thread(new Runnable() {
@@ -185,8 +187,9 @@ public class LobbyController implements Initializable {
       @Override
       public void handle(ActionEvent arg0) {
         User user = User.THISUSER;
-        String sessionToLaunch = availableSessionList
+        String sessionString = availableSessionList
                                    .getSelectionModel().getSelectedItem();
+        String sessionToLaunch = sessionString.split(" - ")[1];
         if (launch_session(sessionToLaunch, user.getAccessToken())) {
           Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
               get_session(sessionToLaunch));
@@ -260,7 +263,7 @@ public class LobbyController implements Initializable {
       String name = gameParameters.getString("displayName");
       //TODO : Add game service name
       String sessionInfo = (String) key;
-      arr.add(sessionInfo);
+      arr.add(name + " - " + sessionInfo);
     }
     return arr;
   }

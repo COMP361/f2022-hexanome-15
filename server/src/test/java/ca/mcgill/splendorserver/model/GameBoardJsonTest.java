@@ -50,7 +50,7 @@ class GameBoardJsonTest {
     Deck deck1 = new Deck(BASE1);
     decks.add(deck1);
     List<Noble> nobles = Noble.getNobles(2);
-    List<City> cities = City.getCities(2);
+    List<City> cities = City.getCities();
     List<TradingPostSlot> tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     tradingPostSlots.get(0).addCoatOfArms(new CoatOfArms(RED));
     gjson = new GameBoardJson("SplendorOrientTradingPosts", whoseTurn, inventories, decks,

@@ -75,17 +75,15 @@ public class City {
   /**
    * Returns the cities that are currently on the game board.
    *
-   * @param numPlayers the number of players in the game
    * @return a list of cities that are currently on the game board
    */
-  public static List<City> getCities(int numPlayers) {
-    assert numPlayers >= 2 && numPlayers <= 4;
+  public static List<City> getCities() {
     if (cities.size() == 0) {
       generateCities();
     }
     Collections.shuffle(cities);
     citiesInGame = new ArrayList<>();
-    for (int i = 0; i < numPlayers; i++) {
+    for (int i = 0; i < 3; i++) {
       City city = cities.get(i);
       citiesInGame.add(city);
     }

@@ -350,6 +350,7 @@ public class UserInventory implements Iterable<Card> {
   public void discardCard(Card card) {
     assert card != null && cards.contains(card);
     removePrestige(card.getPrestige());
+    int index = cards.indexOf(card);
     cards.remove(card);
   }
 
@@ -471,7 +472,7 @@ public class UserInventory implements Iterable<Card> {
    * @param card orient level one card to add
    * @throws AssertionError if card == null
    */
-  public void addCascadeLevelOne(OrientCard card) {
+  public void addCascadeLevelOne(Card card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
     if (card.getDeckType() == DeckType.ORIENT1 || card.getDeckType() == DeckType.BASE1) {
       card.setCardStatus(CardStatus.PURCHASED);
@@ -486,7 +487,7 @@ public class UserInventory implements Iterable<Card> {
    * @param card orient level two card to add
    * @throws AssertionError if card == null
    */
-  public void addCascadeLevelTwo(OrientCard card) {
+  public void addCascadeLevelTwo(Card card) {
     assert card != null && card.getCardStatus() == CardStatus.NONE;
     if (card.getDeckType() == DeckType.ORIENT2 || card.getDeckType() == DeckType.BASE2) {
       card.setCardStatus(CardStatus.PURCHASED);
@@ -522,7 +523,7 @@ public class UserInventory implements Iterable<Card> {
       // bonusDiscount = sum(tokenBonusAmount)
       // for owned cards that match the current cost token in iteration
       int bonusDiscount = tokenBonusAmountByType(entry.getKey());
-      final int actualCost = entry.getValue() - bonusDiscount;
+      int actualCost = entry.getValue() - bonusDiscount;
 
       int numGoldTokensNeeded = amountGoldTokensNeeded(entry.getKey(), entry.getValue());
       int numGoldCardsNeeded = (int) Math.ceil((double) numGoldTokensNeeded / 2);
@@ -535,14 +536,17 @@ public class UserInventory implements Iterable<Card> {
         removeGoldCard();
         numGoldCardsNeeded--;
         numGoldCardsUsed++;
+        actualCost -= 2;
       }
       numGoldTokensNeeded -= 2 * numGoldCardsUsed;
 
+      if (numGoldTokensNeeded > 0) {
+        List<Token> goldTokens = removeTokensByTokenType(TokenType.GOLD, numGoldTokensNeeded);
+        costs.addAll(goldTokens);
+        actualCost -= goldTokens.size();
+      }
       if (actualCost > 0) {
         costs.addAll(removeTokensByTokenType(entry.getKey(), actualCost));
-      }
-      if (numGoldTokensNeeded > 0) {
-        costs.addAll(removeTokensByTokenType(TokenType.GOLD, numGoldTokensNeeded));
       }
     }
     if (card.getCardStatus() == CardStatus.NONE) {

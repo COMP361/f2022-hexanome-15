@@ -18,7 +18,10 @@ public class Counter extends Text {
    */
   public Counter(int count) {
     this.setText(String.valueOf(count));
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 35));
+    this.setFont(Font.font("Comic Sans MS",
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 
   /**
@@ -38,7 +41,10 @@ public class Counter extends Text {
   public void setCount(int count) {
 
     this.setText(String.valueOf(count));
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 35));
+    this.setFont(Font.font("Comic Sans MS", 
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 
 }
