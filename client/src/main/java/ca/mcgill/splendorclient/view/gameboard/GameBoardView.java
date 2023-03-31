@@ -13,6 +13,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -419,9 +421,9 @@ public class GameBoardView {
     }
 
     //save and quit buttons
+    HBox menu = new HBox();
+    menu.setSpacing(10);
     Button saveButton = new Button("Save Game");
-    //saveButton.setLayoutX(screenSize.width - 100);
-    //saveButton.setLayoutY(screenSize.height - 50);
     saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
       @Override
@@ -430,19 +432,25 @@ public class GameBoardView {
         //send to server /api/games/{gameId}/savegame
         String location = LobbyServiceExecutor.SERVERLOCATION;
         String url = String.format("http://%s/api/games/%d/savegame", location, gameid);
-        HttpResponse<JsonNode> response =
+        HttpResponse<JsonNode> response = 
             Unirest.put(url).asJson();
         System.out.println(response.getStatus());
-        /* TODO: only do this when the quit button is clicked
+      }
+      
+    });
+    Button quitButton = new Button("Quit Game");
+    quitButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+      @Override
+      public void handle(MouseEvent event) {
         GameController.stop();
         Splendor.transitionTo(SceneManager.getLobbyScreen(), Optional.of("Splendor Lobby"));
-        */
+        
       }
-    }
-    );
-
-    root.getChildren().add(saveButton);
-
+      
+    });
+    menu.getChildren().addAll(saveButton, quitButton);
+    root.getChildren().add(menu);
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
     if (newImage != null) {

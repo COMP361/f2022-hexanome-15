@@ -19,11 +19,11 @@ public class LobbyServiceExecutor {
   /**
    * Instance of Lobby Service Executor.
    */
-  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://127.0.0.1:4242");
+  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor("http://localhost:4242");
   /**
    * The location of the server.
    */
-  public static final String SERVERLOCATION = "127.0.0.1:8080";
+  public static final String SERVERLOCATION = "localhost:8080";
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   private final String lobbyServiceLocation;
@@ -47,6 +47,13 @@ public class LobbyServiceExecutor {
     String command = String.format("curl -X GET %s/api/online", lobbyServiceLocation);
     String output = (String) run(command, ParseText.PARSE_TEXT);
     return output;
+  }
+  
+  /**
+   * 
+   */
+  public final String getLobbyServiceLocation() {
+    return lobbyServiceLocation;
   }
 
   /**
