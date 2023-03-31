@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public final class AuthTokenAuthenticator {
-  private static final String lobbyServiceLocation = "localhost:4242";
+  private static final String lobbyServiceLocation = "http://localhost:4242";
   private static final String GET_USERNAME         = "/oauth/username";
   private static final String GET_ROLE             = "/oauth/role";
 
