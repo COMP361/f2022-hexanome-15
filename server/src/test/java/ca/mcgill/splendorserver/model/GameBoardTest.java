@@ -56,7 +56,7 @@ class GameBoardTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    SessionInfo sessionInfo = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia,"1L");
+    SessionInfo sessionInfo = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia,"");
     SplendorGame game = new SplendorGame(sessionInfo, 1L);
     inventories = game.getBoard().getInventories();
     decks = game.getBoard().getDecks();

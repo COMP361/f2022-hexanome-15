@@ -31,7 +31,7 @@ class GameRestControllerTest {
   private Player player1 = new Player("Sofia", "purple");
   private Player player2 = new Player("Jeff", "blue");
   List<Player> playerList = new ArrayList<>(List.of(player1, player2));
-  private SessionInfo sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"5L");
+  private SessionInfo sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
 
   @Test
   void launchRequestBadRequest() {

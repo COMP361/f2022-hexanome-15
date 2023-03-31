@@ -83,7 +83,7 @@ class ActionManagerTest {
     players.add(player1);
     players.add(player2);
 
-    SessionInfo si = new SessionInfo("",players,lpw,aPlayer,"1L");
+    SessionInfo si = new SessionInfo("",players,lpw,aPlayer,"");
     splendorGame = new SplendorGame(si,1L);
     LocalGameStorage.addActiveGame(splendorGame);
 

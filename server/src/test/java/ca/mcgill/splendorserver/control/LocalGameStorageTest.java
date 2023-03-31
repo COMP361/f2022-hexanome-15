@@ -30,7 +30,7 @@ class LocalGameStorageTest {
     List<PlayerWrapper> players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
-    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"1L");
+    SessionInfo sessionInfo = new SessionInfo("12345", playerList, players, sofia,"");
     sg = new SplendorGame(sessionInfo,1L);
   }
 
