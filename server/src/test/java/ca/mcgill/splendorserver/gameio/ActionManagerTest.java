@@ -161,13 +161,23 @@ class ActionManagerTest {
     splendorGame = new SplendorGame(si,1L);
     LocalGameStorage.addActiveGame(splendorGame);
 
+    List<Action> bActions0 = new ArrayList<>();
+    bActions0.add(RESERVE_NOBLE);
+    CardCost acost = new CardCost(0,1,0,1,0);
+    OrientCard aCard = new OrientCard(111,1,SAPPHIRE,BASE1,ZERO,acost,false,bActions0);
+    Noble aNoble = new Noble(13,acost);
+    Move aMove = new Move(PURCHASE_DEV,aCard,aPlayer,BASE1,aNoble,null,SAPPHIRE,null);
 
-    affordCard(uinv, "Slava");
+    gameBoardReflector("actionPending",splendorGame.getBoard(),RESERVE_NOBLE);
+    buyCard (aPlayer, aCard, TAKE_TOKEN, aMove);
+    ResponseEntity<String> LMoves = aM.getAvailableActions(1L,"Slava","");
+    String lAction = LMoves.getBody().substring(2,34);
 
-  assertEquals//REWRITE
+
+  assertEquals
     (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
         .body(TAKE_TOKEN.toString()),
-      aM.performAction(1L, "Slava", "B0914F85246E7181D38AB1138EA637C0", "Slava"),
+      aM.performAction(1L, "Slava", lAction, "Slava"),
       "");
 
     assertEquals //REWRITE
@@ -177,8 +187,8 @@ class ActionManagerTest {
         "");
 
     affordCard(uinv2,"Larry");
-    ResponseEntity<String> LMoves = aM.getAvailableActions(1L,"Larry","");
-    String lAction = LMoves.getBody().substring(2,34);
+    LMoves = aM.getAvailableActions(1L,"Larry","");
+    lAction = LMoves.getBody().substring(2,34);
 
 
     assertEquals // REWRITE
