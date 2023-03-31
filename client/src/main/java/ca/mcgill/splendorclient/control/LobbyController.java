@@ -166,6 +166,12 @@ public class LobbyController implements Initializable {
                   if (sessionInfo.getBoolean("launched")) {
                     Platform.runLater(() -> {
                       Splendor.transitionToGameScreen(Long.valueOf(sessionToJoin), sessionInfo);
+                      try {
+                        Thread.sleep(2000);
+                      } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                      }
                       GameController.getInstance().setGameId(Long.valueOf(sessionToJoin));
                       GameController.start();
                     });
@@ -192,11 +198,19 @@ public class LobbyController implements Initializable {
                                    .getSelectionModel().getSelectedItem();
         String sessionToLaunch = sessionString.split(" - ")[1];
         if (launch_session(sessionToLaunch, user.getAccessToken())) {
-          Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
-              get_session(sessionToLaunch));
-          GameController.getInstance()
-              .setGameId(Long.valueOf(sessionToLaunch));
-          GameController.start();
+          Platform.runLater(() -> {
+            Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
+                get_session(sessionToLaunch));
+            try {
+              Thread.sleep(2000);
+            } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+            GameController.getInstance()
+                .setGameId(Long.valueOf(sessionToLaunch));
+            GameController.start();
+          });
         } else {
           //notify user failure to launch session.
         }
