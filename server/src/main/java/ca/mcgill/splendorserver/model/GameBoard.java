@@ -1,6 +1,5 @@
 package ca.mcgill.splendorserver.model;
 
-import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
@@ -26,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.persistence.Embeddable;
 
 
 /**
@@ -35,7 +33,6 @@ import javax.persistence.Embeddable;
  *
  * @author lawrenceberardelli
  */
-@Embeddable
 public class GameBoard {
 
   private final List<UserInventory>           inventories;

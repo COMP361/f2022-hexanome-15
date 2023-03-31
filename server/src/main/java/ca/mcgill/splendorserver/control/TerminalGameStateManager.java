@@ -1,6 +1,5 @@
 package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 

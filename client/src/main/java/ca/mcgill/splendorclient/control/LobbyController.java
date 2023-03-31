@@ -52,7 +52,7 @@ public class LobbyController implements Initializable {
 
   // setting lobby service location
   @Value("{lobbyservice.location}")
-  private String lobbyServiceLocation = "http://127.0.0.1:4242"; // TODO: fix the value injection
+  private String lobbyServiceLocation = "http://10.121.47.57:4242"; // TODO: fix the value injection
 
   /**
    * Creates a LobbyController object.

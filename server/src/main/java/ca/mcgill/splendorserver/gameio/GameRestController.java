@@ -1,7 +1,5 @@
 package ca.mcgill.splendorserver.gameio;
 
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
-import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.model.GameBoard;
@@ -13,6 +11,10 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -46,8 +49,8 @@ public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
 
   @Value("{lobbyservice.location}")
-  private        String lobbyServiceLocation = "http://lobby:4242";
-  private static String gameServiceLocation = "http://splendor_server:4244";
+  private        String lobbyServiceLocation = "http://172.17.0.1:4242";
+  private static String gameServiceLocation = "http://10.121.47.57:8080"; //"http://splendor_server:4244";
 
   /**
    * Setter for static field, value is injected from properties file.
@@ -62,16 +65,14 @@ public class GameRestController {
   // 4 threads for the max 4 players
   private final ExecutorService updaters     = Executors.newFixedThreadPool(4);
   private       String          gameName;
-  private       JSONObject      adminAuth    = LobbyServiceExecutor
-      .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
-  private       String          refreshToken = (String) Parsejson
-      .PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+  private       JSONObject      adminAuth    = auth_token("maex", "abc123_ABC123");
+  private       String          refreshToken = (String) getFromKey(adminAuth, "refresh_token");
 
   /**
    * Creates a GameRestController.
    */
   public GameRestController() {
-    String accessToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
+    String accessToken = (String) getFromKey(adminAuth, "access_token");
     register_gameservice(accessToken, gameServiceLocation, 4, 2,
                          "SplendorOrient", "SplendorOrient", true
     );
@@ -83,6 +84,92 @@ public class GameRestController {
     );
     System.out.println("in here");
 
+  }
+
+  /**
+   * Gets auth token from the lobby service.
+   *
+   * @param username username
+   * @param password password
+   * @return the json containing object with response
+   */
+  public JSONObject auth_token(String username, String password) {
+    String command = String.format(
+        "curl -X POST " + "--user bgp-client-name:bgp-client-pw "
+            + "%s/oauth/token?grant_type=password&username=%s&password=%s",
+        lobbyServiceLocation, username, password);
+
+    try {
+      // execute the command
+      Process process = Runtime.getRuntime().exec(command);
+
+      // handle exit code
+      int exitCode = process.waitFor();
+
+      java.util.logging.Logger.getAnonymousLogger()
+                              .log(Level.INFO, command + " exit code: " + exitCode);
+
+      if (exitCode != 0) {
+        // get error message
+        BufferedReader errorStream = new BufferedReader(
+            new InputStreamReader(process.getErrorStream()));
+        String line;
+        System.out.println("Error Stream: \n");
+        while ((line = errorStream.readLine()) != null) {
+          System.out.println(line);
+        }
+        errorStream.close();
+        // throw exception if error with the script
+        throw new RuntimeException("[WARNING] Process: " + command
+                                       + " resulted in exit code: " + exitCode);
+      }
+
+      // get parsed output; output will be "NULLPARSER" if the parser if NULLParser
+      // assign global variable
+      JSONObject output = (JSONObject) parseJsonOutput(process.getInputStream());
+
+      // kill process
+      process.destroy();
+
+      // return parsed output or null
+
+      return output;
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the specified key from json.
+   *
+   * @param json json to parse
+   * @param key key to get
+   * @return the specified key if exists
+   */
+  public Object getFromKey(JSONObject json, String key) {
+    assert json != null && key != null;
+    return json.get(key);
+  }
+
+  private Object parseJsonOutput(InputStream scriptOutput) {
+    assert scriptOutput != null;
+
+    StringBuilder output = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(scriptOutput));
+
+    String line;
+    try {
+      while ((line = reader.readLine()) != null) {
+        output.append(line + "\n");
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+    return new JSONObject(output.toString());
   }
 
   private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
@@ -166,9 +253,9 @@ public class GameRestController {
                                                   .asString();
 
 
-    adminAuth    = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.auth_token(gameName, "Antichrist1!");
-    accessToken  = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token");
-    refreshToken = (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+    adminAuth    = auth_token(gameName, "Antichrist1!");
+    accessToken  = (String) getFromKey(adminAuth, "access_token");
+    refreshToken = (String) getFromKey(adminAuth, "refresh_token");
     GameServiceJson
         gs = new GameServiceJson(
         gameName,

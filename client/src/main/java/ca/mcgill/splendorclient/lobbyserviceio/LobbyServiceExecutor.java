@@ -25,7 +25,7 @@ public class LobbyServiceExecutor {
   /**
    * The location of the server.
    */
-  public static String SERVERLOCATION = "http://splendor_server:8080"; // TODO: fix the value injection;
+  public static String SERVERLOCATION = "10.121.47.57:8080"; // TODO: fix the value injection;
 
   /**
    * Sets the game service location from properties.
@@ -39,7 +39,7 @@ public class LobbyServiceExecutor {
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   @Value("{lobbyservice.location}")
-  private String lobbyServiceLocation = "http://lobby:4242"; // TODO: fix the value injection;
+  private String lobbyServiceLocation = "http://10.121.47.57:4242"; // TODO: fix the value injection;
 
   /**
    * Creates a LobbyServiceExecutor.
@@ -68,7 +68,7 @@ public class LobbyServiceExecutor {
   public final void sendGameboard(String gameboard, int gameid) {
     String command = String.format("curl -X PUT --header 'Content-Type: application/json' "
                                      + "--data {'gameboard':%s} "
-                                     + "%s/api/games/%s/gameboard",
+                                     + "http://%s/api/games/%s/gameboard",
         gameboard, SERVERLOCATION, gameid);
     run(command, Parsejson.PARSE_JSON);
   }

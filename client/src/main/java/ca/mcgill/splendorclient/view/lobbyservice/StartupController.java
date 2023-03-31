@@ -8,9 +8,6 @@ import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
 import ca.mcgill.splendorclient.model.users.Role;
 import ca.mcgill.splendorclient.model.users.User;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -19,16 +16,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-/**
- * Controls the start up for the lobby service.
- */
-@Component
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+
 public class StartupController implements Initializable {
-  @Autowired
-  private LobbyServiceExecutor ls;
+  private LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 
   @FXML
   private TextField usernameField;
