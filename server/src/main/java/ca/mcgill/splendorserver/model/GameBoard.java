@@ -401,6 +401,75 @@ public class GameBoard {
   }
 
   /**
+   * Returns the bonus actions of an Orient card.
+   *
+   * @param actions the bonus actions
+   * @param inventory the player's inventory
+   * @return the bonus actions of an Orient card
+   */
+  private Action getBonusAction(List<Action> actions, UserInventory inventory) {
+    if (actions.size() > 0) {
+      if (actions.get(0) == Action.RESERVE_NOBLE) {
+        if (!nobles.isEmpty()) {
+          return actions.get(0);
+        }
+      }
+      if (actions.get(0) == Action.CASCADE_LEVEL_1) {
+        if (deckLevelExists(1)) {
+          return actions.get(0);
+        }
+      }
+      if (actions.get(0) == Action.CASCADE_LEVEL_2) {
+        if (deckLevelExists(2)) {
+          return actions.get(0);
+        }
+      }
+      if (actions.get(0) == Action.DISCARD_FIRST_WHITE_CARD
+            || actions.get(0) == Action.DISCARD_FIRST_BLUE_CARD
+            || actions.get(0) == Action.DISCARD_FIRST_GREEN_CARD
+            || actions.get(0) == Action.DISCARD_FIRST_RED_CARD
+            || actions.get(0) == Action.DISCARD_FIRST_BLACK_CARD) {
+        TokenType tokenType = null;
+        switch (actions.get(0)) {
+          case DISCARD_FIRST_WHITE_CARD:
+            tokenType = TokenType.DIAMOND;
+            break;
+          case DISCARD_FIRST_BLUE_CARD:
+            tokenType = TokenType.SAPPHIRE;
+            break;
+          case DISCARD_FIRST_GREEN_CARD:
+            tokenType = TokenType.EMERALD;
+            break;
+          case DISCARD_FIRST_RED_CARD:
+            tokenType = TokenType.RUBY;
+            break;
+          case DISCARD_FIRST_BLACK_CARD:
+            tokenType = TokenType.ONYX;
+            break;
+          default:
+            tokenType = null;
+        }
+        if (tokenType != null) {
+          int spiceCount = inventory.getNumSpiceCardsByType(tokenType);
+          if (spiceCount >= 2) {
+            inventory.discardSpiceCard(tokenType);
+            inventory.discardSpiceCard(tokenType);
+            return null;
+          } else if (spiceCount == 1) {
+            inventory.discardSpiceCard(tokenType);
+            return actions.get(1);
+          } else if (spiceCount == 0) {
+            return actions.get(0);
+          }
+        }
+      } else {
+        return actions.get(0);
+      }
+    }
+    return null;
+  }
+
+  /**
    * Performs a purchase development card action routine.
    *
    * @param move      the move to perform
@@ -428,67 +497,9 @@ public class GameBoard {
 
     if (selectedCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) selectedCard).getBonusActions();
-      if (actions.size() > 0) {
-        if (actions.get(0) == Action.RESERVE_NOBLE) {
-          if (!nobles.isEmpty()) {
-            return actions.get(0);
-          }
-        }
-        if (actions.get(0) == Action.CASCADE_LEVEL_1) {
-          if (deckLevelExists(1)) {
-            return actions.get(0);
-          }
-        }
-        if (actions.get(0) == Action.CASCADE_LEVEL_2) {
-          if (deckLevelExists(2)) {
-            return actions.get(0);
-          }
-        }
-        if (actions.get(0) == Action.DISCARD_FIRST_WHITE_CARD
-              || actions.get(0) == Action.DISCARD_FIRST_BLUE_CARD
-              || actions.get(0) == Action.DISCARD_FIRST_GREEN_CARD
-              || actions.get(0) == Action.DISCARD_FIRST_RED_CARD
-              || actions.get(0) == Action.DISCARD_FIRST_BLACK_CARD) {
-          TokenType tokenType = null;
-          switch (actions.get(0)) {
-            case DISCARD_FIRST_WHITE_CARD:
-              tokenType = TokenType.DIAMOND;
-              break;
-            case DISCARD_FIRST_BLUE_CARD:
-              tokenType = TokenType.SAPPHIRE;
-              break;
-            case DISCARD_FIRST_GREEN_CARD:
-              tokenType = TokenType.EMERALD;
-              break;
-            case DISCARD_FIRST_RED_CARD:
-              tokenType = TokenType.RUBY;
-              break;
-            case DISCARD_FIRST_BLACK_CARD:
-              tokenType = TokenType.ONYX;
-              break;
-            default:
-              tokenType = null;
-          }
-          if (tokenType != null) {
-            int spiceCount = inventory.getNumSpiceCardsByType(tokenType);
-            if (spiceCount >= 2) {
-              inventory.discardSpiceCard(tokenType);
-              inventory.discardSpiceCard(tokenType);
-              return null;
-            } else if (spiceCount == 1) {
-              inventory.discardSpiceCard(tokenType);
-              return actions.get(1);
-            } else if (spiceCount == 0) {
-              return actions.get(0);
-            }
-          }
-        } else {
-          return actions.get(0);
-        }
-      }
+      return getBonusAction(actions, inventory);
     }
     return null;
-
   }
 
   /**
@@ -676,10 +687,9 @@ public class GameBoard {
 
     if (levelOneCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelOneCard).getBonusActions();
-      if (actions.size() > 0) {
-        return actions.get(0);
-      }
+      return getBonusAction(actions, inventory);
     }
+
     return null;
   }
 
@@ -703,9 +713,7 @@ public class GameBoard {
 
     if (levelTwoCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) levelTwoCard).getBonusActions();
-      if (actions.size() > 0) {
-        return actions.get(0);
-      }
+      return getBonusAction(actions, inventory);
     }
     return null;
   }
