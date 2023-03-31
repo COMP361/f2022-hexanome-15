@@ -20,7 +20,10 @@ public class TotalCardCountView extends Text {
    */
   public TotalCardCountView(String startupText) {
     setText(startupText);
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
+    this.setFont(Font.font("Comic Sans MS", 
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 
   /**
@@ -32,6 +35,9 @@ public class TotalCardCountView extends Text {
     totalCardCount = amount;
     String text = String.format("Total Purchased Cards: %d", totalCardCount);
     setText(text);
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
+    this.setFont(Font.font("Comic Sans MS", 
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 }

@@ -9,6 +9,7 @@ import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
 import ca.mcgill.splendorserver.model.action.MoveInfo;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cities.City;
@@ -185,8 +186,8 @@ public class ActionManager {
       String cardId = move.getCard() != null ? Integer.toString(move.getCard().getId()) : null;
       String tokenType =
           move.getSelectedTokenTypes() != null ? move.getSelectedTokenTypes().toString() : null;
-      String noble = move.getNoble() != null ? move.getNoble().toString() : null;
-      String city = move.getCity() != null ? move.getCity().toString() : null;
+      String noble = move.getNoble() != null ? Integer.toString(move.getNoble().getId()) : null;
+      String city = move.getCity() != null ? Integer.toString(move.getCity().getId()) : null;
       String deckLevel = move.getDeckType() != null ? move.getDeckType().toString() : null;
       simplifiedMap.put(md5, new MoveInfo(move.getPlayerName(),
           move.getAction().toString(), cardId, tokenType, noble, city, deckLevel));
@@ -411,7 +412,7 @@ public class ActionManager {
     // cards face-up on table
     for (Card faceUp : gameBoard.getCards()) {
       // cannot offer a move involving a card already purchased
-      if (inventory.canAffordCard(faceUp) && !faceUp.isPurchased()) {
+      if (inventory.canAffordCard(faceUp) && faceUp.getCardStatus() == CardStatus.NONE) {
         Move move = new Move(Action.PURCHASE_DEV, faceUp, player, null,
             null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move)).toUpperCase();
@@ -477,16 +478,17 @@ public class ActionManager {
       return;
     }
 
-
     Action action = Action.RESERVE_DEV;
 
     // here looking at face up cards
     for (Card card : gameBoard.getCards()) {
-      Move takeFaceUp = new Move(action, card, player, null, null,
-          null, null, null);
-      String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
-                               .toUpperCase();
-      moveMap.put(takeFaceUpMd5, takeFaceUp);
+      if (card.getCardStatus() == CardStatus.NONE) {
+        Move takeFaceUp = new Move(action, card, player, null, null,
+            null, null, null);
+        String takeFaceUpMd5 = DigestUtils.md2Hex(new Gson().toJson(takeFaceUp))
+                                 .toUpperCase();
+        moveMap.put(takeFaceUpMd5, takeFaceUp);
+      }
     }
     // or can take from one of the decks, but they won't be able to see the card, so it'll be null
     // ,but they will see the different deck levels (1, 2, 3)
@@ -566,7 +568,9 @@ public class ActionManager {
   private void getCascadeLevelOneMoves(Map<String, Move> moveMap, UserInventory inventory,
                                        GameBoard gameBoard, PlayerWrapper player) {
     for (Card card : gameBoard.getCards()) {
-      if (card.getDeckType() == DeckType.ORIENT1 || card.getDeckType() == DeckType.BASE1) {
+      if (card.getCardStatus() == CardStatus.NONE
+            && (card.getDeckType() == DeckType.ORIENT1
+                  || card.getDeckType() == DeckType.BASE1)) {
         Move move = new Move(Action.CASCADE_LEVEL_1, card, player,
             DeckType.ORIENT1, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
@@ -588,7 +592,9 @@ public class ActionManager {
   private void getCascadeLevelTwoMoves(Map<String, Move> moveMap, UserInventory inventory,
                                        GameBoard gameBoard, PlayerWrapper player) {
     for (Card card : gameBoard.getCards()) {
-      if (card.getDeckType() == DeckType.ORIENT2 || card.getDeckType() == DeckType.BASE2) {
+      if (card.getCardStatus() == CardStatus.NONE
+            && (card.getDeckType() == DeckType.ORIENT2
+                  || card.getDeckType() == DeckType.BASE2)) {
         Move move = new Move(Action.CASCADE_LEVEL_2, card, player,
             DeckType.ORIENT2, null, null, null, null);
         String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))

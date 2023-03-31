@@ -21,7 +21,10 @@ public class TotalTokenCountView extends Text {
   public TotalTokenCountView(String startupText) {
 
     setText(startupText);
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
+    this.setFont(Font.font("Comic Sans MS", 
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 
   /**
@@ -33,6 +36,9 @@ public class TotalTokenCountView extends Text {
     totalTokenCount = amount;
     String text = String.format("Total Tokens: %d", totalTokenCount);
     setText(text);
-    this.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, FontPosture.REGULAR, 25));
+    this.setFont(Font.font("Comic Sans MS", 
+        FontWeight.BOLD, 
+        FontPosture.REGULAR, 
+        GameBoardView.getFontSize() / 2));
   }
 }

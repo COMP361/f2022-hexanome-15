@@ -6,19 +6,20 @@ package ca.mcgill.splendorserver.model.tradingposts;
  */
 public enum CoatOfArmsType {
   /**
-   * Blue coat of arms type.
-   */
-  BLUE,
-  /**
-   * Red coat of arms type.
-   */
-  RED,
-  /**
    * Yellow coat of arms type.
    */
   YELLOW,
   /**
    * Black coat of arms type.
    */
-  BLACK
+  BLACK,
+  /**
+   * Red coat of arms type.
+   */
+  RED,
+  /**
+   * Blue coat of arms type.
+   */
+  BLUE
+
 }

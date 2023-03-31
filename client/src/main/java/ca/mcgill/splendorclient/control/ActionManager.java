@@ -240,6 +240,60 @@ public class ActionManager {
   }
 
   /**
+   * Finds receive noble moves in the move map and forwards to server.
+   *
+   * @param nobleid requested to receive
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReceiveNobleMove(int nobleid) {
+    System.out.println("Search for receive noble move with id: " + nobleid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RECEIVE_NOBLE")) {
+        if (entry.getValue().getNobleId().equals(String.valueOf(nobleid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds reserve noble moves in the move map and forwards to server.
+   *
+   * @param nobleid requested to reserve
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReserveNobleMove(int nobleid) {
+    System.out.println("Search for reserve noble move with id: " + nobleid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RESERVE_NOBLE")) {
+        if (entry.getValue().getNobleId().equals(String.valueOf(nobleid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds receive city moves in the move map and forwards to server.
+   *
+   * @param cityid requested to receive
+   * @return response from server
+   */
+  public static HttpResponse<String> findAndSendReceiveCityMove(int cityid) {
+    System.out.println("Search for receive city move with id: " + cityid);
+    for (Entry<String, MoveInfo> entry : currentMoveMap.entrySet()) {
+      if (entry.getValue().getAction().equals("RECEIVE_CITY")) {
+        if (entry.getValue().getCityId().equals(String.valueOf(cityid))) {
+          return sendAction(entry.getKey());
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Returns this instance of ActionManager.
    *
    * @return this instance of ActionManager
@@ -288,12 +342,12 @@ public class ActionManager {
     } else if (action.equals("CASCADE_LEVEL_1")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
-      alert.setHeaderText("Please select valid level 1 orient card.");
+      alert.setHeaderText("Please select valid level 1 card.");
       alert.show();
     } else if (action.equals("CASCADE_LEVEL_2")) {
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setTitle("Compound Move Info");
-      alert.setHeaderText("Please select valid level 2 orient card.");
+      alert.setHeaderText("Please select valid level 2 card.");
       alert.show();
     } else if (action.equals("DISCARD_FIRST_WHITE_CARD")
                  || action.equals("DISCARD_SECOND_WHITE_CARD")) {
