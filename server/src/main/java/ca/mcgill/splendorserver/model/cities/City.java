@@ -93,7 +93,7 @@ public class City {
   }
   
   /**
-   * Gets city by id
+   * Gets city by id.
    *
    * @param id of sought city
    * @return the city

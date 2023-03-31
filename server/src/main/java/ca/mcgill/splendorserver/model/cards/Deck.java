@@ -1,10 +1,9 @@
 package ca.mcgill.splendorserver.model.cards;
 
+import ca.mcgill.splendorserver.model.savegame.DeckJson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import ca.mcgill.splendorserver.model.savegame.DeckJson;
 
 /**
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount

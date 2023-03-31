@@ -17,6 +17,7 @@ import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -25,8 +26,6 @@ import java.util.Optional;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
-import com.google.gson.Gson;
 
 /**
  * SplendorGame object which keeps track of all game info including the session info,
@@ -60,8 +59,7 @@ public class SplendorGame {
     requiresUpdate = true;
     if (info.getSaveGameId().isEmpty()) {
       instantiateNewGameboard();
-    }
-    else {
+    } else {
       instantiateGameboardFromSavegame(info.getSaveGameId());
     }
   }
@@ -271,10 +269,7 @@ public class SplendorGame {
     List<TokenPile>     piles        = new ArrayList<>();
     List<Deck>          decks        = new ArrayList<>();
     List<Card>          playingField = new ArrayList<>();
-    List<UserInventory> inventories  = new ArrayList<>();
     List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
-    List<City> cities = new ArrayList<>();
-    List<Noble> nobles = new ArrayList<>();
     
     //setting up gameboard
     for (Entry<TokenType, Integer> entry : gameboardJson.tokenField.entrySet()) {
@@ -294,20 +289,22 @@ public class SplendorGame {
       playingField.add(Card.getCard(cardId));
     }
     
+    List<City> cities = new ArrayList<>();
     if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
-    }
-    else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
+    } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
       for (Integer cityId : gameboardJson.cities) {
         cities.add(City.getCity(cityId));
       }
     }
     
+    List<Noble> nobles = new ArrayList<>();
     for (Integer nobleId : gameboardJson.nobles) {
       nobles.add(Noble.getNoble(nobleId));
     }
     
     //setting up user inventories
+    final List<UserInventory> inventories  = new ArrayList<>();
     int i = 0;
     for (InventoryJson inventoryJson : gameboardJson.inventories) {
       UserInventory inventory;
@@ -316,8 +313,7 @@ public class SplendorGame {
             new UserInventory(
                 PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
                 Optional.ofNullable(CoatOfArmsType.values()[i]));
-      }
-      else {
+      } else {
         inventory = 
             new UserInventory(
                 PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
