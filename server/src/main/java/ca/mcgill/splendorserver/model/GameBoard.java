@@ -260,14 +260,16 @@ public class GameBoard {
   }
 
   /**
-   * Returns the number of tokens on the gameboard.
+   * Returns the number of tokens on the gameboard not including gold.
    *
-   * @return the number of tokens on the gameboard
+   * @return the number of tokens on the gameboard not including gold
    */
   public int getTokenCount() {
     int sum = 0;
     for (Entry<TokenType, TokenPile> entry : tokenPiles.entrySet()) {
-      sum += entry.getValue().getSize();
+      if (entry.getKey() != TokenType.GOLD) {
+        sum += entry.getValue().getSize();
+      }
     }
     return sum;
   }

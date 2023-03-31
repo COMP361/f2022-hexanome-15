@@ -1346,7 +1346,7 @@ class GameBoardTest {
 
   @Test
   void getTokenCount() {
-    assertEquals(25, gb.getTokenCount());
+    assertEquals(20, gb.getTokenCount());
   }
 
   @Test
