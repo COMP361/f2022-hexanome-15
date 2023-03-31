@@ -49,6 +49,13 @@ public class LobbyServiceExecutor {
     String output = (String) run(command, ParseText.PARSE_TEXT);
     return output;
   }
+  
+  /**
+   * 
+   */
+  public final String getLobbyServiceLocation() {
+    return lobbyServiceLocation;
+  }
 
   /**
    * Sends the gameboard to the server using a put request.

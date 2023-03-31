@@ -286,7 +286,7 @@ public class GameController {
               public void run() {
                 Alert notYourTurnAlert = new Alert(Alert.AlertType.INFORMATION);
                 notYourTurnAlert.setTitle("Turn Information");
-                notYourTurnAlert.setHeaderText("It's " + User.THISUSER.getUsername()
+                notYourTurnAlert.setHeaderText("It's " + currentTurn
                                                  + "'s turn, please wait for them to go.");
                 notYourTurnAlert.show();
               }

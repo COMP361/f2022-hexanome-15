@@ -408,9 +408,11 @@ public class GameBoardView {
     }
     
     //save and quit buttons
+    HBox menu = new HBox();
+    menu.setLayoutX(screenSize.width-3*universalUnitX);
+    menu.setLayoutY(screenSize.height - 3*universalUnitY);
+    menu.setSpacing(10);
     Button saveButton = new Button("Save Game");
-//    saveButton.setLayoutX(screenSize.width - 100);
-//    saveButton.setLayoutY(screenSize.height - 50);
     saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
       @Override
@@ -429,7 +431,18 @@ public class GameBoardView {
       }
       
     });
-    root.getChildren().add(saveButton);
+    Button quitButton = new Button("Quit Game");
+    quitButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+      @Override
+      public void handle(MouseEvent event) {
+        //TODO send quit request to server
+        
+      }
+      
+    });
+    menu.getChildren().addAll(saveButton, quitButton);
+    root.getChildren().add(menu);
     Scene toReturn =  new Scene(root, screenSize.width, screenSize.height, Color.BLACK);
     Image newImage = new Image("file:///" + rootPath + "/resources/background_tile.jpg");
     if (newImage != null) {

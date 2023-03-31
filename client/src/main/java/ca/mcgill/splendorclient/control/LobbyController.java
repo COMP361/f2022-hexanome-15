@@ -1,5 +1,6 @@
 package ca.mcgill.splendorclient.control;
 
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -230,7 +231,8 @@ public class LobbyController implements Initializable {
     checkNotNullNotEmpty(accessToken, createUserName, gameName, saveGame);
     HttpResponse<String> response2;
     response2 = Unirest.post(
-      "http://127.0.0.1:4242/api/sessions"
+      LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation() 
+        + "/api/sessions"
         + "?access_token="
         + accessToken)
                   .header("Authorization", "Bearer" + accessToken)
@@ -250,7 +252,8 @@ public class LobbyController implements Initializable {
    */
   private ArrayList<String> get_all_sessions() {
     HttpResponse<JsonNode> response = Unirest.get(
-        "http://127.0.0.1:4242/api/sessions").asJson();
+        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+        + "/api/sessions").asJson();
     //System.out.println("Response from launch: " + response.getBody().toString());
     JSONObject obj = response.getBody().getObject();
     obj = obj.getJSONObject("sessions");
@@ -274,7 +277,8 @@ public class LobbyController implements Initializable {
     for (String gameService : gameServices) {
       try {
         HttpResponse<JsonNode> response = Unirest.get(
-            "http://127.0.0.1:4242/api/gameservices/" 
+            LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation() 
+            + "/api/gameservices/" 
             + gameService + "/savegames"
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
             .asJson();
@@ -299,7 +303,8 @@ public class LobbyController implements Initializable {
    */
   private JSONObject get_session(String sessionid) {
     HttpResponse<JsonNode> response = Unirest.get(
-        "http://127.0.0.1:4242/api/sessions/"
+        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+        + "/api/sessions/"
         + sessionid).asJson();
     return response.getBody().getObject();
   }
@@ -313,7 +318,8 @@ public class LobbyController implements Initializable {
   private boolean launch_session(String sessionid, String accessToken) {
     try {
       HttpResponse<String> response = Unirest.post(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+            + "/api/sessions/" + sessionid
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
@@ -336,7 +342,8 @@ public class LobbyController implements Initializable {
   private boolean delete_session(String sessionid, String accessToken) {
     try {
       HttpResponse<String> response = Unirest.delete(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+            + "/api/sessions/" + sessionid
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
@@ -351,7 +358,8 @@ public class LobbyController implements Initializable {
   private void revoke_auth(String accessToken) {
     try {
       HttpResponse<String> response =
-          Unirest.delete("http://127.0.0.1:4242/oauth/active?access_token="
+          Unirest.delete( LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                         + "/oauth/active?access_token="
                          + URLEncoder.encode(accessToken, "UTF-8")).asString();
       if (!response.isSuccess()) {
         System.out.println("Failed to logout");
@@ -372,7 +380,8 @@ public class LobbyController implements Initializable {
     HttpResponse<String> response;
     try {
       response = Unirest.put(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+            + "/api/sessions/" + sessionid
             + "/players/" + playerName + "?access_token="
             + URLEncoder.encode(accessToken, "UTF-8")
         )
@@ -400,7 +409,8 @@ public class LobbyController implements Initializable {
     HttpResponse<String> response;
     try {
       response = Unirest.delete(
-          "http://127.0.0.1:4242/api/sessions/" + sessionid
+          LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+            + "/api/sessions/" + sessionid
             + "/players/" + playerName + "?access_token="
             + URLEncoder.encode(accessToken, "UTF-8")
         )
@@ -419,7 +429,8 @@ public class LobbyController implements Initializable {
    */
   private ArrayList<String> get_gameservices() {
     HttpResponse<JsonNode> response = Unirest.get(
-        "http://127.0.0.1:4242/api/gameservices"
+        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+          + "/api/gameservices"
       )
                                         .asJson();
     ArrayList<String> arr = new ArrayList<>();

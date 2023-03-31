@@ -105,7 +105,8 @@ public class GameRestController {
   }
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {
-    return Unirest.get("http://127.0.0.1:4242/api/gameservices")
+    return Unirest.get(LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                        + "/api/gameservices")
                   .header("accept", "application/json")
                   .asJson();
   }
@@ -144,7 +145,8 @@ public class GameRestController {
     String newUserjSon = new Gson().toJson(acc);
 
     final HttpResponse<String> response1 = Unirest.put(
-                                                "http://127.0.0.1:4242/api/users/"
+        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                                                    + "/api/users/"
                                                     + gameName
                                                     + "?access_token="
                                                     + accessToken.replace("+", "%2B")
@@ -171,7 +173,8 @@ public class GameRestController {
     String newServicejSon = new Gson().toJson(gs);
 
     HttpResponse<String> response2 = Unirest.put(
-                                                "http://127.0.0.1:4242/api/gameservices/"
+        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                                                    + "/api/gameservices/"
                                                     + gameName
                                                     + "?access_token="
                                                     + accessToken.replace("+", "%2B")
@@ -288,8 +291,9 @@ public class GameRestController {
     try {
       String url = 
           String.format(
-              "http://127.0.0.1:4242/api/gameservices/%s/savegames/%s?access_token=%s", 
-              gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
+              LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                + "/api/gameservices/%s/savegames/%s?access_token=%s", 
+                      gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
       
       System.out.println(Unirest.put(url)
                   .header("Content-Type", "application/json")
