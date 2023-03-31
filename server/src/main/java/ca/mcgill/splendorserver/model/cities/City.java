@@ -89,6 +89,19 @@ public class City {
     }
     return citiesInGame;
   }
+  
+  /**
+   * Gets city by id.
+   *
+   * @param id of sought city
+   * @return the city
+   */
+  public static City getCity(int id) {
+    if (cities.size() == 0) {
+      generateCities();
+    }
+    return cities.get(id);
+  }
 
   /**
    * Generates all cities

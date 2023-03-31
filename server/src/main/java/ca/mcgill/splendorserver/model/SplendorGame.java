@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorserver.control.SaveGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.control.TurnManager;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
@@ -8,13 +9,18 @@ import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cities.City;
 import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.savegame.SaveGame;
+import ca.mcgill.splendorserver.model.tokens.Token;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import javax.persistence.Embedded;
@@ -51,7 +57,11 @@ public class SplendorGame {
     this.gameId = gameId;
     turnManager = new TurnManager(info.getPlayers());
     requiresUpdate = true;
-    instantiateNewGameboard();
+    if (info.getSaveGameId().isEmpty()) {
+      instantiateNewGameboard();
+    } else {
+      instantiateGameboardFromSavegame(info.getSaveGameId());
+    }
   }
 
   /**
@@ -248,6 +258,98 @@ public class SplendorGame {
     List<Noble> nobles = Noble.getNobles(sessionInfo.getNumPlayers());
     board = new GameBoard(inventories, decks, playingField,
       piles, nobles, tradingPostSlots, cities);
+  }
+  
+  private void instantiateGameboardFromSavegame(String id) {
+    SaveGame savegame = SaveGameStorage.getSaveGame(id);
+    ca.mcgill.splendorserver.model.savegame.GameBoardJson 
+        gameboardJson = 
+            new Gson().fromJson(savegame.getJson(), 
+                ca.mcgill.splendorserver.model.savegame.GameBoardJson.class);
+    List<TokenPile>     piles        = new ArrayList<>();
+    List<Deck>          decks        = new ArrayList<>();
+    List<Card>          playingField = new ArrayList<>();
+    List<TradingPostSlot> tradingPostSlots = new ArrayList<>();
+    
+    //setting up gameboard
+    for (Entry<TokenType, Integer> entry : gameboardJson.tokenField.entrySet()) {
+      TokenPile pile = new TokenPile(entry.getKey());
+      for (int i = 0; i < entry.getValue(); ++i) {
+        pile.addToken(new Token(entry.getKey()));
+      }
+      piles.add(pile);
+    }
+
+    for (ca.mcgill.splendorserver.model.savegame.DeckJson deckJson : gameboardJson.decks) {
+      Deck deck = new Deck(deckJson);
+      decks.add(deck);
+    }
+    
+    for (Integer cardId : gameboardJson.cardField) {
+      playingField.add(Card.getCard(cardId));
+    }
+    
+    List<City> cities = new ArrayList<>();
+    if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
+      tradingPostSlots = TradingPostSlot.getTradingPostSlots();
+    } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
+      for (Integer cityId : gameboardJson.cities) {
+        cities.add(City.getCity(cityId));
+      }
+    }
+    
+    List<Noble> nobles = new ArrayList<>();
+    for (Integer nobleId : gameboardJson.nobles) {
+      nobles.add(Noble.getNoble(nobleId));
+    }
+    
+    //setting up user inventories
+    final List<UserInventory> inventories  = new ArrayList<>();
+    int i = 0;
+    for (InventoryJson inventoryJson : gameboardJson.inventories) {
+      UserInventory inventory;
+      if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
+        inventory = 
+            new UserInventory(
+                PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
+                Optional.ofNullable(CoatOfArmsType.values()[i]));
+      } else {
+        inventory = 
+            new UserInventory(
+                PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
+                Optional.empty());
+      }
+      for (Integer purchasedCard : inventoryJson.purchasedCards) {
+        inventory.addPurchasedCard(Card.getCard(purchasedCard));
+      }
+      for (Integer reservedCard : inventoryJson.reservedCards) {
+        inventory.addReservedCard(Card.getCard(reservedCard));
+      }
+      for (Entry<TokenType, Integer> tokenEntry : inventoryJson.tokens.entrySet()) {
+        for (int j = 0; j < tokenEntry.getValue(); ++j) {
+          inventory.addToken(new Token(tokenEntry.getKey()));
+        }
+      }
+      for (Integer nobleId : inventoryJson.reservedNobles) {
+        inventory.addReservedNoble(Noble.getNoble(nobleId));
+      }
+      for (Integer nobleId : inventoryJson.visitingNobles) {
+        inventory.receiveVisitFrom(Noble.getNoble(nobleId));
+      }
+      for (Power power : inventoryJson.powers) {
+        inventory.addPower(power);
+      }
+      for (Integer cityId : inventoryJson.cities) {
+        inventory.addCity(City.getCity(cityId));
+      }
+      inventories.add(inventory);
+      ++i;
+    }
+    
+    //make the board
+    board = new GameBoard(inventories, decks, playingField,
+        piles, nobles, tradingPostSlots, cities);
+    
   }
 
   @Override

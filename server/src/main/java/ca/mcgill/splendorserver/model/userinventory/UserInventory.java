@@ -441,6 +441,18 @@ public class UserInventory implements Iterable<Card> {
     card.setCardStatus(CardStatus.RESERVED);
     cards.add(card);
   }
+  
+  /**
+   * Adds a purchased card to the inventory. 
+   * For use reinstantiating savegames.
+   *
+   * @param card to add to inventory
+   */
+  public void addPurchasedCard(Card card) {
+    card.setCardStatus(CardStatus.PURCHASED);
+    cards.add(card);
+    addPrestige(card.getPrestige());
+  }
 
   /**
    * Reserves noble card as part of Orient card bonus action ands adds it to inventory.

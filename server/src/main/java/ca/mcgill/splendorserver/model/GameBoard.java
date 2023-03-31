@@ -1,6 +1,5 @@
 package ca.mcgill.splendorserver.model;
 
-import ca.mcgill.splendorclient.model.users.User;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;

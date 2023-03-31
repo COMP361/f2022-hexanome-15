@@ -23,17 +23,17 @@ import java.util.Map;
  */
 public class InventoryJson {
 
-  private List<Integer> purchasedCards = new ArrayList<Integer>();
-  private List<Integer> reservedCards = new ArrayList<Integer>();
-  private Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
-  private Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
-  private String userName;
-  private int prestige;
-  private List<Integer> visitingNobles = new ArrayList<>();
-  private List<Integer> reservedNobles = new ArrayList<>();
-  private List<Power> powers;
-  private CoatOfArmsType coatOfArmsType;
-  private List<Integer> cities = new ArrayList<>();
+  public List<Integer> purchasedCards = new ArrayList<Integer>();
+  public List<Integer> reservedCards = new ArrayList<Integer>();
+  public Map<TokenType, Integer> tokens = new HashMap<TokenType, Integer>();
+  public Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
+  public String userName;
+  public int prestige;
+  public List<Integer> visitingNobles = new ArrayList<>();
+  public List<Integer> reservedNobles = new ArrayList<>();
+  public List<Power> powers;
+  public CoatOfArmsType coatOfArmsType;
+  public List<Integer> cities = new ArrayList<>();
 
   /**
    * Creates new inventoryjson. Should be based on actual user inventory from splendorgame.

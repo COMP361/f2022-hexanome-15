@@ -70,7 +70,10 @@ public class Card implements Comparable<Card> {
    * @param id The id of the card
    * @return the requested card
    */
-  public Card getCard(int id) {
+  public static Card getCard(int id) {
+    if (cards.size() == 0) {
+      generateCards();
+    }
     return cards.get(id);
   }
 

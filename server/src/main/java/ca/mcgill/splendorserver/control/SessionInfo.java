@@ -101,6 +101,15 @@ public class SessionInfo implements Iterable<PlayerWrapper> {
     }
     return Optional.empty();
   }
+  
+  /**
+   * Gets the savegame id of this session.
+   *
+   * @return savegame id of this session
+   */
+  public String getSaveGameId() {
+    return savegame;
+  }
 
   @Override
   public Iterator<PlayerWrapper> iterator() {
