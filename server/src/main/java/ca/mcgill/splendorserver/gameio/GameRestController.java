@@ -65,6 +65,7 @@ public class GameRestController {
                                    .LOBBY_SERVICE_EXECUTOR.auth_token("maex", "abc123_ABC123");
   private String refreshToken = (String) Parsejson
                                            .PARSE_JSON.getFromKey(adminAuth, "refresh_token");
+  private final String lobbyServiceLocation = "http://10.122.147.22:4242";
 
   /**
    * Creates a GameRestController.
@@ -105,7 +106,7 @@ public class GameRestController {
   }
 
   private HttpResponse<JsonNode> getRegisteredGameServices() {
-    return Unirest.get(LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+    return Unirest.get(lobbyServiceLocation
                         + "/api/gameservices")
                   .header("accept", "application/json")
                   .asJson();
@@ -145,7 +146,7 @@ public class GameRestController {
     String newUserjSon = new Gson().toJson(acc);
 
     final HttpResponse<String> response1 = Unirest.put(
-        LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+                                                  lobbyServiceLocation
                                                     + "/api/users/"
                                                     + gameName
                                                     + "?access_token="
@@ -291,7 +292,7 @@ public class GameRestController {
     try {
       String url = 
           String.format(
-              LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+              lobbyServiceLocation
                 + "/api/gameservices/%s/savegames/%s?access_token=%s", 
                       gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
       
