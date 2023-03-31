@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class SaveGameJson {
   
-  public String gameName;
+  public String gamename;
   
   public List<String> players;
   
@@ -25,7 +25,7 @@ public class SaveGameJson {
    * @param id of the savegame
    */
   public SaveGameJson(String name, List<String> players, String id) {
-    gameName = name;
+    gamename = name;
     this.players = players;
     savegameid = id;
   }

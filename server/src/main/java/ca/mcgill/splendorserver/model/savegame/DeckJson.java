@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class DeckJson {
   
-  private String deckType;
-  private List<Integer> cards = new ArrayList<>();
+  public String deckType;
+  public List<Integer> cards = new ArrayList<>();
   
   /**
    * Creates a deckjson object.

@@ -136,19 +136,6 @@ public class LobbyServiceExecutor {
     }
     return output;
   }
-  
-  public void save_game(String accessToken, String body, String gameserviceName, String id) {
-    try {
-      System.out.println(Unirest.put(lobbyServiceLocation + "/api/gameservices/" + 
-                  gameserviceName + "/savegames/" + id + 
-                   "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
-                  .header("accept", "application/json")
-                  .body(body).asString().getBody());
-    } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Launches a session.

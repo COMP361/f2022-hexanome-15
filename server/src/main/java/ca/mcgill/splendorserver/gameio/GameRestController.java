@@ -25,6 +25,8 @@ import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +41,6 @@ import kong.unirest.Unirest;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -266,8 +267,8 @@ public class GameRestController {
                 splendorGame.whoseTurn().getName(), inventoriesJson, decksJson,
                 nobles, cardField, gameboard.getTokenPiles(), tradingPosts,
                 cities);
-    String id = String.valueOf(new Random());
-    SaveGame savegame = new SaveGame(id, gameboardJson.toString());
+    String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameboardJson));
     SaveGameStorage.addSaveGame(savegame);
     //inform lobby service
     List<String> players = new ArrayList<>();
@@ -276,11 +277,27 @@ public class GameRestController {
     }
     SaveGameJson body = 
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
-    LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.save_game(
+    save_game(
         (String) Parsejson.PARSE_JSON.getFromKey(adminAuth, "access_token"), 
-        body.toString(), splendorGame.getSessionInfo().getGameServer(), id);
+         new Gson().toJson(body), splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));
     return ResponseEntity.status(HttpStatus.OK).build();
+  }
+  
+  private void save_game(String accessToken, String body, String gameserviceName, String id) {
+    try {
+      String url = 
+          String.format(
+              "http://127.0.0.1:4242/api/gameservices/%s/savegames/%s?access_token=%s", 
+              gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
+      
+      System.out.println(Unirest.put(url)
+                  .header("Content-Type", "application/json")
+                  .body(body).asString().getBody());
+    } catch (UnsupportedEncodingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**

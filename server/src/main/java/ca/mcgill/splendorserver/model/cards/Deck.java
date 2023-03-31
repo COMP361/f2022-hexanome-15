@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ca.mcgill.splendorserver.model.savegame.DeckJson;
+
 /**
  * Represents a Splendor Deck with cards, color, tokenBonus, cardType, discount
  * and cost. This class implements the Flyweight design pattern.
  */
 public class Deck {
 
-  private final ArrayList<Card> cards;
-  private final DeckType        type;
+  private ArrayList<Card> cards;
+  private DeckType        type;
 
   /**
    * Creates a deck made of cards of a certain type.
@@ -23,6 +25,19 @@ public class Deck {
     this.cards = (ArrayList<Card>) Card.makeDeck(type);
     Collections.shuffle(this.cards);
     this.type  = type;
+  }
+  
+  /**
+   * Creates a blank deck for use in reinstantiating savegames.
+   *
+   * @param json of savegame deck
+   */
+  public Deck(DeckJson json) {
+    type = DeckType.valueOf(json.deckType);
+    cards = new ArrayList<Card>();
+    for (Integer id : json.cards) {
+      cards.add(Card.getCard(id));
+    }
   }
 
   /**
