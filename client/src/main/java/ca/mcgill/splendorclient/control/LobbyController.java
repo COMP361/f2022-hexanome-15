@@ -111,7 +111,6 @@ public class LobbyController implements Initializable {
       public void handle(ActionEvent event) {
         revoke_auth(User.THISUSER.getAccessToken());
         User.logout(User.THISUSER.getUsername());
-        exitThread = true;
         Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
       }
     });
