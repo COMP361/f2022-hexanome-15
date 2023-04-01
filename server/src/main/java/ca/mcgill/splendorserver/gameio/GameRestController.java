@@ -64,8 +64,8 @@ public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
 
   @Value("{lobbyservice.location}")
-  private        String lobbyServiceLocation = "http://172.17.0.1:4242";
-  private static String gameServiceLocation = "http://10.121.47.57:8080"; //"http://splendor_server:4244";
+  private        String lobbyServiceLocation = "http://localhost:4242";
+  private static String gameServiceLocation = "http://localhost:8080";; //"http://splendor_server:4244";
 
   /**
    * Setter for static field, value is injected from properties file.
