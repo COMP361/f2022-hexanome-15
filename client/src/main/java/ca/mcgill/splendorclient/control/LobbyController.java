@@ -1,5 +1,6 @@
 package ca.mcgill.splendorclient.control;
 
+import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -117,7 +118,6 @@ public class LobbyController implements Initializable {
       public void handle(ActionEvent event) {
         revoke_auth(User.THISUSER.getAccessToken());
         User.logout(User.THISUSER.getUsername());
-        exitThread = true;
         Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
       }
     });
@@ -172,6 +172,12 @@ public class LobbyController implements Initializable {
                   if (sessionInfo.getBoolean("launched")) {
                     Platform.runLater(() -> {
                       Splendor.transitionToGameScreen(Long.valueOf(sessionToJoin), sessionInfo);
+                      try {
+                        Thread.sleep(2000);
+                      } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                      }
                       GameController.getInstance().setGameId(Long.valueOf(sessionToJoin));
                       GameController.start();
                     });
@@ -198,11 +204,19 @@ public class LobbyController implements Initializable {
                                    .getSelectionModel().getSelectedItem();
         String sessionToLaunch = sessionString.split(" - ")[1];
         if (launch_session(sessionToLaunch, user.getAccessToken())) {
-          Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
-              get_session(sessionToLaunch));
-          GameController.getInstance()
-              .setGameId(Long.valueOf(sessionToLaunch));
-          GameController.start();
+          Platform.runLater(() -> {
+            Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
+                get_session(sessionToLaunch));
+            try {
+              Thread.sleep(2000);
+            } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+            GameController.getInstance()
+                .setGameId(Long.valueOf(sessionToLaunch));
+            GameController.start();
+          });
         } else {
           //notify user failure to launch session.
         }
@@ -238,7 +252,8 @@ public class LobbyController implements Initializable {
 
     HttpResponse<String> response2;
     response2 = Unirest.post(
-      "http://127.0.0.1:4242/api/sessions"
+      LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation() 
+        + "/api/sessions"
         + "?access_token="
         + accessToken)
                   .header("Authorization", "Bearer" + accessToken)
@@ -257,8 +272,7 @@ public class LobbyController implements Initializable {
    * @return a list of sessions
    */
   private ArrayList<String> get_all_sessions() {
-    HttpResponse<JsonNode> response = Unirest.get(
-        lobbyServiceLocation + "/api/sessions").asJson();
+    HttpResponse<JsonNode> response = Unirest.get(lobbyServiceLocation + "/api/sessions").asJson();
     JSONObject obj = response.getBody().getObject();
     obj = obj.getJSONObject("sessions");
     ArrayList<String> arr = new ArrayList<>();
@@ -281,7 +295,8 @@ public class LobbyController implements Initializable {
     for (String gameService : gameServices) {
       try {
         HttpResponse<JsonNode> response = Unirest.get(
-            "http://127.0.0.1:4242/api/gameservices/" 
+            LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation() 
+            + "/api/gameservices/" 
             + gameService + "/savegames"
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
             .asJson();

@@ -1,4 +1,4 @@
-*/target/*
-*/docs/*
-*/.idea/*
-*/.settings/*
+target/
+docs/
+.idea/
+.settings/

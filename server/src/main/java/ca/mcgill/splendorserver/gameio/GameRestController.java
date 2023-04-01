@@ -401,8 +401,9 @@ public class GameRestController {
     try {
       String url = 
           String.format(
-              "http://127.0.0.1:4242/api/gameservices/%s/savegames/%s?access_token=%s", 
-              gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
+              lobbyServiceLocation
+                + "/api/gameservices/%s/savegames/%s?access_token=%s", 
+                      gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
       
       System.out.println(Unirest.put(url)
                   .header("Content-Type", "application/json")
