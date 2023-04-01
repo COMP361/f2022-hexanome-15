@@ -372,7 +372,7 @@ public class LobbyController implements Initializable {
   private void revoke_auth(String accessToken) {
     try {
       HttpResponse<String> response =
-          Unirest.delete( LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
+          Unirest.delete(LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation()
                          + "/oauth/active?access_token="
                          + URLEncoder.encode(accessToken, "UTF-8")).asString();
       if (!response.isSuccess()) {

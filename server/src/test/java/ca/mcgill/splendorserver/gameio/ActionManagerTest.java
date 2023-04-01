@@ -72,43 +72,10 @@ class ActionManagerTest {
   void setup() {
   }
 
-  void defAction(Action action, String playerName) {
-    ResponseEntity<String> LMoves = aM.getAvailableActions(1L,playerName,"");
-    String lAction = LMoves.getBody().substring(2,34);
-    aM.performAction(1L, "Slava", lAction, playerName);
-  }
-
 
   private void affordCard(UserInventory inv, String playerName) {
     OrientCard cardMove = (OrientCard) splendorGame.getBoard().getCards().get(15);
     CardCost costMove = cardMove.getCardCost();
-
-    // Add necessary tokens to user inventory allow them to purchase card
-    for (int i = 0; i < costMove.costByTokenType(DIAMOND); i++) {
-      Token t = new Token(DIAMOND);
-      inv.addToken(t);
-    }
-    for (int i = 0; i < costMove.costByTokenType(SAPPHIRE); i++) {
-      Token t = new Token(SAPPHIRE);
-      inv.addToken(t);
-    }
-    for (int i = 0; i < costMove.costByTokenType(EMERALD); i++) {
-      Token t = new Token(EMERALD);
-      inv.addToken(t);
-    }
-    for (int i = 0; i < costMove.costByTokenType(RUBY); i++) {
-      Token t = new Token(RUBY);
-      inv.addToken(t);
-    }
-    for (int i = 0; i < costMove.costByTokenType(ONYX); i++) {
-      Token t = new Token(ONYX);
-      inv.addToken(t);
-    }
-  }
-
-  private void affordCard(UserInventory inv, Card aCard, String playerName) {
-
-    CardCost costMove = aCard.getCardCost();
 
     // Add necessary tokens to user inventory allow them to purchase card
     for (int i = 0; i < costMove.costByTokenType(DIAMOND); i++) {

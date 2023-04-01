@@ -50,7 +50,9 @@ public class LobbyServiceExecutor {
   }
   
   /**
-   * 
+   * Returns the lobby service location.
+   *
+   * @return the lobby service location
    */
   public final String getLobbyServiceLocation() {
     return lobbyServiceLocation;
