@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Represents a user.
- * Flyweight design pattern. (maybe singleton TODO)
+ * Flyweight design pattern.
  *
  * @author zacharyhayden
  */
@@ -39,42 +39,6 @@ public class User {
     renewalTimer.scheduleAtFixedRate(new RenewAccessToken(), expiresIn, expiresIn);
   }
 
-  private Timer getTimer() {
-    return renewalTimer;
-  }
-
-  /**
-   * Creates a User.
-   *
-   * @param userName     the username of the user
-   * @param accessToken  the access token of the user
-   * @param refreshToken the refresh token of the user
-   * @param isThisUser is this the user that is created
-   * @return the newly created user
-   */
-  public static User newUser(String userName, String accessToken,
-                             String refreshToken, boolean isThisUser) {
-    if (!USERS.containsKey(userName)) {
-      User user = new User(userName, accessToken,
-                           refreshToken);
-      USERS.put(userName, user);
-      if (isThisUser) {
-        THISUSER  = user;
-      }
-    }
-    return USERS.get(refreshToken);
-  }
-
-  /**
-   * Logs out the user with the given username.
-   *
-   * @param userName the given username
-   */
-  public static void logout(String userName) {
-    USERS.get(userName).getTimer().cancel();
-    USERS.remove(userName);
-  }
-
   /**
    * Inner class to update the access token of the user using their refresh token.
    *
@@ -88,19 +52,10 @@ public class User {
     public void run() {
       JSONObject renewedTokens =
           lobbyServiceExecutor.renew_auth_token(refreshToken);
-      accessToken = (String) Parsejson.PARSE_JSON.getFromKey(renewedTokens, "access_token");
-      expiresIn = (int) Parsejson.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
+      accessToken = (String) renewedTokens.get("access_token");
+      expiresIn = (int) renewedTokens.get("expires_in");
     }
 
-  }
-
-  /**
-   * Returns the user's accessToken.
-   *
-   * @return the user's accessToken
-   */
-  public String getAccessToken() {
-    return accessToken;
   }
 
   @Override
@@ -108,15 +63,6 @@ public class User {
     return "User [userName=" + userName + ", accessToken="
         + accessToken + ", refreshToken=" + refreshToken
          + ", expiresIn=" + expiresIn + "]";
-  }
-
-  /**
-   * Returns this user's username.
-   *
-   * @return this user's username
-   */
-  public String getUsername() {
-    return userName;
   }
 
 }

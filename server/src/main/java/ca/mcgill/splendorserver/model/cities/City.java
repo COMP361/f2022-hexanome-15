@@ -4,7 +4,7 @@ import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 
 
 /**
@@ -81,10 +81,12 @@ public class City {
     if (cities.size() == 0) {
       generateCities();
     }
-    Collections.shuffle(cities);
+    List<City> cityList = new ArrayList<>(cities);
+    Collections.shuffle(cityList);
     citiesInGame = new ArrayList<>();
+
     for (int i = 0; i < 3; i++) {
-      City city = cities.get(i);
+      City city = cityList.get(i);
       citiesInGame.add(city);
     }
     return citiesInGame;
@@ -136,5 +138,24 @@ public class City {
         new CardCost(0, 0, 4, 0, 0), 4));
     cities.add(new City(13, 15,
         new CardCost(0, 0, 0, 0, 0), 5));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof City city)) {
+      return false;
+    }
+    return id == city.id
+             && requiredPrestige == city.requiredPrestige
+             && numSameCards == city.numSameCards
+             && requiredCardBonuses.equals(city.requiredCardBonuses);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, requiredPrestige, requiredCardBonuses, numSameCards);
   }
 }

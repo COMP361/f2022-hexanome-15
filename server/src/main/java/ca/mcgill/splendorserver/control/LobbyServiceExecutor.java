@@ -48,36 +48,6 @@ public class LobbyServiceExecutor {
 
 
   /**
-   * Auth role.
-   *
-   * @param accessToken the accessToken of the user
-   * @return the output of the command as a JSONObject
-   */
-  public final JSONObject auth_role(String accessToken) {
-    String command = String.format("curl -X GET %s/oauth/role?access_token=%s",
-                                   lobbyServiceLocation, accessToken);
-    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
-    return output;
-  }
-
-  /**
-   * JSON Object.
-   *
-   * @param userName the username of the user
-   * @param password the password of the user
-   * @return the output as a JSONObject
-   */
-  public final JSONObject auth_token(String userName, String password) {
-    String command = String.format(
-        "curl -X POST " + "--user bgp-client-name:bgp-client-pw "
-            + "%s/oauth/token?grant_type=password&username=%s&password=%s",
-        lobbyServiceLocation, userName, password);
-    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
-    return output;
-  }
-
-
-  /**
    * Renews authentication token.
    *
    * @param refreshToken the accessToken of the user
@@ -89,19 +59,6 @@ public class LobbyServiceExecutor {
         "curl -X POST " + "--user bgp-client-name:bgp-client-pw "
             + "%s/oauth/token?grant_type=refresh_token&refresh_token=%s",
         lobbyServiceLocation, refreshToken);
-    JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
-    return output;
-  }
-
-  /**
-   * Returns the session info as a JSONObject.
-   *
-   * @param sessionid The id of the session
-   * @return the session info
-   */
-  public JSONObject getSessionInfo(int sessionid) {
-    String command = String.format("curl -X GET %s/api/sessions/%s",
-                                   lobbyServiceLocation, sessionid);
     JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
     return output;
   }

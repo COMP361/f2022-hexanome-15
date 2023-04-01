@@ -41,8 +41,7 @@ class CardTest {
 
   @Test
   void getCard() {
-    Card.makeDeck(BASE1);
-    assertEquals(acard, acard.getCard(0));
+    assertEquals(acard, Card.getCard(0));
   }
 
   @Test
@@ -154,6 +153,13 @@ class CardTest {
   }
 
   @Test
+  void testEquals() {
+    CardCost cost = new CardCost(0, 0, 4, 0, 0);
+    Card card1 = new Card(0, 1, DIAMOND, BASE1, ONE, cost);
+    assertEquals(acard, card1);
+  }
+
+  @Test
   void testEqualsNotCard() {
     assertFalse(acard.equals(null));
   }
@@ -161,7 +167,7 @@ class CardTest {
   @Test
   void testHashCode() {
     CardCost cost = new CardCost(0, 0, 4, 0, 0);
-    Card newCard = new Card(0, 1, DIAMOND, BASE1, ONE, acost);
+    Card newCard = new Card(0, 1, DIAMOND, BASE1, ONE, cost);
     assertEquals(acard.hashCode(), newCard.hashCode());
   }
 }

@@ -4,6 +4,7 @@ import ca.mcgill.splendorserver.model.cards.CardCost;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a Splendor Noble with reserved status and prestige.
@@ -13,7 +14,7 @@ public class Noble {
   private final CardCost visitRequirements;
   private NobleStatus status;
   private final int         prestige;
-  private static final List<Noble> nobles  = new ArrayList<Noble>();
+  private static final List<Noble> nobles  = new ArrayList<>();
   private static List<Noble> noblesInGame = new ArrayList<>();
 
   /**
@@ -87,11 +88,12 @@ public class Noble {
     if (nobles.size() == 0) {
       generateNobles();
     }
-    Collections.shuffle(nobles);
+    List<Noble> nobleList = new ArrayList<>(nobles);
+    Collections.shuffle(nobleList);
     noblesInGame = new ArrayList<>();
 
     for (int i = 0; i < numPlayers + 1; i++) {
-      Noble noble = nobles.get(i);
+      Noble noble = nobleList.get(i);
       noblesInGame.add(noble);
     }
     return noblesInGame;
@@ -134,5 +136,24 @@ public class Noble {
     nobles.add(new Noble(16, new CardCost(4, 0, 0, 4, 0)));
     nobles.add(new Noble(17, new CardCost(0, 0, 4, 0, 4)));
     nobles.add(new Noble(18, new CardCost(4, 4, 0, 0, 0)));*/
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Noble noble)) {
+      return false;
+    }
+    return id == noble.id
+             && prestige == noble.prestige
+             && visitRequirements.equals(noble.visitRequirements)
+             && status == noble.status;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, visitRequirements, status, prestige);
   }
 }

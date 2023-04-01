@@ -1,9 +1,10 @@
 package ca.mcgill.splendorserver.model.cards;
 
+import ca.mcgill.splendorserver.model.savegame.DeckJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static ca.mcgill.splendorserver.model.cards.DeckType.BASE2;
-import static ca.mcgill.splendorserver.model.cards.DeckType.ORIENT1;
+
+import static ca.mcgill.splendorserver.model.cards.DeckType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
@@ -50,6 +51,13 @@ class DeckTest {
   void dealOrientDeck() {
     Deck newDeck = new Deck(ORIENT1);
     assertEquals(2, newDeck.deal().size());
+  }
+
+  @Test
+  void createDeck() {
+    DeckJson deckJson = new DeckJson(deck);
+    Deck deck1 = new Deck(deckJson);
+    assertEquals(deck.getSize(), deck1.getSize());
   }
 
 }

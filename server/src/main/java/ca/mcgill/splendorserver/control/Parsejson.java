@@ -45,17 +45,4 @@ public class Parsejson {
     return new JSONObject(output.toString());
   }
 
-  /**
-   * Get JSON object from key.
-   *
-   * @param json parsed json object, will require a cast when used with output
-   *              from executing
-   * @param key  string key to search for and get associated value of
-   * @return the returned value corresponding to the key
-   */
-  public Object getFromKey(JSONObject json, String key) {
-    assert json != null && key != null;
-    return json.get(key);
-  }
-
 }
