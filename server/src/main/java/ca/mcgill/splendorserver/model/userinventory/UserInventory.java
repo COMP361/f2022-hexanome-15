@@ -350,7 +350,6 @@ public class UserInventory implements Iterable<Card> {
   public void discardCard(Card card) {
     assert card != null && cards.contains(card);
     removePrestige(card.getPrestige());
-    int index = cards.indexOf(card);
     cards.remove(card);
   }
 
@@ -406,7 +405,8 @@ public class UserInventory implements Iterable<Card> {
 
   private void removeGoldCard() {
     for (Card card : cards) {
-      if (card.getTokenBonusType() == TokenType.GOLD) {
+      if (card.getTokenBonusType() == TokenType.GOLD
+            && card.getCardStatus() == CardStatus.PURCHASED) {
         cards.remove(card);
         break;
       }
