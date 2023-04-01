@@ -19,7 +19,6 @@ import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,6 @@ import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.*;
 import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@AutoConfigureMockRestServiceServer
 class GameBoardTest {
   private GameBoard gb;
   private PlayerWrapper sofia;
