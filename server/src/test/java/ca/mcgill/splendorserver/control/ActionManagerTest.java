@@ -1,9 +1,8 @@
-package ca.mcgill.splendorserver.gameio;
+package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.control.LocalGameStorage;
-import ca.mcgill.splendorserver.control.SaveGameStorage;
-import ca.mcgill.splendorserver.control.SessionInfo;
-import ca.mcgill.splendorserver.control.TurnManager;
+import ca.mcgill.splendorserver.control.*;
+import ca.mcgill.splendorserver.gameio.Player;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.SplendorGame;
 import ca.mcgill.splendorserver.model.action.Action;
 import ca.mcgill.splendorserver.model.action.Move;
@@ -18,8 +17,6 @@ import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
 import ca.mcgill.splendorserver.model.tradingposts.Power;
 import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
-import org.hamcrest.Matcher;
-import org.hamcrest.collection.IsIn;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
