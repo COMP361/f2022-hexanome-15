@@ -65,7 +65,7 @@ public class GameRestController {
 
   @Value("{lobbyservice.location}")
   private        String lobbyServiceLocation = "http://localhost:4242";
-  private static String gameServiceLocation = "http://localhost:8080";; //"http://splendor_server:4244";
+  private static String gameServiceLocation = "http://localhost:8080"; //"http://splendor_server:4244";
 
   /**
    * Setter for static field, value is injected from properties file.
