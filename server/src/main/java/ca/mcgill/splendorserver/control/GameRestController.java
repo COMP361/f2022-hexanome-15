@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -62,129 +65,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
-
-  @Value("{lobbyservice.location}")
-  private        String lobbyServiceLocation = "http://localhost:4242";
-  private static String gameServiceLocation = "http://localhost:8080"; //"http://splendor_server:4244";
+  private LobbyServiceExecutorInterface lobbyServiceExecutor;
 
   /**
-   * Setter for static field, value is injected from properties file.
+   * Creates a Game Rest Controller.
    *
-   * @param address address of game service.
+   * @param lobbyServiceExecutor the class that will execute lobby service calls
    */
-  @Value("{gameservice.location}")
-  public void setGameServiceLocation(String address) {
-    GameRestController.gameServiceLocation = address;
-  }
-
-  // 4 threads for the max 4 players
-  private final ExecutorService updaters     = Executors.newFixedThreadPool(4);
-  private       String          gameName;
-  private       JSONObject      adminAuth    = auth_token("maex", "abc123_ABC123");
-  private       String          refreshToken = (String) getFromKey(adminAuth, "refresh_token");
-
-  /**
-   * Creates a GameRestController.
-   */
-  public GameRestController() {
-    String accessToken = (String) getFromKey(adminAuth, "access_token");
-    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-                         "SplendorOrient", "SplendorOrient", true
-    );
-    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-                         "SplendorOrientTradingPosts", "SplendorOrientTradingPosts", true
-    );
-    register_gameservice(accessToken, gameServiceLocation, 4, 2,
-                         "SplendorOrientCities", "SplendorOrientCities", true
-    );
+  public GameRestController(@Autowired LobbyServiceExecutorInterface lobbyServiceExecutor) {
+    this.lobbyServiceExecutor = lobbyServiceExecutor;
+    this.lobbyServiceExecutor.register_gameservice(4, 2,
+        "SplendorOrient", "SplendorOrient", true);
+    this.lobbyServiceExecutor.register_gameservice(4, 2,
+        "SplendorOrientTradingPosts",
+        "SplendorOrientTradingPosts", true);
+    this.lobbyServiceExecutor.register_gameservice(4, 2,
+        "SplendorOrientCities",
+        "SplendorOrientCities", true);
     System.out.println("in here");
-
-  }
-
-  /**
-   * Gets auth token from the lobby service.
-   *
-   * @param username username
-   * @param password password
-   * @return the json containing object with response
-   */
-  public JSONObject auth_token(String username, String password) {
-    String command = String.format(
-        "curl -X POST " + "--user bgp-client-name:bgp-client-pw "
-            + "%s/oauth/token?grant_type=password&username=%s&password=%s",
-        lobbyServiceLocation, username, password);
-
-    try {
-      // execute the command
-      Process process = Runtime.getRuntime().exec(command);
-
-      // handle exit code
-      int exitCode = process.waitFor();
-
-      java.util.logging.Logger.getAnonymousLogger()
-                              .log(Level.INFO, command + " exit code: " + exitCode);
-
-      if (exitCode != 0) {
-        // get error message
-        BufferedReader errorStream = new BufferedReader(
-            new InputStreamReader(process.getErrorStream()));
-        String line;
-        System.out.println("Error Stream: \n");
-        while ((line = errorStream.readLine()) != null) {
-          System.out.println(line);
-        }
-        errorStream.close();
-        // throw exception if error with the script
-        throw new RuntimeException("[WARNING] Process: " + command
-                                       + " resulted in exit code: " + exitCode);
-      }
-
-      // get parsed output; output will be "NULLPARSER" if the parser if NULLParser
-      // assign global variable
-      JSONObject output = (JSONObject) parseJsonOutput(process.getInputStream());
-
-      // kill process
-      process.destroy();
-
-      // return parsed output or null
-
-      return output;
-    } catch (IOException | InterruptedException e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
-
-    return null;
-  }
-
-  /**
-   * Gets the specified key from json.
-   *
-   * @param json json to parse
-   * @param key key to get
-   * @return the specified key if exists
-   */
-  public Object getFromKey(JSONObject json, String key) {
-    assert json != null && key != null;
-    return json.get(key);
-  }
-
-  private Object parseJsonOutput(InputStream scriptOutput) {
-    assert scriptOutput != null;
-
-    StringBuilder output = new StringBuilder();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(scriptOutput));
-
-    String line;
-    try {
-      while ((line = reader.readLine()) != null) {
-        output.append(line + "\n");
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
-    return new JSONObject(output.toString());
   }
 
   private String buildGameBoardJson(String gameName, String whoseTurn, GameBoard gameboard) {
@@ -218,84 +116,6 @@ public class GameRestController {
     return gson.toJson(gameBoardJson);
   }
 
-  private HttpResponse<JsonNode> getRegisteredGameServices() {
-    return Unirest.get(lobbyServiceLocation + "/api/gameservices")
-                  .header("accept", "application/json")
-                  .asJson();
-  }
-
-  /**
-   * Registers a game service. This should not be called by client and is kept here
-   * for reference while changes are made. Servers should register themselves
-   * as per LS diagram.
-   *
-   * @param accessToken       the accessToken of the user
-   * @param gameLocation      the location of the game
-   * @param maxSessionPlayers the max amount of players that can be in a session
-   * @param minSessionPlayers the min amount of players that can be in a session
-   * @param gameName          the name of the game
-   * @param displayName       the name of the display
-   * @param webSupport        boolean value for webSupport
-   */
-  private final void register_gameservice(String accessToken, String gameLocation,
-                                          int maxSessionPlayers,
-                                          int minSessionPlayers, String gameName,
-                                          String displayName,
-                                          boolean webSupport
-  ) {
-    checkNotNullNotEmpty(accessToken, gameLocation, gameName, displayName);
-
-    System.out.println(getRegisteredGameServices().getBody()
-                                                  .toPrettyString());
-
-    GameServiceAccountJson
-        acc = new GameServiceAccountJson(
-        gameName,
-        "Antichrist1!",
-        "#000000"
-    );
-
-    String newUserjSon = new Gson().toJson(acc);
-
-    final HttpResponse<String> response1 = Unirest.put(
-                                                      lobbyServiceLocation + "/api/users/"
-                                                          + gameName
-                                                          + "?access_token="
-                                                          + accessToken.replace("+", "%2B")
-                                                  )
-                                                  .header("Content-Type", "application/json")
-                                                  .body(newUserjSon)
-                                                  .asString();
-
-
-    adminAuth    = auth_token(gameName, "Antichrist1!");
-    accessToken  = (String) getFromKey(adminAuth, "access_token");
-    refreshToken = (String) getFromKey(adminAuth, "refresh_token");
-    GameServiceJson
-        gs = new GameServiceJson(
-        gameName,
-        displayName,
-        gameServiceLocation,
-        "2",
-        "4",
-        "true"
-    );
-
-    System.out.println("Response from service user registration: " + response1.getBody());
-    String newServicejSon = new Gson().toJson(gs);
-
-    HttpResponse<String> response2 = Unirest.put(
-                                                lobbyServiceLocation + "/api/gameservices/"
-                                                    + gameName
-                                                    + "?access_token="
-                                                    + accessToken.replace("+", "%2B")
-                                            )
-                                            .header("Content-Type", "application/json")
-                                            .body(newServicejSon)
-                                            .asString();
-    System.out.println("Response from registration request: " + response2.getBody());
-  }
-
   /**
    * Sends a launch request to the server and launches the session.
    *
@@ -326,7 +146,6 @@ public class GameRestController {
     }
   }
   
-  
   /**
    * Route for registering a savegame.
    *
@@ -336,9 +155,6 @@ public class GameRestController {
   @PutMapping(value = "/api/games/{gameId}/savegame")
   public ResponseEntity<String> saveGame(@PathVariable long gameId) {
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameId).get();
-    //refresh registrar token or just log in again actually with gameName Antichrist! account
-    final JSONObject adminAuth = auth_token(
-            splendorGame.getSessionInfo().getGameServer(), "Antichrist1!");
     //grab the game model, generate a savegameid and add it to an in-memory json "db"
     List<InventoryJson> inventoriesJson = new ArrayList<>();
     GameBoard gameboard = splendorGame.getBoard();
@@ -390,28 +206,10 @@ public class GameRestController {
     }
     SaveGameJson body = 
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
-    save_game(
-        (String) getFromKey(adminAuth, "access_token"),
-         new Gson().toJson(body), splendorGame.getSessionInfo().getGameServer(), id);
+    lobbyServiceExecutor.save_game(new Gson().toJson(body),
+        splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));
     return ResponseEntity.status(HttpStatus.OK).build();
-  }
-  
-  private void save_game(String accessToken, String body, String gameserviceName, String id) {
-    try {
-      String url = 
-          String.format(
-              lobbyServiceLocation
-                + "/api/gameservices/%s/savegames/%s?access_token=%s", 
-                      gameserviceName, id, URLEncoder.encode(accessToken, "UTF-8"));
-      
-      System.out.println(Unirest.put(url)
-                  .header("Content-Type", "application/json")
-                  .body(body).asString().getBody());
-    } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -424,14 +222,6 @@ public class GameRestController {
     LocalGameStorage.removeActiveGame(LocalGameStorage.getActiveGame(gameid)
                                                       .get());
     LOGGER.info("DELETED GAME ID: " + gameid);
-  }
-
-
-  //copied from LobbyServiceExecutor, to be refactored later
-  private void checkNotNullNotEmpty(String... args) {
-    for (String arg : args) {
-      assert arg != null && arg.length() != 0 : "Arguments cannot be empty nor null.";
-    }
   }
 
   /**
