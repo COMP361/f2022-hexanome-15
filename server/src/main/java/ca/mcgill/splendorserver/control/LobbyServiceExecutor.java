@@ -28,8 +28,6 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   private static String gameServiceLocation = "http://localhost:8080";
   private String lobbyServiceLocation = "http://localhost:4242";
   private       JSONObject      adminAuth    = auth_token("maex", "abc123_ABC123");
-  private       String          refreshToken = (String) adminAuth.get("refresh_token");
-  private String accessToken = (String) adminAuth.get("access_token");
 
   /**
    * Creates a LobbyServiceExecutor.
@@ -38,14 +36,8 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   public LobbyServiceExecutor() {
   }
 
-  /**
-   * Gets auth token from the lobby service.
-   *
-   * @param username username
-   * @param password password
-   * @return the json containing object with response
-   */
-  private JSONObject auth_token(String username, String password) {
+  @Override
+  public JSONObject auth_token(String username, String password) {
     String command = String.format(
         "curl -X POST " + "--user bgp-client-name:bgp-client-pw "
         + "%s/oauth/token?grant_type=password&username=%s&password=%s",
@@ -101,7 +93,7 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   }
 
   @Override
-  public void register_gameservice(int maxSessionPlayers,
+  public void register_gameservice(String accessToken, int maxSessionPlayers,
                                    int minSessionPlayers, String gameName,
                                    String displayName,
                                    boolean webSupport) {
@@ -129,7 +121,6 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
 
     adminAuth    = auth_token(gameName, "Antichrist1!");
     accessToken  = (String) adminAuth.get("access_token");
-    refreshToken = (String) adminAuth.get("refresh_token");
     GameServiceJson gs = new GameServiceJson(gameName, displayName,
         gameServiceLocation, "2", "4", "true"
     );
@@ -150,7 +141,7 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   }
 
   @Override
-  public void save_game(String body, String gameserviceName, String id) {
+  public void save_game(String accessToken, String body, String gameserviceName, String id) {
     try {
       String url =
           String.format(

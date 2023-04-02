@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
   private LobbyServiceExecutorInterface lobbyServiceExecutor;
+  JSONObject adminAuth;
 
   /**
    * Creates a Game Rest Controller.
@@ -64,12 +66,14 @@ public class GameRestController {
    */
   public GameRestController(@Autowired LobbyServiceExecutorInterface lobbyServiceExecutor) {
     this.lobbyServiceExecutor = lobbyServiceExecutor;
-    this.lobbyServiceExecutor.register_gameservice(4, 2,
+    JSONObject adminAuth = this.lobbyServiceExecutor.auth_token("maex", "abc123_ABC123");
+    String accessToken = (String) adminAuth.get("access_token");
+    this.lobbyServiceExecutor.register_gameservice(accessToken, 4, 2,
         "SplendorOrient", "SplendorOrient", true);
-    this.lobbyServiceExecutor.register_gameservice(4, 2,
+    this.lobbyServiceExecutor.register_gameservice(accessToken, 4, 2,
         "SplendorOrientTradingPosts",
         "SplendorOrientTradingPosts", true);
-    this.lobbyServiceExecutor.register_gameservice(4, 2,
+    this.lobbyServiceExecutor.register_gameservice(accessToken, 4, 2,
         "SplendorOrientCities",
         "SplendorOrientCities", true);
     System.out.println("in here");
@@ -196,7 +200,8 @@ public class GameRestController {
     }
     SaveGameJson body = 
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
-    lobbyServiceExecutor.save_game(new Gson().toJson(body),
+    String accessToken = (String) adminAuth.get("access_token");
+    lobbyServiceExecutor.save_game(accessToken, new Gson().toJson(body),
         splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));
     return ResponseEntity.status(HttpStatus.OK).build();
