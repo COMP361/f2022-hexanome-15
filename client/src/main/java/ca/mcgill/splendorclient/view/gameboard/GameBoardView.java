@@ -253,13 +253,29 @@ public class GameBoardView {
 
   private static HBox buildUserInventoryView(int numPlayer,
                                              Dimension screenSize,
+                                             float x,
+                                             float y,
                                              String playerName) {
     //building the user inventory
-    float yoffset = 6 * screenSize.height / 10f;
+    /*float yoffset = 6 * screenSize.height / 10f;
     float xoffset = screenSize.width * (numPlayer + 1) / 6f;
     if (numPlayer > 0) {
       xoffset = screenSize.width * (numPlayer + 2) / 6f;
+    }*/
+    
+    float xoffset = 0; //= (float) (1 * universalUnitX + cardWidth * 1.2 + spacer);
+    float yoffset = 0; //= 6 * screenSize.height / 10f;
+    
+    if (numPlayer == 0 || numPlayer == 1) {
+      yoffset = 6 * screenSize.height / 10f;
+      xoffset = (float) (1 * universalUnitX + cardWidth * 1.2 + spacer + x * numPlayer);
     }
+    
+    if (numPlayer == 2 || numPlayer == 3) {
+      yoffset = universalUnitY + ((numPlayer - 2) * numPlayer);
+      xoffset = (float) (1 * universalUnitX + (9.2) * cardWidth + 9 * spacer + 2);
+    }
+    
     HBox userInventoryView = new HBox();
     userInventoryView.setLayoutY(yoffset);
     userInventoryView.setLayoutX(xoffset);
@@ -269,10 +285,10 @@ public class GameBoardView {
     Label username = new Label(playerName);
     username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD,
         FontPosture.REGULAR, fontSize / 1.5));
-    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
-    TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
+    TotalTokenCountView tokenCountView = new TotalTokenCountView("Tokens: 0");
+    TotalCardCountView cardCountView = new TotalCardCountView("Cards: 0");
     TotalPrestigeCountView prestigeCountView =
-        new TotalPrestigeCountView("Total Prestige: 0");
+        new TotalPrestigeCountView("Prestige: 0");
     tokenColumn.getChildren().addAll(username, tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView(playerName,
         screenSize.height / 15f,
@@ -372,7 +388,10 @@ public class GameBoardView {
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
       HBox userInventoryView =
-          buildUserInventoryView(i, screenSize, (String) players.get(i));
+          buildUserInventoryView(i, screenSize,
+              6,
+              7,
+              (String) players.get(i));
       allUserInventoryViews.add(userInventoryView);
     }
 
