@@ -68,7 +68,12 @@ public class LobbyController implements Initializable {
    */
   public LobbyController() {
   }
-  
+
+  /**
+   * Sets the exit thread to the given boolean.
+   *
+   * @param b the given boolean
+   */
   public void setExitThread(boolean b) {
     exitThread = b;
   }

@@ -78,8 +78,10 @@ public class GameController {
     instance.updaterThread = instance.new BoardUpdater();
     instance.updaterThread.start();
   }
-  
-  
+
+  /**
+   * Sets the updaterThread to exit.
+   */
   public static void stop() {
     instance.updaterThread.setExit();
   }
