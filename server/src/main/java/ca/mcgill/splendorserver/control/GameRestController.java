@@ -1,9 +1,6 @@
-package ca.mcgill.splendorserver.gameio;
+package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.control.LobbyServiceExecutorInterface;
-import ca.mcgill.splendorserver.control.LocalGameStorage;
-import ca.mcgill.splendorserver.control.SaveGameStorage;
-import ca.mcgill.splendorserver.control.SessionInfo;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
@@ -24,29 +21,17 @@ import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import org.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
