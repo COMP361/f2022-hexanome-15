@@ -1,8 +1,8 @@
-package ca.mcgill.splendorserver.gameio;
+package ca.mcgill.splendorserver.control;
 
-import ca.mcgill.splendorserver.control.LocalGameStorage;
-import ca.mcgill.splendorserver.control.SaveGameStorage;
-import ca.mcgill.splendorserver.control.SessionInfo;
+import ca.mcgill.splendorserver.gameio.GameServiceAccountJson;
+import ca.mcgill.splendorserver.gameio.GameServiceJson;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;

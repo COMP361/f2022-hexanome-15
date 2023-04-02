@@ -1,25 +1,13 @@
-package ca.mcgill.splendorserver.gameio;
+package ca.mcgill.splendorserver.control;
 
 
-import ca.mcgill.splendorserver.control.LocalGameStorage;
+import ca.mcgill.splendorserver.control.GameRestController;
 import ca.mcgill.splendorserver.control.SessionInfo;
-import ca.mcgill.splendorserver.model.GameBoard;
-import ca.mcgill.splendorserver.model.GameBoardJson;
-import ca.mcgill.splendorserver.model.InventoryJson;
-import ca.mcgill.splendorserver.model.SplendorGame;
-import ca.mcgill.splendorserver.model.tokens.TokenPile;
-import ca.mcgill.splendorserver.model.tokens.TokenType;
-import ca.mcgill.splendorserver.model.userinventory.UserInventory;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.junit.jupiter.api.Test;
+import ca.mcgill.splendorserver.gameio.Player;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameRestControllerTest {
