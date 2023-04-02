@@ -1,6 +1,8 @@
 package ca.mcgill.splendorserver.gameio;
 
 
+import ca.mcgill.splendorserver.control.LobbyServiceExecutor;
+import ca.mcgill.splendorserver.control.LobbyServiceExecutorInterface;
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.model.GameBoard;
@@ -13,6 +15,7 @@ import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameRestControllerTest {
-
-  private GameRestController controller = new GameRestController();
+  private LobbyServiceExecutorInterface lsExecutor = Mockito.mock(LobbyServiceExecutor.class);
+  private GameRestController controller = new GameRestController(lsExecutor);
   private PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
   private PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
   private List<PlayerWrapper> players = new ArrayList<>(List.of(sofia, jeff));
