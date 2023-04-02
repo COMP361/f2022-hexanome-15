@@ -25,9 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
-  @Value("{gameservice.location}")
   private static String gameServiceLocation = "http://localhost:8080";
-  @Value("{lobbyservice.location}")
   public String lobbyServiceLocation = "http://localhost:4242";
   private       JSONObject      adminAuth    = auth_token("maex", "abc123_ABC123");
   private       String          refreshToken = (String) adminAuth.get("refresh_token");
