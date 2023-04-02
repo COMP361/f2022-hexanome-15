@@ -8,15 +8,6 @@ import org.json.JSONObject;
 public interface LobbyServiceExecutorInterface {
 
   /**
-   * Gets auth token from the lobby service.
-   *
-   * @param username username
-   * @param password password
-   * @return the json containing object with response
-   */
-  JSONObject auth_token(String username, String password);
-
-  /**
    * Registers a game service. This should not be called by client and is kept here
    * for reference while changes are made. Servers should register themselves
    * as per LS diagram.

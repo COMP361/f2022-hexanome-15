@@ -40,8 +40,14 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   public LobbyServiceExecutor() {
   }
 
-  @Override
-  public JSONObject auth_token(String username, String password) {
+  /**
+   * Gets auth token from the lobby service.
+   *
+   * @param username username
+   * @param password password
+   * @return the json containing object with response
+   */
+  private JSONObject auth_token(String username, String password) {
     String command = String.format(
         "curl -X POST " + "--user bgp-client-name:bgp-client-pw "
         + "%s/oauth/token?grant_type=password&username=%s&password=%s",

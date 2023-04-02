@@ -154,9 +154,7 @@ public class GameRestController {
   @PutMapping(value = "/api/games/{gameId}/savegame")
   public ResponseEntity<String> saveGame(@PathVariable long gameId) {
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameId).get();
-    //refresh registrar token or just log in again actually with gameName Antichrist! account
-    final JSONObject adminAuth = lobbyServiceExecutor.auth_token(
-            splendorGame.getSessionInfo().getGameServer(), "Antichrist1!");
+
     //grab the game model, generate a savegameid and add it to an in-memory json "db"
     List<InventoryJson> inventoriesJson = new ArrayList<>();
     GameBoard gameboard = splendorGame.getBoard();

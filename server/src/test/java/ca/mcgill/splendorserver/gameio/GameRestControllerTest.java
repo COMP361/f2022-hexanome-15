@@ -61,6 +61,13 @@ class GameRestControllerTest {
   }
 
   @Test
+  void saveGame() {
+    String sessionInfoJson = new Gson().toJson(sessionInfo);
+    controller.launchRequest(5L, sessionInfoJson);
+    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.saveGame(5L));
+  }
+
+  @Test
   void knock() {
     assertEquals("SOMEONE'S KNOCKING", controller.knock());
   }
