@@ -74,13 +74,13 @@ public class GameRestController {
   public GameRestController(@Autowired LobbyServiceExecutorInterface lobbyServiceExecutor) {
     this.lobbyServiceExecutor = lobbyServiceExecutor;
     this.lobbyServiceExecutor.register_gameservice(4, 2,
-      "SplendorOrient", "SplendorOrient", true);
+        "SplendorOrient", "SplendorOrient", true);
     this.lobbyServiceExecutor.register_gameservice(4, 2,
-      "SplendorOrientTradingPosts",
-      "SplendorOrientTradingPosts", true);
+        "SplendorOrientTradingPosts",
+        "SplendorOrientTradingPosts", true);
     this.lobbyServiceExecutor.register_gameservice(4, 2,
-      "SplendorOrientCities",
-      "SplendorOrientCities", true);
+        "SplendorOrientCities",
+        "SplendorOrientCities", true);
     System.out.println("in here");
   }
 
