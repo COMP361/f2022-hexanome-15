@@ -266,13 +266,13 @@ public class GameBoardView {
     float xoffset = 0; //= (float) (1 * universalUnitX + cardWidth * 1.2 + spacer);
     float yoffset = 0; //= 6 * screenSize.height / 10f;
     
-    if (numPlayer == 0 || numPlayer == 1) {
+    if (numPlayer == 0 || numPlayer == 1 || numPlayer == 2) {
       yoffset = 6 * screenSize.height / 10f;
       xoffset = (float) (1 * universalUnitX + cardWidth * 1.2 + spacer + x * numPlayer);
     }
     
-    if (numPlayer == 2 || numPlayer == 3) {
-      yoffset = universalUnitY + ((numPlayer - 2) * numPlayer);
+    if (numPlayer == 3) {
+      yoffset = universalUnitY;
       xoffset = (float) (1 * universalUnitX + (9.2) * cardWidth + 9 * spacer + 2);
     }
     
@@ -389,8 +389,8 @@ public class GameBoardView {
     for (int i = 0; i < nPlayers; ++i) {
       HBox userInventoryView =
           buildUserInventoryView(i, screenSize,
-              6,
-              7,
+              screenSize.height / 3f,
+              screenSize.width / 3f,
               (String) players.get(i));
       allUserInventoryViews.add(userInventoryView);
     }
