@@ -1,5 +1,7 @@
 package ca.mcgill.splendorserver.control;
 
+import ca.mcgill.splendorserver.gameio.GameServiceAccountJson;
+import ca.mcgill.splendorserver.gameio.GameServiceJson;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
@@ -21,17 +23,31 @@ import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -139,7 +155,6 @@ public class GameRestController {
   @PutMapping(value = "/api/games/{gameId}/savegame")
   public ResponseEntity<String> saveGame(@PathVariable long gameId) {
     SplendorGame splendorGame = LocalGameStorage.getActiveGame(gameId).get();
-
     //grab the game model, generate a savegameid and add it to an in-memory json "db"
     List<InventoryJson> inventoriesJson = new ArrayList<>();
     GameBoard gameboard = splendorGame.getBoard();
@@ -208,7 +223,6 @@ public class GameRestController {
                                                       .get());
     LOGGER.info("DELETED GAME ID: " + gameid);
   }
-
 
   /**
    * Retrieves the game board from the game with the given game id from the server.

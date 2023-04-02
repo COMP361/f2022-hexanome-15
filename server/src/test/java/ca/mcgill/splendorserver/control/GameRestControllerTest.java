@@ -1,6 +1,5 @@
 package ca.mcgill.splendorserver.control;
 
-
 import ca.mcgill.splendorserver.control.*;
 import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
