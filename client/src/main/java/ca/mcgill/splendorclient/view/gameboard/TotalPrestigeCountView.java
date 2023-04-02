@@ -33,7 +33,7 @@ public class TotalPrestigeCountView extends Text {
    */
   public void set(int amount) {
     totalPrestigeCount = amount;
-    String text = String.format("Total Prestige: %d", totalPrestigeCount);
+    String text = String.format("Prestige: %d", totalPrestigeCount);
     setText(text);
     this.setFont(Font.font("Comic Sans MS", 
         FontWeight.BOLD, 
