@@ -61,7 +61,7 @@ public class LobbyController implements Initializable {
 
   // setting lobby service location
   @Value("{lobbyservice.location}")
-  private String lobbyServiceLocation = "http://10.121.47.57:4242"; // TODO: fix the value injection
+  private String lobbyServiceLocation = "http://localhost:4242"; // TODO: fix the value injection
 
   /**
    * Creates a LobbyController object.
@@ -252,7 +252,7 @@ public class LobbyController implements Initializable {
 
     HttpResponse<String> response2;
     response2 = Unirest.post(
-      LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation() 
+      lobbyServiceLocation
         + "/api/sessions"
         + "?access_token="
         + accessToken)
@@ -295,7 +295,7 @@ public class LobbyController implements Initializable {
     for (String gameService : gameServices) {
       try {
         HttpResponse<JsonNode> response = Unirest.get(
-            LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR.getLobbyServiceLocation() 
+            lobbyServiceLocation
             + "/api/gameservices/" 
             + gameService + "/savegames"
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"))
