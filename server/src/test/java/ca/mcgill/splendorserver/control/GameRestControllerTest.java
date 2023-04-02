@@ -12,7 +12,10 @@ import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.http.HttpStatus;
@@ -24,17 +27,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockRestServiceServer
 class GameRestControllerTest {
-  private LobbyServiceExecutorInterface lsExecutor = Mockito.mock(LobbyServiceExecutor.class);
-  private GameRestController controller = new GameRestController(lsExecutor);
-  private PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
-  private PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
-  private List<PlayerWrapper> players = new ArrayList<>(List.of(sofia, jeff));
-  private Player player1 = new Player("Sofia", "purple");
-  private Player player2 = new Player("Jeff", "blue");
-  List<Player> playerList = new ArrayList<>(List.of(player1, player2));
-  private SessionInfo sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
+  private LobbyServiceExecutor lsExecutor;
+  private GameRestController controller;
+  private List<PlayerWrapper> players;
+  private List<Player> playerList;
+  private SessionInfo sessionInfo;
+  private String adminAuth;
 
-  /*@Test
+  @BeforeEach
+  void setUp() {
+    lsExecutor = Mockito.mock(LobbyServiceExecutor.class);
+    Gson gson = new Gson();
+    AuthTokenJson authToken = new AuthTokenJson();
+    adminAuth = gson.toJson(authToken);
+    JSONObject json = new JSONObject(adminAuth);
+    Mockito.when(lsExecutor.auth_token("maex", "abc123_ABC123")).thenReturn(json);
+    controller = new GameRestController(lsExecutor);
+    PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
+    PlayerWrapper jeff = PlayerWrapper.newPlayerWrapper("Jeff");
+    players = new ArrayList<>(List.of(sofia, jeff));
+    Player player1 = new Player("Sofia", "purple");
+    Player player2 = new Player("Jeff", "blue");
+    playerList = new ArrayList<>(List.of(player1, player2));
+    sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
+  }
+
+  @Test
   void launchRequestBadRequest() {
     assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).build(),
       controller.launchRequest(5L, null));
@@ -56,13 +74,6 @@ class GameRestControllerTest {
   void getGameBoardNotFound() {
     assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND)
                    .build(), controller.getGameBoard(10L));
-  }
-
-  @Test
-  void saveGame() {
-    String sessionInfoJson = new Gson().toJson(sessionInfo);
-    controller.launchRequest(5L, sessionInfoJson);
-    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.saveGame(5L));
   }
 
   @Test
@@ -89,7 +100,7 @@ class GameRestControllerTest {
       gameboard.getTradingPostSlots(), gameboard.getCities());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
-  }*/
+  }
 }
 
 
