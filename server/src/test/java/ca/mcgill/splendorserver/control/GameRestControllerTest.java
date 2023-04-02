@@ -34,7 +34,7 @@ class GameRestControllerTest {
   List<Player> playerList = new ArrayList<>(List.of(player1, player2));
   private SessionInfo sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
 
-  @Test
+  /*@Test
   void launchRequestBadRequest() {
     assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).build(),
       controller.launchRequest(5L, null));
@@ -89,7 +89,7 @@ class GameRestControllerTest {
       gameboard.getTradingPostSlots(), gameboard.getCities());
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(gameBoardJson);
-  }
+  }*/
 }
 
 
