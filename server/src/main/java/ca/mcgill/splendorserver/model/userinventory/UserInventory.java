@@ -437,7 +437,7 @@ public class UserInventory implements Iterable<Card> {
    * @throws AssertionError if card == null
    */
   public void addReservedCard(Card card) {
-    assert card != null && card.getCardStatus() == CardStatus.NONE;
+    assert card != null;
     card.setCardStatus(CardStatus.RESERVED);
     cards.add(card);
   }
@@ -449,6 +449,7 @@ public class UserInventory implements Iterable<Card> {
    * @param card to add to inventory
    */
   public void addPurchasedCard(Card card) {
+    assert card != null;
     card.setCardStatus(CardStatus.PURCHASED);
     cards.add(card);
     addPrestige(card.getPrestige());
@@ -461,7 +462,7 @@ public class UserInventory implements Iterable<Card> {
    * @throws AssertionError if noble == null
    */
   public void addReservedNoble(Noble noble) {
-    assert noble != null && noble.getStatus() == NobleStatus.ON_BOARD;
+    assert noble != null;
     noble.setStatus(NobleStatus.RESERVED);
     visitingNobles.add(noble);
   }
@@ -717,7 +718,7 @@ public class UserInventory implements Iterable<Card> {
    * @param city the city to be added
    */
   public void addCity(City city) {
-    assert city != null && canReceiveCity(city);
+    assert city != null;
     cities.add(city);
   }
 

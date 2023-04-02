@@ -1,14 +1,34 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorserver.control.SaveGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
+import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardCost;
+import ca.mcgill.splendorserver.model.cards.Deck;
+import ca.mcgill.splendorserver.model.cities.City;
+import ca.mcgill.splendorserver.model.nobles.Noble;
+import ca.mcgill.splendorserver.model.savegame.DeckJson;
+import ca.mcgill.splendorserver.model.savegame.GameBoardJson;
+import ca.mcgill.splendorserver.model.savegame.SaveGame;
+import ca.mcgill.splendorserver.model.tokens.Token;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArms;
+import ca.mcgill.splendorserver.model.tradingposts.CoatOfArmsType;
+import ca.mcgill.splendorserver.model.tradingposts.Power;
+import ca.mcgill.splendorserver.model.tradingposts.TradingPostSlot;
+import ca.mcgill.splendorserver.model.userinventory.UserInventory;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+import static ca.mcgill.splendorserver.model.cards.DeckType.BASE1;
+import static ca.mcgill.splendorserver.model.cards.TokenBonusAmount.ONE;
+import static ca.mcgill.splendorserver.model.tokens.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SplendorGameTest {
@@ -21,6 +41,8 @@ class SplendorGameTest {
   private SessionInfo sessionInfo3;
   private PlayerWrapper sofia;
   private PlayerWrapper jeff;
+  private List<Player> playerList;
+  private List<PlayerWrapper> players;
 
   @BeforeEach
   void setUp() {
@@ -28,10 +50,10 @@ class SplendorGameTest {
     jeff = PlayerWrapper.newPlayerWrapper("Jeff");
     Player player1 = new Player("Sofia", "purple");
     Player player2 = new Player("Jeff", "blue");
-    List<Player> playerList = new ArrayList<>();
+    playerList = new ArrayList<>();
     playerList.add(player1);
     playerList.add(player2);
-    List<PlayerWrapper> players = new ArrayList<>();
+    players = new ArrayList<>();
     players.add(sofia);
     players.add(jeff);
     sessionInfo1 = new SessionInfo("SplendorOrient", playerList, players, sofia,"");
@@ -40,6 +62,169 @@ class SplendorGameTest {
     game1 = new SplendorGame(sessionInfo1,1L);
     game2 = new SplendorGame(sessionInfo2,2L);
     game3 = new SplendorGame(sessionInfo3,3L);
+  }
+  @Test
+  void instantiateOrientGameBoardFromSaveGame() {
+    List<InventoryJson> inventoriesJson = new ArrayList<>();
+    GameBoard gameboard = game2.getBoard();
+    for (UserInventory inventory : gameboard.getInventories()) {
+      Card card1 = new Card(0, 1, DIAMOND, BASE1, ONE,
+        new CardCost(1, 0, 0, 0, 0));
+      Card card2 = new Card(1, 0, DIAMOND, BASE1, ONE,
+        new CardCost(1, 0, 0, 0, 0));
+      inventory.addToken(new Token(DIAMOND));
+      inventory.addToken(new Token(SAPPHIRE));
+      inventory.addToken(new Token(EMERALD));
+      inventory.purchaseCard(card1);
+      inventory.addReservedCard(card2);
+      Noble noble1 = new Noble(0, new CardCost(0, 0, 0, 1, 0));
+      Noble noble2 = new Noble(1, new CardCost(0, 0, 0, 2, 0));
+      inventory.receiveVisitFrom(noble1);
+      inventory.addReservedNoble(noble2);
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(),
+        inventory.getTokenPiles(), inventory.getPlayer().getName(),
+        inventory.getPrestigeWon(), inventory.getNobles(),
+        inventory.getPowers(), inventory.getCoatOfArmsPile(),
+        inventory.getCities(), null);
+      inventoriesJson.add(inventoryJson);
+    }
+    List<ca.mcgill.splendorserver.model.savegame.DeckJson> decksJson = new ArrayList<>();
+    for (Deck deck : gameboard.getDecks()) {
+      decksJson.add(new DeckJson(deck));
+    }
+    List<Integer> nobles = new ArrayList<>();
+    for (Noble noble : gameboard.getNobles()) {
+      nobles.add(noble.getId());
+    }
+    List<Integer> cardField = new ArrayList<>();
+    for (Card card : gameboard.getCards()) {
+      cardField.add(card.getId());
+    }
+    List<TradingPostJson> tradingPosts = new ArrayList<>();
+    for (TradingPostSlot tradingPostSlot : gameboard.getTradingPostSlots()) {
+      List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()) {
+        coatOfArmsTypes.add(coatOfArms.getType());
+      }
+      tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
+    }
+    List<Integer> cities = new ArrayList<>();
+    for (City city : gameboard.getCities()) {
+      cities.add(city.getId());
+    }
+    ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
+      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+    String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
+    SaveGameStorage.addSaveGame(savegame);
+
+    SessionInfo sessionInfo4 = new SessionInfo("SplendorOrient", playerList, players, sofia, id);
+    SplendorGame game4 = new SplendorGame(sessionInfo4, 1L);
+    assertNotNull(game4);
+  }
+
+  @Test
+  void instantiateTradingPostsGameBoardFromSaveGame() {
+    List<InventoryJson> inventoriesJson = new ArrayList<>();
+    GameBoard gameboard = game2.getBoard();
+    for (UserInventory inventory : gameboard.getInventories()) {
+      inventory.addPower(Power.GAIN_5_PRESTIGE);
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(),
+        inventory.getTokenPiles(), inventory.getPlayer().getName(),
+        inventory.getPrestigeWon(), inventory.getNobles(),
+        inventory.getPowers(), inventory.getCoatOfArmsPile(),
+        inventory.getCities(), null);
+      inventoriesJson.add(inventoryJson);
+    }
+    List<ca.mcgill.splendorserver.model.savegame.DeckJson> decksJson = new ArrayList<>();
+    for (Deck deck : gameboard.getDecks()) {
+      decksJson.add(new DeckJson(deck));
+    }
+    List<Integer> nobles = new ArrayList<>();
+    for (Noble noble : gameboard.getNobles()) {
+      nobles.add(noble.getId());
+    }
+    List<Integer> cardField = new ArrayList<>();
+    for (Card card : gameboard.getCards()) {
+      cardField.add(card.getId());
+    }
+    List<TradingPostJson> tradingPosts = new ArrayList<>();
+    for (TradingPostSlot tradingPostSlot : gameboard.getTradingPostSlots()) {
+      List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()) {
+        coatOfArmsTypes.add(coatOfArms.getType());
+      }
+      tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
+    }
+    List<Integer> cities = new ArrayList<>();
+    for (City city : gameboard.getCities()) {
+      cities.add(city.getId());
+    }
+    ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
+      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+    String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
+    SaveGameStorage.addSaveGame(savegame);
+
+    SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia, id);
+    SplendorGame game4 = new SplendorGame(sessionInfo4, 2L);
+    assertNotNull(game4);
+  }
+
+  @Test
+  void instantiateCitiesGameBoardFromSaveGame() {
+    List<InventoryJson> inventoriesJson = new ArrayList<>();
+    GameBoard gameboard = game3.getBoard();
+    for (UserInventory inventory : gameboard.getInventories()) {
+      Card card1 = new Card(0, 1, DIAMOND, BASE1, ONE,
+        new CardCost(1, 0, 0, 0, 0));
+      Card card2 = new Card(1, 0, DIAMOND, BASE1, ONE,
+        new CardCost(1, 0, 0, 0, 0));
+      inventory.addToken(new Token(DIAMOND));
+      inventory.purchaseCard(card1);
+      City city1 = new City(0, 1,
+        new CardCost(0, 0, 0, 0, 0), 0);
+      inventory.addCity(city1);
+      InventoryJson inventoryJson = new InventoryJson(inventory.getCards(),
+        inventory.getTokenPiles(), inventory.getPlayer().getName(),
+        inventory.getPrestigeWon(), inventory.getNobles(),
+        inventory.getPowers(), inventory.getCoatOfArmsPile(),
+        inventory.getCities(), null);
+      inventoriesJson.add(inventoryJson);
+    }
+    List<ca.mcgill.splendorserver.model.savegame.DeckJson> decksJson = new ArrayList<>();
+    for (Deck deck : gameboard.getDecks()) {
+      decksJson.add(new DeckJson(deck));
+    }
+    List<Integer> nobles = new ArrayList<>();
+    for (Noble noble : gameboard.getNobles()) {
+      nobles.add(noble.getId());
+    }
+    List<Integer> cardField = new ArrayList<>();
+    for (Card card : gameboard.getCards()) {
+      cardField.add(card.getId());
+    }
+    List<TradingPostJson> tradingPosts = new ArrayList<>();
+    for (TradingPostSlot tradingPostSlot : gameboard.getTradingPostSlots()) {
+      List<CoatOfArmsType> coatOfArmsTypes = new ArrayList<>();
+      for (CoatOfArms coatOfArms : tradingPostSlot.getAcquiredCoatOfArmsList()) {
+        coatOfArmsTypes.add(coatOfArms.getType());
+      }
+      tradingPosts.add(new TradingPostJson(tradingPostSlot.getId(), coatOfArmsTypes));
+    }
+    List<Integer> cities = new ArrayList<>();
+    for (City city : gameboard.getCities()) {
+      cities.add(city.getId());
+    }
+    ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
+      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+    String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
+    SaveGameStorage.addSaveGame(savegame);
+
+    SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientCities", playerList, players, sofia, id);
+    SplendorGame game4 = new SplendorGame(sessionInfo4, 3L);
+    assertNotNull(game4);
   }
 
   @Test
