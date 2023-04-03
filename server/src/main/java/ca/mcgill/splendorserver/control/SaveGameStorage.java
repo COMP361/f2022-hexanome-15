@@ -73,7 +73,7 @@ public class SaveGameStorage {
    *
    * @param savegame to put into the bucket
    */
-  public void addSaveGame(SaveGame savegame) {
+  public void addAndFlushSaveGame(SaveGame savegame) {
     savegames.add(savegame);
     File permanentsavegame = new File(savegamepath + "/" + savegame.getId());
     File permanentsavegamebody = new File(savegamebodypath + "/" + savegame.getId());
@@ -90,6 +90,18 @@ public class SaveGameStorage {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Remove savegame from memory and persistent storage.
+   *
+   * @param savegame to remove
+   */
+  public void removeSaveGameFromDb(SaveGame savegame) {
+    File savegamefile = new File(savegamepath + "/" + savegame.getId());
+    File savegamebodyfile = new File(savegamebodypath + "/" + savegame.getId());
+    savegamefile.delete();
+    savegamebodyfile.delete();
   }
   
   /**

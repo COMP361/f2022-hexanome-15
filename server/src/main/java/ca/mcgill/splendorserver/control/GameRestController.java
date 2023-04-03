@@ -81,6 +81,9 @@ public class GameRestController {
     SaveGameStorage.getInstance().loadSaveGames();
     for (SaveGame savegame : SaveGameStorage.getInstance().getSaveGames()) {
       SaveGameJson body = new Gson().fromJson(savegame.getBody(), SaveGameJson.class);
+      if (body == null) {
+        continue;
+      }
       lobbyServiceExecutor.save_game(savegame.getBody(), body.gamename, savegame.getId());
     }
     System.out.println("in here");
@@ -228,7 +231,7 @@ public class GameRestController {
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
     String strbody = new Gson().toJson(body);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameboardJson), strbody);
-    SaveGameStorage.getInstance().addSaveGame(savegame);
+    SaveGameStorage.getInstance().addAndFlushSaveGame(savegame);
     lobbyServiceExecutor.save_game(strbody,
         splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));

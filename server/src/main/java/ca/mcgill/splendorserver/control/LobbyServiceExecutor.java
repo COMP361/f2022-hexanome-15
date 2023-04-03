@@ -102,7 +102,7 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
     try {
       url = String.format("%s/api/gameservices/%s?access_token=%s", 
           lobbyServiceLocation, gameName, URLEncoder.encode(accessToken, "UTF-8"));
-      System.out.println(Unirest.delete(url).getBody().get().toString());
+      System.out.println(Unirest.delete(url).asJson().getStatus());
     } catch (UnsupportedEncodingException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

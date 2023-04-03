@@ -91,7 +91,8 @@ class SaveGameStorageTest {
     json = new Gson().toJson(gameBoardJson);
     savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
 
-    SaveGameStorage.getInstance().addSaveGame(savegame);
+    SaveGameStorage.getInstance().addAndFlushSaveGame(savegame);
     assertEquals(savegame, SaveGameStorage.getInstance().getSaveGame(id));
+    SaveGameStorage.getInstance().removeSaveGameFromDb(savegame);
   }
 }
