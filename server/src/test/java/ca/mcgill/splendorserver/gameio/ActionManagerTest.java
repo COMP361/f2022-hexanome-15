@@ -125,7 +125,7 @@ class ActionManagerTest {
     SessionInfo si = new SessionInfo("",players,lpw,aPlayer,"");
     SaveGameStorage sgStorage = new SaveGameStorage();
     SaveGame saveGame = new SaveGame("","");
-    splendorGame = new SplendorGame(si,1L);
+    splendorGame = new SplendorGame(si,2L);
     LocalGameStorage.addActiveGame(splendorGame);
 
     List<Action> bActions0 = new ArrayList<>();
@@ -137,123 +137,127 @@ class ActionManagerTest {
 
     gameBoardReflector("actionPending",splendorGame.getBoard(),RESERVE_NOBLE);
     buyCard (aPlayer, aCard, TAKE_TOKEN, aMove);
-    ResponseEntity<String> LMoves = aM.getAvailableActions(1L,"Slava","");
-    String lAction = LMoves.getBody().substring(2,34);
+    ResponseEntity<String> LMoves = aM.getAvailableActions(2L,"Slava","");
+    String lAction;
+    if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
 
 
   assertEquals
     (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
         .body(TAKE_TOKEN.toString()),
-      aM.performAction(1L, "Slava", lAction, "Slava"),
+      aM.performAction(2L, "Slava", lAction, "Slava"),
       "");
+
+    LMoves = aM.getAvailableActions(2L,"Slava","");
+    if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
 
     assertEquals //REWRITE
       (ResponseEntity.status(HttpStatus.OK)
           .body("Larry"),
-        aM.performAction(1L, "Slava", "B0914F85246E7181D38AB1138EA637C0", "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     affordCard(uinv2,"Larry");
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     lAction = LMoves.getBody().substring(2,34);
 
 
     assertEquals // REWRITE
       (ResponseEntity.status(HttpStatus.OK)
           .body("Slava"),
-        aM.performAction(1L, "Larry", lAction, "Larry"),
+        aM.performAction(2L, "Larry", lAction, "Larry"),
         "");
 
 
     cardDiscard(1,aPlayer,SAPPHIRE,DISCARD_FIRST_BLUE_CARD);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     lAction = LMoves.getBody().substring(2,34);
     //System.out.println(splendorGame.getBoard().getInventories().get(0).toString());
 
     assertEquals
       (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(DISCARD_SECOND_BLUE_CARD.toString()),
-        aM.performAction(1L, "Slava", lAction, "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     cardDiscard(2,aPlayer,SAPPHIRE,DISCARD_SECOND_BLUE_CARD);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.OK).body("Larry"),
-        aM.performAction(1L, "Slava", lAction, "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     cardDiscard(3,aPlayer2,DIAMOND,DISCARD_FIRST_WHITE_CARD);
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(DISCARD_SECOND_WHITE_CARD.toString()),
-        aM.performAction(1L, "Larry", lAction, "Larry"),
+        aM.performAction(2L, "Larry", lAction, "Larry"),
         "");
 
     cardDiscard(3,aPlayer2,DIAMOND,DISCARD_SECOND_WHITE_CARD);
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.OK).body("Slava"),
-        aM.performAction(1L, "Larry", lAction, "Larry"),
+        aM.performAction(2L, "Larry", lAction, "Larry"),
         "");
 
     cardDiscard(4,aPlayer,EMERALD,DISCARD_FIRST_GREEN_CARD);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(DISCARD_SECOND_GREEN_CARD.toString()),
-        aM.performAction(1L, "Slava", lAction, "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     cardDiscard(4,aPlayer,EMERALD,DISCARD_SECOND_GREEN_CARD);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.OK).body("Larry"),
-        aM.performAction(1L, "Slava", lAction, "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     cardDiscard(5,aPlayer2,RUBY,DISCARD_FIRST_RED_CARD);
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(DISCARD_SECOND_RED_CARD.toString()),
-        aM.performAction(1L, "Larry", lAction, "Larry"),
+        aM.performAction(2L, "Larry", lAction, "Larry"),
         "");
 
     cardDiscard(5,aPlayer2,RUBY,DISCARD_SECOND_RED_CARD);
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.OK).body("Slava"),
-        aM.performAction(1L, "Larry", lAction, "Larry"),
+        aM.performAction(2L, "Larry", lAction, "Larry"),
         "");
 
     cardDiscard(6,aPlayer,ONYX,DISCARD_FIRST_BLACK_CARD);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(DISCARD_SECOND_BLACK_CARD.toString()),
-        aM.performAction(1L, "Slava", lAction, "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     cardDiscard(6,aPlayer,ONYX,DISCARD_SECOND_BLACK_CARD);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     lAction = LMoves.getBody().substring(2,34);
 
     assertEquals
       (ResponseEntity.status(HttpStatus.OK).body("Larry"),
-        aM.performAction(1L, "Slava", lAction, "Slava"),
+        aM.performAction(2L, "Slava", lAction, "Slava"),
         "");
 
     List<Action> bonusActions = new ArrayList<>();
@@ -266,7 +270,7 @@ class ActionManagerTest {
     Move bMove = new Move(PURCHASE_DEV,card,aPlayer2,BASE1,bNoble,bTPS,SAPPHIRE,bCity);
 
     buyCard (aPlayer2, card, CASCADE_LEVEL_2, bMove);
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     lAction = LMoves.getBody().substring(2,34);
 
     List<ResponseEntity<String>> possibleOutputs = new ArrayList<>();
@@ -275,7 +279,7 @@ class ActionManagerTest {
     possibleOutputs.add(ResponseEntity.status(HttpStatus.OK).body("Slava"));
 
     assertThat(
-      (aM.performAction(1L, "Larry", lAction, "Larry")), in(possibleOutputs));
+      (aM.performAction(2L, "Larry", lAction, "Larry")), in(possibleOutputs));
 
     List<Action> bonusActions1 = new ArrayList<>();
     bonusActions1.add(TAKE_EXTRA_TOKEN);
@@ -287,7 +291,7 @@ class ActionManagerTest {
     Move move1 = new Move(PURCHASE_DEV,card1,aPlayer,BASE1,noble1,tps1,SAPPHIRE,city0);
 
     buyCard (aPlayer, card1, CASCADE_LEVEL_1, move1);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
 
     if (LMoves.getBody().length() == 2) {
       lAction = "";
@@ -304,7 +308,7 @@ class ActionManagerTest {
     possibleOutputs1.add(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
 
     assertThat(
-      (aM.performAction(1L, "Slava", lAction, "Slava")), in(possibleOutputs1));
+      (aM.performAction(2L, "Slava", lAction, "Slava")), in(possibleOutputs1));
 
     List<City> cities = new ArrayList<>();
     CardCost cost2 = new CardCost(0,0,0,0,0);
@@ -321,15 +325,15 @@ class ActionManagerTest {
     Move move2 = new Move(PURCHASE_DEV,card2,aPlayer2,BASE1,noble2,tps2,SAPPHIRE,city1);
 
     //Move move2 = new Move(PAIR_SPICE_CARD,card2,aPlayer2,BASE1,noble1,tps1,SAPPHIRE,city1);
-    aM.performAction(1L, "Larry", lAction, "Larry");
+    aM.performAction(2L, "Larry", lAction, "Larry");
     uinv2 = splendorGame.getBoard().getInventories().get(1);
 
     buyCard (aPlayer2, card2, RECEIVE_CITY, move2);
-    LMoves = aM.getAvailableActions(1L,"Larry","");
+    LMoves = aM.getAvailableActions(2L,"Larry","");
     if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
 
     assertEquals(
-      (ResponseEntity.status(HttpStatus.OK).body("Slava")),aM.performAction(1L, "Larry", lAction, "Larry"),"");
+      (ResponseEntity.status(HttpStatus.OK).body("Slava")),aM.performAction(2L, "Larry", lAction, "Larry"),"");
 
 
     CardCost cost3 = new CardCost(1,0,0,0,0);
@@ -346,18 +350,57 @@ class ActionManagerTest {
     Move move3 = new Move(PURCHASE_DEV,card3,aPlayer,BASE1,noble3,tps3,SAPPHIRE,city2);
 
     //Move move2 = new Move(PAIR_SPICE_CARD,card2,aPlayer2,BASE1,noble1,tps1,SAPPHIRE,city1);
-    aM.performAction(1L, "Larry", lAction, "Larry");
+    aM.performAction(2L, "Larry", lAction, "Larry");
     uinv2 = splendorGame.getBoard().getInventories().get(1);
 
     buyCard (aPlayer, card3, PAIR_SPICE_CARD, move3);
-    LMoves = aM.getAvailableActions(1L,"Slava","");
+    LMoves = aM.getAvailableActions(2L,"Slava","");
     if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
 
     assertEquals(
       (ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(TAKE_EXTRA_TOKEN.toString())),
-      aM.performAction(1L, "Slava", lAction, "Slava"),"");
+      aM.performAction(2L, "Slava", lAction, "Slava"),"");
+
+    //buyCard (aPlayer, card3, PAIR_SPICE_CARD, move3);
+    LMoves = aM.getAvailableActions(2L,"Slava","");
+    if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
+
+    assertEquals(
+      (ResponseEntity.status(HttpStatus.OK).body("Larry")),
+      aM.performAction(2L, "Slava", lAction, "Slava"),"");
+
+
+    Move move4 = new Move(RET_TOKEN,card3,aPlayer2,BASE1,noble3,tps3,SAPPHIRE,city2);
+    Token t1 = new Token(SAPPHIRE);
+    uinv2.addToken(t1); uinv2.addToken(t1); uinv2.addToken(t1);
+
+    buyCard (aPlayer2, card3, RET_TOKEN, move4);
+    LMoves = aM.getAvailableActions(2L,"Larry","");
+    if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
+
+    assertEquals(
+      (ResponseEntity.status(HttpStatus.OK).body("Slava")),
+      aM.performAction(2L, "Larry", lAction, "Larry"),"");
+
+/*
+    List<Noble> nobles = new ArrayList();
+    nobles.add(noble1); nobles.add(noble2); nobles.add(noble3);
+    gameBoardReflector("nobles",splendorGame.getBoard(),nobles);
+
+    Move move5 = new Move(RECEIVE_NOBLE,card3,aPlayer,BASE1,noble3,tps3,SAPPHIRE,city2);
+    buyCard (aPlayer, card3, RECEIVE_NOBLE, move5);
+    LMoves = aM.getAvailableActions(2L,"Slava","");
+    if (LMoves.getBody().length() == 2) { lAction = "";} else { lAction = LMoves.getBody().substring(2,34);}
+
+    assertEquals(
+      (ResponseEntity.status(HttpStatus.OK).body("Larry")),
+      aM.performAction(2L, "Slava", lAction, "Slava"),"");
+*/
+
 
   }
+
+
 
     private static void gameBoardReflector(String fieldName, Object obj, Object val){
     try {
