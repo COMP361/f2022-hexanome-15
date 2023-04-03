@@ -66,6 +66,8 @@ public class GameBoardView {
   private static float cardHeight;
   private static final float spacer = 5f;
   private static int fontSize;
+  //cards displayed in inventories are of size card * fraction
+  private static final float inventoryCardSizeFraction = 0.6f;
   
   /**
    * Returns the horizontal universal unit, 1% of screen resolution.
@@ -244,8 +246,8 @@ public class GameBoardView {
                                                 Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
       CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
-      newView.setBackground(new Background(
-          new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+      //newView.setBackground(new Background(
+      //    new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
       //newView.getChildren().add(new HBox(4));
       //newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
       inventoryView.addCardColumn(newView);
@@ -255,14 +257,31 @@ public class GameBoardView {
 
   private static HBox buildUserInventoryView(int numPlayer,
                                              Dimension screenSize,
+                                             float x,
+                                             float y,
                                              String playerName) {
     //building the user inventory
-    float yoffset = 6 * screenSize.height / 10f;
+    /*float yoffset = 6 * screenSize.height / 10f;
     float xoffset = screenSize.width * (numPlayer + 1) / 6f;
     if (numPlayer > 0) {
       xoffset = screenSize.width * (numPlayer + 2) / 6f;
+    }*/
+    
+    float xoffset = 0; //= (float) (1 * universalUnitX + cardWidth * 1.2 + spacer);
+    float yoffset = 0; //= 6 * screenSize.height / 10f;
+    
+    if (numPlayer == 0 || numPlayer == 1 || numPlayer == 2) {
+      yoffset = 6 * screenSize.height / 10f;
+      xoffset = (float) (1 * universalUnitX + cardWidth * 1.2 + spacer + x * numPlayer);
     }
+    
+    if (numPlayer == 3) {
+      yoffset = universalUnitY;
+      xoffset = (float) (1 * universalUnitX + (9.2) * cardWidth + 9 * spacer + 2);
+    }
+    
     HBox userInventoryView = new HBox();
+    userInventoryView.setSpacing(spacer);
     userInventoryView.setLayoutY(yoffset);
     userInventoryView.setLayoutX(xoffset);
     VBox tokenColumn = new VBox();
@@ -271,14 +290,14 @@ public class GameBoardView {
     Label username = new Label(playerName);
     username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD,
         FontPosture.REGULAR, fontSize / 1.5));
-    TotalTokenCountView tokenCountView = new TotalTokenCountView("Total Tokens: 0");
-    TotalCardCountView cardCountView = new TotalCardCountView("Total Purchased Cards: 0");
+    TotalTokenCountView tokenCountView = new TotalTokenCountView("Tokens: 0");
+    TotalCardCountView cardCountView = new TotalCardCountView("Cards: 0");
     TotalPrestigeCountView prestigeCountView =
-        new TotalPrestigeCountView("Total Prestige: 0");
+        new TotalPrestigeCountView("Prestige: 0");
     tokenColumn.getChildren().addAll(username, tokenCountView, cardCountView, prestigeCountView);
     UserInventoryView inventoryView = new UserInventoryView(playerName,
-        screenSize.height / 15f,
-        screenSize.width / 15f,
+        cardWidth * inventoryCardSizeFraction,
+        cardHeight * inventoryCardSizeFraction,
         tokenCountView,
         cardCountView,
         prestigeCountView);
@@ -308,7 +327,7 @@ public class GameBoardView {
     cityViews.clear();
     instance.tokenPileViews.clear();
     
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screenSize = new Dimension(1920, 1080);//Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
     universalUnitY = screenSize.height / 100f;
     cardHeight = universalUnitY * 16;
@@ -382,7 +401,10 @@ public class GameBoardView {
     List<HBox> allUserInventoryViews = new ArrayList<HBox>();
     for (int i = 0; i < nPlayers; ++i) {
       HBox userInventoryView =
-          buildUserInventoryView(i, screenSize, (String) players.get(i));
+          buildUserInventoryView(i, screenSize,
+              3 * universalUnitX + 5 * (cardWidth * inventoryCardSizeFraction + spacer),
+              screenSize.height / 3f,
+              (String) players.get(i));
       allUserInventoryViews.add(userInventoryView);
     }
 
@@ -422,8 +444,8 @@ public class GameBoardView {
     if (gameServer.equals("SplendorOrientCities")) {
       for (int i = 3; i > 0; i--) {
         CityView city = new CityView(1.5f * cardHeight, 0.8f * cardHeight);
-        city.setLayoutX(universalUnitX * (99) - 1.5f * 0.8 * cardHeight);
-        city.setLayoutY(universalUnitY * (95) - i * (0.8 * cardHeight + spacer));
+        city.setLayoutX(universalUnitX * (99) - 1.5f * cardHeight);
+        city.setLayoutY(universalUnitY * (95) - i * (0.8f * cardHeight + spacer));
         cityViews.add(city);
       }
       root.getChildren().addAll(cityViews);
