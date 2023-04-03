@@ -361,10 +361,10 @@ public class SplendorGame {
     if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
-      List<Noble> citiesInInventories = new ArrayList<>();
+      List<City> citiesInInventories = new ArrayList<>();
       for (InventoryJson inventory : gameboardJson.inventories) {
         for (Integer cityId : inventory.cities) {
-          citiesInInventories.add(Noble.getNoble(cityId));
+          citiesInInventories.add(City.getCity(cityId));
         }
       }
       for (Integer cityId : gameboardJson.cities) {
@@ -372,6 +372,7 @@ public class SplendorGame {
       }
       cities.removeAll(citiesInInventories);
     }
+    
     List<Noble> noblesInInventories = new ArrayList<>();
     for (InventoryJson inventory : gameboardJson.inventories) {
       for (Integer nobleId : inventory.visitingNobles) {
@@ -392,12 +393,12 @@ public class SplendorGame {
       if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
         inventory = 
             new UserInventory(
-                PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
+                sessionInfo.getPlayers().get(i), 
                 Optional.ofNullable(CoatOfArmsType.values()[i]));
       } else {
         inventory = 
             new UserInventory(
-                PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
+                sessionInfo.getPlayers().get(i), 
                 Optional.empty());
       }
       for (Integer purchasedCard : inventoryJson.purchasedCards) {
