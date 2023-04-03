@@ -82,6 +82,8 @@ public class GameRestController {
   private String buildGameBoardJson(String gameName, String whoseTurn,
                                     GameBoard gameboard, List<PlayerWrapper> winningPlayers) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    List<Noble> nobles = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
       for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles()
@@ -99,13 +101,15 @@ public class GameRestController {
                                                       inventory.getCities(), purchasedCardCount
       );
       inventories.add(inventoryJson);
+      nobles.addAll(inventory.getNobles());
+      cities.addAll(inventory.getCities());
     }
 
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
-                                                    gameboard.getDecks(), gameboard.getNobles(),
+                                                    gameboard.getDecks(), nobles,
                                                     gameboard.getCards(), gameboard.getTokenPiles(),
                                                     gameboard.getTradingPostSlots(),
-                                                    gameboard.getCities(), winningPlayers);
+                                                    cities, winningPlayers);
     Gson gson = new GsonBuilder().setPrettyPrinting()
                                  .create();
     return gson.toJson(gameBoardJson);
