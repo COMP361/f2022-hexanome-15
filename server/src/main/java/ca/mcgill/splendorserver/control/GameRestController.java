@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
   private LobbyServiceExecutorInterface lobbyServiceExecutor;
-  JSONObject adminAuth;
 
   /**
    * Creates a Game Rest Controller.
@@ -79,8 +78,11 @@ public class GameRestController {
     System.out.println("in here");
   }
 
-  private String buildGameBoardJson(String gameName, String whoseTurn, GameBoard gameboard) {
+  private String buildGameBoardJson(String gameName, String whoseTurn,
+                                    GameBoard gameboard, List<PlayerWrapper> winningPlayers) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    List<Noble> nobles = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
       for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles()
@@ -98,13 +100,17 @@ public class GameRestController {
                                                       inventory.getCities(), purchasedCardCount
       );
       inventories.add(inventoryJson);
+      nobles.addAll(inventory.getNobles());
+      cities.addAll(inventory.getCities());
     }
+    nobles.addAll(gameboard.getNobles());
+    cities.addAll(gameboard.getCities());
+
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
-                                                    gameboard.getDecks(), gameboard.getNobles(),
+                                                    gameboard.getDecks(), nobles,
                                                     gameboard.getCards(), gameboard.getTokenPiles(),
                                                     gameboard.getTradingPostSlots(),
-                                                    gameboard.getCities()
-    );
+                                                    cities, winningPlayers);
     Gson gson = new GsonBuilder().setPrettyPrinting()
                                  .create();
     return gson.toJson(gameBoardJson);
@@ -184,12 +190,16 @@ public class GameRestController {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : splendorGame.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     ca.mcgill.splendorserver.model.savegame.GameBoardJson 
         gameboardJson = 
             new ca.mcgill.splendorserver.model.savegame.GameBoardJson(
                 splendorGame.whoseTurn().getName(), inventoriesJson, decksJson,
                 nobles, cardField, gameboard.getTokenPiles(), tradingPosts,
-                cities);
+                cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameboardJson));
     SaveGameStorage.addSaveGame(savegame);
@@ -200,8 +210,7 @@ public class GameRestController {
     }
     SaveGameJson body = 
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
-    String accessToken = (String) adminAuth.get("access_token");
-    lobbyServiceExecutor.save_game(accessToken, new Gson().toJson(body),
+    lobbyServiceExecutor.save_game(new Gson().toJson(body),
         splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));
     return ResponseEntity.status(HttpStatus.OK).build();
@@ -236,7 +245,7 @@ public class GameRestController {
 
       String json = buildGameBoardJson(manager.get().getSessionInfo().getGameServer(),
           manager.get().whoseTurn().getName(), 
-          manager.get().getBoard());
+          manager.get().getBoard(), manager.get().getWinningPlayers());
       return ResponseEntity.status(HttpStatus.OK)
                            .body(json);
     }

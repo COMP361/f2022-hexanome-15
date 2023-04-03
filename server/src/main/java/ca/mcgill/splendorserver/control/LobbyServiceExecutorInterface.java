@@ -36,10 +36,9 @@ public interface LobbyServiceExecutorInterface {
   /**
    * Sends a savegame to the lobby service.
    *
-   * @param accessToken the access token
    * @param body the body of the save game
    * @param gameserviceName the name of the game service
    * @param id the id of the save game
    */
-  void save_game(String accessToken, String body, String gameserviceName, String id);
+  void save_game(String body, String gameserviceName, String id);
 }

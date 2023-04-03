@@ -3,6 +3,9 @@ package ca.mcgill.splendorclient.view.lobbyservice;
 import ca.mcgill.splendorclient.control.LobbyController;
 import ca.mcgill.splendorclient.control.Splendor;
 import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
@@ -12,6 +15,7 @@ import javafx.scene.Scene;
 public class LobbyScreen {
   private Scene scene;
   
+  @Autowired
   private LobbyController controller;
 
   /**
