@@ -104,6 +104,8 @@ public class GameRestController {
       nobles.addAll(inventory.getNobles());
       cities.addAll(inventory.getCities());
     }
+    nobles.addAll(gameboard.getNobles());
+    cities.addAll(gameboard.getCities());
 
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
                                                     gameboard.getDecks(), nobles,
