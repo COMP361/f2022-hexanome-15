@@ -34,6 +34,7 @@ class GameRestControllerTest {
   private List<PlayerWrapper> players;
   private List<Player> playerList;
   private SessionInfo sessionInfo;
+  private SessionInfo sessionInfo2;
   private String adminAuth;
 
   @BeforeEach
@@ -52,6 +53,7 @@ class GameRestControllerTest {
     Player player2 = new Player("Jeff", "blue");
     playerList = new ArrayList<>(List.of(player1, player2));
     sessionInfo = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
+    sessionInfo2 = new SessionInfo("SplendorOrientCities", playerList, players, sofia,"");
   }
 
   @Test
@@ -78,6 +80,20 @@ class GameRestControllerTest {
   void getGameBoardNotFound() {
     assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND)
                    .build(), controller.getGameBoard(10L));
+  }
+
+  @Test
+  void saveGameCities() {
+    String sessionInfoJson = new Gson().toJson(sessionInfo);
+    controller.launchRequest(5L, sessionInfoJson);
+    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.saveGame(5L));
+  }
+
+  @Test
+  void saveGameTradingPosts() {
+    String sessionInfoJson = new Gson().toJson(sessionInfo);
+    controller.launchRequest(5L, sessionInfoJson);
+    assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.saveGame(5L));
   }
 
   @Test

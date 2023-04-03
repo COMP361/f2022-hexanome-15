@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
   private LobbyServiceExecutorInterface lobbyServiceExecutor;
-  JSONObject adminAuth;
 
   /**
    * Creates a Game Rest Controller.
