@@ -242,8 +242,8 @@ public class GameBoardView {
                                                 Dimension screenSize) {
     for (int i = 0; i < TokenType.values().length - 1; ++i) {
       CardColumnView newView = new CardColumnView(TokenType.values()[i], screenSize);
-      newView.setBackground(new Background(
-          new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+      //newView.setBackground(new Background(
+      //    new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
       //newView.getChildren().add(new HBox(4));
       //newView.getChildren().add(new CardView(screenSize.height / 15f, screenSize.width / 15f));
       inventoryView.addCardColumn(newView);
