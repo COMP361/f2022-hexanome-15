@@ -329,7 +329,7 @@ public class SplendorGame {
   }
   
   private void instantiateGameboardFromSavegame(String id) {
-    SaveGame savegame = SaveGameStorage.getSaveGame(id);
+    SaveGame savegame = SaveGameStorage.getInstance().getSaveGame(id);
     ca.mcgill.splendorserver.model.savegame.GameBoardJson 
         gameboardJson = 
             new Gson().fromJson(savegame.getJson(), 

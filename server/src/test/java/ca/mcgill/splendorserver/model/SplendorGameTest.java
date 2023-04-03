@@ -120,8 +120,8 @@ class SplendorGameTest {
     ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game2.whoseTurn().getName(), inventoriesJson, decksJson,
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
-    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
-    SaveGameStorage.addSaveGame(savegame);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
+    SaveGameStorage.getInstance().addSaveGame(savegame);
 
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrient", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 1L);
@@ -172,8 +172,8 @@ class SplendorGameTest {
     ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
-    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
-    SaveGameStorage.addSaveGame(savegame);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
+    SaveGameStorage.getInstance().addSaveGame(savegame);
 
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 2L);
@@ -230,8 +230,8 @@ class SplendorGameTest {
     ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
-    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
-    SaveGameStorage.addSaveGame(savegame);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
+    SaveGameStorage.getInstance().addSaveGame(savegame);
 
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientCities", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 3L);

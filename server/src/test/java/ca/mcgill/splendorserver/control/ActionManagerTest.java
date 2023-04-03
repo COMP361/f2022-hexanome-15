@@ -120,8 +120,6 @@ class ActionManagerTest {
     players.add(player2);
 
     SessionInfo si = new SessionInfo("",players,lpw,aPlayer,"");
-    SaveGameStorage sgStorage = new SaveGameStorage();
-    SaveGame saveGame = new SaveGame("","");
     splendorGame = new SplendorGame(si,1L);
     LocalGameStorage.addActiveGame(splendorGame);
 
