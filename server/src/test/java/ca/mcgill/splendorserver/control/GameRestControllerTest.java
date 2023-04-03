@@ -7,6 +7,8 @@ import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.GameBoardJson;
 import ca.mcgill.splendorserver.model.InventoryJson;
 import ca.mcgill.splendorserver.model.SplendorGame;
+import ca.mcgill.splendorserver.model.cities.City;
+import ca.mcgill.splendorserver.model.nobles.Noble;
 import ca.mcgill.splendorserver.model.tokens.TokenPile;
 import ca.mcgill.splendorserver.model.tokens.TokenType;
 import ca.mcgill.splendorserver.model.userinventory.UserInventory;
@@ -65,7 +67,8 @@ class GameRestControllerTest {
     assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(5L, sessionInfoJson));
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(5L);
     String json = buildGameBoardJson(manager.get().getSessionInfo().getGameServer(),
-      manager.get().whoseTurn().getName(), manager.get().getBoard(), manager.get().getWinningPlayers());
+      manager.get().whoseTurn().getName(),
+      manager.get().getBoard(), manager.get().getWinningPlayers());
     assertEquals(ResponseEntity.status(HttpStatus.OK).body(json), controller.getGameBoard(5L));
     controller.quitRequest(5L);
     assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(5L));
@@ -85,6 +88,8 @@ class GameRestControllerTest {
   private String buildGameBoardJson(String gameName, String whoseTurn,
                                     GameBoard gameboard, List<PlayerWrapper> winningPlayers) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    List<Noble> nobles = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
       for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles()
@@ -102,13 +107,15 @@ class GameRestControllerTest {
         inventory.getCities(), purchasedCardCount
       );
       inventories.add(inventoryJson);
+      nobles.addAll(inventory.getNobles());
+      cities.addAll(inventory.getCities());
     }
 
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
-      gameboard.getDecks(), gameboard.getNobles(),
+      gameboard.getDecks(), nobles,
       gameboard.getCards(), gameboard.getTokenPiles(),
       gameboard.getTradingPostSlots(),
-      gameboard.getCities(), winningPlayers);
+      cities, winningPlayers);
     Gson gson = new GsonBuilder().setPrettyPrinting()
                   .create();
     return gson.toJson(gameBoardJson);
