@@ -75,10 +75,14 @@ class GameBoardJsonTest {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : game.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     GameBoardJson
       gameboardJson = new GameBoardJson(game.whoseTurn().getName(), inventoriesJson, decksJson,
         nobles, cardField, gameboard.getTokenPiles(), tradingPosts,
-        cities);
+        cities, winningPlayers);
     assertNotNull(gameboardJson);
   }
 

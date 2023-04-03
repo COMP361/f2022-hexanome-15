@@ -357,15 +357,28 @@ public class SplendorGame {
     if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
+      List<Noble> citiesInInventories = new ArrayList<>();
+      for (InventoryJson inventory : gameboardJson.inventories) {
+        for (Integer cityId : inventory.cities) {
+          citiesInInventories.add(Noble.getNoble(cityId));
+        }
+      }
       for (Integer cityId : gameboardJson.cities) {
         cities.add(City.getCity(cityId));
       }
+      cities.removeAll(citiesInInventories);
     }
-    
+    List<Noble> noblesInInventories = new ArrayList<>();
+    for (InventoryJson inventory : gameboardJson.inventories) {
+      for (Integer nobleId : inventory.visitingNobles) {
+        noblesInInventories.add(Noble.getNoble(nobleId));
+      }
+    }
     List<Noble> nobles = new ArrayList<>();
     for (Integer nobleId : gameboardJson.nobles) {
       nobles.add(Noble.getNoble(nobleId));
     }
+    nobles.removeAll(noblesInInventories);
     
     //setting up user inventories
     final List<UserInventory> inventories  = new ArrayList<>();

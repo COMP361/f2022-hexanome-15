@@ -79,8 +79,12 @@ class SaveGameTest {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : game.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     GameBoardJson gameBoardJson = new GameBoardJson(game.whoseTurn().getName(), inventoriesJson, decksJson,
-        nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+        nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     json = new Gson().toJson(gameBoardJson);
     savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));

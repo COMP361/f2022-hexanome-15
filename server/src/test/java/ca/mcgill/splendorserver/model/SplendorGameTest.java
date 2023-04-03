@@ -113,8 +113,12 @@ class SplendorGameTest {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
-    ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
-      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : game2.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
+    ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game2.whoseTurn().getName(), inventoriesJson, decksJson,
+      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
     SaveGameStorage.addSaveGame(savegame);
@@ -161,8 +165,12 @@ class SplendorGameTest {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : game2.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
-      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
     SaveGameStorage.addSaveGame(savegame);
@@ -215,8 +223,12 @@ class SplendorGameTest {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : game2.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     ca.mcgill.splendorserver.model.savegame.GameBoardJson gameBoardJson = new GameBoardJson(game1.whoseTurn().getName(), inventoriesJson, decksJson,
-      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities);
+      nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
     SaveGameStorage.addSaveGame(savegame);

@@ -191,12 +191,16 @@ public class GameRestController {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : splendorGame.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     ca.mcgill.splendorserver.model.savegame.GameBoardJson 
         gameboardJson = 
             new ca.mcgill.splendorserver.model.savegame.GameBoardJson(
                 splendorGame.whoseTurn().getName(), inventoriesJson, decksJson,
                 nobles, cardField, gameboard.getTokenPiles(), tradingPosts,
-                cities);
+                cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameboardJson));
     SaveGameStorage.addSaveGame(savegame);
