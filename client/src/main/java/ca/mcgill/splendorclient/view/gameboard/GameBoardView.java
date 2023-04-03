@@ -325,7 +325,7 @@ public class GameBoardView {
     cityViews.clear();
     instance.tokenPileViews.clear();
     
-    Dimension screenSize = new Dimension(1920, 1080);//Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
     universalUnitY = screenSize.height / 100f;
     cardHeight = universalUnitY * 16;
