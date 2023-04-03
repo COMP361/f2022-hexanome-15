@@ -211,8 +211,7 @@ public class GameRestController {
     }
     SaveGameJson body = 
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
-    String accessToken = (String) adminAuth.get("access_token");
-    lobbyServiceExecutor.save_game(accessToken, new Gson().toJson(body),
+    lobbyServiceExecutor.save_game(new Gson().toJson(body),
         splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));
     return ResponseEntity.status(HttpStatus.OK).build();

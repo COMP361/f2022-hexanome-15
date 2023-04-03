@@ -35,6 +35,6 @@ class LobbyServiceExecutorTest {
 
   @Test
   void save_game() {
-    lsExecutor.save_game("", "", "SplendorOrient", "1L");
+    lsExecutor.save_game("", "SplendorOrient", "1L");
   }
 }
