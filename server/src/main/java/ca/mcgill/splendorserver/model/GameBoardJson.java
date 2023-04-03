@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cities.City;
@@ -32,6 +33,7 @@ public class GameBoardJson {
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostJson> tradingPosts = new ArrayList<>();
   private List<Integer> cities = new ArrayList<>();
+  private List<String> winningPlayers = new ArrayList<>();
 
   /**
    * Creates a gameboardjson object. Should be based on the actual gameboard. 
@@ -45,15 +47,20 @@ public class GameBoardJson {
    * @param tokenField tokens on the playing field
    * @param tradingPostSlots trading post slots on the field
    * @param cities cities on the field
+   * @param winningPlayers the winners of the game (is null if game is not finished)
    */
   public GameBoardJson(String gameServer, String whoseTurn,
                        List<InventoryJson> inventories, List<Deck> decks,
                        List<Noble> nobles, List<Card> cardField,
                        EnumMap<TokenType, TokenPile> tokenField,
-                       List<TradingPostSlot> tradingPostSlots, List<City> cities) {
+                       List<TradingPostSlot> tradingPostSlots,
+                       List<City> cities, List<PlayerWrapper> winningPlayers) {
     this.whoseTurn = whoseTurn;
     this.gameServer = gameServer;
     this.inventories = inventories;
+    for (PlayerWrapper player : winningPlayers) {
+      this.winningPlayers.add(player.getName());
+    }
     for (Deck deck : decks) {
       this.decks.add(new DeckJson(deck.getSize(), deck.getType()));
     }
@@ -76,15 +83,6 @@ public class GameBoardJson {
     for (City city : cities) {
       this.cities.add(city.getId());
     }
-  }
-
-  /**
-   * Returns the player whose turn it is.
-   *
-   * @return the player whose turn it is
-   */
-  public String getWhoseTurn() {
-    return whoseTurn;
   }
 
 }

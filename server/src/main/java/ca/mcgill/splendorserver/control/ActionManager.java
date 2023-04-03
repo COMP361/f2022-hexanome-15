@@ -119,7 +119,8 @@ public class ActionManager {
         splendorGame.getBoard().endTurn();
 
         // check for terminal game state after action has been performed
-        if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+        if (!splendorGame.isFinished()
+              && TerminalGameStateManager.isTerminalGameState(splendorGame)) {
           logger.log(Level.INFO, "Terminal game state reached");
         }
         // advance to the next players turn

@@ -2,6 +2,7 @@ package ca.mcgill.splendorserver.model;
 
 import ca.mcgill.splendorserver.control.SaveGameStorage;
 import ca.mcgill.splendorserver.control.SessionInfo;
+import ca.mcgill.splendorserver.control.TerminalGameStateManager;
 import ca.mcgill.splendorserver.gameio.Player;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
@@ -178,8 +179,6 @@ class SplendorGameTest {
     for (UserInventory inventory : gameboard.getInventories()) {
       Card card1 = new Card(0, 1, DIAMOND, BASE1, ONE,
         new CardCost(1, 0, 0, 0, 0));
-      Card card2 = new Card(1, 0, DIAMOND, BASE1, ONE,
-        new CardCost(1, 0, 0, 0, 0));
       inventory.addToken(new Token(DIAMOND));
       inventory.purchaseCard(card1);
       City city1 = new City(0, 1,
@@ -225,6 +224,132 @@ class SplendorGameTest {
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientCities", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 3L);
     assertNotNull(game4);
+  }
+
+  @Test
+  void getLastPlayer() {
+    assertEquals(jeff, game1.getLastPlayer());
+  }
+
+  @Test
+  void getWinningPlayer() {
+    UserInventory inventory = game1.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card = new Card(0,15, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory.addToken(token);
+    inventory.purchaseCard(card);
+    game1.endTurn(sofia);
+    TerminalGameStateManager.isTerminalGameState(game1);
+    assertEquals(sofia, game1.getWinningPlayers().get(0));
+    assertEquals(1, game1.getWinningPlayers().size());
+  }
+
+  @Test
+  void getWinningPlayerTieBreak() {
+    UserInventory inventory1 = game1.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card1 = new Card(0,7, DIAMOND, BASE1, ONE, cost);
+    Card card2 = new Card(1,8, DIAMOND, BASE1, ONE, cost);
+    Card card3 = new Card(2,15, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card1);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card2);
+    game1.endTurn(sofia);
+    UserInventory inventory2 = game1.getBoard().getInventoryByPlayerName("Jeff").get();
+    inventory2.addToken(token);
+    inventory2.purchaseCard(card3);
+    TerminalGameStateManager.isTerminalGameState(game1);
+    assertEquals(jeff, game1.getWinningPlayers().get(0));
+    assertEquals(1, game1.getWinningPlayers().size());
+  }
+
+  @Test
+  void getWinningPlayerTie() {
+    UserInventory inventory1 = game1.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card = new Card(0,15, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card);
+    game1.endTurn(sofia);
+    UserInventory inventory2 = game1.getBoard().getInventoryByPlayerName("Jeff").get();
+    inventory2.addToken(token);
+    Card card1 = new Card(1,15, DIAMOND, BASE1, ONE, cost);
+    inventory2.purchaseCard(card1);
+    TerminalGameStateManager.isTerminalGameState(game1);
+    assertEquals(sofia, game1.getWinningPlayers().get(0));
+    assertEquals(jeff, game1.getWinningPlayers().get(1));
+  }
+
+  @Test
+  void getWinningPlayerCities() {
+    UserInventory inventory = game3.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card = new Card(0,10, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory.addToken(token);
+    inventory.purchaseCard(card);
+    City city1 = new City(0, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory.addCity(city1);
+    game3.endTurn(sofia);
+    TerminalGameStateManager.isTerminalGameState(game3);
+    assertEquals(sofia, game3.getWinningPlayers().get(0));
+    assertEquals(1, game3.getWinningPlayers().size());
+  }
+
+  @Test
+  void getWinningPlayerCitiesTie() {
+    UserInventory inventory1 = game3.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card = new Card(0,10, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card);
+    City city1 = new City(0, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory1.addCity(city1);
+    game3.endTurn(sofia);
+    UserInventory inventory2 = game3.getBoard().getInventoryByPlayerName("Jeff").get();
+    inventory2.addToken(token);
+    Card card1 = new Card(1,10, DIAMOND, BASE1, ONE, cost);
+    inventory2.purchaseCard(card1);
+    City city2 = new City(1, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory2.addCity(city2);
+    TerminalGameStateManager.isTerminalGameState(game3);
+    assertEquals(sofia, game3.getWinningPlayers().get(0));
+    assertEquals(jeff, game3.getWinningPlayers().get(1));
+  }
+
+  @Test
+  void getWinningPlayerCitiesTieBreak() {
+    UserInventory inventory1 = game3.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card1 = new Card(0,7, DIAMOND, BASE1, ONE, cost);
+    Card card2 = new Card(1,8, DIAMOND, BASE1, ONE, cost);
+    Card card3 = new Card(2,15, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card1);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card2);
+    City city1 = new City(0, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory1.addCity(city1);
+    game3.endTurn(sofia);
+    UserInventory inventory2 = game3.getBoard().getInventoryByPlayerName("Jeff").get();
+    inventory2.addToken(token);
+    inventory2.purchaseCard(card3);
+    City city2 = new City(1, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory2.addCity(city2);
+    TerminalGameStateManager.isTerminalGameState(game3);
+    assertEquals(jeff, game3.getWinningPlayers().get(0));
+    assertEquals(1, game3.getWinningPlayers().size());
   }
 
   @Test

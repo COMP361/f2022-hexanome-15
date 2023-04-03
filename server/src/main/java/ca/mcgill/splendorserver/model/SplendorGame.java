@@ -99,6 +99,70 @@ public class SplendorGame {
   }
 
   /**
+   * Returns the winning player at the end of the game.
+   *
+   * @return the winning player at the end of the game
+   */
+  public List<PlayerWrapper> getWinningPlayers() {
+    List<PlayerWrapper> winningPlayers = new ArrayList<>();
+    int highestPrestige = 14;
+    int highestPrestigeCities = 0;
+    int fewestCards = Integer.MAX_VALUE;
+    if (finished) {
+      for (PlayerWrapper player : sessionInfo.getPlayers()) {
+        UserInventory inventory = getBoard().getInventoryByPlayerName(player.getName()).get();
+        if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
+          if (inventory.getCities().size() > 0) {
+            if (inventory.getPrestigeWon() > highestPrestigeCities) {
+              highestPrestigeCities = inventory.getPrestigeWon();
+              fewestCards = inventory.purchasedCardCount();
+              winningPlayers.add(player);
+            } else if (inventory.getPrestigeWon() == highestPrestigeCities) {
+              if (inventory.purchasedCardCount() < fewestCards) {
+                fewestCards = inventory.purchasedCardCount();
+                int numWinningPlayers = winningPlayers.size();
+                for (int i = 0; i < numWinningPlayers; i++) {
+                  winningPlayers.remove(0);
+                }
+                winningPlayers.add(player);
+              } else if (inventory.purchasedCardCount() == fewestCards) {
+                winningPlayers.add(player);
+              }
+            }
+          }
+        } else {
+          if (inventory.getPrestigeWon() > highestPrestige) {
+            highestPrestige = inventory.getPrestigeWon();
+            fewestCards = inventory.purchasedCardCount();
+            winningPlayers.add(player);
+          } else if (inventory.getPrestigeWon() == highestPrestige) {
+            if (inventory.purchasedCardCount() < fewestCards) {
+              fewestCards = inventory.purchasedCardCount();
+              int numWinningPlayers = winningPlayers.size();
+              for (int i = 0; i < numWinningPlayers; i++) {
+                winningPlayers.remove(0);
+              }
+              winningPlayers.add(player);
+            } else if (inventory.purchasedCardCount() == fewestCards) {
+              winningPlayers.add(player);
+            }
+          }
+        }
+      }
+    }
+    return winningPlayers;
+  }
+
+  /**
+   * Returns the last player in the game.
+   *
+   * @return the last player in the game
+   */
+  public PlayerWrapper getLastPlayer() {
+    return sessionInfo.getPlayers().get(sessionInfo.getNumPlayers() - 1);
+  }
+
+  /**
    * Returns the player whose turn it is.
    *
    * @return the player whose turn it is

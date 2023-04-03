@@ -22,6 +22,10 @@ public final class TerminalGameStateManager {
    * @return if the game is in a terminal state
    */
   public static boolean isTerminalGameState(SplendorGame game) {
+    if (!game.whoseTurn().equals(game.getLastPlayer())) {
+      return false;
+    }
+
     for (UserInventory inventory : game.getBoard()
                                        .getInventories()) {
       if (game.getSessionInfo().getGameServer().equals("SplendorOrientCities")) {

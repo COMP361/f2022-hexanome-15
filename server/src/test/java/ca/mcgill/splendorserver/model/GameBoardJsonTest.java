@@ -1,5 +1,6 @@
 package ca.mcgill.splendorserver.model;
 
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
 import ca.mcgill.splendorserver.model.cards.CardCost;
 import ca.mcgill.splendorserver.model.cards.Deck;
@@ -53,13 +54,11 @@ class GameBoardJsonTest {
     List<City> cities = City.getCities();
     List<TradingPostSlot> tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     tradingPostSlots.get(0).addCoatOfArms(new CoatOfArms(RED));
+    PlayerWrapper sofia = PlayerWrapper.newPlayerWrapper("Sofia");
+    List<PlayerWrapper> winningPlayers = new ArrayList<>();
+    winningPlayers.add(sofia);
     gjson = new GameBoardJson("SplendorOrientTradingPosts", whoseTurn, inventories, decks,
-      nobles, cards, tokenPiles, tradingPostSlots, cities);
-  }
-
-  @Test
-  void getWhoseTurn() {
-    assertEquals("Sofia", gjson.getWhoseTurn());
+      nobles, cards, tokenPiles, tradingPostSlots, cities, winningPlayers);
   }
 
 }

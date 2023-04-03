@@ -64,7 +64,8 @@ class GameRestControllerTest {
     controller.launchRequest(5L, sessionInfoJson);
     assertEquals(ResponseEntity.status(HttpStatus.OK).build(), controller.launchRequest(5L, sessionInfoJson));
     Optional<SplendorGame> manager = LocalGameStorage.getActiveGame(5L);
-    String json = buildGameBoardJson(manager.get().whoseTurn().getName(), manager.get().getBoard());
+    String json = buildGameBoardJson(manager.get().getSessionInfo().getGameServer(),
+      manager.get().whoseTurn().getName(), manager.get().getBoard(), manager.get().getWinningPlayers());
     assertEquals(ResponseEntity.status(HttpStatus.OK).body(json), controller.getGameBoard(5L));
     controller.quitRequest(5L);
     assertEquals(Optional.empty(), LocalGameStorage.getActiveGame(5L));
@@ -81,24 +82,35 @@ class GameRestControllerTest {
     assertEquals("SOMEONE'S KNOCKING", controller.knock());
   }
 
-  private String buildGameBoardJson(String whoseTurn, GameBoard gameboard) {
+  private String buildGameBoardJson(String gameName, String whoseTurn,
+                                    GameBoard gameboard, List<PlayerWrapper> winningPlayers) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
-      for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles().entrySet()) {
+      for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles()
+                                                     .entrySet()) {
         purchasedCardCount.put(entry.getKey(), inventory.tokenBonusAmountByType(entry.getKey()));
       }
       InventoryJson inventoryJson = new InventoryJson(inventory.getCards(),
-        inventory.getTokenPiles(), inventory.getPlayer().getName(),
-        inventory.getPrestigeWon(), inventory.getNobles(),
-        inventory.getPowers(), inventory.getCoatOfArmsPile(), inventory.getCities(), purchasedCardCount);
+        inventory.getTokenPiles(),
+        inventory.getPlayer()
+          .getName(),
+        inventory.getPrestigeWon(),
+        inventory.getNobles(),
+        inventory.getPowers(),
+        inventory.getCoatOfArmsPile(),
+        inventory.getCities(), purchasedCardCount
+      );
       inventories.add(inventoryJson);
     }
-    GameBoardJson gameBoardJson = new GameBoardJson("SplendorOrientCities", whoseTurn, inventories,
+
+    GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
       gameboard.getDecks(), gameboard.getNobles(),
       gameboard.getCards(), gameboard.getTokenPiles(),
-      gameboard.getTradingPostSlots(), gameboard.getCities());
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      gameboard.getTradingPostSlots(),
+      gameboard.getCities(), winningPlayers);
+    Gson gson = new GsonBuilder().setPrettyPrinting()
+                  .create();
     return gson.toJson(gameBoardJson);
   }
 }

@@ -79,7 +79,8 @@ public class GameRestController {
     System.out.println("in here");
   }
 
-  private String buildGameBoardJson(String gameName, String whoseTurn, GameBoard gameboard) {
+  private String buildGameBoardJson(String gameName, String whoseTurn,
+                                    GameBoard gameboard, List<PlayerWrapper> winningPlayers) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
@@ -99,12 +100,12 @@ public class GameRestController {
       );
       inventories.add(inventoryJson);
     }
+
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
                                                     gameboard.getDecks(), gameboard.getNobles(),
                                                     gameboard.getCards(), gameboard.getTokenPiles(),
                                                     gameboard.getTradingPostSlots(),
-                                                    gameboard.getCities()
-    );
+                                                    gameboard.getCities(), winningPlayers);
     Gson gson = new GsonBuilder().setPrettyPrinting()
                                  .create();
     return gson.toJson(gameBoardJson);
@@ -236,7 +237,7 @@ public class GameRestController {
 
       String json = buildGameBoardJson(manager.get().getSessionInfo().getGameServer(),
           manager.get().whoseTurn().getName(), 
-          manager.get().getBoard());
+          manager.get().getBoard(), manager.get().getWinningPlayers());
       return ResponseEntity.status(HttpStatus.OK)
                            .body(json);
     }
