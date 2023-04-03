@@ -615,10 +615,14 @@ public class UserInventory implements Iterable<Card> {
    */
   public void receiveVisitFrom(Noble noble) {
     assert noble != null;
+    if (noble.getStatus() == NobleStatus.ON_BOARD) {
+      visitingNobles.add(noble);
+    }
     addPrestige(noble.getPrestige());
-    visitingNobles.add(noble);
     noble.setStatus(NobleStatus.VISITING);
   }
+
+
 
   private boolean notEnoughBonusesFor(TokenType tokenType, int amount) {
     assert tokenType != null && amount >= 0;
