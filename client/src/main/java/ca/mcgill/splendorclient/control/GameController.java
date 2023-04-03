@@ -22,7 +22,7 @@ import kong.unirest.json.JSONObject;
 public class GameController {
 
   private Long gameId;
-  private String currentState;
+  private static String currentState;
   private GameBoardView localView;
 
   private static GameController instance = new GameController();
@@ -78,10 +78,13 @@ public class GameController {
     instance.updaterThread = instance.new BoardUpdater();
     instance.updaterThread.start();
   }
-  
-  
+
+  /**
+   * Sets the updaterThread to exit.
+   */
   public static void stop() {
     instance.updaterThread.setExit();
+    currentState = "";
   }
 
 

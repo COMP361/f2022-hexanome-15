@@ -36,7 +36,7 @@ public class Card implements Comparable<Card> {
   public Card(int id, int prestige, TokenType tokenBonusType, DeckType deckType,
               TokenBonusAmount tokenBonusAmount, CardCost cardCost
   ) {
-    assert prestige >= 0 && deckType != null && tokenBonusAmount != null && cardCost != null;
+    assert prestige >= 0 && cardCost != null;
     this.id               = id;
     this.prestige         = prestige;
     this.tokenBonusType   = tokenBonusType;

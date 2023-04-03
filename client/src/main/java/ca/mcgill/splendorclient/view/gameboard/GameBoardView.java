@@ -314,6 +314,14 @@ public class GameBoardView {
    * @return the gameboard scene
    */
   public static Scene setupGameBoard(JSONArray players, String gameServer) {
+    //since users can go in and out of games, we need to reset the static containers
+    cardViews.clear();
+    deckViews.clear();
+    nobleViews.clear();
+    userViews.clear();
+    cityViews.clear();
+    instance.tokenPileViews.clear();
+    
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
     universalUnitY = screenSize.height / 100f;

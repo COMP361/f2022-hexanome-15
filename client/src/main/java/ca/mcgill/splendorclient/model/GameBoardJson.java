@@ -22,20 +22,12 @@ public class GameBoardJson {
   private Map<TokenType, Integer> tokenField = new HashMap<TokenType, Integer>();
   private List<TradingPostJson> tradingPosts = new ArrayList<>();
   private List<Integer> cities = new ArrayList<>();
+  private List<String> winningPlayers = new ArrayList<>();
 
   /**
    * Creates a GameBoardJson object.
    */
   public GameBoardJson() {
-  }
-
-  /**
-   * Returns the player whose turn it is.
-   *
-   * @return the player whose turn it is
-   */
-  public String getWhoseTurn() {
-    return whoseTurn;
   }
 
 }

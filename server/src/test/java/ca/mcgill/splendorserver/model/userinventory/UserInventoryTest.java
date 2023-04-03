@@ -100,6 +100,13 @@ class UserInventoryTest {
   }
 
   @Test
+  void addPurchasedCard() {
+    uinv.addToken(new Token(DIAMOND));
+    uinv.addPurchasedCard(card1);
+    assertTrue(uinv.hasCard(card1));
+  }
+
+  @Test
   void getUnpairedSpiceCard() {
     uinv.addToken(new Token(DIAMOND));
     uinv.purchaseCard(oCard1);

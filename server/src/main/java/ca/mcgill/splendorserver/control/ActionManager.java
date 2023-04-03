@@ -1,7 +1,8 @@
-package ca.mcgill.splendorserver.gameio;
+package ca.mcgill.splendorserver.control;
 
 import ca.mcgill.splendorserver.control.LocalGameStorage;
 import ca.mcgill.splendorserver.control.TerminalGameStateManager;
+import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.GameBoard;
 import ca.mcgill.splendorserver.model.IllegalGameStateException;
 import ca.mcgill.splendorserver.model.SplendorGame;
@@ -118,7 +119,8 @@ public class ActionManager {
         splendorGame.getBoard().endTurn();
 
         // check for terminal game state after action has been performed
-        if (TerminalGameStateManager.isTerminalGameState(splendorGame)) {
+        if (!splendorGame.isFinished()
+              && TerminalGameStateManager.isTerminalGameState(splendorGame)) {
           logger.log(Level.INFO, "Terminal game state reached");
         }
         // advance to the next players turn

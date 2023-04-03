@@ -8,6 +8,9 @@ import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import ca.mcgill.splendorclient.lobbyserviceio.ScriptExecutor;
 import ca.mcgill.splendorclient.model.users.Role;
 import ca.mcgill.splendorclient.model.users.User;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -17,11 +20,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
-
+/**
+ * StartupController for the client.
+ */
 public class StartupController implements Initializable {
   private LobbyServiceExecutor ls = LobbyServiceExecutor.LOBBY_SERVICE_EXECUTOR;
 

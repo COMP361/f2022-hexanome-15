@@ -58,7 +58,12 @@ public class GameBoardJson {
    * Cities on the board, optional.
    */
   public List<Integer> cities = new ArrayList<>();
-  
+
+  /**
+   * Winning players.
+   */
+  public List<String> winningPlayers = new ArrayList<>();
+
   /**
    * Creates a gameboard json object.
    *
@@ -70,10 +75,12 @@ public class GameBoardJson {
    * @param tokenField on playing field
    * @param tradingPosts on playing field
    * @param cities on playing field
+   * @param winningPlayers players that won the game
    */
   public GameBoardJson(String whoseTurn, List<InventoryJson> inventories, List<DeckJson> decks, 
       List<Integer> nobles, List<Integer> cardField, EnumMap<TokenType, TokenPile> tokenField,
-      List<TradingPostJson> tradingPosts, List<Integer> cities) {
+      List<TradingPostJson> tradingPosts, List<Integer> cities, List<String> winningPlayers) {
+    this.whoseTurn = whoseTurn;
     this.inventories = inventories;
     this.decks = decks;
     this.nobles = nobles;

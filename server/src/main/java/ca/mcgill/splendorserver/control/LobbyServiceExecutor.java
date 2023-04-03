@@ -25,9 +25,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
-  private static String gameServiceLocation = "http://localhost:8080";
-  private String lobbyServiceLocation = "http://localhost:4242";
-  private       JSONObject      adminAuth    = auth_token("maex", "abc123_ABC123");
+  private static String gameServiceLocation = "http://192.168.2.250:8080";
+  private String lobbyServiceLocation = "http://192.168.2.250:4242";
+  private       JSONObject      adminAuth;
+
 
   /**
    * Creates a LobbyServiceExecutor.
@@ -141,8 +142,10 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   }
 
   @Override
-  public void save_game(String accessToken, String body, String gameserviceName, String id) {
+  public void save_game(String body, String gameserviceName, String id) {
     try {
+      adminAuth    = auth_token(gameserviceName, "Antichrist1!");
+      String accessToken = (String) adminAuth.getString("access_token");
       String url =
           String.format(
           lobbyServiceLocation
