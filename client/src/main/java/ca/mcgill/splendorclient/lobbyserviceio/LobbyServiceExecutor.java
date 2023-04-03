@@ -28,7 +28,7 @@ public class LobbyServiceExecutor {
   /**
    * The location of the server.
    */
-  public static String SERVERLOCATION = "localhost:8080"; // TODO: fix the value injection;
+  public static String SERVERLOCATION = "192.168.2.250:8080"; // TODO: fix the value injection;
 
   /**
    * Sets the game service location from properties.
@@ -42,7 +42,7 @@ public class LobbyServiceExecutor {
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
   @Value("{lobbyservice.location}")
-  private String lobbyServiceLocation = "http://localhost:4242"; // TODO: fix the value injection;
+  private String lobbyServiceLocation = "http://192.168.2.250:4242"; // TODO: fix the value injection;
 
   /**
    * Creates a LobbyServiceExecutor.

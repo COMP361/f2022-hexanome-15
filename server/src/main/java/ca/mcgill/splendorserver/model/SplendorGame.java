@@ -372,7 +372,8 @@ public class SplendorGame {
       }
       cities.removeAll(citiesInInventories);
     }
-    
+    // Removing the nobles that are in the inventories
+    // to instantiate the gameboard only with nobles on the board
     List<Noble> noblesInInventories = new ArrayList<>();
     for (InventoryJson inventory : gameboardJson.inventories) {
       for (Integer nobleId : inventory.visitingNobles) {
