@@ -12,7 +12,9 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -51,7 +53,7 @@ public class GameBoardView {
   private static final ArrayList<CardView> cardViews = new ArrayList<CardView>();
   private static final ArrayList<DeckView> deckViews = new ArrayList<>();
   private static final ArrayList<NobleView> nobleViews = new ArrayList<>();
-  private static final ArrayList<UserInventoryView> userViews = new ArrayList<>();
+  private static final Map<String, UserInventoryView> userViews = new HashMap<>();
   private static final ArrayList<CityView> cityViews = new ArrayList<>();
   private static TradingView tradingView;
   private List<TokenPileView> tokenPileViews;
@@ -280,7 +282,7 @@ public class GameBoardView {
         tokenCountView,
         cardCountView,
         prestigeCountView);
-    userViews.add(inventoryView);
+    userViews.put(playerName, inventoryView);
     populateUserInventoryView(inventoryView, screenSize);
     populateUserInventoryDisplay(tokenColumn, screenSize, inventoryView);
     for (CardColumnView cardColumn : inventoryView) {
@@ -509,7 +511,7 @@ public class GameBoardView {
    * including their hand, token amounts, prestige,
    * nobles, and powers.
    *
-   * @param playerIndex the index of the player
+   * @param playerName the name of the player
    * @param cards an int[] array representing cards in player's possession
    * @param reservedcards an int[] array representing reserved cards in player's possession
    * @param numOfDiamonds number of diamond tokens in player's possession
@@ -528,7 +530,7 @@ public class GameBoardView {
    * @param visitingNobles IDs of nobles currently visiting player
    * @param powers int[] array representing unlocked Trading Posts powers
    */
-  public static void updateInventories(int playerIndex,
+  public static void updateInventories(String playerName,
                                        int[] cards,
                                        int[] reservedcards,
                                        int numOfDiamonds,
@@ -546,21 +548,21 @@ public class GameBoardView {
                                        int prestige,
                                        int[] visitingNobles,
                                        int[] powers) {
-    userViews.get(playerIndex).updateCards(cards, reservedcards);
-    userViews.get(playerIndex).updateTokens(numOfDiamonds,
+    userViews.get(playerName).updateCards(cards, reservedcards);
+    userViews.get(playerName).updateTokens(numOfDiamonds,
         numOfSapphires,
         numOfEmeralds,
         numOfRubies,
         numOfOnyx,
         numOfGolds);
-    userViews.get(playerIndex).updateMiniCards(numWhiteCards,
+    userViews.get(playerName).updateMiniCards(numWhiteCards,
         numBlueCards,
         numGreenCards,
         numRedCards,
         numBlackCards,
         numGoldCards);
-    userViews.get(playerIndex).updatePrestige(prestige);
-    userViews.get(playerIndex).updateCardCount(cards.length);
+    userViews.get(playerName).updatePrestige(prestige);
+    userViews.get(playerName).updateCardCount(cards.length);
   }
 
   /**
