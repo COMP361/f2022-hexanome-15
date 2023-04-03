@@ -478,7 +478,7 @@ public class ActionManager {
                                   GameBoard gameBoard, PlayerWrapper player) {
     // players may not have more than three reserved cards in hand
     final int maxNumReservedCards = 3;
-    if (inventory.reservedCardCount() > maxNumReservedCards) {
+    if (inventory.reservedCardCount() >= maxNumReservedCards) {
       return;
     }
 
