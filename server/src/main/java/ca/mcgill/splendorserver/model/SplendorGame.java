@@ -116,6 +116,10 @@ public class SplendorGame {
             if (inventory.getPrestigeWon() > highestPrestigeCities) {
               highestPrestigeCities = inventory.getPrestigeWon();
               fewestCards = inventory.purchasedCardCount();
+              int numWinningPlayers = winningPlayers.size();
+              for (int i = 0; i < numWinningPlayers; i++) {
+                winningPlayers.remove(0);
+              }
               winningPlayers.add(player);
             } else if (inventory.getPrestigeWon() == highestPrestigeCities) {
               if (inventory.purchasedCardCount() < fewestCards) {

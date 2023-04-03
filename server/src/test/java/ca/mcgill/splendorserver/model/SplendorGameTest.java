@@ -365,6 +365,33 @@ class SplendorGameTest {
   }
 
   @Test
+  void getWinningPlayerCitiesTiePrestige() {
+    UserInventory inventory1 = game3.getBoard().getInventoryByPlayerName("Sofia").get();
+    CardCost cost = new CardCost(1,0,0,0,0);
+    Card card1 = new Card(0,9, DIAMOND, BASE1, ONE, cost);
+    Card card2 = new Card(1,8, DIAMOND, BASE1, ONE, cost);
+    Card card3 = new Card(2,15, DIAMOND, BASE1, ONE, cost);
+    Token token = new Token(DIAMOND);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card1);
+    inventory1.addToken(token);
+    inventory1.purchaseCard(card2);
+    City city1 = new City(0, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory1.addCity(city1);
+    game3.endTurn(sofia);
+    UserInventory inventory2 = game3.getBoard().getInventoryByPlayerName("Jeff").get();
+    inventory2.addToken(token);
+    inventory2.purchaseCard(card3);
+    City city2 = new City(1, 10,
+      new CardCost(1, 0, 0, 0, 0), 0);
+    inventory2.addCity(city2);
+    TerminalGameStateManager.isTerminalGameState(game3);
+    assertEquals(sofia, game3.getWinningPlayers().get(0));
+    assertEquals(1, game3.getWinningPlayers().size());
+  }
+
+  @Test
   void setRequiresUpdate() {
     game1.setRequiresUpdate(false);
     assertFalse(game1.getRequiresUpdate());
