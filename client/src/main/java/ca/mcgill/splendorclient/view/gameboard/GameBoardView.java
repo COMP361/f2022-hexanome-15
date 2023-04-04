@@ -567,7 +567,8 @@ public class GameBoardView {
                                        int numGoldCards,
                                        int prestige,
                                        int[] visitingNobles,
-                                       int[] powers) {
+                                       int[] powers,
+                                       int[] reservedNobles) {
     userViews.get(playerIndex).updateCards(cards, reservedcards);
     userViews.get(playerIndex).updateTokens(numOfDiamonds,
         numOfSapphires,
@@ -583,6 +584,7 @@ public class GameBoardView {
         numGoldCards);
     userViews.get(playerIndex).updatePrestige(prestige);
     userViews.get(playerIndex).updateCardCount(cards.length);
+    userViews.get(playerIndex).updateNoblesInventory(reservedNobles, visitingNobles, nobleViews);
   }
 
   /**
