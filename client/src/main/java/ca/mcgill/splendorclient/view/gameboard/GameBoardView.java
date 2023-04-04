@@ -271,7 +271,7 @@ public class GameBoardView {
     float yoffset = 0; //= 6 * screenSize.height / 10f;
     
     if (numPlayer == 0 || numPlayer == 1 || numPlayer == 2) {
-      yoffset = 6 * screenSize.height / 10f;
+      yoffset = 5.5f * screenSize.height / 10f;
       xoffset = (float) (1 * universalUnitX + cardWidth * 1.2 + spacer + x * numPlayer);
     }
     
@@ -435,9 +435,13 @@ public class GameBoardView {
 
     //creating Trade Routes expansion
     if (gameServer.equals("SplendorOrientTradingPosts")) {
-      tradingView = new TradingView(screenSize);
-      tradingView.setLayoutY(screenSize.height / 2.4f);
-      tradingView.setLayoutX(screenSize.width / 4f);
+      float tradingY = 37 * universalUnitY;
+      float tradingX = 1 * universalUnitX + (9.2f) * cardWidth + 9 * spacer + 2;
+      tradingView = new TradingView(screenSize,
+          98 * universalUnitX - (9.2f) * cardWidth - 9 * spacer - 2,
+          cardHeight);
+      tradingView.setLayoutY(tradingY);
+      tradingView.setLayoutX(tradingX);
       root.getChildren().addAll(tradingView);
     }
     //creating Cities expansion
