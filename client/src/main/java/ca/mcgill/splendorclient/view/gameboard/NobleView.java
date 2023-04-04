@@ -76,6 +76,11 @@ public class NobleView extends StackPane {
     localid = num;
   }
 
+  /**
+   * Adds display text to a noble view after reserving or visiting.
+   *
+   * @param text the text to display
+   */
   public void displayText(String text) {
     this.textToDisplay = new Text();
     this.textToDisplay.setText(text);
@@ -84,11 +89,16 @@ public class NobleView extends StackPane {
             FontPosture.REGULAR,
             GameBoardView.getFontSize() / 2));
     this.textToDisplay.setFill(Color.WHITE);
-    this.textToDisplay.setStrokeWidth(1.5);
+    this.textToDisplay.setStrokeWidth(1.0);
     this.textToDisplay.setStroke(Color.BLACK);
     this.getChildren().add(textToDisplay);
   }
 
+  /**
+   * Returns the id of this city view.
+   *
+   * @return the id of this city view
+   */
   public int getLocalid() {
     return localid;
   }

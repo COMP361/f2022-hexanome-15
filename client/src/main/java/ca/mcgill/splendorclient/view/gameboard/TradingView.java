@@ -18,6 +18,10 @@ public class TradingView extends Pane {
 
   private final Dimension screenSize;
   private static final String rootPath = new File("").getAbsolutePath();
+  private final float sizeX;
+  private final float sizeY;
+  private final float shieldSizeX;
+  private final float shieldSizeY;
 
   //order of shields is blue red yellow black
   private final ArrayList[] shields = new ArrayList[5];
@@ -27,14 +31,18 @@ public class TradingView extends Pane {
    *
    * @param screenSize the size of the screen
    */
-  public TradingView(Dimension screenSize) {
+  public TradingView(Dimension screenSize, float x, float y) {
     this.screenSize = screenSize;
     Image newImage = new Image("file:///" + rootPath + "/resources/tradingBoard.jpg");
     if (newImage != null) {
       this.setBackground(new Background(
           new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     }
-    this.setPrefSize(screenSize.getWidth() / 4.0f, screenSize.getHeight() / 10.0f);
+    this.setPrefSize(x, y);
+    this.sizeX = x;
+    this.sizeY = y;
+    this.shieldSizeX = sizeX / 18f;
+    this.shieldSizeY = sizeY / 4f;
 
     for (int i = 0; i < 5; i++) {
       shields[i] = new ArrayList<>();
@@ -57,17 +65,17 @@ public class TradingView extends Pane {
                            String[] fourthShields,
                            String[] fifthShields) {
     this.getChildren().clear();
-    float xoffset = (float) (screenSize.getWidth() / 65f);
-    float yoffset = (float) (screenSize.getHeight() / 40f);
+    float xoffset = sizeX / 18f;
+    float yoffset = sizeY / 8f;
     float xorigin = 0.0f;
     updatePower(0, firstShields, xoffset, yoffset, xorigin);
-    xorigin += screenSize.getWidth() / 20.0f;
+    xorigin += sizeX / 5f;
     updatePower(1, secondShields, xoffset, yoffset, xorigin);
-    xorigin += screenSize.getWidth() / 20.0f;
+    xorigin += sizeX / 5f;
     updatePower(2, thirdShields, xoffset, yoffset, xorigin);
-    xorigin += screenSize.getWidth() / 20.0f;
+    xorigin += sizeX / 5f;
     updatePower(3, fourthShields, xoffset, yoffset, xorigin);
-    xorigin += screenSize.getWidth() / 20.0f;
+    xorigin += sizeX / 5f;
     updatePower(4, fifthShields, xoffset, yoffset, xorigin);
 
   }
@@ -78,7 +86,7 @@ public class TradingView extends Pane {
       return;
     }
 
-    CoatofarmsView toAdd = new CoatofarmsView(screenSize, colors[0]);
+    CoatofarmsView toAdd = new CoatofarmsView(screenSize, shieldSizeX, shieldSizeY, colors[0]);
     this.getChildren().add(toAdd);
     toAdd.setTranslateX(xoffset + xorigin);
     toAdd.setTranslateY(yoffset);
@@ -86,7 +94,7 @@ public class TradingView extends Pane {
     if (colors.length < 2) {
       return;
     }
-    toAdd = new CoatofarmsView(screenSize, colors[1]);
+    toAdd = new CoatofarmsView(screenSize, shieldSizeX, shieldSizeY, colors[1]);
     this.getChildren().add(toAdd);
     toAdd.setTranslateX(2 * xoffset + xorigin);
     toAdd.setTranslateY(yoffset);
@@ -95,19 +103,19 @@ public class TradingView extends Pane {
     if (colors.length < 3) {
       return;
     }
-    toAdd = new CoatofarmsView(screenSize, colors[2]);
+    toAdd = new CoatofarmsView(screenSize, shieldSizeX, shieldSizeY, colors[2]);
     this.getChildren().add(toAdd);
     toAdd.setTranslateX(xoffset + xorigin);
-    toAdd.setTranslateY(2 * yoffset);
+    toAdd.setTranslateY(3.5 * yoffset);
 
 
     if (colors.length < 4) {
       return;
     }
-    toAdd = new CoatofarmsView(screenSize, colors[3]);
+    toAdd = new CoatofarmsView(screenSize, shieldSizeX, shieldSizeY, colors[3]);
     this.getChildren().add(toAdd);
     toAdd.setTranslateX(2 * xoffset + xorigin);
-    toAdd.setTranslateY(2 * yoffset);
+    toAdd.setTranslateY(3.5 * yoffset);
 
 
   }

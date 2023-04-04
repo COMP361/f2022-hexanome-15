@@ -66,10 +66,20 @@ public class CityView extends StackPane {
     cityid = num;
   }
 
+  /**
+   * Returns the city id.
+   *
+   * @return the city id
+   */
   public int getCityid() {
     return cityid;
   }
 
+  /**
+   * Adds display text to city view when unlocked.
+   *
+   * @param text the text to be displayed
+   */
   public void displayText(String text) {
     this.textToDisplay = new Text();
     this.textToDisplay.setText(text);
@@ -78,7 +88,7 @@ public class CityView extends StackPane {
             FontPosture.REGULAR,
             GameBoardView.getFontSize() / 2));
     this.textToDisplay.setFill(Color.WHITE);
-    this.textToDisplay.setStrokeWidth(1.5);
+    this.textToDisplay.setStrokeWidth(1.0);
     this.textToDisplay.setStroke(Color.BLACK);
     this.getChildren().add(textToDisplay);
   }
