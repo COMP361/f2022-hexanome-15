@@ -151,6 +151,24 @@ public class GameController {
                   reservedCardids[i] = reservedCardArray.getInt(i);
                 }
 
+                JSONArray reservedNobleArray = inventory.getJSONArray("reservedNobles");
+                int[] reservedNobleids = new int[reservedNobleArray.length()];
+                for (int i = 0; i < reservedNobleArray.length(); i++) {
+                  reservedNobleids[i] = reservedNobleArray.getInt(i);
+                }
+
+                JSONArray visitingNobleArray = inventory.getJSONArray("visitingNobles");
+                int[] visitingNobleids = new int[visitingNobleArray.length()];
+                for (int i = 0; i < visitingNobleArray.length(); i++) {
+                  visitingNobleids[i] = visitingNobleArray.getInt(i);
+                }
+
+                JSONArray acquiredCitiesArray = inventory.getJSONArray("cities");
+                int[] acquiredCities = new int[acquiredCitiesArray.length()];
+                for (int i = 0; i < acquiredCitiesArray.length(); i++) {
+                  acquiredCities[i] = acquiredCitiesArray.getInt(i);
+                }
+
                 int[] placeholder = null;
 
 
@@ -171,8 +189,8 @@ public class GameController {
                     inventory.getJSONObject("purchasedCardCount").getInt("ONYX"),
                     inventory.getJSONObject("purchasedCardCount").getInt("GOLD"),
                     inventory.getInt("prestige"),
-                    placeholder,
-                    placeholder);
+                    visitingNobleids,
+                    placeholder, reservedNobleids, acquiredCities);
               }
 
               //update tokens
@@ -191,7 +209,6 @@ public class GameController {
                   tokens.getInt("GOLD"));
 
               //update nobles
-              
 
 
               //update decks

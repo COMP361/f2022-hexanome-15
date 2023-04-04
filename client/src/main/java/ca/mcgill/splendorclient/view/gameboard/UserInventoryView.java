@@ -96,6 +96,33 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     }
   }
 
+  public void updateNoblesInventory(int[] reservednobles, int[] visitingNobles, ArrayList<NobleView> nobleViews) {
+    for (int noble: reservednobles) {
+      for (NobleView nobleView: nobleViews) {
+        if (nobleView.getLocalid() == noble) {
+          nobleView.displayText("RESERVED" + " - " + player);
+        }
+      }
+    }
+    for (int noble: visitingNobles) {
+      for (NobleView nobleView: nobleViews) {
+        if (nobleView.getLocalid() == noble) {
+          nobleView.displayText("VISITING" + " - " + player);
+        }
+      }
+    }
+  }
+
+  public void updateCitiesInventory(int[] acquiredCities, ArrayList<CityView> cityViews) {
+    for (int city : acquiredCities) {
+      for (CityView cityView : cityViews) {
+        if (cityView.getCityid() == city) {
+          cityView.displayText("ACQUIRED" + " - " + player);
+        }
+      }
+    }
+  }
+
   /**
    * Updates the token piles in the user inventory.
    *
