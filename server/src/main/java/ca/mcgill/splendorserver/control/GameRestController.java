@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import javax.annotation.PreDestroy;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class GameRestController {
   private static final Logger LOGGER = LoggerFactory.getLogger(GameRestController.class);
   private LobbyServiceExecutorInterface lobbyServiceExecutor;
-  JSONObject adminAuth;
 
   /**
    * Creates a Game Rest Controller.
@@ -76,11 +76,31 @@ public class GameRestController {
     this.lobbyServiceExecutor.register_gameservice(accessToken, 4, 2,
         "SplendorOrientCities",
         "SplendorOrientCities", true);
+    
+    //now register any savegames
+    SaveGameStorage.getInstance().loadSaveGames();
+    for (SaveGame savegame : SaveGameStorage.getInstance().getSaveGames()) {
+      SaveGameJson body = new Gson().fromJson(savegame.getBody(), SaveGameJson.class);
+      lobbyServiceExecutor.save_game(savegame.getBody(), body.gamename, savegame.getId());
+    }
     System.out.println("in here");
   }
+  
+  /**
+   * Unregisters gameservices. Called on application end.
+   */
+  @PreDestroy
+  public void unregisterGameServices() {
+    lobbyServiceExecutor.unregister_gameservice("SplendorOrient");
+    lobbyServiceExecutor.unregister_gameservice("SplendorOrientTradingPosts");
+    lobbyServiceExecutor.unregister_gameservice("SplendorOrientCities");
+  }
 
-  private String buildGameBoardJson(String gameName, String whoseTurn, GameBoard gameboard) {
+  private String buildGameBoardJson(String gameName, String whoseTurn,
+                                    GameBoard gameboard, List<PlayerWrapper> winningPlayers) {
     List<InventoryJson> inventories = new ArrayList<InventoryJson>();
+    List<Noble> nobles = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     for (UserInventory inventory : gameboard.getInventories()) {
       Map<TokenType, Integer> purchasedCardCount = new HashMap<TokenType, Integer>();
       for (Map.Entry<TokenType, TokenPile> entry : inventory.getTokenPiles()
@@ -98,13 +118,17 @@ public class GameRestController {
                                                       inventory.getCities(), purchasedCardCount
       );
       inventories.add(inventoryJson);
+      nobles.addAll(inventory.getNobles());
+      cities.addAll(inventory.getCities());
     }
+    nobles.addAll(gameboard.getNobles());
+    cities.addAll(gameboard.getCities());
+
     GameBoardJson gameBoardJson = new GameBoardJson(gameName, whoseTurn, inventories,
-                                                    gameboard.getDecks(), gameboard.getNobles(),
+                                                    gameboard.getDecks(), nobles,
                                                     gameboard.getCards(), gameboard.getTokenPiles(),
                                                     gameboard.getTradingPostSlots(),
-                                                    gameboard.getCities()
-    );
+                                                    cities, winningPlayers);
     Gson gson = new GsonBuilder().setPrettyPrinting()
                                  .create();
     return gson.toJson(gameBoardJson);
@@ -184,15 +208,17 @@ public class GameRestController {
     for (City city : gameboard.getCities()) {
       cities.add(city.getId());
     }
+    List<String> winningPlayers = new ArrayList<>();
+    for (PlayerWrapper player : splendorGame.getWinningPlayers()) {
+      winningPlayers.add(player.getName());
+    }
     ca.mcgill.splendorserver.model.savegame.GameBoardJson 
         gameboardJson = 
             new ca.mcgill.splendorserver.model.savegame.GameBoardJson(
                 splendorGame.whoseTurn().getName(), inventoriesJson, decksJson,
                 nobles, cardField, gameboard.getTokenPiles(), tradingPosts,
-                cities);
+                cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
-    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameboardJson));
-    SaveGameStorage.addSaveGame(savegame);
     //inform lobby service
     List<String> players = new ArrayList<>();
     for (PlayerWrapper player : splendorGame.getSessionInfo().getPlayers()) {
@@ -200,8 +226,10 @@ public class GameRestController {
     }
     SaveGameJson body = 
         new SaveGameJson(splendorGame.getSessionInfo().getGameServer(), players, id);
-    String accessToken = (String) adminAuth.get("access_token");
-    lobbyServiceExecutor.save_game(accessToken, new Gson().toJson(body),
+    String strbody = new Gson().toJson(body);
+    SaveGame savegame = new SaveGame(id, new Gson().toJson(gameboardJson), strbody);
+    SaveGameStorage.getInstance().addSaveGame(savegame);
+    lobbyServiceExecutor.save_game(strbody,
         splendorGame.getSessionInfo().getGameServer(), id);
     System.out.println(new Gson().toJson(gameboardJson));
     return ResponseEntity.status(HttpStatus.OK).build();
@@ -233,15 +261,13 @@ public class GameRestController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
                            .build();
     } else {
-
       String json = buildGameBoardJson(manager.get().getSessionInfo().getGameServer(),
           manager.get().whoseTurn().getName(), 
-          manager.get().getBoard());
+          manager.get().getBoard(), manager.get().getWinningPlayers());
       return ResponseEntity.status(HttpStatus.OK)
                            .body(json);
     }
   }
-
 
   @GetMapping("/api/knock")
   String knock() {

@@ -99,6 +99,74 @@ public class SplendorGame {
   }
 
   /**
+   * Returns the winning player at the end of the game.
+   *
+   * @return the winning player at the end of the game
+   */
+  public List<PlayerWrapper> getWinningPlayers() {
+    List<PlayerWrapper> winningPlayers = new ArrayList<>();
+    int highestPrestige = 14;
+    int highestPrestigeCities = 0;
+    int fewestCards = Integer.MAX_VALUE;
+    if (finished) {
+      for (PlayerWrapper player : sessionInfo.getPlayers()) {
+        UserInventory inventory = getBoard().getInventoryByPlayerName(player.getName()).get();
+        if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
+          if (inventory.getCities().size() > 0) {
+            if (inventory.getPrestigeWon() > highestPrestigeCities) {
+              highestPrestigeCities = inventory.getPrestigeWon();
+              fewestCards = inventory.purchasedCardCount();
+              int numWinningPlayers = winningPlayers.size();
+              for (int i = 0; i < numWinningPlayers; i++) {
+                winningPlayers.remove(0);
+              }
+              winningPlayers.add(player);
+            } else if (inventory.getPrestigeWon() == highestPrestigeCities) {
+              if (inventory.purchasedCardCount() < fewestCards) {
+                fewestCards = inventory.purchasedCardCount();
+                int numWinningPlayers = winningPlayers.size();
+                for (int i = 0; i < numWinningPlayers; i++) {
+                  winningPlayers.remove(0);
+                }
+                winningPlayers.add(player);
+              } else if (inventory.purchasedCardCount() == fewestCards) {
+                winningPlayers.add(player);
+              }
+            }
+          }
+        } else {
+          if (inventory.getPrestigeWon() > highestPrestige) {
+            highestPrestige = inventory.getPrestigeWon();
+            fewestCards = inventory.purchasedCardCount();
+            winningPlayers.add(player);
+          } else if (inventory.getPrestigeWon() == highestPrestige) {
+            if (inventory.purchasedCardCount() < fewestCards) {
+              fewestCards = inventory.purchasedCardCount();
+              int numWinningPlayers = winningPlayers.size();
+              for (int i = 0; i < numWinningPlayers; i++) {
+                winningPlayers.remove(0);
+              }
+              winningPlayers.add(player);
+            } else if (inventory.purchasedCardCount() == fewestCards) {
+              winningPlayers.add(player);
+            }
+          }
+        }
+      }
+    }
+    return winningPlayers;
+  }
+
+  /**
+   * Returns the last player in the game.
+   *
+   * @return the last player in the game
+   */
+  public PlayerWrapper getLastPlayer() {
+    return sessionInfo.getPlayers().get(sessionInfo.getNumPlayers() - 1);
+  }
+
+  /**
    * Returns the player whose turn it is.
    *
    * @return the player whose turn it is
@@ -261,7 +329,7 @@ public class SplendorGame {
   }
   
   private void instantiateGameboardFromSavegame(String id) {
-    SaveGame savegame = SaveGameStorage.getSaveGame(id);
+    SaveGame savegame = SaveGameStorage.getInstance().getSaveGame(id);
     ca.mcgill.splendorserver.model.savegame.GameBoardJson 
         gameboardJson = 
             new Gson().fromJson(savegame.getJson(), 
@@ -293,15 +361,30 @@ public class SplendorGame {
     if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
       tradingPostSlots = TradingPostSlot.getTradingPostSlots();
     } else if (sessionInfo.getGameServer().equals("SplendorOrientCities")) {
+      List<City> citiesInInventories = new ArrayList<>();
+      for (InventoryJson inventory : gameboardJson.inventories) {
+        for (Integer cityId : inventory.cities) {
+          citiesInInventories.add(City.getCity(cityId));
+        }
+      }
       for (Integer cityId : gameboardJson.cities) {
         cities.add(City.getCity(cityId));
       }
+      cities.removeAll(citiesInInventories);
     }
-    
+    // Removing the nobles that are in the inventories
+    // to instantiate the gameboard only with nobles on the board
+    List<Noble> noblesInInventories = new ArrayList<>();
+    for (InventoryJson inventory : gameboardJson.inventories) {
+      for (Integer nobleId : inventory.visitingNobles) {
+        noblesInInventories.add(Noble.getNoble(nobleId));
+      }
+    }
     List<Noble> nobles = new ArrayList<>();
     for (Integer nobleId : gameboardJson.nobles) {
       nobles.add(Noble.getNoble(nobleId));
     }
+    nobles.removeAll(noblesInInventories);
     
     //setting up user inventories
     final List<UserInventory> inventories  = new ArrayList<>();
@@ -311,12 +394,12 @@ public class SplendorGame {
       if (sessionInfo.getGameServer().equals("SplendorOrientTradingPosts")) {
         inventory = 
             new UserInventory(
-                PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
+                sessionInfo.getPlayers().get(i), 
                 Optional.ofNullable(CoatOfArmsType.values()[i]));
       } else {
         inventory = 
             new UserInventory(
-                PlayerWrapper.newPlayerWrapper(inventoryJson.userName), 
+                sessionInfo.getPlayers().get(i), 
                 Optional.empty());
       }
       for (Integer purchasedCard : inventoryJson.purchasedCards) {

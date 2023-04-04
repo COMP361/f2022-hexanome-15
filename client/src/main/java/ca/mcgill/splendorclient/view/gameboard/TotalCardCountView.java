@@ -33,7 +33,7 @@ public class TotalCardCountView extends Text {
    */
   public void set(int amount) {
     totalCardCount = amount;
-    String text = String.format("Total Purchased Cards: %d", totalCardCount);
+    String text = String.format("Cards: %d", totalCardCount);
     setText(text);
     this.setFont(Font.font("Comic Sans MS", 
         FontWeight.BOLD, 

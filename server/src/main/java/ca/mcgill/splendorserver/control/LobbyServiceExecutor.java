@@ -27,7 +27,8 @@ import org.springframework.stereotype.Component;
 public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   private static String gameServiceLocation = "http://localhost:8080";
   private String lobbyServiceLocation = "http://localhost:4242";
-  private       JSONObject      adminAuth    = auth_token("maex", "abc123_ABC123");
+  private       JSONObject      adminAuth;
+
 
   /**
    * Creates a LobbyServiceExecutor.
@@ -91,6 +92,22 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
              .header("accept", "application/json")
              .asJson();
   }
+  
+  @Override
+  public void unregister_gameservice(String gameName) {
+    // TODO Auto-generated method stub
+    adminAuth    = auth_token(gameName, "Antichrist1!");
+    String accessToken  = (String) adminAuth.get("access_token");
+    String url;
+    try {
+      url = String.format("%s/api/gameservices/%s?access_token=%s", 
+          lobbyServiceLocation, gameName, URLEncoder.encode(accessToken, "UTF-8"));
+      System.out.println(Unirest.delete(url).getBody().get().toString());
+    } catch (UnsupportedEncodingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 
   @Override
   public void register_gameservice(String accessToken, int maxSessionPlayers,
@@ -141,8 +158,10 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
   }
 
   @Override
-  public void save_game(String accessToken, String body, String gameserviceName, String id) {
+  public void save_game(String body, String gameserviceName, String id) {
     try {
+      adminAuth    = auth_token(gameserviceName, "Antichrist1!");
+      String accessToken = (String) adminAuth.getString("access_token");
       String url =
           String.format(
           lobbyServiceLocation

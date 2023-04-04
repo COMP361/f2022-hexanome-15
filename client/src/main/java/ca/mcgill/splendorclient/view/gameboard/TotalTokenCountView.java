@@ -34,7 +34,7 @@ public class TotalTokenCountView extends Text {
    */
   public void set(int amount) {
     totalTokenCount = amount;
-    String text = String.format("Total Tokens: %d", totalTokenCount);
+    String text = String.format("Tokens: %d", totalTokenCount);
     setText(text);
     this.setFont(Font.font("Comic Sans MS", 
         FontWeight.BOLD, 

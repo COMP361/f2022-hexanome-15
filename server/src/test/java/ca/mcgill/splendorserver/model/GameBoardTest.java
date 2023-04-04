@@ -204,6 +204,24 @@ class GameBoardTest {
   }
 
   @Test
+  void applyReserveMoveDeckEmpty() {
+    int size = decks.get(0).getSize();
+    for (int i = 0; i < size; i++) {
+      decks.get(0).draw();
+    }
+    gb = new GameBoard(inventories, decks, cards, tokenPiles, nobles, tradingPosts, cities);
+
+    Card reservedCard = cards.get(0);
+    Move move = new Move(Action.RESERVE_DEV, reservedCard, sofia, null,
+      null, null, null, null);
+    Action action = gb.applyMove(move, sofia);
+    assertNull(action);
+    UserInventory inventory = gb.getInventoryByPlayerName("Sofia").get();
+    assertTrue(inventory.hasCardReserved(reservedCard));
+    assertEquals(1, inventory.getTokenPiles().get(GOLD).getSize());
+  }
+
+  @Test
   void applyReserveFromDeckMove() {
     Card reservedCard = decks.get(0).getCards().get(0);
     Move move = new Move(Action.RESERVE_DEV, null, sofia, BASE1,

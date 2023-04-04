@@ -22,7 +22,7 @@ import kong.unirest.json.JSONObject;
 public class GameController {
 
   private Long gameId;
-  private String currentState;
+  private static String currentState;
   private GameBoardView localView;
 
   private static GameController instance = new GameController();
@@ -78,10 +78,13 @@ public class GameController {
     instance.updaterThread = instance.new BoardUpdater();
     instance.updaterThread.start();
   }
-  
-  
+
+  /**
+   * Sets the updaterThread to exit.
+   */
   public static void stop() {
     instance.updaterThread.setExit();
+    currentState = "";
   }
 
 
@@ -135,7 +138,7 @@ public class GameController {
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
               for (int player = 0; player < inventories.length(); player++) {
                 JSONObject inventory = (JSONObject) inventories.get(player);
-
+                String playerName = inventory.getString("userName");
                 JSONArray playerCardArray = inventory.getJSONArray("purchasedCards");
                 int[] playerCardids = new int[playerCardArray.length()];
                 for (int i = 0; i < playerCardArray.length(); i++) {
@@ -152,7 +155,7 @@ public class GameController {
 
 
 
-                GameBoardView.updateInventories(player,
+                GameBoardView.updateInventories(playerName,
                     playerCardids,
                     reservedCardids,
                     inventory.getJSONObject("tokens").getInt("DIAMOND"),

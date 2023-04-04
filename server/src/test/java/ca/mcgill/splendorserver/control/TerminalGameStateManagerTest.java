@@ -21,12 +21,14 @@ class TerminalGameStateManagerTest {
 
   private SplendorGame game1;
   private SplendorGame game2;
+  PlayerWrapper larry;
+  PlayerWrapper zach;
 
   @BeforeEach
   void setUp() {
     List<PlayerWrapper> lp = new ArrayList<>();
-    PlayerWrapper larry = PlayerWrapper.newPlayerWrapper("Larry");
-    PlayerWrapper zach = PlayerWrapper.newPlayerWrapper("Zach");
+    larry = PlayerWrapper.newPlayerWrapper("Larry");
+    zach = PlayerWrapper.newPlayerWrapper("Zach");
     lp.add(larry);
     lp.add(zach);
     List<Player> players = new ArrayList<>();
@@ -53,6 +55,7 @@ class TerminalGameStateManagerTest {
     Token token = new Token(DIAMOND);
     inventory1.addToken(token);
     inventory1.purchaseCard(card);
+    game1.endTurn(larry);
     assertTrue(TerminalGameStateManager.isTerminalGameState(game1));
   }
 
@@ -66,6 +69,7 @@ class TerminalGameStateManagerTest {
     inventory1.purchaseCard(card);
     City city = new City(0, 0, cost, 0);
     inventory1.addCity(city);
+    game2.endTurn(larry);
     assertTrue(TerminalGameStateManager.isTerminalGameState(game2));
   }
 }
