@@ -1,6 +1,5 @@
 package ca.mcgill.splendorclient.control;
 
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -61,7 +60,7 @@ public class LobbyController implements Initializable {
 
   // setting lobby service location
   @Value("{lobbyservice.location}")
-  private String lobbyServiceLocation = "http://localhost:4242"; // TODO: fix the value injection
+  private String lobbyServiceLocation = "http://192.168.2.220:4242"; // TODO: fix the value injection
 
   /**
    * Creates a LobbyController object.
@@ -122,7 +121,7 @@ public class LobbyController implements Initializable {
       @Override
       public void handle(ActionEvent event) {
         revoke_auth(User.THISUSER.getAccessToken());
-        User.logout(User.THISUSER.getUsername());
+        User.logout();
         Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
       }
     });
@@ -134,8 +133,6 @@ public class LobbyController implements Initializable {
         String savegame = availableSavegamesList.getSelectionModel().getSelectedItem();
         String[] idAndName = savegame.split(",");
         User user = User.THISUSER;
-        // ls.create_session(user.getAccessToken(),
-        // user.getUsername(), gameserviceChoiceBox.getValue(), "");
         create_session(user.getAccessToken(),
             user.getUsername(), idAndName[1], idAndName[0]);
       }
@@ -147,13 +144,9 @@ public class LobbyController implements Initializable {
       @Override
       public void handle(ActionEvent event) {
         String sessionString = availableSessionList.getSelectionModel().getSelectedItem();
-        String toDelete = sessionString.split(" - ")[1];
-        if (delete_session(toDelete, User.THISUSER.getAccessToken())) {
-          //TODO: add something to this if block
-        } else {
-          //issue deleting the session
-          System.out.println("Failed to delete session: " + toDelete);
-        }
+        String toDelete = sessionString.split("\t")[0];
+        String session = toDelete.split(" - ")[1];
+        delete_session(session, User.THISUSER.getAccessToken());
       }
     });
     
@@ -163,9 +156,10 @@ public class LobbyController implements Initializable {
         User user = User.THISUSER;
         String sessionString = availableSessionList
                                  .getSelectionModel().getSelectedItem();
-        String sessionToJoin = sessionString.split(" - ")[1];
+        String sessionToJoin = sessionString.split("\t")[0];
+        String session = sessionToJoin.split(" - ")[1];
         if (add_player_to_session(user.getUsername(),
-            user.getAccessToken(), sessionToJoin)) {
+            user.getAccessToken(), session)) {
           new Thread(new Runnable() {
 
             @Override
@@ -173,17 +167,17 @@ public class LobbyController implements Initializable {
               while (true) {
                 try {
                   Thread.sleep(2000);
-                  JSONObject sessionInfo = get_session(sessionToJoin);
+                  JSONObject sessionInfo = get_session(session);
                   if (sessionInfo.getBoolean("launched")) {
                     Platform.runLater(() -> {
-                      Splendor.transitionToGameScreen(Long.valueOf(sessionToJoin), sessionInfo);
+                      Splendor.transitionToGameScreen(Long.valueOf(session), sessionInfo);
                       try {
                         Thread.sleep(2000);
                       } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                       }
-                      GameController.getInstance().setGameId(Long.valueOf(sessionToJoin));
+                      GameController.getInstance().setGameId(Long.valueOf(session));
                       GameController.start();
                     });
                     break;
@@ -207,11 +201,12 @@ public class LobbyController implements Initializable {
         User user = User.THISUSER;
         String sessionString = availableSessionList
                                    .getSelectionModel().getSelectedItem();
-        String sessionToLaunch = sessionString.split(" - ")[1];
-        if (launch_session(sessionToLaunch, user.getAccessToken())) {
+        String sessionToLaunch = sessionString.split("\t")[0];
+        String session = sessionToLaunch.split(" - ")[1];
+        if (launch_session(session, user.getAccessToken())) {
           Platform.runLater(() -> {
-            Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
-                get_session(sessionToLaunch));
+            Splendor.transitionToGameScreen(Long.valueOf(session),
+                get_session(session));
             try {
               Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -219,7 +214,7 @@ public class LobbyController implements Initializable {
               e.printStackTrace();
             }
             GameController.getInstance()
-                .setGameId(Long.valueOf(sessionToLaunch));
+                .setGameId(Long.valueOf(session));
             GameController.start();
           });
         } else {
@@ -289,7 +284,14 @@ public class LobbyController implements Initializable {
       String name = gameParameters.getString("displayName");
       //TODO : Add game service name
       String sessionInfo = (String) key;
-      arr.add(name + " - " + sessionInfo);
+      String format = String.format("%s - %s\t\t%d:%d\t\t%s\t\tjoined players count:%d", 
+          name,
+          sessionInfo,
+          gameParameters.getInt("minSessionPlayers"),
+          gameParameters.getInt("maxSessionPlayers"),
+          session.getBoolean("launched") ? "Launched" : "Not Launched",
+          session.getJSONArray("players").length());
+      arr.add(format);
     }
     return arr;
   }
@@ -360,18 +362,16 @@ public class LobbyController implements Initializable {
    * @param sessionid the id of the session to be deleted
    * @param accessToken the access token
    */
-  private boolean delete_session(String sessionid, String accessToken) {
+  private void delete_session(String sessionid, String accessToken) {
     try {
       HttpResponse<String> response = Unirest.delete(
           lobbyServiceLocation + "/api/sessions/" + sessionid
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
-      System.out.println("Response from delete: " + response.getBody().toString());
-      return response.getStatus() % 100 == 2;
+      System.out.println("Response from delete: " + response.getBody().toString() + response.getStatus());
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
-      return false;
     }
   }
 

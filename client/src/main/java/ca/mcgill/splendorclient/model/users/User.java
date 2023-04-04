@@ -1,6 +1,6 @@
 package ca.mcgill.splendorclient.model.users;
 
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
+import ca.mcgill.splendorclient.control.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -21,7 +21,7 @@ public class User {
   private String accessToken;
   private String refreshToken;
   private final Role role;
-  private int expiresIn = 1800000; // time in milliseconds until the users access token expires
+  private int expiresIn = 200000; // time in milliseconds until the users access token expires
   private Timer renewalTimer = new Timer();
   /**
    * Instance of this user.
@@ -65,7 +65,7 @@ public class User {
         THISUSER  = user;
       }
     }
-    return USERS.get(refreshToken);
+    return USERS.get(userName);
   }
 
   /**
@@ -73,9 +73,11 @@ public class User {
    *
    * @param userName the given username
    */
-  public static void logout(String userName) {
-    USERS.get(userName).getTimer().cancel();
-    USERS.remove(userName);
+  public static void logout() {
+    LobbyServiceExecutor.LOBBYSERVICEEXUTOR.revoke_auth(THISUSER.accessToken.replace("+", "%2B"));
+    THISUSER.getTimer().cancel();
+    USERS.remove(THISUSER.getUsername());
+    THISUSER = null;
   }
 
   /**
@@ -84,13 +86,13 @@ public class User {
    * @author zacharyhayden
    */
   private class RenewAccessToken extends TimerTask {
-    @Autowired
-    private LobbyServiceExecutor lobbyServiceExecutor;
+    
+    private LobbyServiceExecutor lobbyServiceExecutor = LobbyServiceExecutor.LOBBYSERVICEEXUTOR;
 
     @Override
     public void run() {
       JSONObject renewedTokens =
-          lobbyServiceExecutor.renew_auth_token(refreshToken);
+          lobbyServiceExecutor.renew_auth_token(refreshToken.replace("+", "%2B"));
       accessToken = (String) Parsejson.PARSE_JSON.getFromKey(renewedTokens, "access_token");
       expiresIn = (int) Parsejson.PARSE_JSON.getFromKey(renewedTokens, "expires_in");
     }
