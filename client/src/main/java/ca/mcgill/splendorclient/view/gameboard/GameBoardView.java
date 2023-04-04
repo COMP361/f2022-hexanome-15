@@ -58,6 +58,7 @@ public class GameBoardView {
   private static TradingView tradingView;
   private List<TokenPileView> tokenPileViews;
   private static GameBoardView instance = new GameBoardView();
+  private static List<Label> labels = new ArrayList<Label>();
   //private static final float baseUnit_X = screenSize.height / 15f;
   private static final String rootPath = new File("").getAbsolutePath();
   private static float universalUnitX;
@@ -288,8 +289,10 @@ public class GameBoardView {
     tokenColumn.setSpacing(spacer);
     userInventoryView.getChildren().add(tokenColumn);
     Label username = new Label(playerName);
+    username.setTextFill(Color.BLACK);
     username.setFont(Font.font("Comic Sans MS", FontWeight.BOLD,
         FontPosture.REGULAR, fontSize / 1.5));
+    labels.add(username);
     TotalTokenCountView tokenCountView = new TotalTokenCountView("Tokens: 0");
     TotalCardCountView cardCountView = new TotalCardCountView("Cards: 0");
     TotalPrestigeCountView prestigeCountView =
@@ -326,6 +329,7 @@ public class GameBoardView {
     userViews.clear();
     cityViews.clear();
     instance.tokenPileViews.clear();
+    labels.clear();
     
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     universalUnitX = screenSize.width / 100f;
@@ -493,6 +497,22 @@ public class GameBoardView {
           new BackgroundFill(new ImagePattern(newImage), CornerRadii.EMPTY, Insets.EMPTY)));
     }
     return toReturn;
+  }
+  
+  
+  /**
+   * Updates the turn labels to red when it's your turn.
+   *
+   * @param whoseTurn the current turn
+   */
+  public static void updateTurnLabels(String whoseTurn) {
+    for (Label label : labels) {
+      if (label.getText().equals(whoseTurn)) {
+        label.setTextFill(Color.RED);
+      } else {
+        label.setTextFill(Color.BLACK);
+      }
+    }
   }
 
   /**
