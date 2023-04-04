@@ -1,4 +1,4 @@
-package ca.mcgill.splendorclient.lobbyserviceio;
+package ca.mcgill.splendorclient.control;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,11 +6,18 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+
+import kong.unirest.HttpRequest;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import ca.mcgill.splendorclient.lobbyserviceio.NullParser;
+import ca.mcgill.splendorclient.lobbyserviceio.OutputParser;
+import ca.mcgill.splendorclient.lobbyserviceio.ParseText;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 
 
 /**
@@ -20,11 +27,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LobbyServiceExecutor {
-
-  /**
-   * Instance of Lobby Service Executor.
-   */
-  public static final LobbyServiceExecutor LOBBY_SERVICE_EXECUTOR = new LobbyServiceExecutor();
+  
+  public static final LobbyServiceExecutor LOBBYSERVICEEXUTOR = new LobbyServiceExecutor();
+  
   /**
    * The location of the server.
    */
@@ -37,7 +42,7 @@ public class LobbyServiceExecutor {
    */
   @Value("{gameservice.location}")
   public void setServerLocation(String location) {
-    LobbyServiceExecutor.SERVERLOCATION = location;
+    SERVERLOCATION = location;
   }
 
   // location of the running lobby service (ex http.127.0.0.1:4242)
@@ -112,7 +117,7 @@ public class LobbyServiceExecutor {
   }
 
   /**
-   * JSON Object.
+   * Issues a token.
    *
    * @param userName the username of the user
    * @param password the password of the user
@@ -226,6 +231,7 @@ public class LobbyServiceExecutor {
         + "%s/oauth/token?grant_type=refresh_token&refresh_token=%s",
         lobbyServiceLocation, refreshToken);
     JSONObject output = (JSONObject) run(command, Parsejson.PARSE_JSON);
+    System.out.println("Renew: " + output);
     return output;
   }
 
@@ -242,7 +248,17 @@ public class LobbyServiceExecutor {
         gameName, accessToken);
     run(command, NullParser.NULLPARSER);
   }
-
+  
+  
+  public final void revoke_auth(String accessToken) {
+    String url = 
+        String.format("%s/oauth/active?access_token=%s",
+            lobbyServiceLocation,
+            accessToken);
+    HttpResponse<String> response = Unirest.delete(url).asString();
+    System.out.println(response.getBody());
+  }
+  
   /**
    * Returns the user with a given username and access token.
    *

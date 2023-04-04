@@ -294,7 +294,7 @@ public class GameBoard {
         }
       }
       if (candidateNobles.size() == 1) {
-        performClaimNobleAction(nobles.get(0), inventory);
+        performClaimNobleAction(candidateNobles.get(0), inventory);
       } else if (candidateNobles.size() > 1) {
         actionPending = Action.RECEIVE_NOBLE;
         return Action.RECEIVE_NOBLE;
@@ -554,7 +554,9 @@ public class GameBoard {
   private void performClaimNobleAction(Noble noble, UserInventory inventory) {
     if (inventory.canBeVisitedByNoble(noble)) {
       inventory.receiveVisitFrom(noble);
-      nobles.remove(noble);
+      if (nobles.contains(noble)) {
+        nobles.remove(noble);
+      }
     }
   }
 

@@ -168,6 +168,19 @@ public class GameRestController {
   }
   
   /**
+   * As required by the lobby service, the quit request endpoint.
+   *
+   * @param gameId to be removed
+   * @return results of removal
+   */
+  @DeleteMapping(value = "/api/games/{gameId}")
+  public ResponseEntity<String> deleteRequest(@PathVariable long gameId) {
+    //TODO: inform clients of the game that it is deleted 
+    //TODO: remove game from storage
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+  
+  /**
    * Route for registering a savegame.
    *
    * @param gameId to identify the game that requested this save

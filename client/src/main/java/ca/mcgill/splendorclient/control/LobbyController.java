@@ -1,12 +1,12 @@
 package ca.mcgill.splendorclient.control;
 
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.users.User;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -56,8 +57,12 @@ public class LobbyController implements Initializable {
   private Button refreshSavegames;
   @FXML
   private ChoiceBox<String> gameserviceChoiceBox;
+  @FXML
+  private Button leaveButton;
   
   private boolean exitThread = false;
+  
+  private List<LaunchWaiter> waiters = new ArrayList<>();
 
   // setting lobby service location
   @Value("{lobbyservice.location}")
@@ -83,6 +88,15 @@ public class LobbyController implements Initializable {
     ArrayList<String> cope = get_gameservices();
     ObservableList<String> listcope = FXCollections.observableArrayList(cope);
     gameserviceChoiceBox.setItems(listcope);
+    gameserviceChoiceBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+      @Override
+      public void handle(MouseEvent event) {
+        ObservableList<String> listcope = FXCollections.observableArrayList(get_gameservices());
+        gameserviceChoiceBox.setItems(listcope);
+      }
+      
+    });
 
     //get session updates by polling
     new Thread(new Runnable() {
@@ -106,6 +120,32 @@ public class LobbyController implements Initializable {
       }
     }).start();
     
+    leaveButton.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        User user = User.THISUSER;
+        String sessionString = availableSessionList
+                                 .getSelectionModel().getSelectedItem();
+        String sessionToJoin = sessionString.split("\t")[0];
+        String session = sessionToJoin.split(" - ")[1];
+        //delete_player_from_session
+        delete_player_from_session(user.getUsername(),
+            user.getAccessToken(), session);
+        LaunchWaiter tgt = null;
+        for (LaunchWaiter waiter : waiters) {
+          if (waiter.sessionid.equals(session)) {
+            tgt = waiter;
+          }
+        }
+        if (tgt != null) {
+          tgt.setExit();
+        }
+        waiters.remove(tgt);
+      }
+      
+    });
+    
     refreshSavegames.setOnAction(new EventHandler<ActionEvent>() {
 
       @Override
@@ -122,7 +162,7 @@ public class LobbyController implements Initializable {
       @Override
       public void handle(ActionEvent event) {
         revoke_auth(User.THISUSER.getAccessToken());
-        User.logout(User.THISUSER.getUsername());
+        User.logout();
         Splendor.transitionTo(SceneManager.getLoginScreen(), Optional.of("Login Screen"));
       }
     });
@@ -134,8 +174,6 @@ public class LobbyController implements Initializable {
         String savegame = availableSavegamesList.getSelectionModel().getSelectedItem();
         String[] idAndName = savegame.split(",");
         User user = User.THISUSER;
-        // ls.create_session(user.getAccessToken(),
-        // user.getUsername(), gameserviceChoiceBox.getValue(), "");
         create_session(user.getAccessToken(),
             user.getUsername(), idAndName[1], idAndName[0]);
       }
@@ -147,13 +185,9 @@ public class LobbyController implements Initializable {
       @Override
       public void handle(ActionEvent event) {
         String sessionString = availableSessionList.getSelectionModel().getSelectedItem();
-        String toDelete = sessionString.split(" - ")[1];
-        if (delete_session(toDelete, User.THISUSER.getAccessToken())) {
-          //TODO: add something to this if block
-        } else {
-          //issue deleting the session
-          System.out.println("Failed to delete session: " + toDelete);
-        }
+        String toDelete = sessionString.split("\t")[0];
+        String session = toDelete.split(" - ")[1];
+        delete_session(session, User.THISUSER.getAccessToken());
       }
     });
     
@@ -163,38 +197,13 @@ public class LobbyController implements Initializable {
         User user = User.THISUSER;
         String sessionString = availableSessionList
                                  .getSelectionModel().getSelectedItem();
-        String sessionToJoin = sessionString.split(" - ")[1];
+        String sessionToJoin = sessionString.split("\t")[0];
+        String session = sessionToJoin.split(" - ")[1];
         if (add_player_to_session(user.getUsername(),
-            user.getAccessToken(), sessionToJoin)) {
-          new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-              while (true) {
-                try {
-                  Thread.sleep(2000);
-                  JSONObject sessionInfo = get_session(sessionToJoin);
-                  if (sessionInfo.getBoolean("launched")) {
-                    Platform.runLater(() -> {
-                      Splendor.transitionToGameScreen(Long.valueOf(sessionToJoin), sessionInfo);
-                      try {
-                        Thread.sleep(2000);
-                      } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                      }
-                      GameController.getInstance().setGameId(Long.valueOf(sessionToJoin));
-                      GameController.start();
-                    });
-                    break;
-                  }
-                } catch (InterruptedException e) {
-                  // TODO Auto-generated catch block
-                  e.printStackTrace();
-                }
-              }
-            }
-          }).start();;
+            user.getAccessToken(), session)) {
+          LaunchWaiter waiter = new LaunchWaiter(session);
+          waiters.add(waiter);
+          waiter.start();
         } else {
           //failed to join session, notify user.
         }
@@ -207,11 +216,12 @@ public class LobbyController implements Initializable {
         User user = User.THISUSER;
         String sessionString = availableSessionList
                                    .getSelectionModel().getSelectedItem();
-        String sessionToLaunch = sessionString.split(" - ")[1];
-        if (launch_session(sessionToLaunch, user.getAccessToken())) {
+        String sessionToLaunch = sessionString.split("\t")[0];
+        String session = sessionToLaunch.split(" - ")[1];
+        if (launch_session(session, user.getAccessToken())) {
           Platform.runLater(() -> {
-            Splendor.transitionToGameScreen(Long.valueOf(sessionToLaunch),
-                get_session(sessionToLaunch));
+            Splendor.transitionToGameScreen(Long.valueOf(session),
+                get_session(session));
             try {
               Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -219,7 +229,7 @@ public class LobbyController implements Initializable {
               e.printStackTrace();
             }
             GameController.getInstance()
-                .setGameId(Long.valueOf(sessionToLaunch));
+                .setGameId(Long.valueOf(session));
             GameController.start();
           });
         } else {
@@ -289,7 +299,14 @@ public class LobbyController implements Initializable {
       String name = gameParameters.getString("displayName");
       //TODO : Add game service name
       String sessionInfo = (String) key;
-      arr.add(name + " - " + sessionInfo);
+      String format = String.format("%s - %s\t\t%d:%d\t\t%s\t\tjoined players count:%d", 
+          name,
+          sessionInfo,
+          gameParameters.getInt("minSessionPlayers"),
+          gameParameters.getInt("maxSessionPlayers"),
+          session.getBoolean("launched") ? "Launched" : "Not Launched",
+          session.getJSONArray("players").length());
+      arr.add(format);
     }
     return arr;
   }
@@ -360,18 +377,16 @@ public class LobbyController implements Initializable {
    * @param sessionid the id of the session to be deleted
    * @param accessToken the access token
    */
-  private boolean delete_session(String sessionid, String accessToken) {
+  private void delete_session(String sessionid, String accessToken) {
     try {
       HttpResponse<String> response = Unirest.delete(
           lobbyServiceLocation + "/api/sessions/" + sessionid
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
-      System.out.println("Response from delete: " + response.getBody().toString());
-      return response.getStatus() % 100 == 2;
+      System.out.println("Response from delete: " + response.getBody().toString() + response.getStatus());
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
-      return false;
     }
   }
 
@@ -467,6 +482,48 @@ public class LobbyController implements Initializable {
     for (String arg : args) {
       assert arg != null && arg.length() != 0 : "Arguments cannot be empty nor null.";
     }
+  }
+  
+  private class LaunchWaiter extends Thread {
+    
+    private String sessionid;
+    private boolean bExit = false;
+    
+    public void setExit() {
+      bExit = true;
+    }
+    
+    public LaunchWaiter(String session) {
+      sessionid = session;
+    }
+    
+    @Override
+    public void run() {
+      while (!bExit) {
+        try {
+          Thread.sleep(2000);
+          JSONObject sessionInfo = get_session(sessionid);
+          if (sessionInfo.getBoolean("launched")) {
+            Platform.runLater(() -> {
+              Splendor.transitionToGameScreen(Long.valueOf(sessionid), sessionInfo);
+              try {
+                Thread.sleep(2000);
+              } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+              GameController.getInstance().setGameId(Long.valueOf(sessionid));
+              GameController.start();
+            });
+            break;
+          }
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+    
   }
 }
 

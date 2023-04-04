@@ -5,6 +5,8 @@ import ca.mcgill.splendorserver.control.SessionInfo;
 import ca.mcgill.splendorserver.control.TurnManager;
 import ca.mcgill.splendorserver.gameio.PlayerWrapper;
 import ca.mcgill.splendorserver.model.cards.Card;
+import ca.mcgill.splendorserver.model.cards.CardCost;
+import ca.mcgill.splendorserver.model.cards.CardStatus;
 import ca.mcgill.splendorserver.model.cards.Deck;
 import ca.mcgill.splendorserver.model.cards.DeckType;
 import ca.mcgill.splendorserver.model.cities.City;
@@ -354,7 +356,15 @@ public class SplendorGame {
     }
     
     for (Integer cardId : gameboardJson.cardField) {
-      playingField.add(Card.getCard(cardId));
+      if (cardId == -1) {
+        //fill with a placeholder
+        Card card = new Card(-1, 0, null, null, null,
+            new CardCost(100, 100, 100, 100, 100));
+        card.setCardStatus(CardStatus.PURCHASED);
+        playingField.add(card);
+      } else {
+        playingField.add(Card.getCard(cardId));
+      }
     }
     
     List<City> cities = new ArrayList<>();
@@ -421,6 +431,11 @@ public class SplendorGame {
       }
       for (Power power : inventoryJson.powers) {
         inventory.addPower(power);
+        for (TradingPostSlot slot : tradingPostSlots) {
+          if (slot.getPower() == power) {
+            slot.addCoatOfArms(inventory.getCoatOfArmsPile().removeCoatOfArms());
+          }
+        }
       }
       for (Integer cityId : inventoryJson.cities) {
         inventory.addCity(City.getCity(cityId));

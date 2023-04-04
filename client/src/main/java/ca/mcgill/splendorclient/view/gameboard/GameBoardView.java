@@ -2,9 +2,9 @@ package ca.mcgill.splendorclient.view.gameboard;
 
 import ca.mcgill.splendorclient.control.ColorManager;
 import ca.mcgill.splendorclient.control.GameController;
+import ca.mcgill.splendorclient.control.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.control.SceneManager;
 import ca.mcgill.splendorclient.control.Splendor;
-import ca.mcgill.splendorclient.lobbyserviceio.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.model.DeckType;
 import ca.mcgill.splendorclient.model.TokenType;
 import java.awt.Dimension;
