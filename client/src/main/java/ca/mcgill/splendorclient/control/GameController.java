@@ -114,6 +114,7 @@ public class GameController {
         if (!response.getBody().toPrettyString().equals(currentState)) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
+          String currentTurn = response.getBody().getObject().getString("whoseTurn");
           Platform.runLater(new Runnable() {
 
             @Override
@@ -132,6 +133,8 @@ public class GameController {
                 nobleids[i] = (int) (nobleArray.get(i));
               }
               GameBoardView.updateNobleViews(nobleids);
+              
+              GameBoardView.updateTurnLabels(currentTurn);
 
               //update inventories
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
@@ -278,7 +281,6 @@ public class GameController {
             }
 
           });
-          String currentTurn = response.getBody().getObject().getString("whoseTurn");
           if (currentTurn.equals(User.THISUSER.getUsername()) && !requestedActions) {
             requestedActions = true;
             HttpResponse<JsonNode> moveMap = Unirest
