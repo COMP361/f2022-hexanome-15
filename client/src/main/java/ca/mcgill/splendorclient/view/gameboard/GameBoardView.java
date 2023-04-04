@@ -551,6 +551,8 @@ public class GameBoardView {
    * @param prestige player's current prestige score
    * @param visitingNobles IDs of nobles currently visiting player
    * @param powers int[] array representing unlocked Trading Posts powers
+   * @param reservedNobles IDS of nobles currently reserved
+   * @param acquiredCities IDS of cities currently acquired by a player
    */
   public static void updateInventories(String playerName,
                                        int[] cards,

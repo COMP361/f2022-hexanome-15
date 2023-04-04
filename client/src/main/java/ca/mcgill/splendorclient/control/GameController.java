@@ -138,7 +138,7 @@ public class GameController {
               JSONArray inventories = response.getBody().getObject().getJSONArray("inventories");
               for (int player = 0; player < inventories.length(); player++) {
                 JSONObject inventory = (JSONObject) inventories.get(player);
-                String playerName = inventory.getString("userName");
+                final String playerName = inventory.getString("userName");
                 JSONArray playerCardArray = inventory.getJSONArray("purchasedCards");
                 int[] playerCardids = new int[playerCardArray.length()];
                 for (int i = 0; i < playerCardArray.length(); i++) {

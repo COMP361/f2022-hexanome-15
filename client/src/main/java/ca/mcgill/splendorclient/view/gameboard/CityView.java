@@ -66,10 +66,20 @@ public class CityView extends StackPane {
     cityid = num;
   }
 
+  /**
+   * Returns the city id.
+   *
+   * @return the city id
+   */
   public int getCityid() {
     return cityid;
   }
 
+  /**
+   * Adds display text to city view when unlocked.
+   *
+   * @param text the text to be displayed
+   */
   public void displayText(String text) {
     this.textToDisplay = new Text();
     this.textToDisplay.setText(text);

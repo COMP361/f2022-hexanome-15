@@ -96,16 +96,24 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     }
   }
 
-  public void updateNoblesInventory(int[] reservednobles, int[] visitingNobles, ArrayList<NobleView> nobleViews) {
-    for (int noble: reservednobles) {
-      for (NobleView nobleView: nobleViews) {
+  /**
+   * Updates the noble views in the inventories.
+   *
+   * @param reservednobles the reserved nobles in the inventories
+   * @param visitingNobles the nobles visiting players
+   * @param nobleViews the noble views on the board
+   */
+  public void updateNoblesInventory(int[] reservednobles,
+                                    int[] visitingNobles, ArrayList<NobleView> nobleViews) {
+    for (int noble : reservednobles) {
+      for (NobleView nobleView : nobleViews) {
         if (nobleView.getLocalid() == noble) {
           nobleView.displayText("RESERVED" + " - " + player);
         }
       }
     }
-    for (int noble: visitingNobles) {
-      for (NobleView nobleView: nobleViews) {
+    for (int noble : visitingNobles) {
+      for (NobleView nobleView : nobleViews) {
         if (nobleView.getLocalid() == noble) {
           nobleView.displayText("VISITING" + " - " + player);
         }
@@ -113,6 +121,12 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     }
   }
 
+  /**
+   * Updates the city views in the user inventories.
+   *
+   * @param acquiredCities the cities in the inventories
+   * @param cityViews the city views on the game board
+   */
   public void updateCitiesInventory(int[] acquiredCities, ArrayList<CityView> cityViews) {
     for (int city : acquiredCities) {
       for (CityView cityView : cityViews) {
