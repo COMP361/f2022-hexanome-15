@@ -62,7 +62,7 @@
                   <Font size="15.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Leave">
+            <Button fx:id="leaveButton" layoutX="10.0" layoutY="400.0" mnemonicParsing="false" style="-fx-background-color: #24a0ed; -fx-text-fill: white; -fx-border-radius: 5; -fx-border-width: 2; -fx-border-color: #24a0ed;" text="Leave">
                <font>
                   <Font size="15.0" />
                </font>

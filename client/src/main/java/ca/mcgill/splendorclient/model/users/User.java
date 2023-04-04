@@ -2,13 +2,10 @@ package ca.mcgill.splendorclient.model.users;
 
 import ca.mcgill.splendorclient.control.LobbyServiceExecutor;
 import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Represents a user.

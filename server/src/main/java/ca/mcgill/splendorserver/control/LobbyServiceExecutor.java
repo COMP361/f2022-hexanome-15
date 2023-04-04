@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
-  private static String gameServiceLocation = "http://192.168.2.220:8080";
-  private String lobbyServiceLocation = "http://192.168.2.220:4242";
+  private static String gameServiceLocation = "http://localhost:8080";
+  private String lobbyServiceLocation = "http://localhost:4242";
   private       JSONObject      adminAuth;
 
 
