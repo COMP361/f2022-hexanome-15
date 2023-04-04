@@ -18,6 +18,7 @@ public class SaveGame {
    *
    * @param id generated; key for a savegame
    * @param json the representation of a savegame
+   * @param body the body to be forwarded to the server on reg
    */
   public SaveGame(String id, String json, String body) {
     this.id = id;

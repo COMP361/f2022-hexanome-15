@@ -121,8 +121,8 @@ class SplendorGameTest {
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
-    SaveGameStorage.getInstance().addSaveGame(savegame);
-
+    SaveGameStorage.getInstance().addAndFlushSaveGame(savegame);
+    SaveGameStorage.getInstance().removeSaveGameFromDb(savegame);
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrient", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 1L);
     assertNotNull(game4);
@@ -173,8 +173,8 @@ class SplendorGameTest {
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
-    SaveGameStorage.getInstance().addSaveGame(savegame);
-
+    SaveGameStorage.getInstance().addAndFlushSaveGame(savegame);
+    SaveGameStorage.getInstance().removeSaveGameFromDb(savegame);
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientTradingPosts", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 2L);
     assertNotNull(game4);
@@ -231,8 +231,8 @@ class SplendorGameTest {
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     String id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     SaveGame savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
-    SaveGameStorage.getInstance().addSaveGame(savegame);
-
+    SaveGameStorage.getInstance().addAndFlushSaveGame(savegame);
+    SaveGameStorage.getInstance().removeSaveGameFromDb(savegame);
     SessionInfo sessionInfo4 = new SessionInfo("SplendorOrientCities", playerList, players, sofia, id);
     SplendorGame game4 = new SplendorGame(sessionInfo4, 3L);
     assertNotNull(game4);
