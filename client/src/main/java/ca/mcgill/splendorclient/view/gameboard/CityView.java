@@ -88,7 +88,7 @@ public class CityView extends StackPane {
             FontPosture.REGULAR,
             GameBoardView.getFontSize() / 2));
     this.textToDisplay.setFill(Color.WHITE);
-    this.textToDisplay.setStrokeWidth(1.5);
+    this.textToDisplay.setStrokeWidth(1.0);
     this.textToDisplay.setStroke(Color.BLACK);
     this.getChildren().add(textToDisplay);
   }
