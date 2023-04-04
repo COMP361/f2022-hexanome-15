@@ -113,6 +113,16 @@ public class UserInventoryView implements Iterable<CardColumnView> {
     }
   }
 
+  public void updateCitiesInventory(int[] acquiredCities, ArrayList<CityView> cityViews) {
+    for (int city : acquiredCities) {
+      for (CityView cityView : cityViews) {
+        if (cityView.getCityid() == city) {
+          cityView.displayText("ACQUIRED" + " - " + player);
+        }
+      }
+    }
+  }
+
   /**
    * Updates the token piles in the user inventory.
    *

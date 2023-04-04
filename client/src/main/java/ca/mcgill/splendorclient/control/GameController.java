@@ -163,6 +163,12 @@ public class GameController {
                   visitingNobleids[i] = visitingNobleArray.getInt(i);
                 }
 
+                JSONArray acquiredCitiesArray = inventory.getJSONArray("cities");
+                int[] acquiredCities = new int[acquiredCitiesArray.length()];
+                for (int i = 0; i < acquiredCitiesArray.length(); i++) {
+                  acquiredCities[i] = acquiredCitiesArray.getInt(i);
+                }
+
                 int[] placeholder = null;
 
 
@@ -184,7 +190,7 @@ public class GameController {
                     inventory.getJSONObject("purchasedCardCount").getInt("GOLD"),
                     inventory.getInt("prestige"),
                     visitingNobleids,
-                    placeholder, reservedNobleids);
+                    placeholder, reservedNobleids, acquiredCities);
               }
 
               //update tokens

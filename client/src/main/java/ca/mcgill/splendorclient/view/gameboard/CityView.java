@@ -7,6 +7,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import kong.unirest.HttpResponse;
 
 /**
@@ -18,6 +22,7 @@ public class CityView extends StackPane {
 
   private final Rectangle outer;
   private final Rectangle inner;
+  private Text textToDisplay;
   private int cityid;
   private static final String rootPath = new File("").getAbsolutePath();
 
@@ -59,5 +64,22 @@ public class CityView extends StackPane {
       inner.setFill(new ImagePattern(newImage));
     }
     cityid = num;
+  }
+
+  public int getCityid() {
+    return cityid;
+  }
+
+  public void displayText(String text) {
+    this.textToDisplay = new Text();
+    this.textToDisplay.setText(text);
+    this.textToDisplay.setFont(Font.font("Comic Sans MS",
+            FontWeight.BOLD,
+            FontPosture.REGULAR,
+            GameBoardView.getFontSize() / 2));
+    this.textToDisplay.setFill(Color.WHITE);
+    this.textToDisplay.setStrokeWidth(1.5);
+    this.textToDisplay.setStroke(Color.BLACK);
+    this.getChildren().add(textToDisplay);
   }
 }
