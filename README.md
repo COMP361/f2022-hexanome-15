@@ -1,5 +1,15 @@
 # COMP 361 Project
 
+## About
+This is a repository for the popular board game Splendor, including the extension packs. In this repository, you will find resources for playing the game online, including code for a java desktop version, as well as rules for the [base game](splendor-rulebook.pdf) and the [extensions](extensions-rulebook.pdf).
+
+## Getting Started
+1. Clone this repository: ```https://github.com/COMP361/f2022-hexanome-15.git```
+2. [Install Docker Compose](https://docs.docker.com/get-started/08_using_compose/)
+3. One player must be the host and startup the LobbyService as well as the Splendor Server backend. First they must enter their public IP address into the [application properties prod file](server/src/main/resources/application-prod.properties). Then, while within the root directory of this repository enter: ```docker compose up``` or to force rebuild of resources instead: ```docker compose up --build```. Once this is complete, all players are ready to play
+4. Navigate within the client folder and enter: ```mvn clean javafx:run```
+##
+
  > See also [my video instuctions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
 
 ## The Rules
