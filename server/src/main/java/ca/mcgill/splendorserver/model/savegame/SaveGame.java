@@ -10,16 +10,20 @@ public class SaveGame {
   
   private String id;
   private String json;
+  //For forwarding on re-registration.
+  private String body;
   
   /**
    * Creates a savegame model object.
    *
    * @param id generated; key for a savegame
    * @param json the representation of a savegame
+   * @param body the body to be forwarded to the server on reg
    */
-  public SaveGame(String id, String json) {
+  public SaveGame(String id, String json, String body) {
     this.id = id;
     this.json = json;
+    this.body = body;
   }
   
   /**
@@ -38,6 +42,15 @@ public class SaveGame {
    */
   public String getJson() {
     return json;
+  }
+  
+  /**
+   * Returns the body for the registration request to Lobby Service.
+   *
+   * @return the body
+   */
+  public String getBody() {
+    return body;
   }
   
 }

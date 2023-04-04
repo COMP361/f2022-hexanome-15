@@ -359,44 +359,31 @@ public class ActionManager {
   private void getRemainingTokenMoves(Map<String, Move> moveMap,
                                       UserInventory inventory,
                                       GameBoard gameBoard, PlayerWrapper player) {
-    if (gameBoard.getTokenCount() >= 3) {
-      List<Move> moveCache = gameBoard.getMoveCache();
-      if (moveCache.size() == 1) {
-        Move pastMove = moveCache.get(0);
-        TokenType pastType = pastMove.getSelectedTokenTypes();
-        for (TokenType type : gameBoard.getTokenPiles().keySet()) {
-          if (type == TokenType.GOLD) {
-            continue;
-          }
-          TokenPile pile = gameBoard.getTokenPiles().get(type);
-          if (type == pastType) {
-            if (pile.getSize() >= 3) {
-              Move move = new Move(Action.TAKE_TOKEN, null, player,
-                  null, null, null, pile.getType(), null);
-              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                 .toUpperCase();
-              moveMap.put(moveMd5, move);
-            }
-          } else {
-            if (pile.getSize() > 0 && gameBoard.getTokenCount() >= 2) {
-              Move move = new Move(Action.TAKE_TOKEN,
-                  null, player, null,
-                  null, null, pile.getType(), null);
-              String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
-                                 .toUpperCase();
-              moveMap.put(moveMd5, move);
-            }
-          }
+    List<Move> moveCache = gameBoard.getMoveCache();
+    if (moveCache.size() == 1) {
+      Move pastMove = moveCache.get(0);
+      TokenType pastType = pastMove.getSelectedTokenTypes();
+      int npileswithtokens = 0;
+      for (Entry<TokenType, TokenPile> gbpile : gameBoard.getTokenPiles().entrySet()) {
+        if (gbpile.getValue().getSize() > 0 && gbpile.getKey() != pastType) {
+          npileswithtokens++;
         }
-      } else if (moveCache.size() == 2) {
-        for (TokenType type : gameBoard.getTokenPiles().keySet()) {
-          if (moveCache.get(0).getSelectedTokenTypes() == type
-                || moveCache.get(1).getSelectedTokenTypes() == type
-                || type == TokenType.GOLD) {
-            continue;
+      }
+      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+        if (type == TokenType.GOLD) {
+          continue;
+        }
+        TokenPile pile = gameBoard.getTokenPiles().get(type);
+        if (type == pastType) {
+          if (pile.getSize() >= 3) {
+            Move move = new Move(Action.TAKE_TOKEN, null, player,
+                null, null, null, pile.getType(), null);
+            String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                               .toUpperCase();
+            moveMap.put(moveMd5, move);
           }
-          TokenPile pile = gameBoard.getTokenPiles().get(type);
-          if (pile.getSize() > 0 && gameBoard.getTokenCount() >= 1) {
+        } else {
+          if (pile.getSize() > 0 && npileswithtokens >= 2) {
             Move move = new Move(Action.TAKE_TOKEN,
                 null, player, null,
                 null, null, pile.getType(), null);
@@ -404,6 +391,23 @@ public class ActionManager {
                                .toUpperCase();
             moveMap.put(moveMd5, move);
           }
+        }
+      }
+    } else if (moveCache.size() == 2) {
+      for (TokenType type : gameBoard.getTokenPiles().keySet()) {
+        if (moveCache.get(0).getSelectedTokenTypes() == type
+              || moveCache.get(1).getSelectedTokenTypes() == type
+              || type == TokenType.GOLD) {
+          continue;
+        }
+        TokenPile pile = gameBoard.getTokenPiles().get(type);
+        if (pile.getSize() > 0) {
+          Move move = new Move(Action.TAKE_TOKEN,
+              null, player, null,
+              null, null, pile.getType(), null);
+          String moveMd5 = DigestUtils.md2Hex(new Gson().toJson(move))
+                             .toUpperCase();
+          moveMap.put(moveMd5, move);
         }
       }
     }
@@ -478,7 +482,7 @@ public class ActionManager {
                                   GameBoard gameBoard, PlayerWrapper player) {
     // players may not have more than three reserved cards in hand
     final int maxNumReservedCards = 3;
-    if (inventory.reservedCardCount() > maxNumReservedCards) {
+    if (inventory.reservedCardCount() >= maxNumReservedCards) {
       return;
     }
 
@@ -527,8 +531,20 @@ public class ActionManager {
   private void getAvailableTokenMoves(Map<String, Move> moveMap,
                                       GameBoard gameBoard, PlayerWrapper player) {
     List<TokenPile> piles = gameBoard.getTokenPilesNoGold();
+    int ntokenpileswithtokens = 0;
     for (TokenPile pile : piles) {
       if (pile.getSize() > 0) {
+        ++ntokenpileswithtokens;
+      }
+    }
+    for (TokenPile pile : piles) {
+      if (pile.getSize() > 0 && ntokenpileswithtokens >= 3) {
+        Move takeTokenMove = new Move(Action.TAKE_TOKEN, null, player,
+            null, null, null, pile.getType(), null);
+        String takeTokenMoveMd5 = DigestUtils.md2Hex(new Gson().toJson(takeTokenMove))
+                                    .toUpperCase();
+        moveMap.put(takeTokenMoveMd5, takeTokenMove);
+      } else if (pile.getSize() > 3) {
         Move takeTokenMove = new Move(Action.TAKE_TOKEN, null, player,
             null, null, null, pile.getType(), null);
         String takeTokenMoveMd5 = DigestUtils.md2Hex(new Gson().toJson(takeTokenMove))

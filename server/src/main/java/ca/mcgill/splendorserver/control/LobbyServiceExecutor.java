@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
-  private static String gameServiceLocation = "http://192.168.2.250:8080";
-  private String lobbyServiceLocation = "http://192.168.2.250:4242";
+  private static String gameServiceLocation = "http://localhost:8080";
+  private String lobbyServiceLocation = "http://localhost:4242";
   private       JSONObject      adminAuth;
 
 
@@ -91,6 +91,22 @@ public class LobbyServiceExecutor implements LobbyServiceExecutorInterface {
     return Unirest.get(lobbyServiceLocation + "/api/gameservices")
              .header("accept", "application/json")
              .asJson();
+  }
+  
+  @Override
+  public void unregister_gameservice(String gameName) {
+    // TODO Auto-generated method stub
+    adminAuth    = auth_token(gameName, "Antichrist1!");
+    String accessToken  = (String) adminAuth.get("access_token");
+    String url;
+    try {
+      url = String.format("%s/api/gameservices/%s?access_token=%s", 
+          lobbyServiceLocation, gameName, URLEncoder.encode(accessToken, "UTF-8"));
+      System.out.println(Unirest.delete(url).asJson().getStatus());
+    } catch (UnsupportedEncodingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override

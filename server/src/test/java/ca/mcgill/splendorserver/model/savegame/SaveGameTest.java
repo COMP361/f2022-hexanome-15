@@ -87,7 +87,7 @@ class SaveGameTest {
         nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     json = new Gson().toJson(gameBoardJson);
-    savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
+    savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
   }
 
   @Test

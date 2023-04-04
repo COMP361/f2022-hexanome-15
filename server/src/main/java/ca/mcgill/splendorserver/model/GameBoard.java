@@ -508,6 +508,9 @@ public class GameBoard {
       returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
     }
+    if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN) && getTokenCount() > 0) {
+      return Action.TAKE_EXTRA_TOKEN;
+    }
 
     if (selectedCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) selectedCard).getBonusActions();

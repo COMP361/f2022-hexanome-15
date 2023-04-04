@@ -6,8 +6,13 @@ import java.io.File;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import kong.unirest.HttpResponse;
 import kong.unirest.json.JSONException;
 
@@ -18,6 +23,7 @@ public class NobleView extends StackPane {
 
   private final Rectangle outer;
   private final Rectangle inner;
+  private Text textToDisplay;
   private int localid;
   private static final String rootPath = new File("").getAbsolutePath();
 
@@ -68,5 +74,22 @@ public class NobleView extends StackPane {
       inner.setFill(new ImagePattern(newImage));
     }
     localid = num;
+  }
+
+  public void displayText(String text) {
+    this.textToDisplay = new Text();
+    this.textToDisplay.setText(text);
+    this.textToDisplay.setFont(Font.font("Comic Sans MS",
+            FontWeight.BOLD,
+            FontPosture.REGULAR,
+            GameBoardView.getFontSize() / 2));
+    this.textToDisplay.setFill(Color.WHITE);
+    this.textToDisplay.setStrokeWidth(1.5);
+    this.textToDisplay.setStroke(Color.BLACK);
+    this.getChildren().add(textToDisplay);
+  }
+
+  public int getLocalid() {
+    return localid;
   }
 }

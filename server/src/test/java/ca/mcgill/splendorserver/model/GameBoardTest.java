@@ -377,7 +377,7 @@ class GameBoardTest {
     UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
     UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
     tradingPosts = new ArrayList<>();
-    TradingPostSlot tradingPost = new TradingPostSlot(0, false, Power.PURCHASE_CARD_TAKE_TOKEN,
+    TradingPostSlot tradingPost = new TradingPostSlot(0, false, Power.GAIN_5_PRESTIGE,
       new CardCost(0, 0, 0, 0, 2));
     tradingPosts = new ArrayList<>();
     tradingPosts.add(tradingPost);
@@ -411,7 +411,7 @@ class GameBoardTest {
     UserInventory inventory1 = gb.getInventoryByPlayerName("Sofia").get();
     UserInventory inventory2 = gb.getInventoryByPlayerName("Jeff").get();
     tradingPosts = new ArrayList<>();
-    TradingPostSlot tradingPost = new TradingPostSlot(0, false, Power.PURCHASE_CARD_TAKE_TOKEN,
+    TradingPostSlot tradingPost = new TradingPostSlot(0, false, Power.GAIN_5_PRESTIGE,
       new CardCost(0, 0, 0, 0, 1));
     tradingPosts = new ArrayList<>();
     tradingPosts.add(tradingPost);
