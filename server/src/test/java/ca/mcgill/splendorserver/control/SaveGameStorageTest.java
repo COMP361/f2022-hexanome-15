@@ -31,7 +31,6 @@ class SaveGameStorageTest {
   private String id;
   private String json;
   private SaveGame savegame;
-  private SaveGameStorage gameStorage;
 
   @Test
   void getSaveGame() {
@@ -90,11 +89,10 @@ class SaveGameStorageTest {
       nobles, cardField, gameboard.getTokenPiles(), tradingPosts, cities, winningPlayers);
     id = String.valueOf(new Random().nextInt() & Integer.MAX_VALUE);
     json = new Gson().toJson(gameBoardJson);
-    savegame = new SaveGame(id, new Gson().toJson(gameBoardJson));
+    savegame = new SaveGame(id, new Gson().toJson(gameBoardJson), "");
 
-    gameStorage = new SaveGameStorage();
-
-    SaveGameStorage.addSaveGame(savegame);
-    assertEquals(savegame, SaveGameStorage.getSaveGame(id));
+    SaveGameStorage.getInstance().addAndFlushSaveGame(savegame);
+    assertEquals(savegame, SaveGameStorage.getInstance().getSaveGame(id));
+    SaveGameStorage.getInstance().removeSaveGameFromDb(savegame);
   }
 }

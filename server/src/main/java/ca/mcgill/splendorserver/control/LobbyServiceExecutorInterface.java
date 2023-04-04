@@ -41,4 +41,12 @@ public interface LobbyServiceExecutorInterface {
    * @param id the id of the save game
    */
   void save_game(String body, String gameserviceName, String id);
+  
+  
+  /**
+   * Unregisters a game service. Useful at end of application instance.
+   *
+   * @param gameName the name of the game.
+   */
+  void unregister_gameservice(String gameName);
 }
