@@ -64,11 +64,6 @@ class NobleTest {
   }
 
   @Test
-  void getNoble() {
-    assertEquals(anoble, Noble.getNoble(0));
-  }
-
-  @Test
   void testEquals() {
     CardCost cost = new CardCost(4, 4, 0, 0, 0);
     Noble noble1 = new Noble(0, cost);

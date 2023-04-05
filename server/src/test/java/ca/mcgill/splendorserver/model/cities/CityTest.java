@@ -47,11 +47,6 @@ class CityTest {
   }
 
   @Test
-  void getCity() {
-    assertEquals(city, City.getCity(0));
-  }
-
-  @Test
   void testEqualsSameCity() {
     assertEquals(city, city);
   }

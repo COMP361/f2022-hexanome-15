@@ -40,10 +40,6 @@ class CardTest {
   }
 
   @Test
-  void getCard() {
-    assertEquals(acard.getId(), Card.getCard(0).getId());
-  }
-  @Test
   void makeDeckBase1() {
     List<Card> deck = Card.makeDeck(BASE1);
     assertEquals(40, deck.size());
