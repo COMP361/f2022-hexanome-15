@@ -1,8 +1,5 @@
 FROM maven:3.8.3-adoptopenjdk-16 as serverbuild
 MAINTAINER zachary hayden
-COPY client /usr/src/client
-RUN mvn -f /usr/src/client/pom.xml clean install -P prod
-
 COPY server/src /usr/src/app/src
 COPY server/pom.xml /usr/src/app
 RUN mvn -DskipTests -f /usr/src/app/pom.xml clean package -P prod
@@ -18,7 +15,3 @@ RUN chmod +x /wait
 #  copy the jar from the build process earlier, and expose / use the proper port then run it
 COPY --from=serverbuild /usr/src/app/target/splendorServer.jar /usr/app/splendorServer.jar
 EXPOSE 8080
-#ENTRYPOINT ["java", "-jar", "/usr/app/splendorServer.jar"]
-
-# allow debug if startup fails, with: docker run -it --entrypoint /bin/bash ls-xox -s
-#RUN apk add --no-cache bash coreutils grep sed
