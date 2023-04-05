@@ -119,7 +119,7 @@ public class GameController {
                   response.getBody().getObject().optJSONArray("winningPlayers");
               Alert gameEndAlert = new Alert(Alert.AlertType.INFORMATION);
               StringBuilder winners = new StringBuilder();
-              if (winnersArray.length() > 1) {
+              if (winnersArray.length() == 1) {
                 gameEndAlert.setTitle("Game Ended");
                 gameEndAlert.setHeaderText("The game had ended! The winner(s) are: "
                                              + winnersArray.getString(0)
@@ -129,7 +129,7 @@ public class GameController {
                 for (int i = 0; i < winnersArray.length() - 1; i++) {
                   winners.append(winnersArray.getString(i)).append(", ");
                 }
-                winners.append(winnersArray.getString(winnersArray.length()));
+                winners.append(winnersArray.getString(winnersArray.length() - 1));
                 gameEndAlert.setTitle("Game Ended");
                 gameEndAlert.setHeaderText("The game had ended! The winner(s) are: " + winners
                         + ". Congratulations!");
