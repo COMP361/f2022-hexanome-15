@@ -111,6 +111,33 @@ public class GameController {
           }
           continue;
         }
+        if (!response.getBody().getObject().optJSONArray("winningPlayers").isEmpty()) {
+          Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+              JSONArray winnersArray = response.getBody().getObject().optJSONArray("winningPlayers");
+              Alert gameEndAlert = new Alert(Alert.AlertType.INFORMATION);
+              StringBuilder winners = new StringBuilder();
+              if (winnersArray.length() > 1) {
+                gameEndAlert.setTitle("Game Ended");
+                gameEndAlert.setHeaderText("The game had ended! The winner(s) are: " + winnersArray.getString(0)
+                        + ". Congratulations!");
+                gameEndAlert.show();
+              }
+              else {
+                for (int i = 0; i < winnersArray.length() - 1; i++) {
+                  winners.append(winnersArray.getString(i)).append(", ");
+                }
+                winners.append(winnersArray.getString(winnersArray.length()));
+                gameEndAlert.setTitle("Game Ended");
+                gameEndAlert.setHeaderText("The game had ended! The winner(s) are: " + winners
+                        + ". Congratulations!");
+                gameEndAlert.show();
+              }
+            }
+          });
+          break;
+        }
         if (!response.getBody().toPrettyString().equals(currentState)) {
           System.out.println(response.getBody().toPrettyString());
           currentState = response.getBody().toPrettyString();
