@@ -124,7 +124,7 @@ public class GameBoard {
           actionPending = pendingAction;
           return pendingAction;
         } else {
-          if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN)) {
+          if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN) && getTokenCount() > 0) {
             actionPending = Action.TAKE_EXTRA_TOKEN;
             return actionPending;
           } else {
@@ -509,9 +509,6 @@ public class GameBoard {
       int ix = cardField.indexOf(selectedCard);
       returnTokensToBoard(inventory.purchaseCard(cardField.remove(ix)));
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
-    }
-    if (inventory.hasPower(Power.PURCHASE_CARD_TAKE_TOKEN) && getTokenCount() > 0) {
-      return Action.TAKE_EXTRA_TOKEN;
     }
 
     if (selectedCard instanceof OrientCard) {
