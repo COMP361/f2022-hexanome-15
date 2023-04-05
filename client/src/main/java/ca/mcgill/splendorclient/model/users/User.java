@@ -67,8 +67,6 @@ public class User {
 
   /**
    * Logs out the user with the given username.
-   *
-   * @param userName the given username
    */
   public static void logout() {
     LobbyServiceExecutor.LOBBYSERVICEEXUTOR.revoke_auth(THISUSER.accessToken.replace("+", "%2B"));

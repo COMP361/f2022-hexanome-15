@@ -18,6 +18,8 @@ public class CoatofarmsView extends Rectangle {
    * Creates a CoatofarmsView.
    *
    * @param screenSize the size of the screen
+   * @param x the x coordinate
+   * @param y the y coordinate
    * @param color a string representing the color of the shield
    */
   public CoatofarmsView(Dimension screenSize, float x, float y, String color) {
