@@ -511,6 +511,8 @@ public class GameBoard {
       replenishTakenCardFromDeck(selectedCard.getDeckType(), ix);
     }
 
+    moveCache.add(move);
+
     if (selectedCard instanceof OrientCard) {
       List<Action> actions = ((OrientCard) selectedCard).getBonusActions();
       return getBonusAction(actions, inventory);
