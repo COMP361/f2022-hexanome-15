@@ -115,16 +115,17 @@ public class GameController {
           Platform.runLater(new Runnable() {
             @Override
             public void run() {
-              JSONArray winnersArray = response.getBody().getObject().optJSONArray("winningPlayers");
+              JSONArray winnersArray =
+                  response.getBody().getObject().optJSONArray("winningPlayers");
               Alert gameEndAlert = new Alert(Alert.AlertType.INFORMATION);
               StringBuilder winners = new StringBuilder();
               if (winnersArray.length() > 1) {
                 gameEndAlert.setTitle("Game Ended");
-                gameEndAlert.setHeaderText("The game had ended! The winner(s) are: " + winnersArray.getString(0)
+                gameEndAlert.setHeaderText("The game had ended! The winner(s) are: "
+                                             + winnersArray.getString(0)
                         + ". Congratulations!");
                 gameEndAlert.show();
-              }
-              else {
+              } else {
                 for (int i = 0; i < winnersArray.length() - 1; i++) {
                   winners.append(winnersArray.getString(i)).append(", ");
                 }

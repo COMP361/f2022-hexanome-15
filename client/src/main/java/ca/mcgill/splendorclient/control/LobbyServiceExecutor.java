@@ -1,24 +1,17 @@
 package ca.mcgill.splendorclient.control;
 
+import ca.mcgill.splendorclient.lobbyserviceio.NullParser;
+import ca.mcgill.splendorclient.lobbyserviceio.OutputParser;
+import ca.mcgill.splendorclient.lobbyserviceio.ParseText;
+import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
-
-import kong.unirest.HttpRequest;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import ca.mcgill.splendorclient.lobbyserviceio.NullParser;
-import ca.mcgill.splendorclient.lobbyserviceio.OutputParser;
-import ca.mcgill.splendorclient.lobbyserviceio.ParseText;
-import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
-
 
 /**
  * Executes Lobby Service commands.
@@ -27,7 +20,9 @@ import ca.mcgill.splendorclient.lobbyserviceio.Parsejson;
  */
 @Component
 public class LobbyServiceExecutor {
-  
+  /**
+   * Executes calls to the lobby service.
+   */
   public static final LobbyServiceExecutor LOBBYSERVICEEXUTOR = new LobbyServiceExecutor();
   
   /**
@@ -248,8 +243,12 @@ public class LobbyServiceExecutor {
         gameName, accessToken);
     run(command, NullParser.NULLPARSER);
   }
-  
-  
+
+  /**
+   * Revokes the auth token.
+   *
+   * @param accessToken the access token
+   */
   public final void revoke_auth(String accessToken) {
     String url = 
         String.format("%s/oauth/active?access_token=%s",

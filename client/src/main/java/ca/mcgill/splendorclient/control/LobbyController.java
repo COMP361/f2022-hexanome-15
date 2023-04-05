@@ -384,7 +384,8 @@ public class LobbyController implements Initializable {
             + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8")
         )
                                         .asString();
-      System.out.println("Response from delete: " + response.getBody().toString() + response.getStatus());
+      System.out.println("Response from delete: "
+                           + response.getBody().toString() + response.getStatus());
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
     }
@@ -487,10 +488,10 @@ public class LobbyController implements Initializable {
   private class LaunchWaiter extends Thread {
     
     private String sessionid;
-    private boolean bExit = false;
+    private boolean exit = false;
     
     public void setExit() {
-      bExit = true;
+      exit = true;
     }
     
     public LaunchWaiter(String session) {
@@ -499,7 +500,7 @@ public class LobbyController implements Initializable {
     
     @Override
     public void run() {
-      while (!bExit) {
+      while (!exit) {
         try {
           Thread.sleep(2000);
           JSONObject sessionInfo = get_session(sessionid);

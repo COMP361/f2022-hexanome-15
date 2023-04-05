@@ -30,6 +30,8 @@ public class TradingView extends Pane {
    * Creates a TradingView.
    *
    * @param screenSize the size of the screen
+   * @param x the x coordinate
+   * @param y the y coordinate
    */
   public TradingView(Dimension screenSize, float x, float y) {
     this.screenSize = screenSize;
