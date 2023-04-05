@@ -115,6 +115,8 @@ public class GameBoard {
         "player (" + player.getName() + ") wasn't found in this current game board"));
     Action pendingAction;
     moveCache.add(move);
+    unlockedNoble = false;
+    unlockedCity = false;
     switch (move.getAction()) {
       case PURCHASE_DEV:
         pendingAction = performPurchaseDev(move, player, inventory);
