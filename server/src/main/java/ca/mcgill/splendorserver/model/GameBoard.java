@@ -318,7 +318,7 @@ public class GameBoard {
         }
       }
       if (candidateCities.size() == 1) {
-        performClaimCityAction(cities.get(0), inventory);
+        performClaimCityAction(candidateCities.get(0), inventory);
       } else if (candidateCities.size() > 1) {
         actionPending = Action.RECEIVE_CITY;
         return Action.RECEIVE_CITY;
